@@ -363,7 +363,7 @@ def pdf_appunti_parti(parti, info, destinazione):
             pdf.set_text_color(*GRIGIO)
             if el.riga_studente(info):
                 testo(el.riga_studente(info), 5)
-            testo(f"{el._data_it(info.get('inizio', ''))} · {len(parti)} parti · appunti creati da Claude "
+            testo(f"{el._data_it(info.get('inizio', ''))} · {len(parti)} parti · appunti in formato Cornell creati da Claude "
                   "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
             pdf.set_text_color(0, 0, 0)
             pdf.ln(4)
@@ -388,9 +388,14 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_text_color(*GRIGIO)
         if el.riga_studente(info):
             testo(el.riga_studente(info), 5)
-        testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti creati da Claude "
-              "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+        testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti in formato Cornell "
+              "creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
         pdf.set_text_color(0, 0, 0)
+    pdf.set_font(font, "", 8.5)
+    pdf.set_text_color(124, 58, 237)
+    testo("Come si studia: copri la colonna APPUNTI e prova a rispondere alle domande a sinistra; "
+          "poi controlla. Il riassunto in fondo dice l'essenziale.", 4.4)
+    pdf.set_text_color(0, 0, 0)
 
     xl, wl = pdf.l_margin, 52.0
     xr = xl + wl + 5

@@ -665,7 +665,7 @@ class App:
         r.pack(fill="x", pady=(8, 0))
         self.sw = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
         self.sw.pack(side="left")
-        lb = tk.Label(r, text="Per ogni pacchetto, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
+        lb = tk.Label(r, text="Per ogni pacchetto, crea da solo gli appunti di studio (PDF, formato Cornell)", bg=SOFT, fg=INK,
                       font=(FONT, 10), cursor="hand2")
         lb.pack(side="left", padx=(8, 0))
         for w in (self.sw, lb):
@@ -765,7 +765,7 @@ class App:
         m = int(self.cfg.get("parte_minuti", 30))
         righe = [
             (True, f"Pacchetti in: {corta} · uno ogni {'ora' if m == 60 else f'{m} minuti'}"),
-            (app_on, "Appunti automatici con Claude: " + ("accesi" if app_on else
+            (app_on, "Appunti automatici con Claude (formato Cornell): " + ("accesi" if app_on else
                                                            ("spenti" if ha_chiave else "spenti (manca la chiave)"))),
         ]
         if aud is not None:
@@ -869,7 +869,8 @@ class App:
         self.pann_reg.disegna(self.parti)
         self.pann_fine.disegna(self.parti)
         ha_appunti = any(p.get("ap") == "ok" for p in self.parti.values())
-        self.btn_appunti.config(text="📄  Apri gli appunti" if ha_appunti else "Gli appunti non ci sono ancora")
+        self.btn_appunti.config(text="📄  Apri gli appunti (formato Cornell)" if ha_appunti
+                                else "Gli appunti non ci sono ancora")
         if self.finale == "ok":
             self.btn_completa.config(text="Trascrizione completa (slide + testo, per controllare)")
             self.btn_completa.abilita(True)
@@ -1042,6 +1043,57 @@ class App:
         self.ridisegna_parti()
         self.scheda("reg")
         self.mostra("fine")
+
+    def rifai_appunti(self, cartella):
+        """Rifà pacchetti e appunti di una lezione già pronta: formato Cornell, lavagne unite,
+        slide ritagliate. Richiama Claude, quindi costa qualche centesimo."""
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        pac = info.get("pacchetti") or {}
+        if not pac:
+            return
+        minuti = max(1, round((info.get("durata") or 0) / 60))
+        stima = max(0.01, 0.2 * minuti / 60)
+        if not messagebox.askyesno(APP, f"Rifaccio gli appunti di «{info.get('nome', '')}»?\n\n"
+                                        "Saranno nel formato Cornell, con le lavagne unite e le slide "
+                                        "ritagliate.\nGli appunti di prima vengono sostituiti.\n\n"
+                                        f"Costo stimato: circa {stima:.2f} $".replace(".", ",")):
+            return
+        for k in pac:
+            vecchio = (info.get("appunti") or {}).get(k)
+            for f in (cart / f"appunti_{int(k):03d}.json", Path(vecchio) if vecchio else None):
+                if f and f.exists():
+                    try:
+                        f.unlink()
+                    except OSError:
+                        pass
+        tutti = info.get("appunti_completi")
+        if tutti and Path(tutti).exists() and len(pac) > 1:
+            try:
+                Path(tutti).unlink()
+            except OSError:
+                pass
+        el.aggiorna_info(cart, appunti={}, appunti_completi=None)
+        self.cartella_corrente = cart
+        self.parti = {int(k): {"stato": "lav", "perc": 0.0, "orario": ""} for k in pac}
+        self.appunti_lezione = True          # quando il pacchetto e' rifatto, partono gli appunti
+        self.finale = "ok"
+        self.lbl_fine.config(text=f" {info.get('nome', 'Lezione')}")
+        self.avviso_fine.config(text="")
+        self.aggiorna_spesa()
+        self.ridisegna_parti()
+        self.scheda("reg")
+        self.mostra("fine")
+
+        def lavoro():
+            for k in sorted(pac, key=int):
+                try:
+                    zp = el.crea_pacchetto(cart, int(k), self.cfg["cartella_pacchetti"])
+                    self.coda.put(("parte_ok", (int(k), str(zp))))
+                except Exception:
+                    log.exception("rifai pacchetto %s", k)
+                    self.coda.put(("parte_err", int(k)))
+        threading.Thread(target=lavoro, daemon=True).start()
 
     def completa(self, cartella):
         """Finisce una lezione rimasta a meta' (es. PC spento mentre preparava i file)."""
@@ -1630,6 +1682,8 @@ class App:
                            if Path(z).exists() and k not in appunti]
                 if mancano and self.chiave() and not self.occupato:
                     btn("Crea appunti", lambda c=cart: self.appunti_mancanti(c))
+                elif appunti and self.chiave() and not self.occupato:
+                    btn("↻ Rifai appunti", lambda c=cart: self.rifai_appunti(c))
                 tutti = info.get("appunti_completi")
                 if tutti and Path(tutti).exists():
                     btn("📄 Apri appunti", lambda f=tutti: apri(f))

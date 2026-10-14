@@ -1,5 +1,5 @@
 {
- "versione": "2.3",
+ "versione": "2.4",
  "librerie": 1,
- "novita": "Pausa per gli intervalli, video visibili ed eliminabili in Le mie lezioni, pacchetti ogni 30 minuti (o 1 ora)"
+ "novita": "Appunti in formato Cornell (domande a sinistra, appunti a destra, riassunto) e pulsante 'Rifai appunti' per le lezioni già registrate"
 }
