@@ -126,6 +126,14 @@ def riavvia():
     """Riapre il programma (il lanciatore mette al suo posto la versione nuova)."""
     import subprocess
     if getattr(sys, "frozen", False):
-        subprocess.Popen([sys.executable], cwd=str(RADICE))
+        if sys.platform == "win32":
+            # aspetto qualche secondo: la finestra (e i processi di Edge) devono chiudersi del tutto,
+            # altrimenti la cartella "app" e' ancora in uso e la versione nuova non prende il suo posto
+            exe = str(sys.executable).replace("'", "''")
+            subprocess.Popen(["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command",
+                              f"Start-Sleep -Seconds 6; Start-Process -FilePath '{exe}' -WorkingDirectory '{str(RADICE).replace(chr(39), chr(39) * 2)}'"],
+                             cwd=str(RADICE), creationflags=0x08000000)
+        else:
+            subprocess.Popen([sys.executable], cwd=str(RADICE))
     else:
         subprocess.Popen([sys.executable, str(RADICE / "avvio.py")], cwd=str(RADICE))
