@@ -27,7 +27,7 @@ from pathlib import Path
 log = logging.getLogger("registra_lezione")
 
 # Modello di trascrizione: "small" e' un buon compromesso velocita'/qualita'.
-MODELLO_WHISPER = "small"
+MODELLO_WHISPER = os.environ.get("RL_MODELLO", "small")
 LINGUA = "it"
 # Durata di una parte (secondi). Per le prove si puo' accorciare con la variabile RL_PARTE_SECONDI.
 PARTE_SECONDI = int(os.environ.get("RL_PARTE_SECONDI", "3600"))
@@ -129,6 +129,19 @@ def _data_it(iso):
 
 # --------------------------------------------------------------------------- trascrizione
 
+def audio_16k(wav):
+    """Legge l'audio come serve al modello (mono, 16 kHz, numeri decimali) usando ffmpeg.
+    Cosi' non serve la libreria PyAV per decodificare (la versione nuova non va d'accordo
+    con faster-whisper: "unexpected keyword argument 'metadata_errors'")."""
+    import numpy as np
+    r = subprocess.run([ffmpeg_exe(), "-nostdin", "-loglevel", "error", "-i", str(wav),
+                        "-f", "f32le", "-ac", "1", "-ar", "16000", "-"],
+                       stdout=subprocess.PIPE, stderr=subprocess.PIPE, creationflags=NO_WINDOW)
+    if r.returncode != 0:
+        raise RuntimeError("lettura audio non riuscita: " + r.stderr.decode("utf-8", "replace")[-500:])
+    return np.frombuffer(r.stdout, dtype=np.float32).copy()
+
+
 def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     """Trascrive audio_00k.wav. Orari gia' riferiti all'inizio della lezione.
     Salva trascrizione_00k.json (se esiste gia' la riusa)."""
@@ -148,7 +161,7 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
         threads = max(1, (os.cpu_count() or 2) - 1)
     model = WhisperModel(MODELLO_WHISPER, device="cpu", compute_type="int8", cpu_threads=threads)
     segmenti, info = model.transcribe(
-        str(wav), language=LINGUA, vad_filter=True, beam_size=1,
+        audio_16k(wav), language=LINGUA, vad_filter=True, beam_size=1,
         condition_on_previous_text=False)
     offset = (k - 1) * PARTE_SECONDI
     durata = info.duration or 1.0

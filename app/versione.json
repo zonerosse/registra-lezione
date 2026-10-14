@@ -1,5 +1,5 @@
 {
- "versione": "1.7",
+ "versione": "1.8",
  "librerie": 1,
- "novita": "Negli appunti le slide utili scelte da Claude; Impostazioni scorrevoli (si vede l'interruttore della mini finestra)"
+ "novita": "Corretta la trascrizione (errore 'metadata_errors')"
 }

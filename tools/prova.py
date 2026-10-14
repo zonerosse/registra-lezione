@@ -211,7 +211,7 @@ print("installato")
     controlla(r.returncode == 0 and (prog / "app_nuova" / "registra_lezione.py").exists(),
               "aggiornamento scaricato in app_nuova " + r.stderr[-300:])
     r = subprocess.run([sys.executable, str(prog / "avvio.py"), "--prova"], capture_output=True, text=True,
-                       cwd=str(prog))
+                       cwd=str(prog), env={**os.environ, "RL_SENZA_INTERNET": os.environ.get("RL_SENZA_INTERNET", "1")})
     esito = (prog / "prova_avvio.txt").read_text(encoding="utf-8")
     controlla(r.returncode == 0 and "TUTTO A POSTO" in esito, "il lanciatore parte con la versione nuova\n" + esito[-600:])
     v2 = json.loads((prog / "app" / "versione.json").read_text(encoding="utf-8"))

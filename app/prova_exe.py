@@ -15,6 +15,10 @@ import wave
 from pathlib import Path
 
 
+class _Salta(Exception):
+    pass
+
+
 def main(radice):
     esito = Path(radice) / "prova_avvio.txt"
     righe = []
@@ -101,6 +105,22 @@ def main(radice):
             el.scrivi_json(c / "meta.json", {"nome": "Prova", "audio_t0": 0, "video_t0": 0, "slides": slides})
             el.scrivi_json(c / "info.json", {"nome": "Prova – àèìòù", "inizio": "2026-10-14T09:00:00",
                                              "durata": 7, "stato": "registrazione", "pacchetti": {}})
+            # trascrizione vera, col modello piccolo "tiny" (lo scarica la prima volta)
+            a16 = el.audio_16k(c / "audio_001.wav")
+            assert abs(len(a16) / 16000 - 4) < 0.1, len(a16)
+            try:
+                from faster_whisper import WhisperModel
+                if os.environ.get("RL_SENZA_INTERNET"):
+                    raise _Salta()
+                m = WhisperModel("tiny", device="cpu", compute_type="int8")
+                segs, inf = m.transcribe(a16, language="it", vad_filter=True, beam_size=1)
+                list(segs)
+                segs, inf = m.transcribe(a16, language="it", vad_filter=False, beam_size=1)
+                list(segs)
+                assert abs(inf.duration - 4) < 0.1, inf.duration
+                righe.append("trascrizione (modello tiny, con e senza VAD): ok")
+            except _Salta:
+                righe.append("trascrizione con il modello: saltata (senza internet)")
             pac = Path(t) / "pacchetti"
             el.elabora_finale(c, pac)
             info = json.loads((c / "info.json").read_text(encoding="utf-8"))
