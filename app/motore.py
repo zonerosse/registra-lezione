@@ -909,7 +909,7 @@ class Motore:
             cores = os.cpu_count() or 2
             # mentre si registra meta' del processore (Meet non rallenta); dopo ne lascio libero un po'
             # anche per la finestra, che altrimenti puo' sembrare bloccata
-            threads = max(1, cores // 2) if self.reg is not None else max(1, cores - 2 if cores >= 4 else cores - 1)
+            threads = max(1, cores // 2) if self.reg is not None else max(2, cores - 1)
             try:
                 if tipo == "parte":
                     k = lavoro[2]

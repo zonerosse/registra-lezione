@@ -1,6 +1,6 @@
 {
- "versione": "3.5",
+ "versione": "3.6",
  "librerie": 2,
- "novita": "Una lezione può avere gli appunti in tutti e due i formati: in «Le mie registrazioni» ⋯ → «Crea anche in Formato Esame» (o in Cornell); «Apri appunti» chiede quale aprire.",
- "novita_en": "A lecture can have notes in both formats: in «My recordings» ⋯ → «Also create in Exam format» (or Cornell); «Open notes» asks which one to open."
+ "novita": "Trascrizione più veloce dopo la fine (più processore, modello già caricato, niente controlli su internet); impostazioni salvate anche se l'antivirus tiene occupato il file.",
+ "novita_en": "Faster transcription after stopping (more CPU, model kept loaded, no internet checks); settings are saved even if the antivirus briefly locks the file."
 }

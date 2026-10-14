@@ -94,10 +94,25 @@ def leggi_json(p, default=None):
 
 
 def scrivi_json(p, dati):
+    """Scrive il file in modo sicuro. Se Windows lo tiene occupato un attimo (antivirus,
+    indicizzazione), riprova per qualche secondo invece di dare errore."""
+    import time
     p = Path(p)
-    tmp = p.with_name(p.name + ".tmp")
-    tmp.write_text(json.dumps(dati, ensure_ascii=False, indent=1), encoding="utf-8")
-    os.replace(tmp, p)
+    testo = json.dumps(dati, ensure_ascii=False, indent=1)
+    for n in range(20):
+        tmp = p.with_name(f"{p.name}.{os.getpid()}.{n}.tmp")
+        try:
+            tmp.write_text(testo, encoding="utf-8")
+            os.replace(tmp, p)
+            return
+        except PermissionError:
+            try:
+                tmp.unlink()
+            except OSError:
+                pass
+            if n == 19:
+                raise
+            time.sleep(0.25)
 
 
 def aggiorna_info(cartella, **campi):
@@ -173,10 +188,11 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
         scrivi_json(pj, [])
         progresso(1.0)
         return []
-    from faster_whisper import WhisperModel
+    import time
     if threads is None:
         threads = max(1, (os.cpu_count() or 2) - 1)
-    model = WhisperModel(MODELLO_WHISPER, device="cpu", compute_type="int8", cpu_threads=threads)
+    model = _modello(threads)
+    t0 = time.monotonic()
     lingua = (leggi_json(cartella / "info.json", {}) or {}).get("lingua_lezione") or LINGUA
     segmenti, info = model.transcribe(
         audio_16k(wav), language=None if lingua == "auto" else lingua, vad_filter=True, beam_size=1,
@@ -194,7 +210,24 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
         progresso(min(1.0, s.end / durata))
     progresso(1.0)
     scrivi_json(pj, out)
+    log.info("trascrizione parte %s: %.0f s di audio in %.0f s (%s thread)", k, durata,
+             time.monotonic() - t0, threads)
     return out
+
+
+_MODELLO = {}
+
+
+def _modello(threads):
+    """Il modello di trascrizione resta caricato fra una parte e l'altra (caricarlo costa secondi).
+    Se e' gia' sul PC non si chiede niente a internet."""
+    chiave = (MODELLO_WHISPER, threads)
+    if chiave not in _MODELLO:
+        from faster_whisper import WhisperModel
+        _MODELLO.clear()
+        _MODELLO[chiave] = WhisperModel(MODELLO_WHISPER, device="cpu", compute_type="int8", cpu_threads=threads,
+                                        local_files_only=modello_presente())
+    return _MODELLO[chiave]
 
 
 def modello_presente():
