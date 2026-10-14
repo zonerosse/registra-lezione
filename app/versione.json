@@ -1,5 +1,5 @@
 {
- "versione": "1.4",
+ "versione": "1.5",
  "librerie": 1,
- "novita": "Corretto il blocco di 'Scegli…' per la cartella dei pacchetti; messaggio più chiaro se gli aggiornamenti non si trovano"
+ "novita": "Corretta la registrazione dell'audio del PC"
 }

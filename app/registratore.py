@@ -38,6 +38,17 @@ def co_init():
             pass
 
 
+def carica_soundcard():
+    """Carica la libreria audio e prepara COM nel thread che la usera'.
+
+    L'ordine conta: la libreria, quando si carica, inizializza COM da sola e
+    considera un errore trovarlo gia' inizializzato. Quindi prima la libreria,
+    poi COM per questo thread (se era gia' pronto, Windows risponde "ok, gia' fatto")."""
+    import soundcard as sc
+    co_init()
+    return sc
+
+
 class RilevatoreSlide:
     """Decide quando lo schermo mostra una slide nuova.
 
@@ -140,9 +151,8 @@ class Registratore:
     def _silenzio(self):
         """Suona 'silenzio' sulle casse: tiene sveglia la scheda audio, cosi'
         la registrazione scorre regolare anche quando nessuno parla."""
-        co_init()
         try:
-            import soundcard as sc
+            sc = carica_soundcard()
             spk = sc.default_speaker()
             zeri = np.zeros((4800, 1), dtype=np.float32)
             with spk.player(samplerate=48000, channels=1) as pl:
@@ -161,11 +171,10 @@ class Registratore:
     def _audio(self):
         """Registra l'audio del PC a pezzi da un'ora (audio_001.wav, audio_002.wav, ...).
         Quando un pezzo e' completo chiama on_parte(k): quella parte si puo' gia' trascrivere."""
-        co_init()
         w = None
         try:
             import warnings
-            import soundcard as sc
+            sc = carica_soundcard()
             from elaborazione import PARTE_SECONDI
             warnings.filterwarnings("ignore", category=sc.SoundcardRuntimeWarning)
             spk = sc.default_speaker()
@@ -339,8 +348,7 @@ def controlla_audio():
 
 def _controlla_audio():
     try:
-        co_init()
-        import soundcard as sc
+        sc = carica_soundcard()
         spk = sc.default_speaker()
         sc.get_microphone(spk.id, include_loopback=True)
         return True

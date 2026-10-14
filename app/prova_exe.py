@@ -27,7 +27,32 @@ def main(radice):
         from PIL import Image, ImageDraw
         import mss  # noqa: F401
         if sys.platform == "win32":
-            import soundcard  # noqa: F401
+            # come nel programma vero: la libreria audio caricata da un thread a parte,
+            # poi usata da altri thread (controllo, silenzio, registrazione)
+            import threading
+            import registratore as rg
+            errori = []
+
+            def usa_audio():
+                try:
+                    sc = rg.carica_soundcard()
+                except Exception:
+                    errori.append(traceback.format_exc())
+                    return
+                try:
+                    sc.all_speakers()
+                    sc.all_microphones(include_loopback=True)
+                except Exception as e:
+                    # sul server di GitHub puo' non esserci una scheda audio: va bene,
+                    # basta che non sia l'errore di COM gia' inizializzato
+                    if "0x100000001" in str(e) or "0x80010106" in str(e):
+                        errori.append(traceback.format_exc())
+            for _ in range(3):
+                th = threading.Thread(target=usa_audio)
+                th.start()
+                th.join(30)
+            assert not errori, "libreria audio: " + errori[0]
+            righe.append("libreria audio nei thread: ok")
         import imageio_ffmpeg
         import fpdf  # noqa: F401
         import ctranslate2  # noqa: F401
