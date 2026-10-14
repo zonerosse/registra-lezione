@@ -4,6 +4,9 @@ name: Prova mini finestra
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   prova:
     runs-on: windows-latest
@@ -23,8 +26,16 @@ jobs:
         run: |
           python tools/prova_mini.py
           Get-Content prova_mini/esito.txt -Encoding utf8
-      - uses: actions/upload-artifact@v4
+      - name: Salva i risultati nel ramo "prova-mini"
         if: always()
-        with:
-          name: prova-mini
-          path: prova_mini/
+        shell: pwsh
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          New-Item -ItemType Directory -Force risultati | Out-Null
+          Copy-Item prova_mini/* risultati/ -ErrorAction SilentlyContinue
+          git checkout --orphan prova-mini
+          git rm -rf --cached . | Out-Null
+          git add -f risultati
+          git commit -m "Risultati prova mini finestra"
+          git push -f origin prova-mini
