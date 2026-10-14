@@ -429,6 +429,9 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
         z.write(txt, txt.name)
     os.replace(tmp, zp)
 
+    # quale immagine e' la "Slide N" del PDF di questa parte (serve agli appunti)
+    scrivi_json(cartella / f"pacchetto_{k:03d}.json",
+                [{"n": n, "file": g["slide"], "inizio": g["inizio"]} for n, g in enumerate(gruppi, 1)])
     pacchetti = info.get("pacchetti") or {}
     pacchetti[str(k)] = str(zp)
     aggiorna_info(cartella, pacchetti=pacchetti)

@@ -359,8 +359,11 @@ class App:
 
         root.title(APP)
         root.configure(bg=BG)
-        root.geometry("640x800")
-        root.minsize(540, 640)
+        # dimensioni in proporzione al ridimensionamento di Windows (100%, 125%, 150%...)
+        scala = max(1.0, root.winfo_fpixels("1i") / 96.0)
+        alt = int(min(root.winfo_screenheight() - 90, 820 * scala))
+        root.geometry(f"{int(660 * scala)}x{alt}+40+20")
+        root.minsize(int(540 * scala), int(480 * scala))
         root.protocol("WM_DELETE_WINDOW", self.chiudi)
         root.report_callback_exception = self.errore_tk
         self.menu_testo = menu_tasto_destro(root)
@@ -403,7 +406,17 @@ class App:
 
         self.p_reg = tk.Frame(win, bg=WIN, padx=22, pady=18)
         self.p_arch = tk.Frame(win, bg=WIN, padx=22, pady=10)
-        self.p_imp = tk.Frame(win, bg=WIN, padx=22, pady=16)
+        self.p_imp = tk.Frame(win, bg=WIN)
+        self.canvas_imp = tk.Canvas(self.p_imp, bg=WIN, highlightthickness=0)
+        sb_imp = tk.Scrollbar(self.p_imp, orient="vertical", command=self.canvas_imp.yview)
+        self.p_imp_dentro = tk.Frame(self.canvas_imp, bg=WIN, padx=22, pady=16)
+        self.p_imp_dentro.bind("<Configure>", lambda e: self.canvas_imp.configure(
+            scrollregion=self.canvas_imp.bbox("all")))
+        self._win_imp = self.canvas_imp.create_window((0, 0), window=self.p_imp_dentro, anchor="nw")
+        self.canvas_imp.bind("<Configure>", lambda e: self.canvas_imp.itemconfig(self._win_imp, width=e.width))
+        self.canvas_imp.configure(yscrollcommand=sb_imp.set)
+        self.canvas_imp.pack(side="left", fill="both", expand=True)
+        sb_imp.pack(side="right", fill="y")
         self.costruisci_registra()
         self.costruisci_impostazioni()
         self.costruisci_archivio()
@@ -419,6 +432,7 @@ class App:
     # ------------------------------------------------------------------ schede
 
     def scheda(self, k):
+        self.tab_corrente = k
         for chiave, (lb, ln) in self.tab_btn.items():
             on = chiave == k
             lb.config(fg=INK if on else MUTED, font=(FONT, 11, "bold" if on else "normal"))
@@ -522,7 +536,7 @@ class App:
     # ------------------------------------------------------------------ scheda Impostazioni
 
     def costruisci_impostazioni(self):
-        f = self.p_imp
+        f = self.p_imp_dentro
 
         box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
         box.pack(fill="x")
@@ -1264,7 +1278,17 @@ class App:
         self.canvas.configure(yscrollcommand=sb.set)
         self.canvas.pack(side="left", fill="both", expand=True)
         sb.pack(side="right", fill="y")
-        self.canvas.bind_all("<MouseWheel>", lambda e: self.canvas.yview_scroll(int(-e.delta / 120), "units"))
+        self.root.bind_all("<MouseWheel>", self._rotella)
+        self.root.bind_all("<Button-4>", lambda e: self._rotella(e, -1))
+        self.root.bind_all("<Button-5>", lambda e: self._rotella(e, 1))
+
+    def _rotella(self, e, passi=None):
+        c = {"imp": self.canvas_imp, "arch": self.canvas}.get(getattr(self, "tab_corrente", ""))
+        if c is None:
+            return
+        if passi is None:
+            passi = int(-e.delta / 120) or (-1 if e.delta > 0 else 1)
+        c.yview_scroll(passi, "units")
 
     def aggiorna_archivio(self):
         for w in self.lista.winfo_children():

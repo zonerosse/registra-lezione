@@ -136,6 +136,10 @@ l'esame. Regole:
 - Basati solo su slide e parole del docente. Non inventare contenuti. Se completi un passaggio
   con conoscenze generali, dillo esplicitamente.
 - Per ogni concetto indica dove si trova: numero di slide e orario (es. "slide 3, 00:25").
+- Nel campo "slide" di concetti ed esempi metti il numero N della slide del PDF ("Slide N") da
+  mostrare accanto, SOLO se l'immagine aiuta davvero a capire: grafici, schemi, figure, tabelle,
+  formule o passaggi scritti. Metti 0 se la slide e' solo testo gia' riportato negli appunti, se e'
+  un titolo o un indice, o se mostra solo il docente. Non ripetere la stessa slide due volte.
 - Nella legenda metti TUTTI i simboli, le sigle e le formule usati, ciascuno con il significato,
   in forma breve da tenere sott'occhio. Scrivi le formule in testo semplice con simboli Unicode
   (es. lim x→0 sin(x)/x = 1, ∑, √, ≤, ∞, x², xᵢ). Niente LaTeX.
@@ -152,14 +156,17 @@ SCHEMA = {
         "di_cosa_si_parla": {"type": "string", "description": "riassunto di 3-6 frasi"},
         "concetti": {"type": "array", "items": {"type": "object", "properties": {
             "titolo": {"type": "string"}, "spiegazione": {"type": "string"},
-            "dove": {"type": "string", "description": "slide e orario"}},
+            "dove": {"type": "string", "description": "slide e orario"},
+            "slide": {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}},
             "required": ["titolo", "spiegazione", "dove"]}},
         "legenda": {"type": "array", "items": {"type": "object", "properties": {
             "simbolo": {"type": "string"}, "significato": {"type": "string"}},
             "required": ["simbolo", "significato"]}},
         "esempi_svolti": {"type": "array", "items": {"type": "object", "properties": {
             "titolo": {"type": "string"}, "passaggi": {"type": "array", "items": {"type": "string"}},
-            "dove": {"type": "string"}}, "required": ["titolo", "passaggi"]}},
+            "dove": {"type": "string"},
+            "slide": {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}},
+            "required": ["titolo", "passaggi"]}},
         "domande_esame": {"type": "array", "items": {"type": "string"}},
         "da_controllare": {"type": "array", "items": {"type": "string"}},
     },
@@ -213,7 +220,10 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
     return blocco["input"], spesa
 
 
-def pdf_appunti(dati, info, etichetta, destinazione):
+def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
+    """slide: {N: (percorso immagine, inizio in secondi)} per mettere le slide scelte da Claude."""
+    slide = slide or {}
+    usate = set()
     from fpdf import FPDF
     pdf = FPDF(format="A4")
     pdf.set_auto_page_break(True, margin=15)
@@ -251,6 +261,38 @@ def pdf_appunti(dati, info, etichetta, destinazione):
     def testo(s, h=5.4):
         pdf.multi_cell(0, h, t(s), new_x="LMARGIN", new_y="NEXT")
 
+    def immagine(n):
+        try:
+            n = int(n or 0)
+        except (TypeError, ValueError):
+            return
+        if n <= 0 or n in usate or n not in slide:
+            return
+        percorso, inizio = slide[n]
+        if not percorso or not Path(percorso).exists():
+            return
+        usate.add(n)
+        from PIL import Image
+        with Image.open(percorso) as im:
+            w, h = im.size
+        larg = 120.0
+        alt = larg * h / w
+        if alt > 75:
+            alt, larg = 75.0, 75.0 * w / h
+        if pdf.get_y() + alt + 8 > pdf.h - 15:
+            pdf.add_page()
+        pdf.ln(1)
+        x = (pdf.w - larg) / 2
+        pdf.image(str(percorso), x=x, w=larg, h=alt)
+        pdf.set_draw_color(*GRIGIO)
+        pdf.rect(x, pdf.get_y() - alt, larg, alt)
+        pdf.set_font(font, "", 8.5)
+        pdf.set_text_color(*GRIGIO)
+        pdf.cell(0, 5, t(f"Slide {n} · {el.hms(inizio)}"), align="C", new_x="LMARGIN", new_y="NEXT")
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font(font, "", 10.5)
+        pdf.ln(1)
+
     pdf.add_page()
     pdf.set_font(font, "B", 17)
     testo(f"{info.get('nome', 'Lezione')} · Appunti {etichetta}", 8)
@@ -277,6 +319,7 @@ def pdf_appunti(dati, info, etichetta, destinazione):
                 pdf.set_font(font, "", 9)
                 testo(f"→ {c['dove']}", 4.6)
                 pdf.set_text_color(0, 0, 0)
+            immagine(c.get("slide"))
             pdf.ln(2)
 
     if dati.get("legenda"):
@@ -299,6 +342,7 @@ def pdf_appunti(dati, info, etichetta, destinazione):
             pdf.set_font(font, "", 10.5)
             for i, p in enumerate(e.get("passaggi", []), 1):
                 testo(f"{i}. {p}")
+            immagine(e.get("slide"))
             pdf.ln(2)
 
     if dati.get("domande_esame"):
@@ -332,7 +376,10 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti):
     base = zp.stem
     etichetta = base.split(" – ")[-1] if " – " in base else f"parte {k}"
     dest = Path(cartella_pacchetti) / f"Appunti – {base}.pdf"
-    pdf_appunti(dati, info, etichetta, dest)
+    mappa = el.leggi_json(cartella / f"pacchetto_{k:03d}.json", []) or []
+    slide = {m["n"]: (str(cartella / "slide" / m["file"]) if m.get("file") else None, m.get("inizio", 0))
+             for m in mappa}
+    pdf_appunti(dati, info, etichetta, dest, slide)
     info = el.leggi_json(cartella / "info.json", {}) or {}
     appunti = info.get("appunti") or {}
     appunti[str(k)] = str(dest)
