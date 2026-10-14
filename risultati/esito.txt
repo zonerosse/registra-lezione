@@ -1,0 +1,12 @@
+finestra nuova possibile: True
+avvia: {'ok': True, 'mini': True}
+mini creata: True
+mini mostrata: True
+schermo 1024x768; mini da (694,436) a (978,649); visibile=True; dentro lo schermo=True
+finestra grande ridotta a icona: True
+fine: risposta in 0.00 s
+finestra grande risponde dopo Fine: True (0.00 s)
+mini chiusa: True
+finestra grande riaperta: True
+stato finale: vista=fine occupato=False
+FINE PROVA
