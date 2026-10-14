@@ -14,6 +14,12 @@ on:
 permissions:
   contents: write
 
+# una costruzione alla volta: se ne parte un'altra mentre questa pubblica, aspetta in fila
+# (altrimenti la seconda trova la versione "nuova" e poi fallisce perche' intanto e' stata pubblicata)
+concurrency:
+  group: costruisci-exe
+  cancel-in-progress: false
+
 jobs:
   exe:
     runs-on: windows-latest
