@@ -780,9 +780,15 @@ class App:
             self.root.after(400, self.root.iconify)
 
     def fine(self):
-        if not self.reg:
+        # il comando puo' arrivare due volte (mini finestra + finestra grande): uno solo vale
+        if not self.reg or getattr(self, "_chiedo_fine", False):
             return
-        if not messagebox.askyesno(APP, "Fermo la registrazione?"):
+        self._chiedo_fine = True
+        try:
+            si = messagebox.askyesno(APP, "Fermo la registrazione?")
+        finally:
+            self._chiedo_fine = False
+        if not si or not self.reg:
             return
         reg, self.reg = self.reg, None
         self.chiudi_mini()
@@ -804,6 +810,29 @@ class App:
                 log.exception("fine")
                 self.coda.put(("errore", traceback.format_exc()))
         threading.Thread(target=ferma, daemon=True).start()
+
+    def appunti_mancanti(self, cartella):
+        """Per una lezione gia' pronta: chiede a Claude gli appunti delle parti che non li hanno."""
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        pac, fatti = info.get("pacchetti") or {}, info.get("appunti") or {}
+        self.cartella_corrente = cart
+        self.parti = {}
+        for k in sorted(pac, key=int):
+            p = {"stato": "ok", "file": pac[k], "orario": ""}
+            if k in fatti and Path(fatti[k]).exists():
+                p.update(ap="ok", ap_file=fatti[k])
+            self.parti[int(k)] = p
+        for k, p in self.parti.items():
+            if not p.get("ap"):
+                self.accoda_appunti(cart, k)
+        self.finale = "ok"
+        self.lbl_fine.config(text=f" {info.get('nome', 'Lezione')}")
+        self.avviso_fine.config(text="")
+        self.aggiorna_spesa()
+        self.ridisegna_parti()
+        self.scheda("reg")
+        self.mostra("fine")
 
     def completa(self, cartella):
         """Finisce una lezione rimasta a meta' (es. PC spento mentre preparava i file)."""
@@ -1328,6 +1357,11 @@ class App:
             dx = tk.Frame(riga, bg=WIN)
             dx.pack(side="right")
             if stato == "pronta":
+                mancano = [k for k, z in (info.get("pacchetti") or {}).items()
+                           if Path(z).exists() and k not in (info.get("appunti") or {})]
+                if mancano and self.chiave() and not self.occupato:
+                    BottoneMini(dx, "Crea appunti", lambda c=cart: self.appunti_mancanti(c)).pack(
+                        side="left", padx=(0, 6))
                 BottoneMini(dx, "Apri", lambda c=cart: apri(c / "Lezione.html")).pack(side="left", padx=(0, 6))
             elif not in_corso:
                 BottoneMini(dx, "Completa", lambda c=cart: self.completa(c)).pack(side="left", padx=(0, 6))

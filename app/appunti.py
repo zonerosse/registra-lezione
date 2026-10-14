@@ -147,7 +147,7 @@ l'esame. Regole:
 - Le domande d'esame devono essere quelle che un docente farebbe davvero su quest'ora.
 - In "da controllare" segnala i punti dove l'audio sembra trascritto male, o slide e parole non
   tornano, con l'orario.
-Chiama lo strumento salva_appunti con il risultato."""
+Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
 
 SCHEMA = {
     "type": "object",
@@ -193,7 +193,9 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
         "system": ISTRUZIONI,
         "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di studio dell'ora di lezione.",
                    "input_schema": SCHEMA}],
-        "tool_choice": {"type": "tool", "name": "salva_appunti"},
+        # Sonnet 5.5 non accetta tool_choice "tool"/"any" (errore 400): si usa "auto"
+        # e le istruzioni chiedono di chiamare lo strumento; c'e' comunque il piano B sotto.
+        "tool_choice": {"type": "auto"},
         "messages": [{"role": "user", "content": [
             {"type": "document", "source": {"type": "base64", "media_type": "application/pdf",
                                             "data": base64.b64encode(pdf_bytes).decode()}},
@@ -212,12 +214,31 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
                 raise ErroreAppunti("Claude non risponde o manca internet: tocca Riprova piu' tardi")
             time.sleep(attesa)
             attesa *= 2
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    if not blocco:
-        raise ErroreAppunti("risposta di Claude incompleta")
     uso = r.get("usage", {})
     spesa = uso.get("input_tokens", 0) * PREZZO_INGRESSO + uso.get("output_tokens", 0) * PREZZO_USCITA
-    return blocco["input"], spesa
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    if blocco:
+        return blocco["input"], spesa
+    # piano B: Claude ha risposto con il testo invece che con lo strumento
+    testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+    dati = _json_dal_testo(testo)
+    if dati is None:
+        log.warning("risposta senza appunti: %s", testo[:500])
+        raise ErroreAppunti("risposta di Claude senza appunti: tocca Riprova")
+    return dati, spesa
+
+
+def _json_dal_testo(testo):
+    """Prende il primo oggetto JSON dentro il testo (anche se e' tra ```json ... ```)."""
+    inizio = testo.find("{")
+    fine = testo.rfind("}")
+    if inizio < 0 or fine <= inizio:
+        return None
+    try:
+        dati = json.loads(testo[inizio:fine + 1])
+    except ValueError:
+        return None
+    return dati if isinstance(dati, dict) and "concetti" in dati else None
 
 
 def pdf_appunti(dati, info, etichetta, destinazione, slide=None):

@@ -186,6 +186,30 @@ def prova_appunti(t):
         controlla(True, "chiave sbagliata rifiutata")
 
 
+def prova_richiesta_claude():
+    print("Richiesta a Claude (senza chiamarlo davvero)")
+    import importlib
+    import appunti as ap
+    importlib.reload(ap)          # la prova precedente ha sostituito chiedi_a_claude
+    visto = {}
+
+    def finta(chiave, percorso, corpo=None, timeout=60):
+        visto["corpo"] = corpo
+        return {"content": [{"type": "text", "text": 'Ecco: ```json\n{"titolo": "x", "concetti": [], '
+                             '"legenda": [], "di_cosa_si_parla": "y", "domande_esame": [], "da_controllare": []}\n```'}],
+                "usage": {"input_tokens": 1000, "output_tokens": 100}}
+    vero = ap._richiesta
+    ap._richiesta = finta
+    try:
+        dati, spesa = ap.chiedi_a_claude("sk-ant-x", b"%PDF-1.4", contesto="Ingegneria")
+    finally:
+        ap._richiesta = vero
+    tc = visto["corpo"]["tool_choice"]
+    controlla(tc == {"type": "auto"}, f"tool_choice adatto a Sonnet 5.5: {tc}")
+    controlla(visto["corpo"]["model"] == ap.MODELLO, "modello " + ap.MODELLO)
+    controlla(dati["titolo"] == "x" and abs(spesa - 0.003) < 1e-9, "piano B: appunti letti anche dal testo")
+
+
 def prova_aggiornamento(t):
     print("Aggiornamento e lanciatore")
     prog = t / "programma"
@@ -225,6 +249,7 @@ def main():
         prova_slide()
         prova_lezione(t)
         prova_appunti(t)
+        prova_richiesta_claude()
         prova_aggiornamento(t)
     print("\nTUTTO A POSTO")
 
