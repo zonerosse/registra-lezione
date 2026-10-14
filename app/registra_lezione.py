@@ -62,6 +62,7 @@ if sys.platform == "win32":
             pass
 
 import aggiorna as agg               # noqa: E402
+import appunti as ap                 # noqa: E402
 import elaborazione as el            # noqa: E402
 import registratore as rg            # noqa: E402
 
@@ -69,6 +70,8 @@ import registratore as rg            # noqa: E402
 def leggi_config():
     c = el.leggi_json(CONFIG, {}) or {}
     c.setdefault("cartella_pacchetti", str(cartella_documenti() / "Pacchetti per Claude"))
+    c.setdefault("appunti_attivi", False)
+    c.setdefault("chiave", "")
     return c
 
 
@@ -81,6 +84,7 @@ def salva_config(c):
 BG, WIN, INK, MUTED = "#e9edf2", "#ffffff", "#1d2430", "#6b7686"
 LINE, RED, RED_D, GREEN, BLUE, SOFT = "#dde2e9", "#d93636", "#b52a2a", "#1f9d55", "#2563eb", "#f6f8fb"
 DARK, DARK_D, GREEN_D, BLUE_D = "#333333", "#1f1f1f", "#18804a", "#1d4fc4"
+VIOLA, VIOLA_SOFT, GRIGIO_SW = "#7c3aed", "#f3edff", "#c7ced8"
 FONT = "Segoe UI"
 
 
@@ -142,8 +146,9 @@ def chip(master, testo, ok=False, bg=SOFT):
 class PannelloParti(tk.Frame):
     """Elenco 'Pacchetti per Claude' con lo stato di ogni parte."""
 
-    def __init__(self, master):
+    def __init__(self, master, riprova=None):
         super().__init__(master, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=8)
+        self.riprova = riprova
         tk.Label(self, text="Pacchetti per Claude", bg=SOFT, fg=INK,
                  font=(FONT, 10, "bold")).pack(anchor="w")
         self.righe = tk.Frame(self, bg=SOFT)
@@ -181,7 +186,32 @@ class PannelloParti(tk.Frame):
                 BottoneMini(dx, "Mostra file", lambda f=p.get("file"): mostra_file(f), bg=WIN).pack(side="left")
             else:
                 tk.Label(dx, text="⚠ problema", bg=SOFT, fg=RED, font=(FONT, 9, "bold")).pack()
+            self._riga_appunti(k, p)
             tk.Frame(self.righe, bg=LINE, height=1).pack(fill="x", pady=(6, 0))
+
+    def _riga_appunti(self, k, p):
+        st = p.get("ap")
+        if not st:
+            return
+        r = tk.Frame(self.righe, bg=VIOLA_SOFT, padx=8, pady=5)
+        r.pack(fill="x", pady=(6, 0))
+        if st == "attesa":
+            tk.Label(r, text="Appunti di Claude: in coda…", bg=VIOLA_SOFT, fg=MUTED, font=(FONT, 9)).pack(side="left")
+        elif st == "lav":
+            # Claude non dice a che punto e': stimo sul tempo (di solito 1-3 minuti)
+            f = min(0.95, (time.monotonic() - p.get("ap_t0", time.monotonic())) / 120)
+            tk.Label(r, text="Claude scrive gli appunti…", bg=VIOLA_SOFT, fg=MUTED, font=(FONT, 9)).pack(side="left")
+            c = tk.Canvas(r, width=150, height=6, bg=LINE, highlightthickness=0)
+            c.pack(side="right")
+            c.create_rectangle(0, 0, 150 * f, 6, fill=VIOLA, width=0)
+        elif st == "ok":
+            tk.Label(r, text="✓ Appunti pronti", bg=VIOLA_SOFT, fg=GREEN, font=(FONT, 9, "bold")).pack(side="left")
+            BottoneMini(r, "Apri appunti", lambda f=p.get("ap_file"): apri(f), bg=WIN).pack(side="right")
+        else:
+            tk.Label(r, text="⚠ Appunti non creati: " + p.get("ap_err", ""), bg=VIOLA_SOFT, fg=RED,
+                     font=(FONT, 9), wraplength=360, justify="left").pack(side="left")
+            if self.riprova:
+                BottoneMini(r, "Riprova", lambda: self.riprova(k), bg=WIN).pack(side="right")
 
 
 class App:
@@ -198,11 +228,13 @@ class App:
         self.finale = None             # None | (0..1) | "ok"
         self.agg_trovato = None
         self.accodate = set()          # parti gia' messe in coda
+        self.lavori_appunti = queue.Queue()
+        self.appunti_lezione = False   # appunti attivi per la lezione in corso
 
         root.title(APP)
         root.configure(bg=BG)
-        root.geometry("640x700")
-        root.minsize(540, 600)
+        root.geometry("640x800")
+        root.minsize(540, 640)
         root.protocol("WM_DELETE_WINDOW", self.chiudi)
         root.report_callback_exception = self.errore_tk
         if sys.platform == "win32":
@@ -250,6 +282,7 @@ class App:
         self.mostra("pronto")
 
         threading.Thread(target=self.lavoratore, daemon=True).start()
+        threading.Thread(target=self.lavoratore_appunti, daemon=True).start()
         threading.Thread(target=self.prepara_modello, daemon=True).start()
         self.root.after(200, self.ciclo)
 
@@ -304,6 +337,29 @@ class App:
         r.pack(fill="x", pady=(8, 0))
         chip(r, "Ogni ora di lezione preparo un pacchetto .zip da mandare a Claude", bg=WIN).pack(side="left")
 
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x", pady=(12, 0))
+        tk.Label(box, text="Appunti automatici con Claude", bg=SOFT, fg=INK,
+                 font=(FONT, 10, "bold")).pack(anchor="w")
+        r = tk.Frame(box, bg=SOFT)
+        r.pack(fill="x", pady=(6, 0))
+        self.lbl_chiave = tk.Label(r, text="", bg=SOFT, fg=MUTED, font=(FONT, 9))
+        self.lbl_chiave.pack(side="left")
+        self.btn_chiave = BottoneMini(r, "", self.finestra_chiave)
+        self.btn_chiave.pack(side="right")
+        r = tk.Frame(box, bg=SOFT, cursor="hand2")
+        r.pack(fill="x", pady=(8, 0))
+        self.sw = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
+        self.sw.pack(side="left")
+        lb = tk.Label(r, text="Ogni ora, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
+                      font=(FONT, 10), cursor="hand2")
+        lb.pack(side="left", padx=(8, 0))
+        for w in (self.sw, lb):
+            w.bind("<Button-1>", lambda e: self.cambia_appunti())
+        tk.Label(box, text="Costo stimato: circa 0,20 $ per ogni ora di lezione.", bg=SOFT, fg=MUTED,
+                 font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
+        self.disegna_appunti()
+
         self.riga_controlli = tk.Frame(f, bg=WIN)
         self.riga_controlli.pack(fill="x", pady=(14, 0))
         Bottone(f, "●  Inizia lezione", RED, RED_D, self.inizia).pack(fill="x", pady=(18, 0))
@@ -334,7 +390,7 @@ class App:
         self.meter = tk.Canvas(b, height=8, bg=LINE, highlightthickness=0)
         self.meter.pack(fill="x", padx=12, pady=(6, 12))
         self.meter_bar = self.meter.create_rectangle(0, 0, 0, 8, fill=GREEN, width=0)
-        self.pann_reg = PannelloParti(f)
+        self.pann_reg = PannelloParti(f, self.riprova_appunti)
         self.pann_reg.pack(fill="x", pady=(14, 0))
         r = tk.Frame(f, bg=WIN)
         r.pack(fill="x", pady=(12, 0))
@@ -352,7 +408,9 @@ class App:
         tk.Label(r, text="✓", bg=WIN, fg=GREEN, font=(FONT, 13, "bold")).pack(side="left")
         self.lbl_fine = tk.Label(r, text=" Lezione finita", bg=WIN, fg=INK, font=(FONT, 12, "bold"))
         self.lbl_fine.pack(side="left")
-        self.pann_fine = PannelloParti(f)
+        self.pann_fine = PannelloParti(f, self.riprova_appunti)
+        self.lbl_spesa = tk.Label(f, text="", bg=WIN, fg=MUTED, font=(FONT, 9), anchor="w")
+        self.lbl_spesa.pack(fill="x", pady=(6, 0))
         self.pann_fine.pack(fill="x", pady=(14, 0))
         self.avviso_fine = tk.Label(f, text="", bg=WIN, fg=RED, font=(FONT, 10),
                                     wraplength=540, justify="left")
@@ -445,6 +503,8 @@ class App:
         el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": datetime.datetime.now().isoformat(timespec="seconds"),
                                             "durata": 0, "n_slide": 0, "stato": "registrazione", "pacchetti": {}})
         self.cartella_corrente = cart
+        self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
+        self.lbl_spesa.config(text="")
         self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
         self.finale = None
         self.reg = rg.Registratore(cart, nome)
@@ -494,11 +554,17 @@ class App:
         fatti = info.get("pacchetti") or {}
         parti = el.file_parti(cart)
         self.cartella_corrente = cart
+        self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
+        fatti_ap = info.get("appunti") or {}
         self.parti = {}
         for k, wav in parti.items():
             fine_k = (k - 1) * el.PARTE_SECONDI + el.durata_wav(wav)
             if str(k) in fatti and Path(fatti[str(k)]).exists():
                 self.parti[k] = {"stato": "ok", "file": fatti[str(k)], "orario": self._orario(k, fine_k)}
+                if str(k) in fatti_ap and Path(fatti_ap[str(k)]).exists():
+                    self.parti[k].update(ap="ok", ap_file=fatti_ap[str(k)])
+                elif self.appunti_lezione:
+                    self.accoda_appunti(cart, k)
             else:
                 self.parti[k] = {"stato": "attesa", "orario": self._orario(k, fine_k)}
                 self.accoda_parte(cart, k)
@@ -510,6 +576,7 @@ class App:
         self.occupato = True
         rg.tieni_sveglio(True)
         self.finale = 0.0
+        self.aggiorna_spesa()
         self.lbl_fine.config(text=f" {info.get('nome', 'Lezione')}")
         self.avviso_fine.config(text="")
         self.ridisegna_parti()
@@ -524,6 +591,134 @@ class App:
         self.nome.delete(0, "end")
         self.nome.insert(0, "Lezione del " + datetime.date.today().strftime("%d/%m/%Y"))
         self.mostra("pronto")
+
+    # ------------------------------------------------------------------ appunti automatici
+
+    def chiave(self):
+        return ap.leggi_chiave(self.cfg.get("chiave", ""))
+
+    def disegna_appunti(self):
+        ha = bool(self.chiave())
+        if not ha and self.cfg.get("appunti_attivi"):
+            self.cfg["appunti_attivi"] = False
+        self.lbl_chiave.config(text=("✓ Chiave API salvata" if ha else "✕ Chiave API non inserita"),
+                               fg=GREEN if ha else RED)
+        self.btn_chiave.config(text="Cambia chiave…" if ha else "Inserisci chiave…")
+        on = bool(self.cfg.get("appunti_attivi"))
+        c = self.sw
+        c.delete("all")
+        col = GREEN if on else GRIGIO_SW
+        c.create_oval(0, 0, 22, 22, fill=col, outline=col)
+        c.create_oval(18, 0, 40, 22, fill=col, outline=col)
+        c.create_rectangle(11, 0, 29, 22, fill=col, outline=col)
+        x = 21 if on else 3
+        c.create_oval(x, 3, x + 16, 19, fill="white", outline="white")
+
+    def cambia_appunti(self):
+        if self.reg is not None:
+            messagebox.showinfo(APP, "Si cambia prima di iniziare la lezione.")
+            return
+        if not self.chiave():
+            self.finestra_chiave()
+            return
+        self.cfg["appunti_attivi"] = not self.cfg.get("appunti_attivi")
+        salva_config(self.cfg)
+        self.disegna_appunti()
+
+    def finestra_chiave(self):
+        d = tk.Toplevel(self.root)
+        d.title("Chiave API di Claude")
+        d.configure(bg=WIN, padx=18, pady=16)
+        d.transient(self.root)
+        d.resizable(False, False)
+        tk.Label(d, text="Chiave API di Claude", bg=WIN, fg=INK, font=(FONT, 12, "bold")).pack(anchor="w")
+        tk.Label(d, text="Si crea su platform.claude.com → Settings → API keys.\n"
+                         "Resta salvata solo su questo PC, protetta da Windows.",
+                 bg=WIN, fg=MUTED, font=(FONT, 9), justify="left").pack(anchor="w", pady=(4, 10))
+        e = tk.Entry(d, show="•", font=(FONT, 11), width=46, relief="flat", highlightthickness=1,
+                     highlightbackground=LINE, highlightcolor=BLUE)
+        e.pack(fill="x", ipady=5)
+        e.focus_set()
+        esito = tk.Label(d, text="", bg=WIN, fg=MUTED, font=(FONT, 9), wraplength=420, justify="left")
+        esito.pack(anchor="w", pady=(8, 0))
+        r = tk.Frame(d, bg=WIN)
+        r.pack(fill="x", pady=(12, 0))
+
+        def togli():
+            self.cfg["chiave"] = ""
+            self.cfg["appunti_attivi"] = False
+            salva_config(self.cfg)
+            self.disegna_appunti()
+            d.destroy()
+
+        def prova():
+            k = e.get().strip()
+            esito.config(text="Provo la chiave…", fg=MUTED)
+
+            def lavoro():
+                try:
+                    ap.prova_chiave(k)
+                    self.root.after(0, lambda: riuscita(k))
+                except ap.ErroreAppunti as err:
+                    msg = str(err)
+                    self.root.after(0, lambda: esito.config(text="✕ " + msg, fg=RED))
+                except Exception:
+                    log.exception("prova chiave")
+                    self.root.after(0, lambda: esito.config(text="✕ Non riesco a provarla: riprova.", fg=RED))
+            threading.Thread(target=lavoro, daemon=True).start()
+
+        def riuscita(k):
+            self.cfg["chiave"] = ap.nascondi_chiave(k)
+            self.cfg["appunti_attivi"] = True
+            salva_config(self.cfg)
+            self.disegna_appunti()
+            esito.config(text="✓ Chiave valida, salvata. Appunti automatici accesi.", fg=GREEN)
+            d.after(1200, d.destroy)
+
+        Bottone(r, "Prova e salva", BLUE, BLUE_D, prova, grande=False).pack(side="right")
+        if self.chiave():
+            BottoneMini(r, "Togli chiave", togli).pack(side="right", padx=(0, 8))
+        BottoneMini(r, "Annulla", d.destroy).pack(side="right", padx=(0, 8))
+        e.bind("<Return>", lambda ev: prova())
+        d.grab_set()
+
+    def accoda_appunti(self, cart, k):
+        self.parti.setdefault(k, {"orario": self._orario(k)})["ap"] = "attesa"
+        self.lavori_appunti.put((cart, k))
+
+    def riprova_appunti(self, k):
+        if not self.chiave():
+            self.finestra_chiave()
+            return
+        self.accoda_appunti(self.cartella_corrente, k)
+        self.ridisegna_parti()
+
+    def lavoratore_appunti(self):
+        """Manda a Claude un pacchetto alla volta e salva gli appunti."""
+        while True:
+            cart, k = self.lavori_appunti.get()
+            self.coda.put(("ap_inizio", k))
+            try:
+                dest, spesa = ap.crea_appunti(cart, k, self.chiave(), self.cfg["cartella_pacchetti"])
+                log.info("appunti parte %s: %s (%.3f $)", k, dest, spesa)
+                self.coda.put(("ap_ok", (k, str(dest))))
+            except ap.ErroreAppunti as e:
+                self.coda.put(("ap_err", (k, str(e))))
+            except Exception:
+                log.exception("appunti parte %s", k)
+                self.coda.put(("ap_err", (k, "errore imprevisto (dettagli nel file registra_lezione.log)")))
+
+    def aggiorna_spesa(self):
+        if not self.cartella_corrente:
+            return
+        info = el.leggi_json(self.cartella_corrente / "info.json", {}) or {}
+        n = len(info.get("appunti") or {})
+        if n:
+            spesa = float(info.get("spesa_appunti") or 0)
+            self.lbl_spesa.config(text=f"Appunti creati da Claude per questa lezione: {n} · "
+                                       f"spesa: circa {spesa:.2f} $".replace(".", ","))
+        else:
+            self.lbl_spesa.config(text="")
 
     # ------------------------------------------------------------------ lavoro in sottofondo
 
@@ -621,6 +816,20 @@ class App:
                 elif tipo == "parte_ok":
                     k, f = dato
                     self.parti.setdefault(k, {"orario": self._orario(k)}).update(stato="ok", file=f)
+                    if self.appunti_lezione and not self.parti[k].get("ap"):
+                        self.accoda_appunti(self.cartella_corrente, k)
+                elif tipo == "ap_inizio":
+                    if dato in self.parti:
+                        self.parti[dato].update(ap="lav", ap_t0=time.monotonic())
+                elif tipo == "ap_ok":
+                    k, f = dato
+                    if k in self.parti:
+                        self.parti[k].update(ap="ok", ap_file=f)
+                    self.aggiorna_spesa()
+                elif tipo == "ap_err":
+                    k, msg = dato
+                    if k in self.parti:
+                        self.parti[k].update(ap="errore", ap_err=msg)
                 elif tipo == "parte_err":
                     if dato in self.parti:
                         self.parti[dato]["stato"] = "errore"
@@ -644,6 +853,8 @@ class App:
                     self.nuova()
         except queue.Empty:
             pass
+        if any(p.get("ap") == "lav" for p in self.parti.values()) and int(time.monotonic()) % 2 == 0:
+            cambiato = True
         if cambiato:
             self.ridisegna_parti()
         self.root.after(250, self.ciclo)
@@ -778,7 +989,10 @@ class App:
             in_corso = cart == self.cartella_corrente and self.occupato
             if stato == "pronta":
                 n_pac = len(info.get("pacchetti") or {})
+                n_ap = len(info.get("appunti") or {})
                 sotto = f"{data} · {el.durata_leggibile(info.get('durata', 0))} · {info.get('n_slide', 0)} slide · {n_pac} pacchetti"
+                if n_ap:
+                    sotto += f" · {n_ap} appunti"
             elif in_corso:
                 sotto = f"{data} · in lavorazione…"
             else:

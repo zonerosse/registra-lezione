@@ -1,5 +1,5 @@
 {
- "versione": "1.0",
+ "versione": "1.1",
  "librerie": 1,
- "novita": "Prima versione: registrazione, slide, pacchetti per Claude ogni ora, tasto Aggiorna"
+ "novita": "Appunti automatici con Claude: ogni ora crea da solo il PDF di appunti (serve una chiave API)"
 }

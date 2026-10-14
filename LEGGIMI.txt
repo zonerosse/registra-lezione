@@ -22,6 +22,11 @@ DOVE FINISCONO I FILE
                            Per Claude - <nome>.pdf -> la lezione intera
                            video.mp4     -> il video con l'audio
 
+APPUNTI AUTOMATICI CON CLAUDE (facoltativo)
+  Nel riquadro "Appunti automatici con Claude" tocca "Inserisci chiave...", incolla la chiave API
+  (inizia con sk-ant-) e tocca "Prova e salva". Da quel momento, ogni ora, accanto al pacchetto
+  compare anche "Appunti - <nome> - parte N.pdf". Costo indicativo: 0,20 $ per ora di lezione.
+
 AGGIORNAMENTI
   Tocca "Aggiorna" in fondo alla finestra: scarica solo le novita' (pochi KB).
 

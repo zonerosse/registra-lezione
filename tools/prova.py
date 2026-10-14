@@ -148,6 +148,40 @@ def prova_lezione(t):
     controlla((c / "Per Claude - Analisi 1 – Limiti.pdf").exists(), "PDF della lezione completa")
 
 
+def prova_appunti(t):
+    print("Appunti automatici (risposta di Claude simulata)")
+    import appunti as ap
+    c = t / "lezione"
+    pac = t / "Pacchetti per Claude"
+    finta = {"titolo": "Limiti", "di_cosa_si_parla": "Definizione di limite e forme indeterminate.",
+             "concetti": [{"titolo": "Limite finito", "spiegazione": "f(x) si avvicina a L.", "dove": "slide 2, 00:12"}],
+             "legenda": [{"simbolo": "lim x→0 sin(x)/x = 1", "significato": "limite notevole"}],
+             "esempi_svolti": [{"titolo": "sin(3x)/x", "passaggi": ["moltiplico per 3", "= 3"]}],
+             "domande_esame": ["Definisci il limite."], "da_controllare": ["00:31 audio poco chiaro"]}
+    visti = []
+
+    def chiedi(chiave, pdf_bytes, tentativi=4):
+        visti.append((chiave, pdf_bytes[:5]))
+        return finta, 0.19
+    ap.chiedi_a_claude = chiedi
+    dest, spesa = ap.crea_appunti(c, 2, "sk-ant-prova", pac)
+    controlla(visti and visti[0][1] == b"%PDF-", "a Claude arriva il PDF del pacchetto della parte 2")
+    controlla(dest.exists() and dest.name.startswith("Appunti – Analisi 1 – Limiti – parte 2"),
+              f"PDF degli appunti accanto ai pacchetti: {dest.name}")
+    info = json.loads((c / "info.json").read_text(encoding="utf-8"))
+    controlla(info["appunti"]["2"] == str(dest) and abs(info["spesa_appunti"] - 0.19) < 1e-9,
+              "info.json ricorda appunti e spesa")
+    ap.crea_appunti(c, 2, "sk-ant-prova", pac)
+    controlla(len(visti) == 1, "rifacendo il PDF non richiama Claude (risposta salvata)")
+    k = ap.nascondi_chiave("sk-ant-abc")
+    controlla(ap.leggi_chiave(k) == "sk-ant-abc" and "sk-ant-abc" not in k, "chiave salvata non in chiaro")
+    try:
+        ap.prova_chiave("ciao")
+        controlla(False, "chiave sbagliata rifiutata")
+    except ap.ErroreAppunti:
+        controlla(True, "chiave sbagliata rifiutata")
+
+
 def prova_aggiornamento(t):
     print("Aggiornamento e lanciatore")
     prog = t / "programma"
@@ -186,6 +220,7 @@ def main():
         t = Path(tmp)
         prova_slide()
         prova_lezione(t)
+        prova_appunti(t)
         prova_aggiornamento(t)
     print("\nTUTTO A POSTO")
 
