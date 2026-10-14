@@ -1,0 +1,110 @@
+name: Costruisci exe
+
+# Parte da solo a ogni push su main. Se la versione scritta in app/versione.json
+# e' gia' stata pubblicata non fa niente; se e' nuova costruisce l'exe, lo prova
+# e pubblica una "release" con:
+#   RegistraLezione-<versione>.zip  pacchetto completo (exe + librerie + app)
+#   aggiornamento.zip               solo la cartella app (per il tasto Aggiorna)
+#   versione.json                   numero di versione e novita'
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  exe:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Leggi la versione
+        id: v
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $j = Get-Content app/versione.json -Raw -Encoding utf8 | ConvertFrom-Json
+          $tag = "v$($j.versione)"
+          "versione=$($j.versione)" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          gh release view $tag *> $null
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "La versione $tag esiste gia': niente da fare."
+            "nuova=0" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "Versione nuova: $tag"
+            "nuova=1" >> $env:GITHUB_OUTPUT
+          }
+          exit 0
+
+      - uses: actions/setup-python@v5
+        if: steps.v.outputs.nuova == '1'
+        with:
+          python-version: '3.12'
+
+      - name: Installa le librerie
+        if: steps.v.outputs.nuova == '1'
+        shell: pwsh
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller==6.22.3
+          Get-ChildItem app/*.py, *.py | ForEach-Object { python -m py_compile $_.FullName; if ($LASTEXITCODE -ne 0) { exit 1 } }
+
+      - name: Costruisci l'exe
+        if: steps.v.outputs.nuova == '1'
+        shell: pwsh
+        run: |
+          pyinstaller --noconfirm --clean --windowed `
+            --name "Registra Lezione" --icon app/icona.ico `
+            --collect-all faster_whisper --collect-all ctranslate2 --collect-all soundcard `
+            --collect-all imageio_ffmpeg --collect-all onnxruntime --collect-all av `
+            --collect-all tokenizers --collect-data fpdf `
+            --hidden-import dipendenze avvio.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Prova l'exe e prepara i pacchetti
+        if: steps.v.outputs.nuova == '1'
+        shell: pwsh
+        run: |
+          $v = "${{ steps.v.outputs.versione }}"
+          $dest = "dist/Registra Lezione"
+          Copy-Item app "$dest/app" -Recurse
+          Get-ChildItem "$dest/app" -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+          Copy-Item LEGGIMI.txt $dest
+
+          $p = Start-Process -FilePath "$dest/Registra Lezione.exe" -ArgumentList "--prova" -Wait -PassThru
+          Get-Content "$dest/prova_avvio.txt" -Encoding utf8
+          if ($p.ExitCode -ne 0) { Write-Error "La prova dell'exe e' fallita"; exit 1 }
+          Remove-Item "$dest/prova_avvio.txt"
+          Get-ChildItem "$dest/app" -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+
+          Move-Item $dest "dist/RegistraLezione"
+          Compress-Archive -Path "dist/RegistraLezione" -DestinationPath "RegistraLezione-$v.zip"
+
+          New-Item -ItemType Directory solo_app | Out-Null
+          Copy-Item app/* solo_app -Recurse
+          Get-ChildItem solo_app -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+          Compress-Archive -Path solo_app/* -DestinationPath aggiornamento.zip
+          Copy-Item app/versione.json versione.json
+
+          $j = Get-Content app/versione.json -Raw -Encoding utf8 | ConvertFrom-Json
+          $note = "Novità: $($j.novita)`n`n" +
+                  "Prima installazione: scarica **RegistraLezione-$v.zip** (sotto, in Assets).`n" +
+                  "Chi ha già il programma: tocca **Aggiorna** in fondo alla finestra."
+          Set-Content -Path note.md -Value $note -Encoding utf8
+          Get-Item "RegistraLezione-$v.zip", aggiornamento.zip | Select-Object Name, Length
+
+      - name: Pubblica la release
+        if: steps.v.outputs.nuova == '1'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: Registra Lezione ${{ steps.v.outputs.versione }}
+          body_path: note.md
+          files: |
+            RegistraLezione-${{ steps.v.outputs.versione }}.zip
+            aggiornamento.zip
+            versione.json

@@ -1,0 +1,33 @@
+REGISTRA LEZIONE
+================
+
+PRIMA VOLTA
+  1. Doppio clic su "Registra Lezione.exe".
+     Se Windows mostra "Windows ha protetto il PC": tocca "Ulteriori informazioni" e poi "Esegui comunque".
+  2. Alla prima apertura il programma scarica da solo il modello per la trascrizione
+     (circa 500 MB, una volta sola): in fondo alla finestra c'e' la scritta finche' non ha finito.
+  3. In "Dove salvo i pacchetti per Claude" tocca "Scegli..." se vuoi una cartella diversa.
+
+A OGNI LEZIONE
+  1. Entra nella lezione su Google Meet (sullo schermo principale). Volume del PC acceso.
+  2. Apri Registra Lezione, scrivi il nome della lezione, tocca "Inizia lezione".
+  3. Ogni ora il programma prepara un pacchetto .zip per Claude (lo vedi in "Pacchetti per Claude").
+     Appena e' "pronta", tocca "Mostra file" e mandalo a Claude mentre la lezione continua.
+  4. A fine lezione tocca "Fine lezione": prepara l'ultima parte e la lezione completa.
+
+DOVE FINISCONO I FILE
+  Pacchetti per Claude:  la cartella scelta (di solito Documenti \ Pacchetti per Claude)
+  Lezioni complete:      Documenti \ Lezioni registrate \ <data e nome>
+                           Lezione.html  -> da leggere (slide + parole del docente)
+                           Per Claude - <nome>.pdf -> la lezione intera
+                           video.mp4     -> il video con l'audio
+
+AGGIORNAMENTI
+  Tocca "Aggiorna" in fondo alla finestra: scarica solo le novita' (pochi KB).
+
+COSE DA SAPERE
+  - Non mettere la cartella del programma in "Programmi": tienila nella tua cartella utente,
+    altrimenti il tasto Aggiorna non puo' scrivere.
+  - Se il PC si spegne mentre prepara i file: riapri il programma, scheda "Le mie lezioni",
+    tocca "Completa" sulla lezione.
+  - Chiedi sempre il permesso al docente prima di registrare.

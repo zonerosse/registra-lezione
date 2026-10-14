@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+app_nuova/
+app_vecchia/
+app_difettosa/
+prova_avvio.txt
+errore_avvio.txt
