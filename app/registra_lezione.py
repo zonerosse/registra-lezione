@@ -260,6 +260,86 @@ class PannelloParti(tk.Frame):
                 BottoneMini(r, "Riprova", lambda: self.riprova(k), bg=WIN).pack(side="right")
 
 
+class MiniFinestra(tk.Toplevel):
+    """Finestrella sempre in primo piano durante la registrazione: si trascina dove si vuole."""
+
+    def __init__(self, app):
+        super().__init__(app.root)
+        self.app = app
+        self.overrideredirect(True)
+        self.attributes("-topmost", True)
+        try:
+            self.attributes("-alpha", 0.96)
+        except tk.TclError:
+            pass
+        self.configure(bg=LINE)
+        f = tk.Frame(self, bg=WIN, padx=10, pady=8)
+        f.pack(fill="both", expand=True, padx=1, pady=1)
+        t = tk.Frame(f, bg=WIN)
+        t.pack(fill="x")
+        self.rec = tk.Label(t, text="● REC", bg=WIN, fg=RED, font=(FONT, 9, "bold"))
+        self.rec.pack(side="left")
+        self.nome = tk.Label(t, text="", bg=WIN, fg=INK, font=(FONT, 9, "bold"))
+        self.nome.pack(side="left", padx=(6, 0))
+        tk.Label(t, text="⠿", bg=WIN, fg=MUTED, font=(FONT, 10)).pack(side="right")
+        tk.Frame(f, bg=LINE, height=1).pack(fill="x", pady=(6, 6))
+        g = tk.Frame(f, bg=WIN)
+        g.pack(fill="x")
+        self.valori = {}
+        for i, (k, et) in enumerate((("tempo", "durata"), ("slide", "slide"), ("gb", "registrati"))):
+            g.columnconfigure(i, weight=1, uniform="m")
+            c = tk.Frame(g, bg=WIN)
+            c.grid(row=0, column=i, sticky="ew")
+            v = tk.Label(c, text="–", bg=WIN, fg=INK, font=(FONT, 12, "bold"))
+            v.pack()
+            tk.Label(c, text=et, bg=WIN, fg=MUTED, font=(FONT, 8)).pack()
+            self.valori[k] = v
+        tk.Label(f, text="Audio", bg=WIN, fg=MUTED, font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
+        self.meter = tk.Canvas(f, width=250, height=5, bg=LINE, highlightthickness=0)
+        self.meter.pack(fill="x")
+        self.bar = self.meter.create_rectangle(0, 0, 0, 5, fill=GREEN, width=0)
+        self.parti = tk.Label(f, text="", bg=WIN, fg=MUTED, font=(FONT, 8), justify="left", anchor="w")
+        self.parti.pack(fill="x", pady=(6, 0))
+        self.avviso = tk.Label(f, text="", bg=WIN, fg=RED, font=(FONT, 8, "bold"), justify="left",
+                               anchor="w", wraplength=250)
+        self.avviso.pack(fill="x")
+        b = tk.Frame(f, bg=WIN)
+        b.pack(fill="x", pady=(8, 0))
+        b.columnconfigure(0, weight=1, uniform="b")
+        b.columnconfigure(1, weight=1, uniform="b")
+        BottoneMini(b, "Apri finestra", app.apri_finestra).grid(row=0, column=0, sticky="ew", padx=(0, 3))
+        Bottone(b, "■ Fine lezione", DARK, DARK_D, app.fine_da_mini, grande=False).grid(
+            row=0, column=1, sticky="ew", padx=(3, 0))
+        # trascinamento
+        self._da = None
+        for w in [self, f, t, self.rec, self.nome, g] + list(g.winfo_children()):
+            w.bind("<ButtonPress-1>", self._inizio)
+            w.bind("<B1-Motion>", self._muovi)
+        # niente altezza fissa: la finestrella si allunga da sola se il testo delle parti cresce
+        self.parti.config(text="Parte 1: ● in registrazione\nParte 2: ● in registrazione")
+        self.update_idletasks()
+        x = self.winfo_screenwidth() - self.winfo_reqwidth() - 24
+        y = self.winfo_screenheight() - self.winfo_reqheight() - 90
+        self.geometry(f"+{x}+{y}")
+
+    def _inizio(self, e):
+        self._da = (e.x_root - self.winfo_x(), e.y_root - self.winfo_y())
+
+    def _muovi(self, e):
+        if self._da:
+            self.geometry(f"+{e.x_root - self._da[0]}+{e.y_root - self._da[1]}")
+
+    def aggiorna(self, nome, secondi, n_slide, gb, livello, parti, avviso):
+        self.nome.config(text=nome if len(nome) <= 26 else nome[:25] + "…")
+        self.rec.config(fg=RED if int(secondi * 2) % 2 == 0 else WIN)
+        self.valori["tempo"].config(text=time.strftime("%H:%M:%S", time.gmtime(secondi)))
+        self.valori["slide"].config(text=str(n_slide))
+        self.valori["gb"].config(text=f"{gb:.1f} GB".replace(".", ","))
+        self.meter.coords(self.bar, 0, 0, self.meter.winfo_width() * livello, 5)
+        self.parti.config(text=parti)
+        self.avviso.config(text=avviso)
+
+
 class App:
     def __init__(self, root):
         self.root = root
@@ -297,7 +377,7 @@ class App:
         tabs = tk.Frame(win, bg=WIN)
         tabs.pack(fill="x")
         self.tab_btn = {}
-        for chiave, testo in (("reg", "Registra"), ("arch", "Le mie lezioni")):
+        for chiave, testo in (("reg", "Registra"), ("arch", "Le mie lezioni"), ("imp", "⚙ Impostazioni")):
             col = tk.Frame(tabs, bg=WIN)
             col.pack(side="left", fill="x", expand=True)
             lb = tk.Label(col, text=testo, bg=WIN, fg=MUTED, font=(FONT, 11), pady=10, cursor="hand2")
@@ -323,8 +403,11 @@ class App:
 
         self.p_reg = tk.Frame(win, bg=WIN, padx=22, pady=18)
         self.p_arch = tk.Frame(win, bg=WIN, padx=22, pady=10)
+        self.p_imp = tk.Frame(win, bg=WIN, padx=22, pady=16)
         self.costruisci_registra()
+        self.costruisci_impostazioni()
         self.costruisci_archivio()
+        self.aggiorna_riepilogo()
         self.scheda("reg")
         self.mostra("pronto")
 
@@ -340,10 +423,13 @@ class App:
             on = chiave == k
             lb.config(fg=INK if on else MUTED, font=(FONT, 11, "bold" if on else "normal"))
             ln.config(bg=BLUE if on else WIN)
-        self.p_reg.pack_forget()
-        self.p_arch.pack_forget()
+        for pg in (self.p_reg, self.p_arch, self.p_imp):
+            pg.pack_forget()
         if k == "reg":
+            self.aggiorna_riepilogo()
             self.p_reg.pack(fill="both", expand=True)
+        elif k == "imp":
+            self.p_imp.pack(fill="both", expand=True)
         else:
             self.aggiorna_archivio()
             self.p_arch.pack(fill="both", expand=True)
@@ -369,49 +455,13 @@ class App:
         self.nome.pack(fill="x", ipady=6, pady=(4, 0))
         self.nome.insert(0, "Lezione del " + datetime.date.today().strftime("%d/%m/%Y"))
 
-        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
-        box.pack(fill="x", pady=(16, 0))
-        tk.Label(box, text="Dove salvo i pacchetti per Claude", bg=SOFT, fg=INK,
-                 font=(FONT, 10, "bold")).pack(anchor="w")
-        r = tk.Frame(box, bg=SOFT)
-        r.pack(fill="x", pady=(6, 0))
-        self.lbl_cartella = tk.Label(r, text=self.cfg["cartella_pacchetti"], bg=WIN, fg=INK,
-                                     font=(FONT, 9), anchor="w", padx=8, pady=6,
-                                     highlightthickness=1, highlightbackground=LINE)
-        self.lbl_cartella.pack(side="left", fill="x", expand=True)
-        BottoneMini(r, "Scegli…", self.scegli_cartella).pack(side="left", padx=(8, 0))
-        r = tk.Frame(box, bg=SOFT)
-        r.pack(fill="x", pady=(8, 0))
-        chip(r, "Ogni ora di lezione preparo un pacchetto .zip da mandare a Claude", bg=WIN).pack(side="left")
-
-        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
-        box.pack(fill="x", pady=(12, 0))
-        tk.Label(box, text="Appunti automatici con Claude", bg=SOFT, fg=INK,
-                 font=(FONT, 10, "bold")).pack(anchor="w")
-        r = tk.Frame(box, bg=SOFT)
-        r.pack(fill="x", pady=(6, 0))
-        self.lbl_chiave = tk.Label(r, text="", bg=SOFT, fg=MUTED, font=(FONT, 9))
-        self.lbl_chiave.pack(side="left")
-        self.btn_chiave = BottoneMini(r, "", self.finestra_chiave)
-        self.btn_chiave.pack(side="right")
-        r = tk.Frame(box, bg=SOFT, cursor="hand2")
-        r.pack(fill="x", pady=(8, 0))
-        self.sw = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
-        self.sw.pack(side="left")
-        lb = tk.Label(r, text="Ogni ora, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
-                      font=(FONT, 10), cursor="hand2")
-        lb.pack(side="left", padx=(8, 0))
-        for w in (self.sw, lb):
-            w.bind("<Button-1>", lambda e: self.cambia_appunti())
-        tk.Label(box, text="Costo stimato: circa 0,20 $ per ogni ora di lezione.", bg=SOFT, fg=MUTED,
-                 font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
-        self.disegna_appunti()
-
-        self.riga_controlli = tk.Frame(f, bg=WIN)
-        self.riga_controlli.pack(fill="x", pady=(14, 0))
+        # riepilogo delle impostazioni (si cambiano nella scheda Impostazioni)
+        self.riepilogo = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        self.riepilogo.pack(fill="x", pady=(16, 0))
         Bottone(f, "●  Inizia lezione", RED, RED_D, self.inizia).pack(fill="x", pady=(18, 0))
         tk.Label(f, text="Prima di iniziare: entra nella lezione su Meet e tieni la finestra di Meet "
-                         "sullo schermo principale. Il volume del PC deve essere acceso.",
+                         "sullo schermo principale. Il volume del PC deve essere acceso. "
+                         "Appena inizi, questa finestra si riduce e resta la mini finestra di controllo.",
                  bg=WIN, fg=MUTED, font=(FONT, 9), wraplength=540, justify="left").pack(anchor="w", pady=(12, 0))
 
         # --- registrazione in corso
@@ -469,6 +519,146 @@ class App:
         self.btn_nuova = BottoneMini(f, "Registra un'altra lezione", self.nuova)
         self.btn_nuova.pack(fill="x", pady=(8, 0))
 
+    # ------------------------------------------------------------------ scheda Impostazioni
+
+    def costruisci_impostazioni(self):
+        f = self.p_imp
+
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x")
+        tk.Label(box, text="I tuoi dati", bg=SOFT, fg=INK, font=(FONT, 10, "bold")).pack(anchor="w")
+        g = tk.Frame(box, bg=SOFT)
+        g.pack(fill="x", pady=(6, 0))
+        g.columnconfigure(0, weight=1, uniform="d")
+        g.columnconfigure(1, weight=1, uniform="d")
+        self.campi_dati = {}
+        for n, (chiave, etichetta) in enumerate((("nome", "Nome e cognome"), ("universita", "Università"),
+                                                  ("corso", "Corso di laurea"), ("anno", "Anno"))):
+            c = tk.Frame(g, bg=SOFT)
+            c.grid(row=n // 2, column=n % 2, sticky="ew", padx=(0 if n % 2 == 0 else 6, 0 if n % 2 else 6), pady=3)
+            tk.Label(c, text=etichetta, bg=SOFT, fg=MUTED, font=(FONT, 9)).pack(anchor="w")
+            e = tk.Entry(c, font=(FONT, 10), relief="flat", highlightthickness=1,
+                         highlightbackground=LINE, highlightcolor=BLUE)
+            e.pack(fill="x", ipady=4)
+            e.insert(0, (self.cfg.get("studente") or {}).get(chiave, ""))
+            e.bind("<KeyRelease>", lambda ev: self.salva_dati())
+            e.bind("<FocusOut>", lambda ev: self.salva_dati())
+            self.campi_dati[chiave] = e
+        tk.Label(box, text="Compaiono in testa ai PDF e servono a Claude per scrivere appunti adatti al tuo corso.",
+                 bg=SOFT, fg=MUTED, font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x", pady=(10, 0))
+        tk.Label(box, text="Dove salvo i pacchetti per Claude", bg=SOFT, fg=INK,
+                 font=(FONT, 10, "bold")).pack(anchor="w")
+        r = tk.Frame(box, bg=SOFT)
+        r.pack(fill="x", pady=(6, 0))
+        self.lbl_cartella = tk.Label(r, text=self.cfg["cartella_pacchetti"], bg=WIN, fg=INK,
+                                     font=(FONT, 9), anchor="w", padx=8, pady=6,
+                                     highlightthickness=1, highlightbackground=LINE)
+        self.lbl_cartella.pack(side="left", fill="x", expand=True)
+        BottoneMini(r, "Scegli…", self.scegli_cartella).pack(side="left", padx=(8, 0))
+        r = tk.Frame(box, bg=SOFT)
+        r.pack(fill="x", pady=(8, 0))
+        chip(r, "Ogni ora di lezione preparo un pacchetto .zip da mandare a Claude", bg=WIN).pack(side="left")
+
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x", pady=(12, 0))
+        tk.Label(box, text="Appunti automatici con Claude", bg=SOFT, fg=INK,
+                 font=(FONT, 10, "bold")).pack(anchor="w")
+        r = tk.Frame(box, bg=SOFT)
+        r.pack(fill="x", pady=(6, 0))
+        self.lbl_chiave = tk.Label(r, text="", bg=SOFT, fg=MUTED, font=(FONT, 9))
+        self.lbl_chiave.pack(side="left")
+        self.btn_chiave = BottoneMini(r, "", self.finestra_chiave)
+        self.btn_chiave.pack(side="right")
+        r = tk.Frame(box, bg=SOFT, cursor="hand2")
+        r.pack(fill="x", pady=(8, 0))
+        self.sw = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
+        self.sw.pack(side="left")
+        lb = tk.Label(r, text="Ogni ora, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
+                      font=(FONT, 10), cursor="hand2")
+        lb.pack(side="left", padx=(8, 0))
+        for w in (self.sw, lb):
+            w.bind("<Button-1>", lambda e: self.cambia_appunti())
+        tk.Label(box, text="Costo stimato: circa 0,20 $ per ogni ora di lezione.", bg=SOFT, fg=MUTED,
+                 font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
+        self.disegna_appunti()
+
+
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x", pady=(10, 0))
+        tk.Label(box, text="Mini finestra", bg=SOFT, fg=INK, font=(FONT, 10, "bold")).pack(anchor="w")
+        r = tk.Frame(box, bg=SOFT, cursor="hand2")
+        r.pack(fill="x", pady=(6, 0))
+        self.sw_mini = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
+        self.sw_mini.pack(side="left")
+        lb = tk.Label(r, text="Durante la registrazione mostra la mini finestra sopra le altre", bg=SOFT,
+                      fg=INK, font=(FONT, 10), cursor="hand2")
+        lb.pack(side="left", padx=(8, 0))
+        for w in (self.sw_mini, lb):
+            w.bind("<Button-1>", lambda e: self.cambia_mini())
+
+        box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
+        box.pack(fill="x", pady=(10, 0))
+        tk.Label(box, text="Controlli", bg=SOFT, fg=INK, font=(FONT, 10, "bold")).pack(anchor="w")
+        self.riga_controlli = tk.Frame(box, bg=SOFT)
+        self.riga_controlli.pack(fill="x", pady=(6, 0))
+        self.disegna_interruttore(self.sw_mini, self.cfg.get("mini_finestra", True))
+
+    def salva_dati(self):
+        nuovi = {k: e.get().strip() for k, e in self.campi_dati.items()}
+        if nuovi != (self.cfg.get("studente") or {}):
+            self.cfg["studente"] = nuovi
+            salva_config(self.cfg)
+
+    def cambia_mini(self):
+        self.cfg["mini_finestra"] = not self.cfg.get("mini_finestra", True)
+        salva_config(self.cfg)
+        self.disegna_interruttore(self.sw_mini, self.cfg["mini_finestra"])
+
+    @staticmethod
+    def disegna_interruttore(c, on):
+        c.delete("all")
+        col = GREEN if on else GRIGIO_SW
+        c.create_oval(0, 0, 22, 22, fill=col, outline=col)
+        c.create_oval(18, 0, 40, 22, fill=col, outline=col)
+        c.create_rectangle(11, 0, 29, 22, fill=col, outline=col)
+        x = 21 if on else 3
+        c.create_oval(x, 3, x + 16, 19, fill="white", outline="white")
+
+    def aggiorna_riepilogo(self):
+        f = self.riepilogo
+        for w in f.winfo_children():
+            w.destroy()
+        cart = Path(self.cfg["cartella_pacchetti"])
+        try:
+            corta = str(cart.relative_to(cartella_documenti().parent))
+        except ValueError:
+            corta = str(cart)
+        ha_chiave = bool(self.chiave())
+        app_on = bool(self.cfg.get("appunti_attivi")) and ha_chiave
+        aud = getattr(self, "_audio_ok", None)
+        lib = getattr(self, "_liberi", None)
+        righe = [
+            (True, f"Pacchetti in: {corta}"),
+            (app_on, "Appunti automatici con Claude: " + ("accesi" if app_on else
+                                                           ("spenti" if ha_chiave else "spenti (manca la chiave)"))),
+        ]
+        if aud is not None:
+            righe.append((aud, "Audio del PC" if aud else "Audio del PC: non trovato!"))
+        if lib is not None:
+            righe.append((lib > 5, f"Spazio libero: {lib:.0f} GB"))
+        for ok, testo in righe:
+            r = tk.Frame(f, bg=SOFT)
+            r.pack(anchor="w")
+            tk.Label(r, text="✓" if ok else "✕", bg=SOFT, fg=GREEN if ok else RED,
+                     font=(FONT, 10, "bold"), width=2).pack(side="left")
+            tk.Label(r, text=testo, bg=SOFT, fg=INK, font=(FONT, 10)).pack(side="left")
+        lk = tk.Label(f, text="Per cambiare: ⚙ Impostazioni", bg=SOFT, fg=BLUE, font=(FONT, 9, "underline"),
+                      cursor="hand2")
+        lk.pack(anchor="w", pady=(4, 0))
+        lk.bind("<Button-1>", lambda e: self.scheda("imp"))
+
     def _box(self, master, col, valore, etichetta):
         b = tk.Frame(master, bg=SOFT, highlightthickness=1, highlightbackground=LINE)
         b.grid(row=0, column=col, sticky="nsew", padx=4)
@@ -485,6 +675,7 @@ class App:
             self.cfg["cartella_pacchetti"] = str(Path(c))
             salva_config(self.cfg)
             self.lbl_cartella.config(text=self.cfg["cartella_pacchetti"])
+            self.aggiorna_riepilogo()
 
     def aggiorna_controlli(self):
         for w in self.riga_controlli.winfo_children():
@@ -494,6 +685,8 @@ class App:
         chip(self.riga_controlli, "Audio del PC" if audio_ok else "Audio: non trovato!", audio_ok).pack(side="left", padx=(0, 8))
         chip(self.riga_controlli, "Schermo", True).pack(side="left", padx=(0, 8))
         chip(self.riga_controlli, f"Spazio libero: {liberi:.0f} GB", liberi > 5).pack(side="left")
+        self._audio_ok, self._liberi = audio_ok, liberi
+        self.aggiorna_riepilogo()
         return audio_ok, liberi
 
     # ------------------------------------------------------------------ parti
@@ -548,7 +741,8 @@ class App:
         cart = BASE / f"{datetime.datetime.now():%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
         cart.mkdir(parents=True, exist_ok=True)
         el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": datetime.datetime.now().isoformat(timespec="seconds"),
-                                            "durata": 0, "n_slide": 0, "stato": "registrazione", "pacchetti": {}})
+                                            "durata": 0, "n_slide": 0, "stato": "registrazione", "pacchetti": {},
+                                            "studente": self.cfg.get("studente") or {}})
         self.cartella_corrente = cart
         self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
         self.lbl_spesa.config(text="")
@@ -566,6 +760,10 @@ class App:
         self.ridisegna_parti()
         self.mostra("reg")
         log.info("inizio registrazione: %s", cart)
+        self._gb, self._gb_t = 0.0, 0
+        if self.cfg.get("mini_finestra", True):
+            self.mini = MiniFinestra(self)
+            self.root.after(400, self.root.iconify)
 
     def fine(self):
         if not self.reg:
@@ -573,6 +771,8 @@ class App:
         if not messagebox.askyesno(APP, "Fermo la registrazione?"):
             return
         reg, self.reg = self.reg, None
+        self.chiudi_mini()
+        self.root.deiconify()
         for k, p in self.parti.items():
             if p["stato"] == "reg":
                 p["stato"] = "attesa"
@@ -630,6 +830,48 @@ class App:
         self.scheda("reg")
         self.mostra("fine")
 
+    def apri_finestra(self):
+        self.root.deiconify()
+        self.root.lift()
+        self.root.focus_force()
+        self.scheda("reg")
+
+    def fine_da_mini(self):
+        self.apri_finestra()
+        self.root.after(100, self.fine)
+
+    def chiudi_mini(self):
+        if getattr(self, "mini", None) is not None:
+            try:
+                self.mini.destroy()
+            except tk.TclError:
+                pass
+            self.mini = None
+
+    def testo_parti(self):
+        righe = []
+        for k in sorted(self.parti)[-2:]:
+            p = self.parti[k]
+            st = {"reg": "● in registrazione", "attesa": "in coda", "ok": "✓ pronta", "errore": "⚠ problema"}.get(
+                p["stato"], f"testo {p.get('perc', 0) * 100:.0f}%")
+            ap_ = {"ok": " · ✓ appunti", "lav": " · appunti…", "attesa": " · appunti in coda",
+                   "errore": " · ⚠ appunti"}.get(p.get("ap"), "")
+            righe.append(f"Parte {k}: {st}{ap_}")
+        return "\n".join(righe)
+
+    def gb_registrati(self):
+        ora = time.monotonic()
+        if ora - getattr(self, "_gb_t", 0) > 3 and self.cartella_corrente:
+            tot = 0
+            for dp, _, fs in os.walk(self.cartella_corrente):
+                for n in fs:
+                    try:
+                        tot += os.path.getsize(os.path.join(dp, n))
+                    except OSError:
+                        pass
+            self._gb, self._gb_t = tot / 1e9, ora
+        return getattr(self, "_gb", 0.0)
+
     def nuova(self):
         if self.occupato:
             messagebox.showinfo(APP, "Aspetta che finisca di preparare la lezione completa.")
@@ -660,6 +902,8 @@ class App:
         c.create_rectangle(11, 0, 29, 22, fill=col, outline=col)
         x = 21 if on else 3
         c.create_oval(x, 3, x + 16, 19, fill="white", outline="white")
+        if hasattr(self, "riepilogo"):
+            self.aggiorna_riepilogo()
 
     def cambia_appunti(self):
         if self.reg is not None:
@@ -820,6 +1064,14 @@ class App:
                 self.meter.coords(self.meter_bar, 0, 0, w * self.reg.livello, 8)
                 if self.reg.livello > 0.01:
                     self.silenzio_da = time.monotonic()
+                if getattr(self, "mini", None) is not None:
+                    avv = ""
+                    if "audio" in self.reg.errori:
+                        avv = "⚠ Audio non registrato"
+                    elif time.monotonic() - self.silenzio_da > 60:
+                        avv = "⚠ Nessun suono da 1 minuto: volume?"
+                    self.mini.aggiorna(self.lbl_nome_rec.cget("text"), s, self.reg.n_slide, self.gb_registrati(),
+                                       self.reg.livello, self.testo_parti(), avv)
                 if "audio" in self.reg.errori:
                     self.avviso_audio.config(text="⚠ Problema con l'audio: registro solo lo schermo.")
                 elif time.monotonic() - self.silenzio_da > 60:

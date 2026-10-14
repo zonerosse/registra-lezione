@@ -160,11 +160,15 @@ def prova_appunti(t):
              "domande_esame": ["Definisci il limite."], "da_controllare": ["00:31 audio poco chiaro"]}
     visti = []
 
-    def chiedi(chiave, pdf_bytes, tentativi=4):
-        visti.append((chiave, pdf_bytes[:5]))
+    def chiedi(chiave, pdf_bytes, tentativi=4, contesto=""):
+        visti.append((chiave, pdf_bytes[:5], contesto))
         return finta, 0.19
     ap.chiedi_a_claude = chiedi
+    el.aggiorna_info(c, studente={"nome": "Lorenzo Boldrini", "universita": "Università di Ferrara",
+                                  "corso": "Ingegneria", "anno": "1°"})
     dest, spesa = ap.crea_appunti(c, 2, "sk-ant-prova", pac)
+    controlla(visti[0][2] == "Lorenzo Boldrini · Ingegneria, 1° anno · Università di Ferrara",
+              "a Claude arrivano corso e anno dello studente")
     controlla(visti and visti[0][1] == b"%PDF-", "a Claude arriva il PDF del pacchetto della parte 2")
     controlla(dest.exists() and dest.name.startswith("Appunti – Analisi 1 – Limiti – parte 2"),
               f"PDF degli appunti accanto ai pacchetti: {dest.name}")

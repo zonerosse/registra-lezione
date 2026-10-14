@@ -179,7 +179,7 @@ def _pdf_del_pacchetto(cartella, k):
         return Path(zp), z.read(nome)
 
 
-def chiedi_a_claude(chiave, pdf_bytes, tentativi=4):
+def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
@@ -190,7 +190,9 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4):
         "messages": [{"role": "user", "content": [
             {"type": "document", "source": {"type": "base64", "media_type": "application/pdf",
                                             "data": base64.b64encode(pdf_bytes).decode()}},
-            {"type": "text", "text": "Ecco l'ora di lezione. Prepara gli appunti."}]}],
+            {"type": "text", "text": "Ecco l'ora di lezione. Prepara gli appunti." +
+             (f" Lo studente: {contesto}. Adatta il livello degli appunti al suo corso e anno."
+              if contesto else "")}]}],
     }
     attesa = 10
     for n in range(tentativi):
@@ -254,6 +256,8 @@ def pdf_appunti(dati, info, etichetta, destinazione):
     testo(f"{info.get('nome', 'Lezione')} · Appunti {etichetta}", 8)
     pdf.set_font(font, "", 9.5)
     pdf.set_text_color(*GRIGIO)
+    if el.riga_studente(info):
+        testo(el.riga_studente(info), 5)
     testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti creati da Claude "
           "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
     pdf.set_text_color(0, 0, 0)
@@ -318,7 +322,8 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti):
     gia = el.leggi_json(cartella / f"appunti_{k:03d}.json")
     spesa = 0.0
     if gia is None:
-        dati, spesa = chiedi_a_claude(chiave, pdf_bytes)
+        info0 = el.leggi_json(cartella / "info.json", {}) or {}
+        dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0))
         el.scrivi_json(cartella / f"appunti_{k:03d}.json", dati)
     else:
         dati = gia

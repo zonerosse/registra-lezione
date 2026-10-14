@@ -111,6 +111,15 @@ def durata_wav(p):
         return 0.0
 
 
+def riga_studente(info):
+    """'Lorenzo Boldrini · Ingegneria, 1° anno · Università di Ferrara' (solo i dati inseriti)."""
+    d = info.get("studente") or {}
+    corso = d.get("corso", "")
+    if d.get("anno"):
+        corso = f"{corso}, {d['anno']} anno" if corso else f"{d['anno']} anno"
+    return " · ".join(x for x in (d.get("nome", ""), corso, d.get("universita", "")) if x)
+
+
 def _data_it(iso):
     try:
         return datetime.datetime.fromisoformat(iso).strftime("%d/%m/%Y")
@@ -266,7 +275,7 @@ section img{{width:100%;border:1px solid var(--line);border-radius:4px;display:b
 #big img{{max-width:96vw;max-height:96vh}}
 @media print{{body{{background:#fff}}nav,#big{{display:none}}section{{break-inside:avoid}}}}
 </style></head><body><main>
-<header><h1>{nome}</h1><div class="sub">{sottotitolo}</div>
+<header><h1>{nome}</h1><div class="sub">{sottotitolo}</div>{('<div class="sub">' + html.escape(riga_studente(info)) + '</div>') if riga_studente(info) else ''}
 <div class="nota">Il testo è una trascrizione automatica: può contenere qualche parola sbagliata. Tocca una slide per ingrandirla.</div>
 <nav>{''.join(indice)}</nav></header>
 {''.join(blocchi)}
@@ -323,6 +332,8 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
         riga += f" - durata {durata_leggibile(info.get('durata', 0))}"
     riga += f" - {n_sl} slide"
     pdf.multi_cell(0, 6, t(riga), new_x="LMARGIN", new_y="NEXT")
+    if riga_studente(info):
+        pdf.multi_cell(0, 6, t(riga_studente(info)), new_x="LMARGIN", new_y="NEXT")
     pdf.ln(3)
     pdf.set_font(font, "", 9.5)
     pdf.set_text_color(90, 100, 115)
