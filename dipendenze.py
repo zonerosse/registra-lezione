@@ -22,7 +22,8 @@ from pathlib import Path                                                        
 # (la condizione e' sempre falsa), cosi' il programma si apre subito.
 if os.environ.get("RL_MAI_VERO_123"):
     import numpy                       # noqa: F401
-    import PIL.Image                   # noqa: F401
+    import PIL.Image, PIL.ImageDraw, PIL.ImageFont  # noqa: F401,E401
+    import fontTools.subset            # noqa: F401
     import mss                         # noqa: F401
     import soundcard                   # noqa: F401
     import imageio_ffmpeg              # noqa: F401

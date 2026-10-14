@@ -61,7 +61,8 @@ jobs:
             --name "Registra Lezione" --icon app/icona.ico `
             --collect-all faster_whisper --collect-all ctranslate2 --collect-all soundcard `
             --collect-all imageio_ffmpeg --collect-all onnxruntime --collect-all av `
-            --collect-all tokenizers --collect-data fpdf `
+            --collect-all tokenizers --collect-all fpdf --collect-all PIL --collect-all mss `
+            --collect-all huggingface_hub --collect-submodules fontTools --collect-submodules numpy `
             --hidden-import dipendenze avvio.py
           if ($LASTEXITCODE -ne 0) { exit 1 }
 

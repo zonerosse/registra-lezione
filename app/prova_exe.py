@@ -75,6 +75,16 @@ def main(radice):
             zips = sorted(p.name for p in pac.glob("*.zip"))
             assert len(zips) == 2, zips
             righe.append("pacchetti: " + ", ".join(zips))
+            import appunti as ap
+            dati = {"titolo": "Prova", "di_cosa_si_parla": "x", "concetti": [{"titolo": "a", "spiegazione": "b", "dove": "slide 1"}],
+                    "legenda": [{"simbolo": "lim x→0 sin(x)/x = 1, ∑ xᵢ", "significato": "prova"}],
+                    "esempi_svolti": [{"titolo": "e", "passaggi": ["1", "2"]}],
+                    "domande_esame": ["d"], "da_controllare": ["c"]}
+            ap.pdf_appunti(dati, info, "parte 1", Path(t) / "appunti.pdf")
+            assert (Path(t) / "appunti.pdf").stat().st_size > 1000
+            k = ap.nascondi_chiave("sk-ant-prova")
+            assert ap.leggi_chiave(k) == "sk-ant-prova" and k.startswith("dpapi:" if sys.platform == "win32" else "plain:")
+            righe.append("appunti e chiave cifrata: ok")
         righe.append("TUTTO A POSTO")
         esito.write_text("\n".join(righe), encoding="utf-8")
         return 0
