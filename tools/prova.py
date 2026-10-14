@@ -342,15 +342,24 @@ aggiorna.installa({{"url_zip": {zp.as_uri()!r}, "peso": {zp.stat().st_size}}})
 print("installato")
 """
     r = subprocess.run([sys.executable, "-c", codice], capture_output=True, text=True)
-    controlla(r.returncode == 0 and (prog / "app_nuova" / "registra_lezione.py").exists(),
-              "aggiornamento scaricato in app_nuova " + r.stderr[-300:])
+    v1 = json.loads((prog / "app" / "versione.json").read_text(encoding="utf-8"))
+    controlla(r.returncode == 0 and v1["versione"] == "9.9" and (prog / "app_vecchia" / "registra_lezione.py").exists()
+              and not (prog / "app_nuova").exists(),
+              "Aggiorna copia subito la versione nuova in app (copia di sicurezza in app_vecchia) " + r.stderr[-300:])
     r = subprocess.run([sys.executable, str(prog / "avvio.py"), "--prova"], capture_output=True, text=True,
                        cwd=str(prog), env={**os.environ, "RL_SENZA_INTERNET": os.environ.get("RL_SENZA_INTERNET", "1")})
     esito = (prog / "prova_avvio.txt").read_text(encoding="utf-8")
     controlla(r.returncode == 0 and "TUTTO A POSTO" in esito, "il lanciatore parte con la versione nuova\n" + esito[-600:])
+    # vecchio sistema: una versione lasciata in app_nuova viene messa al suo posto dal lanciatore
+    shutil.copytree(nuova, prog / "app_nuova")
+    v = json.loads((prog / "app_nuova" / "versione.json").read_text(encoding="utf-8"))
+    v["versione"] = "9.10"
+    (prog / "app_nuova" / "versione.json").write_text(json.dumps(v), encoding="utf-8")
+    r = subprocess.run([sys.executable, str(prog / "avvio.py"), "--prova"], capture_output=True, text=True,
+                       cwd=str(prog), env={**os.environ, "RL_SENZA_INTERNET": os.environ.get("RL_SENZA_INTERNET", "1")})
     v2 = json.loads((prog / "app" / "versione.json").read_text(encoding="utf-8"))
-    controlla(v2["versione"] == "9.9" and (prog / "app_vecchia").exists() and not (prog / "app_nuova").exists(),
-              "app sostituita (la vecchia resta in app_vecchia)")
+    controlla(v2["versione"] == "9.10" and not (prog / "app_nuova").exists(),
+              "app_nuova (vecchio Aggiorna) messa al suo posto dal lanciatore")
 
 
 def main():

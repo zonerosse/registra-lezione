@@ -28,17 +28,39 @@ APP, NUOVA, VECCHIA = RADICE / "app", RADICE / "app_nuova", RADICE / "app_vecchi
 
 
 def metti_aggiornamento():
+    """Se c'e' una versione scaricata in app_nuova (vecchio sistema di Aggiorna), la mette al posto di app.
+    Riprova per qualche secondo (il programma appena chiuso puo' tenere ancora occupati i file);
+    se lo scambio di cartelle non riesce, copia i file uno per uno sopra quelli vecchi."""
+    import time
     if not (NUOVA / "registra_lezione.py").exists():
         return
+    for _ in range(20):
+        try:
+            shutil.rmtree(VECCHIA, ignore_errors=True)
+            if VECCHIA.exists():
+                VECCHIA.rename(RADICE / f"app_vecchia_{int(time.time())}")
+            if APP.exists():
+                APP.rename(VECCHIA)
+            NUOVA.rename(APP)
+            return
+        except Exception:
+            if not APP.exists() and VECCHIA.exists():
+                try:
+                    VECCHIA.rename(APP)
+                except Exception:
+                    pass
+            time.sleep(0.5)
     try:
-        shutil.rmtree(VECCHIA, ignore_errors=True)
-        if APP.exists():
-            APP.rename(VECCHIA)
-        NUOVA.rename(APP)
+        for f in NUOVA.rglob("*"):
+            dest = APP / f.relative_to(NUOVA)
+            if f.is_dir():
+                dest.mkdir(parents=True, exist_ok=True)
+            else:
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(f, dest)
+        shutil.rmtree(NUOVA, ignore_errors=True)
     except Exception:
-        # qualcosa non va: rimetto la versione di prima
-        if not APP.exists() and VECCHIA.exists():
-            VECCHIA.rename(APP)
+        pass
 
 
 def errore(testo):

@@ -94,7 +94,11 @@ def cerca():
 
 
 def installa(agg, progresso=lambda f: None):
-    """Scarica il codice nuovo in app_nuova. Al prossimo avvio prende il posto di app."""
+    """Scarica il codice nuovo e lo copia SUBITO sopra la cartella app (i file .py non sono bloccati
+    da Windows mentre il programma gira). Prima fa una copia di sicurezza in app_vecchia: se la
+    versione nuova non parte, il lanciatore rimette quella.
+    (Prima si scaricava in app_nuova e la si scambiava al riavvio, ma se la cartella era ancora
+    in uso lo scambio non riusciva e restava la versione vecchia.)"""
     with tempfile.TemporaryDirectory() as tmp:
         zp = Path(tmp) / "agg.zip"
         with _apri(agg["url_zip"], timeout=60) as r, open(zp, "wb") as f:
@@ -107,18 +111,33 @@ def installa(agg, progresso=lambda f: None):
                 f.write(b)
                 letti += len(b)
                 if tot:
-                    progresso(min(0.95, letti / tot))
-        shutil.rmtree(NUOVA, ignore_errors=True)
-        NUOVA.mkdir()
+                    progresso(min(0.9, letti / tot))
+        nuovo = Path(tmp) / "nuovo"
+        nuovo.mkdir()
         with zipfile.ZipFile(zp) as z:
             for n in z.namelist():
-                dest = (NUOVA / n).resolve()
-                if not str(dest).startswith(str(NUOVA.resolve())):
+                dest = (nuovo / n).resolve()
+                if not str(dest).startswith(str(nuovo.resolve())):
                     raise RuntimeError("file non valido nell'aggiornamento")
-            z.extractall(NUOVA)
-    if not (NUOVA / "registra_lezione.py").exists():
-        shutil.rmtree(NUOVA, ignore_errors=True)
-        raise RuntimeError("l'aggiornamento scaricato e' incompleto")
+            z.extractall(nuovo)
+        if not (nuovo / "registra_lezione.py").exists():
+            raise RuntimeError("l'aggiornamento scaricato e' incompleto")
+        vecchia = RADICE / "app_vecchia"
+        shutil.rmtree(vecchia, ignore_errors=True)
+        try:
+            shutil.copytree(QUI, vecchia, ignore=shutil.ignore_patterns("__pycache__"))
+        except Exception:
+            log.exception("copia di sicurezza della versione attuale")
+        shutil.rmtree(NUOVA, ignore_errors=True)        # resti del vecchio sistema
+        for f in nuovo.rglob("*"):
+            dest = QUI / f.relative_to(nuovo)
+            if f.is_dir():
+                dest.mkdir(parents=True, exist_ok=True)
+            else:
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(f, dest)
+        shutil.rmtree(QUI / "__pycache__", ignore_errors=True)
+    log.info("aggiornamento copiato nella cartella app: versione %s", agg.get("versione"))
     progresso(1.0)
 
 

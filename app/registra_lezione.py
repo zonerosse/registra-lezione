@@ -60,6 +60,18 @@ def finestra_nuova_possibile():
 
 
 def main():
+    _main()
+    # finestra chiusa: il programma finisce davvero, anche se qualche libreria ha lasciato
+    # un thread acceso (altrimenti resta un processo nascosto che tiene occupati i file)
+    if "--prova" not in sys.argv and not os.environ.get("RL_NON_USCIRE"):
+        try:
+            logging.shutdown()
+        except Exception:
+            pass
+        os._exit(0)
+
+
+def _main():
     motivo = perche_no()
     if motivo is None:
         import finestra_web
