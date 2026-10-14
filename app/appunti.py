@@ -398,7 +398,7 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti):
     etichetta = base.split(" – ")[-1] if " – " in base else f"parte {k}"
     dest = Path(cartella_pacchetti) / f"Appunti – {base}.pdf"
     mappa = el.leggi_json(cartella / f"pacchetto_{k:03d}.json", []) or []
-    slide = {m["n"]: (str(cartella / "slide" / m["file"]) if m.get("file") else None, m.get("inizio", 0))
+    slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None, m.get("inizio", 0))
              for m in mappa}
     pdf_appunti(dati, info, etichetta, dest, slide)
     info = el.leggi_json(cartella / "info.json", {}) or {}

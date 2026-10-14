@@ -88,6 +88,48 @@ def lavagna(righe, faccia, cancellata=0):
     return im
 
 
+def schermo_meet(grafico=True):
+    """Schermo intero come lo vede lo studente in Meet: sfondo scuro, slide condivisa con un
+    grafico, riquadri dei partecipanti a destra, barra dei comandi e barra di Windows in basso."""
+    import math
+    im = Image.new("RGB", (W, H), (32, 33, 36))
+    d = ImageDraw.Draw(im)
+    x0, y0, x1, y1 = 40, 60, 1500, 880                       # presentazione
+    d.rectangle((x0, y0, x1, y1), fill=(255, 255, 255))
+    d.text((x0 + 40, y0 + 30), "Andamento di f(x) = ln(1+x)", fill=(30, 58, 138), font=font(44))
+    if grafico:
+        ox, oy = x0 + 120, y1 - 120
+        d.line((ox, oy, x1 - 80, oy), fill=(0, 0, 0), width=3)
+        d.line((ox, oy, ox, y0 + 140), fill=(0, 0, 0), width=3)
+        d.line([(ox + i, oy - 160 * math.log(1 + i / 120)) for i in range(0, 1200, 4)], fill=(217, 54, 54), width=5)
+    for k in range(3):                                         # partecipanti
+        d.rectangle((1540, 60 + k * 250, 1880, 290 + k * 250), fill=(60, 64, 67))
+        d.ellipse((1660, 110 + k * 250, 1760, 210 + k * 250), fill=(200, 170, 140))
+    for k in range(5):                                         # barra comandi di Meet
+        d.ellipse((760 + k * 90, 940, 820 + k * 90, 1000), fill=(60, 64, 67) if k != 4 else (217, 48, 37))
+    d.rectangle((0, 1040, W, H), fill=(20, 20, 24))            # barra di Windows
+    return im
+
+
+def prova_ritaglio(t):
+    print("Ritaglio della slide condivisa")
+    z = el.zona_contenuto(schermo_meet())
+    controlla(z is not None and abs(z[0] - 40) < 20 and abs(z[1] - 60) < 20 and abs(z[2] - 1500) < 20
+              and abs(z[3] - 880) < 20, f"da schermo intero di Meet resta solo la slide col grafico: {z}")
+    piena = Image.new("RGB", (W, H), (255, 255, 255))
+    ImageDraw.Draw(piena).text((100, 100), "Slide a tutto schermo", fill=(0, 0, 0), font=font(60))
+    controlla(el.zona_contenuto(piena) is None, "slide a tutto schermo: niente ritaglio")
+    controlla(el.zona_contenuto(lavagna(5, 10)) is None, "lavagna a tutto schermo: niente ritaglio")
+    c = t / "ritaglio"
+    (c / "slide").mkdir(parents=True)
+    schermo_meet().save(c / "slide" / "slide_001.jpg", "JPEG", quality=85)
+    p = el.immagine_slide(c, "slide_001.jpg")
+    from PIL import Image as I
+    with I.open(p) as im:
+        controlla(p.parent.name == "ritagli" and abs(im.width - 1460) < 25, f"ritaglio salvato a parte ({im.size})")
+    controlla((c / "slide" / "slide_001.jpg").exists(), "la foto intera originale resta")
+
+
 def prova_lavagna(t):
     print("Lavagna scritta a mano: foto unite")
     c = t / "lavagna"
@@ -282,6 +324,7 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
         prova_slide()
+        prova_ritaglio(t)
         prova_lavagna(t)
         prova_lezione(t)
         prova_appunti(t)

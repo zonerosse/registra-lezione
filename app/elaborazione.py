@@ -205,6 +205,67 @@ def slide_in_tempo_audio(meta, cartella=None):
     return slides
 
 
+def _tratto_lungo(maschera):
+    """Inizio e fine del tratto piu' lungo di True in un vettore."""
+    meglio, inizio, corrente = (0, 0), None, None
+    for i, v in enumerate(list(maschera) + [False]):
+        if v and corrente is None:
+            corrente = i
+        elif not v and corrente is not None:
+            if i - corrente > meglio[1] - meglio[0]:
+                meglio = (corrente, i)
+            corrente = None
+    return meglio
+
+
+def zona_contenuto(img):
+    """Trova il riquadro della presentazione condivisa (slide, grafico, lavagna) dentro lo
+    schermo intero di Meet: e' la zona grande e piena che si stacca dallo sfondo della
+    finestra. Ritorna (x0, y0, x1, y1) in pixel, oppure None se non e' sicuro."""
+    import numpy as np
+    W, H = img.size
+    k = 4
+    g = np.asarray(img.convert("L").resize((max(1, W // k), max(1, H // k))), dtype=np.int16)
+    h, w = g.shape
+    bordo = np.concatenate([g[: h // 20].ravel(), g[-h // 20:].ravel(), g[:, : w // 20].ravel(), g[:, -w // 20:].ravel()])
+    sfondo = int(np.bincount((bordo // 8).astype(np.int64)).argmax()) * 8 + 4
+    m = np.abs(g - sfondo) > 25
+    x0, x1 = _tratto_lungo(m.mean(axis=0) > 0.35)
+    if x1 - x0 < w * 0.3:
+        return None
+    y0, y1 = _tratto_lungo(m[:, x0:x1].mean(axis=1) > 0.35)
+    if y1 - y0 < h * 0.3:
+        return None
+    area = (x1 - x0) * (y1 - y0) / float(w * h)
+    if area > 0.93:                 # e' gia' tutto schermo: non c'e' niente da tagliare
+        return None
+    pad = 2
+    x0, y0 = max(0, x0 - pad), max(0, y0 - pad)
+    x1, y1 = min(w, x1 + pad), min(h, y1 + pad)
+    return (x0 * k, y0 * k, min(W, x1 * k), min(H, y1 * k))
+
+
+def immagine_slide(cartella, nome):
+    """Percorso della slide da mettere nei PDF: ritagliata sulla presentazione se si puo'.
+    L'originale (schermo intero) resta in slide/, il ritaglio va in slide/ritagli/."""
+    from PIL import Image
+    orig = Path(cartella) / "slide" / nome
+    rit = Path(cartella) / "slide" / "ritagli" / nome
+    if rit.exists():
+        return rit
+    try:
+        with Image.open(orig) as im:
+            zona = zona_contenuto(im)
+            if zona is None:
+                return orig
+            rit.parent.mkdir(exist_ok=True)
+            im.crop(zona).convert("RGB").save(rit, "JPEG", quality=85)
+        return rit
+    except Exception:
+        log.exception("ritaglio slide %s", nome)
+        return orig
+
+
 def _grigio_ridotto(percorso):
     import numpy as np
     from PIL import Image
@@ -300,7 +361,7 @@ def crea_html(cartella, info, gruppi):
     for n, g in enumerate(gruppi, 1):
         ora = f"{hms(g['inizio'])} – {hms(g['fine'])}"
         if g["slide"]:
-            dati = base64.b64encode((cartella / "slide" / g["slide"]).read_bytes()).decode()
+            dati = base64.b64encode(immagine_slide(cartella, g["slide"]).read_bytes()).decode()
             img = f'<a href="#" class="zoom"><img src="data:image/jpeg;base64,{dati}" alt="Slide {n}"></a>'
         else:
             img = '<div class="noimg">Nessuna slide catturata</div>'
@@ -412,13 +473,13 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
         # niente pagina nuova per ogni slide: una dopo l'altra, piu' piccole
         alt, w_mm = 0.0, 0.0
         if g["slide"]:
-            p = cartella / "slide" / g["slide"]
+            p = immagine_slide(cartella, g["slide"])
             with Image.open(p) as im:
                 w, h = im.size
-            w_mm = min(110.0, larg)
+            w_mm = min(120.0, larg)
             alt = w_mm * h / w
-            if alt > 65:
-                alt, w_mm = 65.0, 65.0 * w / h
+            if alt > 80:
+                alt, w_mm = 80.0, 80.0 * w / h
         if pdf.get_y() + 10 + alt + 12 > pdf.h - 15:
             pdf.add_page()
         if n > 1:
