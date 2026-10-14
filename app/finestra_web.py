@@ -4,6 +4,8 @@ Registra Lezione - la finestra nuova: pagine HTML (cartella "interfaccia") mostr
 Edge WebView2 tramite pywebview. La pagina chiama i metodi di Api (window.pywebview.api).
 """
 import logging
+import os
+import shutil
 import sys
 import threading
 import time
@@ -308,6 +310,8 @@ def main(prova=False):
     api._win = win
     win.events.closing += api._chiusura
     win.events.closed += api._chiusa
-    webview.start(api._carica, private_mode=False,
-                  storage_path=str(Path.home() / "AppData" / "Local" / "RegistraLezione" / "webview")
-                  if sys.platform == "win32" else None)
+    # Le versioni 3.0-3.3 tenevano la memoria di Edge (cache) in questa cartella: Edge continuava a
+    # mostrare le pagine VECCHIE anche dopo Aggiorna. La tolgo e uso una memoria nuova a ogni avvio.
+    vecchia_cache = Path(os.environ.get("LOCALAPPDATA") or Path.home() / "AppData" / "Local") / "RegistraLezione" / "webview"
+    shutil.rmtree(vecchia_cache, ignore_errors=True)
+    webview.start(api._carica, private_mode=True)
