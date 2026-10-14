@@ -649,16 +649,25 @@ class App:
 
         box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
         box.pack(fill="x", pady=(10, 0))
-        tk.Label(box, text="Mini finestra", bg=SOFT, fg=INK, font=(FONT, 10, "bold")).pack(anchor="w")
+        tk.Label(box, text="Durante la registrazione", bg=SOFT, fg=INK, font=(FONT, 10, "bold")).pack(anchor="w")
         r = tk.Frame(box, bg=SOFT, cursor="hand2")
         r.pack(fill="x", pady=(6, 0))
         self.sw_mini = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
         self.sw_mini.pack(side="left")
-        lb = tk.Label(r, text="Durante la registrazione mostra la mini finestra sopra le altre", bg=SOFT,
+        lb = tk.Label(r, text="Mostra la mini finestra sopra le altre", bg=SOFT,
                       fg=INK, font=(FONT, 10), cursor="hand2")
         lb.pack(side="left", padx=(8, 0))
         for w in (self.sw_mini, lb):
             w.bind("<Button-1>", lambda e: self.cambia_mini())
+        r = tk.Frame(box, bg=SOFT, cursor="hand2")
+        r.pack(fill="x", pady=(8, 0))
+        self.sw_dnd = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
+        self.sw_dnd.pack(side="left")
+        lb = tk.Label(r, text="Prima di iniziare ricordami il \"Non disturbare\" di Windows", bg=SOFT,
+                      fg=INK, font=(FONT, 10), cursor="hand2")
+        lb.pack(side="left", padx=(8, 0))
+        for w in (self.sw_dnd, lb):
+            w.bind("<Button-1>", lambda e: self.cambia_dnd())
 
         box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
         box.pack(fill="x", pady=(10, 0))
@@ -666,12 +675,18 @@ class App:
         self.riga_controlli = tk.Frame(box, bg=SOFT)
         self.riga_controlli.pack(fill="x", pady=(6, 0))
         self.disegna_interruttore(self.sw_mini, self.cfg.get("mini_finestra", True))
+        self.disegna_interruttore(self.sw_dnd, self.cfg.get("promemoria_dnd", True))
 
     def salva_dati(self):
         nuovi = {k: e.get().strip() for k, e in self.campi_dati.items()}
         if nuovi != (self.cfg.get("studente") or {}):
             self.cfg["studente"] = nuovi
             salva_config(self.cfg)
+
+    def cambia_dnd(self):
+        self.cfg["promemoria_dnd"] = not self.cfg.get("promemoria_dnd", True)
+        salva_config(self.cfg)
+        self.disegna_interruttore(self.sw_dnd, self.cfg["promemoria_dnd"])
 
     def cambia_mini(self):
         self.cfg["mini_finestra"] = not self.cfg.get("mini_finestra", True)
@@ -832,6 +847,64 @@ class App:
             Path(self.cfg["cartella_pacchetti"]).mkdir(parents=True, exist_ok=True)
         except OSError:
             messagebox.showerror(APP, "Non riesco a usare la cartella dei pacchetti.\nTocca \"Scegli…\" e scegline un'altra.")
+            return
+        if self.cfg.get("promemoria_dnd", True):
+            self.promemoria_non_disturbare(self._avvia)
+        else:
+            self._avvia()
+
+    def promemoria_non_disturbare(self, poi):
+        """Prima di registrare: invito ad attivare 'Non disturbare' (i suoni delle notifiche
+        altrimenti finiscono nella registrazione). Windows non permette di attivarlo da un programma."""
+        d = tk.Toplevel(self.root)
+        d.title("Prima di iniziare")
+        d.configure(bg=WIN, padx=20, pady=18)
+        d.transient(self.root)
+        d.resizable(False, False)
+        tk.Label(d, text="🔕  Prima di iniziare: \"Non disturbare\"", bg=WIN, fg=INK,
+                 font=(FONT, 12, "bold")).pack(anchor="w")
+        tk.Label(d, text="Così i suoni delle notifiche (mail, WhatsApp, Windows) non finiscono "
+                         "nella registrazione.", bg=WIN, fg=INK, font=(FONT, 10), wraplength=400,
+                 justify="left").pack(anchor="w", pady=(8, 0))
+        passi = tk.Frame(d, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=8)
+        passi.pack(fill="x", pady=(10, 0))
+        for t in ("1. Tocca \"Apri Non disturbare\"",
+                  "2. Nella finestra di Windows accendi l'interruttore \"Non disturbare\"",
+                  "3. Torna qui e tocca \"Fatto, inizia\""):
+            tk.Label(passi, text=t, bg=SOFT, fg=INK, font=(FONT, 9), anchor="w").pack(fill="x")
+        piu = tk.BooleanVar(value=False)
+
+        def chiudi_e(azione):
+            if piu.get():
+                self.cfg["promemoria_dnd"] = False
+                salva_config(self.cfg)
+                self.disegna_interruttore(self.sw_dnd, False)
+            d.destroy()
+            if azione:
+                azione()
+
+        def apri_dnd():
+            try:
+                if sys.platform == "win32":
+                    os.startfile("ms-settings:notifications")
+            except Exception:
+                log.exception("apertura impostazioni notifiche")
+        r = tk.Frame(d, bg=WIN)
+        r.pack(fill="x", pady=(14, 0))
+        r.columnconfigure(0, weight=1, uniform="p")
+        r.columnconfigure(1, weight=1, uniform="p")
+        Bottone(r, "Apri Non disturbare", BLUE, BLUE_D, apri_dnd, grande=False).grid(
+            row=0, column=0, sticky="ew", padx=(0, 4))
+        Bottone(r, "Fatto, inizia", RED, RED_D, lambda: chiudi_e(poi), grande=False).grid(
+            row=0, column=1, sticky="ew", padx=(4, 0))
+        BottoneMini(d, "Inizia lo stesso", lambda: chiudi_e(poi)).pack(fill="x", pady=(8, 0))
+        tk.Checkbutton(d, text="Non mostrarlo più (si riattiva in ⚙ Impostazioni)", variable=piu,
+                       bg=WIN, fg=MUTED, font=(FONT, 9), activebackground=WIN).pack(anchor="w", pady=(10, 0))
+        d.protocol("WM_DELETE_WINDOW", lambda: chiudi_e(None))
+        d.grab_set()
+
+    def _avvia(self):
+        if self.occupato:
             return
         nome = self.nome.get().strip() or "Lezione"
         self.ricorda_materia(nome)
