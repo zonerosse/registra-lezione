@@ -574,9 +574,11 @@ class App:
         self.avviso_fine = tk.Label(f, text="", bg=WIN, fg=RED, font=(FONT, 10),
                                     wraplength=540, justify="left")
         self.avviso_fine.pack(anchor="w", pady=(6, 0))
-        Bottone(f, "Apri la cartella dei pacchetti", GREEN, GREEN_D,
-                lambda: apri(self.cfg["cartella_pacchetti"])).pack(fill="x", pady=(8, 0))
-        self.btn_completa = BottoneMini(f, "", lambda: apri(self.cartella_corrente / "Lezione.html"))
+        self.btn_appunti = Bottone(f, "📄  Apri gli appunti", GREEN, GREEN_D, self.apri_appunti_correnti)
+        self.btn_appunti.pack(fill="x", pady=(8, 0))
+        BottoneMini(f, "Apri la cartella dei pacchetti", lambda: apri(self.cfg["cartella_pacchetti"])).pack(
+            fill="x", pady=(10, 0))
+        self.btn_completa = BottoneMini(f, "", lambda: self.apri_lezione(self.cartella_corrente))
         self.btn_completa.pack(fill="x", pady=(12, 0))
         self.btn_nuova = BottoneMini(f, "Registra un'altra lezione", self.nuova)
         self.btn_nuova.pack(fill="x", pady=(8, 0))
@@ -820,8 +822,10 @@ class App:
     def ridisegna_parti(self):
         self.pann_reg.disegna(self.parti)
         self.pann_fine.disegna(self.parti)
+        ha_appunti = any(p.get("ap") == "ok" for p in self.parti.values())
+        self.btn_appunti.config(text="📄  Apri gli appunti" if ha_appunti else "Gli appunti non ci sono ancora")
         if self.finale == "ok":
-            self.btn_completa.config(text="Apri la lezione completa (slide + testo)")
+            self.btn_completa.config(text="Trascrizione completa (slide + testo, per controllare)")
             self.btn_completa.abilita(True)
             self.btn_nuova.abilita(True)
         else:
@@ -1188,16 +1192,38 @@ class App:
         """Manda a Claude un pacchetto alla volta e salva gli appunti."""
         while True:
             cart, k = self.lavori_appunti.get()
+            if k is None:                        # solo: unisci gli appunti della lezione
+                self._unisci_appunti(cart)
+                continue
             self.coda.put(("ap_inizio", k))
             try:
                 dest, spesa = ap.crea_appunti(cart, k, self.chiave(), self.cfg["cartella_pacchetti"])
                 log.info("appunti parte %s: %s (%.3f $)", k, dest, spesa)
                 self.coda.put(("ap_ok", (k, str(dest))))
+                self._unisci_appunti(cart)
             except ap.ErroreAppunti as e:
                 self.coda.put(("ap_err", (k, str(e))))
             except Exception:
                 log.exception("appunti parte %s", k)
                 self.coda.put(("ap_err", (k, "errore imprevisto (dettagli nel file registra_lezione.log)")))
+
+    def _unisci_appunti(self, cart):
+        try:
+            ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"])
+        except Exception:
+            log.exception("appunti della lezione completa")
+
+    def apri_appunti_correnti(self):
+        if not self.cartella_corrente:
+            return
+        info = el.leggi_json(Path(self.cartella_corrente) / "info.json", {}) or {}
+        tutti = info.get("appunti_completi")
+        if tutti and Path(tutti).exists():
+            apri(tutti)
+            return
+        appunti = {k: v for k, v in (info.get("appunti") or {}).items() if Path(v).exists()}
+        if appunti:
+            self.apri_appunti(appunti)
 
     def aggiorna_spesa(self):
         if not self.cartella_corrente:
@@ -1336,6 +1362,7 @@ class App:
                     self.finale = float(dato)
                 elif tipo == "finale_ok":
                     self.finale = "ok"
+                    self.lavori_appunti.put((dato, None))      # appunti in un PDF unico, se pronti
                     self.occupato = False
                     rg.tieni_sveglio(False)
                 elif tipo == "modello":
@@ -1523,9 +1550,12 @@ class App:
                            if Path(z).exists() and k not in appunti]
                 if mancano and self.chiave() and not self.occupato:
                     btn("Crea appunti", lambda c=cart: self.appunti_mancanti(c))
-                if appunti:
-                    btn("📄 Appunti", lambda a=appunti: self.apri_appunti(a))
-                btn("Apri", lambda c=cart: self.apri_lezione(c))
+                tutti = info.get("appunti_completi")
+                if tutti and Path(tutti).exists():
+                    btn("📄 Apri appunti", lambda f=tutti: apri(f))
+                elif appunti:
+                    btn("📄 Apri appunti", lambda a=appunti: self.apri_appunti(a))
+                btn("Trascrizione", lambda c=cart: self.apri_lezione(c))
             elif not in_corso:
                 btn("Completa", lambda c=cart: self.completa(c))
             if not in_corso:

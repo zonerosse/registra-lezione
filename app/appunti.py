@@ -242,10 +242,15 @@ def _json_dal_testo(testo):
 
 
 def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
-    """slide: {N: (percorso immagine, inizio in secondi)} per mettere le slide scelte da Claude."""
-    slide = slide or {}
-    usate = set()
+    """Appunti di una parte. slide: {N: (percorso immagine, inizio)} per le slide scelte da Claude."""
+    pdf_appunti_parti([(dati, etichetta, slide or {})], info, destinazione)
+
+
+def pdf_appunti_parti(parti, info, destinazione):
+    """Uno o piu' blocchi di appunti nello stesso PDF: parti = [(dati, etichetta, slide), ...].
+    Con piu' parti diventa "Appunti della lezione completa"."""
     from fpdf import FPDF
+    stato = {"slide": {}, "usate": set()}
     pdf = FPDF(format="A4")
     pdf.set_auto_page_break(True, margin=15)
     pdf.set_margins(16, 15, 16)
@@ -287,6 +292,7 @@ def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
             n = int(n or 0)
         except (TypeError, ValueError):
             return
+        slide, usate = stato["slide"], stato["usate"]
         if n <= 0 or n in usate or n not in slide:
             return
         percorso, inizio = slide[n]
@@ -314,16 +320,40 @@ def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
         pdf.set_font(font, "", 10.5)
         pdf.ln(1)
 
-    pdf.add_page()
+    completa = len(parti) > 1
+    for indice, (dati, etichetta, slide) in enumerate(parti):
+        stato["slide"], stato["usate"] = slide or {}, set()
+        pdf.add_page()
+        if completa and indice == 0:
+            pdf.set_font(font, "B", 19)
+            testo(f"{info.get('nome', 'Lezione')} · Appunti della lezione completa", 9)
+            pdf.set_font(font, "", 9.5)
+            pdf.set_text_color(*GRIGIO)
+            if el.riga_studente(info):
+                testo(el.riga_studente(info), 5)
+            testo(f"{el._data_it(info.get('inizio', ''))} · {len(parti)} parti · appunti creati da Claude "
+                  "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+            pdf.set_text_color(0, 0, 0)
+            pdf.ln(4)
+            for d, et, _ in parti:
+                testo(f"• {et}: {d.get('titolo', '')}")
+            pdf.add_page()
+        _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO)
+    pdf.output(str(destinazione))
+
+
+def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO):
     pdf.set_font(font, "B", 17)
-    testo(f"{info.get('nome', 'Lezione')} · Appunti {etichetta}", 8)
-    pdf.set_font(font, "", 9.5)
-    pdf.set_text_color(*GRIGIO)
-    if el.riga_studente(info):
-        testo(el.riga_studente(info), 5)
-    testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti creati da Claude "
-          "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
-    pdf.set_text_color(0, 0, 0)
+    testo((f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}" if completa
+           else f"{info.get('nome', 'Lezione')} · Appunti {etichetta}"), 8)
+    if not completa:
+        pdf.set_font(font, "", 9.5)
+        pdf.set_text_color(*GRIGIO)
+        if el.riga_studente(info):
+            testo(el.riga_studente(info), 5)
+        testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti creati da Claude "
+              "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+        pdf.set_text_color(0, 0, 0)
 
     sezione("Di cosa si è parlato")
     testo(dati.get("di_cosa_si_parla", ""))
@@ -377,7 +407,37 @@ def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
         for d in dati["da_controllare"]:
             testo(f"• {d}")
         pdf.set_text_color(0, 0, 0)
-    pdf.output(str(destinazione))
+
+
+def appunti_lezione_completa(cartella, cartella_pacchetti):
+    """Se la lezione e' finita e tutte le parti hanno gli appunti, li mette in un PDF unico.
+    Con una parte sola il PDF unico e' quello della parte. Ritorna il percorso o None."""
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    pac = info.get("pacchetti") or {}
+    fatti = info.get("appunti") or {}
+    if info.get("stato") != "pronta" or not pac or any(k not in fatti for k in pac):
+        return None
+    if len(pac) == 1:
+        dest = fatti[next(iter(pac))]
+    else:
+        parti = []
+        for k in sorted(pac, key=int):
+            dati = el.leggi_json(cartella / f"appunti_{int(k):03d}.json")
+            if dati is None:
+                return None
+            base = Path(pac[k]).stem
+            etichetta = base.split(" – ")[-1] if " – " in base else f"parte {k}"
+            mappa = el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or []
+            slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None,
+                              m.get("inizio", 0)) for m in mappa}
+            parti.append((dati, etichetta, slide))
+        primo = Path(pac[sorted(pac, key=int)[0]]).stem
+        base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
+        dest = str(Path(cartella_pacchetti) / f"Appunti – {base} – lezione completa.pdf")
+        pdf_appunti_parti(parti, info, dest)
+    el.aggiorna_info(cartella, appunti_completi=str(dest))
+    return dest
 
 
 def crea_appunti(cartella, k, chiave, cartella_pacchetti):
