@@ -28,6 +28,7 @@ class Api:
 
     # ------------------------------------------------------------------ avvio
     def _carica(self):
+        threading.Thread(target=self._sentinella, daemon=True).start()
         try:
             import motore
             self._mt = motore
@@ -46,7 +47,31 @@ class Api:
 
     # ------------------------------------------------------------------ stato
     def stato(self):
+        self._battito = time.monotonic()
         return self._m.stato()
+
+    def _sentinella(self):
+        """Se la pagina smette di chiedere lo stato (finestra bloccata), scrive nel log dove sono
+        fermi i thread: serve a capire il problema."""
+        import faulthandler
+        ultimo = 0.0
+        while not self._esci:
+            time.sleep(5)
+            b = getattr(self, "_battito", None)
+            if b is None or self._m is None:
+                continue
+            fermo = time.monotonic() - b
+            if fermo > 30 and time.monotonic() - ultimo > 300:
+                ultimo = time.monotonic()
+                try:
+                    f = self._mt.BASE / "blocco.txt"
+                    with open(f, "a", encoding="utf-8") as out:
+                        out.write(f"\n===== {time.strftime('%Y-%m-%d %H:%M:%S')}: pagina ferma da {fermo:.0f} s\n")
+                        out.flush()
+                        faulthandler.dump_traceback(file=out, all_threads=True)
+                    log.warning("pagina ferma da %.0f s: dettagli in blocco.txt", fermo)
+                except Exception:
+                    log.exception("sentinella")
 
     def riepilogo(self):
         return self._m.riepilogo()
@@ -104,9 +129,15 @@ class Api:
         return self._m.pausa()
 
     def fine(self):
-        r = self._m.fine()
-        self.apri_finestra()
+        log.info("fine: richiesta dalla pagina")
+        r = self._m.fine()                     # chiude la mini finestra (fra poco, in un altro thread)
+        threading.Thread(target=self._dopo_fine, daemon=True).start()
+        log.info("fine: risposta alla pagina")
         return r
+
+    def _dopo_fine(self):
+        time.sleep(0.5)                        # prima la pagina riceve la risposta, poi si toccano le finestre
+        self.apri_finestra()
 
     def nuova(self):
         return self._m.nuova()
@@ -123,30 +154,62 @@ class Api:
                 sw, sh = s.width, s.height
             except Exception:
                 pass
+            # lo schermo e' in pixel veri, la posizione della finestra in pixel "logici":
+            # con lo zoom di Windows al 125-150% senza questa divisione la finestra finiva fuori schermo
+            scala = 1.0
+            if sys.platform == "win32":
+                try:
+                    import ctypes
+                    scala = max(1.0, ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100)
+                except Exception:
+                    pass
             w, h = 300, 252
+            x = max(0, int(sw / scala - w - 30))
+            y = max(0, int(sh / scala - h - 80))
+            log.info("mini finestra: schermo %sx%s, scala %.2f, posizione %s,%s", sw, sh, scala, x, y)
             self._mini = webview.create_window(
                 "Registra Lezione – in registrazione", url=str(PAGINE / "mini.html"), js_api=self,
-                width=w, height=h, x=max(0, sw - w - 24), y=max(0, sh - h - 90), resizable=False,
-                frameless=True, easy_drag=False, on_top=True, background_color="#0d4275", focus=False)
-            time.sleep(0.6)
-            self._win.minimize()
+                width=w, height=h, x=x, y=y, resizable=False,
+                frameless=True, easy_drag=False, on_top=True, background_color="#0d4275")
+            ok = self._mini.events.shown.wait(10)
+            log.info("mini finestra mostrata: %s", ok)
+            if ok and sys.platform == "win32":
+                # la mini finestra non deve finire nel video ne' nelle slide catturate
+                try:
+                    import ctypes
+                    hwnd = int(self._mini.native.Handle.ToInt64())
+                    r = ctypes.windll.user32.SetWindowDisplayAffinity(hwnd, 0x11)   # WDA_EXCLUDEFROMCAPTURE
+                    log.info("mini finestra esclusa dalla registrazione: %s", bool(r))
+                except Exception:
+                    log.exception("esclusione mini finestra dalla registrazione")
+            time.sleep(0.5)
+            if ok:
+                self._win.minimize()
         except Exception:
             log.exception("mini finestra")
 
-    def _chiudi_mini(self):
+    def _chiudi_mini(self, subito=False):
         m, self._mini = self._mini, None
-        if m is not None:
+        if m is None:
+            return
+
+        def chiudi():
+            if not subito:
+                time.sleep(0.5)             # la mini finestra riceve prima la risposta alla sua chiamata
             try:
                 m.destroy()
+                log.info("mini finestra chiusa")
             except Exception:
                 log.exception("chiusura mini finestra")
+        if subito:
+            chiudi()
+        else:
+            threading.Thread(target=chiudi, daemon=True).start()
 
     def apri_finestra(self):
         try:
             self._win.restore()
             self._win.show()
-            self._win.on_top = True
-            self._win.on_top = False
         except Exception:
             log.exception("apri finestra")
 
@@ -209,7 +272,7 @@ class Api:
 
     def _riavvia(self):
         self._esci = True
-        self._chiudi_mini()
+        self._chiudi_mini(subito=True)
         try:
             self._win.destroy()
         except Exception:
@@ -232,7 +295,7 @@ class Api:
         return False
 
     def _chiusa(self):
-        self._chiudi_mini()
+        self._chiudi_mini(subito=True)
         if self._m is not None:
             self._m.chiusura()
 

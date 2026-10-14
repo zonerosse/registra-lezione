@@ -1,6 +1,6 @@
 {
- "versione": "3.1",
+ "versione": "3.2",
  "librerie": 2,
- "novita": "Programma anche in inglese; scegli in che lingua parla il docente (gli appunti arrivano nella tua lingua); avviso se manca il componente di Edge.",
- "novita_en": "The program is now also in English; choose the lecturer's language (notes arrive in your language); warning if the Edge component is missing."
+ "novita": "Corretti la mini finestra che non compariva (schermi con zoom al 125-150%) e il blocco quando si ferma la registrazione; la mini finestra non finisce più nel video.",
+ "novita_en": "Fixed the mini window not appearing (screens zoomed to 125-150%) and the freeze when stopping a recording; the mini window no longer ends up in the video."
 }
