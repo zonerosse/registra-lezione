@@ -95,6 +95,12 @@ jobs:
           Move-Item $dest "dist/RegistraLezione"
           Compress-Archive -Path "dist/RegistraLezione" -DestinationPath "RegistraLezione-$v.zip"
 
+          # programma di installazione (un solo file .exe da scaricare e aprire)
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress | Out-Null }
+          & $iscc "/DVersione=$v" installer.iss
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path RegistraLezione-Setup.exe)) { Write-Error "Installazione non creata"; exit 1 }
+
           New-Item -ItemType Directory solo_app | Out-Null
           Copy-Item app/* solo_app -Recurse
           Get-ChildItem solo_app -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
@@ -102,11 +108,12 @@ jobs:
           Copy-Item app/versione.json versione.json
 
           $j = Get-Content app/versione.json -Raw -Encoding utf8 | ConvertFrom-Json
+          $link = "https://github.com/${{ github.repository }}/releases/latest/download/RegistraLezione-Setup.exe"
           $note = "Novità: $($j.novita)`n`n" +
-                  "Prima installazione: scarica **RegistraLezione-$v.zip** (sotto, in Assets).`n" +
+                  "Prima installazione: scarica e apri **[RegistraLezione-Setup.exe]($link)**.`n" +
                   "Chi ha già il programma: tocca **Aggiorna** in fondo alla finestra."
           Set-Content -Path note.md -Value $note -Encoding utf8
-          Get-Item "RegistraLezione-$v.zip", aggiornamento.zip | Select-Object Name, Length
+          Get-Item "RegistraLezione-$v.zip", RegistraLezione-Setup.exe, aggiornamento.zip | Select-Object Name, Length
 
       - name: Pubblica la release
         if: steps.v.outputs.nuova == '1'
@@ -115,6 +122,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $v = "${{ steps.v.outputs.versione }}"
-          gh release create "${{ steps.v.outputs.tag }}" "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
+          gh release create "${{ steps.v.outputs.tag }}" RegistraLezione-Setup.exe "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
             --title "Registra Lezione $v" --notes-file note.md --target $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) { exit 1 }

@@ -1,5 +1,5 @@
 {
- "versione": "1.1",
+ "versione": "1.2",
  "librerie": 1,
- "novita": "Appunti automatici con Claude: ogni ora crea da solo il PDF di appunti (serve una chiave API)"
+ "novita": "Installazione con un solo file: RegistraLezione-Setup.exe"
 }
