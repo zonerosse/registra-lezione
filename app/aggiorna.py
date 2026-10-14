@@ -47,6 +47,10 @@ def librerie_installate():
         return int(versione_locale().get("librerie", 1))
 
 
+class NonTrovato(Exception):
+    """GitHub risponde 404: repository privato o senza versioni pubblicate."""
+
+
 def _num(v):
     try:
         return tuple(int(x) for x in str(v).lstrip("v").split("."))
@@ -63,8 +67,14 @@ def _apri(url, timeout=30):
 def cerca():
     """Ritorna None se non ci sono novita', altrimenti un dizionario con:
     versione, novita, completo (True = servono le librerie nuove), url_zip, peso, pagina."""
-    with _apri(f"https://api.github.com/repos/{REPO}/releases/latest") as r:
-        rel = json.loads(r.read().decode("utf-8"))
+    import urllib.error
+    try:
+        with _apri(f"https://api.github.com/repos/{REPO}/releases/latest") as r:
+            rel = json.loads(r.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            raise NonTrovato() from e
+        raise
     asset = {a["name"]: a for a in rel.get("assets", [])}
     if "versione.json" not in asset or "aggiornamento.zip" not in asset:
         return None

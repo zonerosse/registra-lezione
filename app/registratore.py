@@ -325,7 +325,19 @@ def tieni_sveglio(si):
 
 
 def controlla_audio():
-    """True se trovo l'uscita audio del PC da registrare."""
+    """True se trovo l'uscita audio del PC da registrare.
+    Gira in un thread a parte: cosi' la finestra principale resta in modalita' STA."""
+    esito = []
+
+    def prova():
+        esito.append(_controlla_audio())
+    th = threading.Thread(target=prova, daemon=True)
+    th.start()
+    th.join(timeout=15)
+    return bool(esito and esito[0])
+
+
+def _controlla_audio():
     try:
         co_init()
         import soundcard as sc

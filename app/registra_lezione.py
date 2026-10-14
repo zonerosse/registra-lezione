@@ -53,6 +53,13 @@ log = logging.getLogger("registra_lezione")
 logging.getLogger("fontTools").setLevel(logging.WARNING)
 
 if sys.platform == "win32":
+    # La finestra deve usare COM in modalita' "STA", quella che serve alle finestre di Windows
+    # (es. "Scegli cartella"). La libreria audio altrimenti la imposta "MTA" e la scelta della
+    # cartella resta bloccata. Va fatto prima di caricare la libreria audio.
+    try:
+        ctypes.windll.ole32.CoInitializeEx(None, 0x2)
+    except Exception:
+        pass
     try:
         ctypes.windll.shcore.SetProcessDpiAwareness(2)
     except Exception:
@@ -915,9 +922,13 @@ class App:
                     self.coda.put(("agg", ("ok", "✓ Hai già l'ultima versione.")))
                 else:
                     self.coda.put(("agg", ("trovato", trovato)))
+            except agg.NonTrovato:
+                log.exception("aggiorna")
+                self.coda.put(("agg", ("msg", "Non trovo gli aggiornamenti su GitHub: il repository "
+                                              "registra-lezione deve essere pubblico.")))
             except Exception:
                 log.exception("aggiorna")
-                self.coda.put(("agg", ("msg", "Non riesco a controllare: serve internet. Riprova più tardi.")))
+                self.coda.put(("agg", ("msg", "Non riesco a collegarmi a GitHub. Riprova più tardi.")))
         threading.Thread(target=lavoro, daemon=True).start()
 
     def mostra_aggiornamento(self, tipo, dato):

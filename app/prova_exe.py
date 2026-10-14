@@ -19,6 +19,10 @@ def main(radice):
     esito = Path(radice) / "prova_avvio.txt"
     righe = []
     try:
+        if sys.platform == "win32":
+            # come la finestra vera: COM in modalita' STA prima della libreria audio
+            import ctypes
+            ctypes.windll.ole32.CoInitializeEx(None, 0x2)
         import numpy as np
         from PIL import Image, ImageDraw
         import mss  # noqa: F401
@@ -32,6 +36,11 @@ def main(radice):
         import faster_whisper
         from faster_whisper.vad import get_vad_model  # noqa: F401
         righe.append("librerie: ok")
+        if sys.platform == "win32":
+            tipo, q = ctypes.c_int(-1), ctypes.c_int(0)
+            ctypes.windll.ole32.CoGetApartmentType(ctypes.byref(tipo), ctypes.byref(q))
+            assert tipo.value in (0, 3), f"COM non in STA dopo la libreria audio ({tipo.value})"
+            righe.append("COM STA (scelta cartella): ok")
         ff = imageio_ffmpeg.get_ffmpeg_exe()
         assert Path(ff).exists(), "ffmpeg mancante"
         righe.append(f"ffmpeg: {ff}")
