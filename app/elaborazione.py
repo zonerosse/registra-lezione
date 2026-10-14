@@ -424,7 +424,12 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     gruppi = raggruppa(slide_in_tempo_audio(meta), segmenti, inizio, fine)
 
     etichetta = f"parte {k} ({ore_min(inizio)}-{ore_min(fine)})"
-    base = f"{nome_sicuro(info.get('nome'))} – {etichetta}"
+    # data e ora nel nome: due lezioni con lo stesso nome non si sovrascrivono i pacchetti
+    try:
+        quando = datetime.datetime.fromisoformat(info.get("inizio", "")).strftime("%d-%m ore %H.%M")
+    except Exception:
+        quando = ""
+    base = " – ".join(x for x in (nome_sicuro(info.get("nome")), quando, etichetta) if x)
     lavoro = cartella / "pacchetti"
     lavoro.mkdir(exist_ok=True)
     pdf = lavoro / f"{base}.pdf"

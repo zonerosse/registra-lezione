@@ -1,5 +1,5 @@
 {
- "versione": "1.9",
+ "versione": "2.0",
  "librerie": 1,
- "novita": "Corretti gli appunti con Claude (errore 400 tool_choice) e il doppio 'Fine lezione'"
+ "novita": "Nome della lezione a ogni registrazione, ora nell'elenco, Rinomina, Elimina (nel Cestino), Apri il PDF e pulsante Appunti"
 }

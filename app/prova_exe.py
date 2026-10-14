@@ -139,6 +139,17 @@ def main(radice):
             k = ap.nascondi_chiave("sk-ant-prova")
             assert ap.leggi_chiave(k) == "sk-ant-prova" and k.startswith("dpapi:" if sys.platform == "win32" else "plain:")
             righe.append("appunti e chiave cifrata: ok")
+        # eliminazione nel Cestino (usata da "🗑 Elimina")
+        import registra_lezione as rl
+        with tempfile.TemporaryDirectory() as t:
+            cart = Path(t) / "lezione – prova àè"
+            (cart / "slide").mkdir(parents=True)
+            (cart / "slide" / "a.jpg").write_bytes(b"x")
+            f = Path(t) / "Appunti – prova.pdf"
+            f.write_bytes(b"x")
+            rl.al_cestino([cart, f])
+            assert not cart.exists() and not f.exists(), "elimina nel Cestino non riuscita"
+        righe.append("elimina nel Cestino: ok")
         righe.append("TUTTO A POSTO")
         esito.write_text("\n".join(righe), encoding="utf-8")
         return 0

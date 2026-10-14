@@ -119,7 +119,7 @@ def prova_lezione(t):
 
     pac = t / "Pacchetti per Claude"
     zp = el.crea_pacchetto(c, 1, pac)            # come durante la lezione
-    controlla(zp.name == "Analisi 1 – Limiti – parte 1 (00h-00h00).zip" or zp.exists(), f"pacchetto parte 1: {zp.name}")
+    controlla(zp.name.startswith("Analisi 1 – Limiti – 14-10 ore 09.00 – parte 1"), f"pacchetto parte 1 con data e ora: {zp.name}")
     with zipfile.ZipFile(zp) as z:
         nomi = z.namelist()
         testo = z.read([n for n in nomi if n.endswith(".txt")][0]).decode("utf-8")
@@ -170,7 +170,7 @@ def prova_appunti(t):
     controlla(visti[0][2] == "Lorenzo Boldrini · Ingegneria, 1° anno · Università di Ferrara",
               "a Claude arrivano corso e anno dello studente")
     controlla(visti and visti[0][1] == b"%PDF-", "a Claude arriva il PDF del pacchetto della parte 2")
-    controlla(dest.exists() and dest.name.startswith("Appunti – Analisi 1 – Limiti – parte 2"),
+    controlla(dest.exists() and dest.name.startswith("Appunti – Analisi 1 – Limiti – 14-10 ore 09.00 – parte 2"),
               f"PDF degli appunti accanto ai pacchetti: {dest.name}")
     info = json.loads((c / "info.json").read_text(encoding="utf-8"))
     controlla(info["appunti"]["2"] == str(dest) and abs(info["spesa_appunti"] - 0.19) < 1e-9,

@@ -105,6 +105,48 @@ def apri(percorso):
         messagebox.showerror(APP, f"Non riesco ad aprire:\n{percorso}")
 
 
+def al_cestino(percorsi):
+    """Sposta file e cartelle nel Cestino di Windows (recuperabili)."""
+    percorsi = [str(Path(p).resolve()) for p in percorsi if Path(p).exists()]
+    if not percorsi:
+        return
+    if sys.platform != "win32":
+        for p in percorsi:
+            if Path(p).is_dir():
+                shutil.rmtree(p)
+            else:
+                Path(p).unlink()
+        return
+    from ctypes import wintypes
+
+    class SHFILEOPSTRUCTW(ctypes.Structure):
+        _fields_ = [("hwnd", wintypes.HWND), ("wFunc", wintypes.UINT),
+                    ("pFrom", wintypes.LPCWSTR), ("pTo", wintypes.LPCWSTR),
+                    ("fFlags", ctypes.c_ushort), ("fAnyOperationsAborted", wintypes.BOOL),
+                    ("hNameMappings", ctypes.c_void_p), ("lpszProgressTitle", wintypes.LPCWSTR)]
+    FO_DELETE, FOF_SILENT, FOF_NOCONFIRMATION, FOF_ALLOWUNDO, FOF_NOERRORUI = 3, 4, 0x10, 0x40, 0x400
+    elenco = "\0".join(percorsi) + "\0\0"          # Windows vuole i percorsi separati da \0
+    buf = (ctypes.c_wchar * len(elenco))(*elenco)
+    op = SHFILEOPSTRUCTW(None, FO_DELETE, ctypes.cast(buf, wintypes.LPCWSTR), None,
+                         FOF_SILENT | FOF_NOCONFIRMATION | FOF_ALLOWUNDO | FOF_NOERRORUI, False, None, None)
+    r = ctypes.windll.shell32.SHFileOperationW(ctypes.byref(op))
+    if r == 0 and not any(Path(p).exists() for p in percorsi):
+        return
+    log.warning("SHFileOperation %s: provo con PowerShell", r)
+    # piano B: la stessa cosa con PowerShell (sempre nel Cestino)
+    for p in percorsi:
+        if not Path(p).exists():
+            continue
+        metodo = "DeleteDirectory" if Path(p).is_dir() else "DeleteFile"
+        comando = ("Add-Type -AssemblyName Microsoft.VisualBasic; "
+                   f"[Microsoft.VisualBasic.FileIO.FileSystem]::{metodo}('{p.replace(chr(39), chr(39) * 2)}', "
+                   "'OnlyErrorDialogs', 'SendToRecycleBin')")
+        subprocess.run(["powershell", "-NoProfile", "-Command", comando], creationflags=0x08000000,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=120)
+    if any(Path(p).exists() for p in percorsi):
+        raise OSError("eliminazione non riuscita")
+
+
 def mostra_file(percorso):
     """Apre la cartella con il file gia' selezionato."""
     p = Path(percorso)
@@ -463,11 +505,17 @@ class App:
         # --- pronto
         f = tk.Frame(P, bg=WIN)
         self.stati["pronto"] = f
-        tk.Label(f, text="Nome della lezione", bg=WIN, fg=MUTED, font=(FONT, 10)).pack(anchor="w")
+        tk.Label(f, text="Che lezione registri?", bg=WIN, fg=INK, font=(FONT, 11, "bold")).pack(anchor="w")
         self.nome = tk.Entry(f, font=(FONT, 12), relief="flat", highlightthickness=1,
                              highlightbackground=LINE, highlightcolor=BLUE)
         self.nome.pack(fill="x", ipady=6, pady=(4, 0))
-        self.nome.insert(0, "Lezione del " + datetime.date.today().strftime("%d/%m/%Y"))
+        self.nome.bind("<KeyRelease>", lambda e: self.aggiorna_nome_anteprima())
+        self.lbl_nome_ant = tk.Label(f, text="", bg=WIN, fg=MUTED, font=(FONT, 9), anchor="w")
+        self.lbl_nome_ant.pack(fill="x", pady=(4, 0))
+        self.riga_recenti = tk.Frame(f, bg=WIN)
+        self.riga_recenti.pack(fill="x", pady=(2, 0))
+        self.aggiorna_nome_anteprima()
+        self.disegna_recenti()
 
         # riepilogo delle impostazioni (si cambiano nella scheda Impostazioni)
         self.riepilogo = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
@@ -673,6 +721,40 @@ class App:
         lk.pack(anchor="w", pady=(4, 0))
         lk.bind("<Button-1>", lambda e: self.scheda("imp"))
 
+    def aggiorna_nome_anteprima(self):
+        n = self.nome.get().strip() or "Lezione"
+        self.lbl_nome_ant.config(text=f"Data e ora le aggiunge il programma: {n} · "
+                                      f"{datetime.datetime.now():%d/%m/%Y} ore {datetime.datetime.now():%H:%M}")
+
+    @staticmethod
+    def materia_di(nome):
+        return nome.split(" – ")[0].split(" - ")[0].strip()
+
+    def ricorda_materia(self, nome):
+        m = self.materia_di(nome)
+        if not m or m == "Lezione":
+            return
+        rec = [x for x in (self.cfg.get("materie_recenti") or []) if x != m]
+        self.cfg["materie_recenti"] = ([m] + rec)[:5]
+        salva_config(self.cfg)
+
+    def disegna_recenti(self):
+        for w in self.riga_recenti.winfo_children():
+            w.destroy()
+        rec = self.cfg.get("materie_recenti") or []
+        if not rec:
+            return
+        tk.Label(self.riga_recenti, text="Ultime usate:", bg=WIN, fg=MUTED, font=(FONT, 9)).pack(side="left")
+        for m in rec:
+            BottoneMini(self.riga_recenti, m, lambda m=m: self.usa_materia(m)).pack(side="left", padx=(6, 0))
+
+    def usa_materia(self, m):
+        self.nome.delete(0, "end")
+        self.nome.insert(0, m + " – ")
+        self.nome.focus_set()
+        self.nome.icursor("end")
+        self.aggiorna_nome_anteprima()
+
     def _box(self, master, col, valore, etichetta):
         b = tk.Frame(master, bg=SOFT, highlightthickness=1, highlightbackground=LINE)
         b.grid(row=0, column=col, sticky="nsew", padx=4)
@@ -752,6 +834,7 @@ class App:
             messagebox.showerror(APP, "Non riesco a usare la cartella dei pacchetti.\nTocca \"Scegli…\" e scegline un'altra.")
             return
         nome = self.nome.get().strip() or "Lezione"
+        self.ricorda_materia(nome)
         cart = BASE / f"{datetime.datetime.now():%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
         cart.mkdir(parents=True, exist_ok=True)
         el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": datetime.datetime.now().isoformat(timespec="seconds"),
@@ -921,7 +1004,8 @@ class App:
             return
         self.aggiorna_controlli()
         self.nome.delete(0, "end")
-        self.nome.insert(0, "Lezione del " + datetime.date.today().strftime("%d/%m/%Y"))
+        self.aggiorna_nome_anteprima()
+        self.disegna_recenti()
         self.mostra("pronto")
 
     # ------------------------------------------------------------------ appunti automatici
@@ -1332,41 +1416,176 @@ class App:
             info = el.leggi_json(cart / "info.json", {}) or {}
             riga = tk.Frame(self.lista, bg=WIN)
             riga.pack(fill="x", pady=(10, 0))
-            sx = tk.Frame(riga, bg=WIN)
-            sx.pack(side="left", fill="x", expand=True)
-            tk.Label(sx, text=info.get("nome", cart.name), bg=WIN, fg=INK, font=(FONT, 11, "bold"),
+            tk.Label(riga, text=info.get("nome", cart.name), bg=WIN, fg=INK, font=(FONT, 11, "bold"),
                      anchor="w").pack(fill="x")
-            data = ""
+            quando = ""
             try:
-                data = datetime.datetime.fromisoformat(info.get("inizio", "")).strftime("%d/%m/%Y")
+                d = datetime.datetime.fromisoformat(info.get("inizio", ""))
+                quando = f"{d:%d/%m/%Y} · ore {d:%H:%M}"
             except Exception:
                 pass
             stato = info.get("stato")
             in_corso = cart == self.cartella_corrente and self.occupato
+            appunti = {k: v for k, v in (info.get("appunti") or {}).items() if Path(v).exists()}
             if stato == "pronta":
                 n_pac = len(info.get("pacchetti") or {})
-                n_ap = len(info.get("appunti") or {})
-                sotto = f"{data} · {el.durata_leggibile(info.get('durata', 0))} · {info.get('n_slide', 0)} slide · {n_pac} pacchetti"
-                if n_ap:
-                    sotto += f" · {n_ap} appunti"
+                sotto = f"{quando} · {el.durata_leggibile(info.get('durata', 0))} · {info.get('n_slide', 0)} slide · {n_pac} pacchetti"
+                if appunti:
+                    sotto += f" · {len(appunti)} appunti"
             elif in_corso:
-                sotto = f"{data} · in lavorazione…"
+                sotto = f"{quando} · in lavorazione…"
             else:
-                sotto = f"{data} · da completare"
-            tk.Label(sx, text=sotto, bg=WIN, fg=MUTED, font=(FONT, 9), anchor="w").pack(fill="x")
+                sotto = f"{quando} · da completare"
+            tk.Label(riga, text=sotto, bg=WIN, fg=MUTED, font=(FONT, 9), anchor="w").pack(fill="x")
             dx = tk.Frame(riga, bg=WIN)
-            dx.pack(side="right")
+            dx.pack(anchor="e", pady=(6, 0))
+
+            def btn(testo, cmd, rosso=False):
+                b = BottoneMini(dx, testo, cmd)
+                if rosso:
+                    b.config(fg=RED)
+                b.pack(side="left", padx=(6, 0))
             if stato == "pronta":
                 mancano = [k for k, z in (info.get("pacchetti") or {}).items()
-                           if Path(z).exists() and k not in (info.get("appunti") or {})]
+                           if Path(z).exists() and k not in appunti]
                 if mancano and self.chiave() and not self.occupato:
-                    BottoneMini(dx, "Crea appunti", lambda c=cart: self.appunti_mancanti(c)).pack(
-                        side="left", padx=(0, 6))
-                BottoneMini(dx, "Apri", lambda c=cart: apri(c / "Lezione.html")).pack(side="left", padx=(0, 6))
+                    btn("Crea appunti", lambda c=cart: self.appunti_mancanti(c))
+                if appunti:
+                    btn("📄 Appunti", lambda a=appunti: self.apri_appunti(a))
+                btn("Apri", lambda c=cart: self.apri_lezione(c))
             elif not in_corso:
-                BottoneMini(dx, "Completa", lambda c=cart: self.completa(c)).pack(side="left", padx=(0, 6))
-            BottoneMini(dx, "Cartella", lambda c=cart: apri(c)).pack(side="left")
+                btn("Completa", lambda c=cart: self.completa(c))
+            if not in_corso:
+                btn("✎ Rinomina", lambda c=cart: self.rinomina(c))
+            btn("Cartella", lambda c=cart: apri(c))
+            if not in_corso:
+                btn("🗑 Elimina", lambda c=cart: self.elimina(c), rosso=True)
             tk.Frame(self.lista, bg=LINE, height=1).pack(fill="x", pady=(10, 0))
+
+    @staticmethod
+    def apri_lezione(cart):
+        pdf = sorted(Path(cart).glob("Per Claude - *.pdf"))
+        apri(pdf[0] if pdf else Path(cart) / "Lezione.html")
+
+    def apri_appunti(self, appunti):
+        if len(appunti) == 1:
+            apri(next(iter(appunti.values())))
+            return
+        m = tk.Menu(self.root, tearoff=0)
+        for k in sorted(appunti, key=int):
+            m.add_command(label=f"Appunti parte {k}", command=lambda f=appunti[k]: apri(f))
+        x, y = self.root.winfo_pointerx(), self.root.winfo_pointery()
+        try:
+            m.tk_popup(x, y)
+        finally:
+            m.grab_release()
+
+    def rinomina(self, cart):
+        cart = Path(cart)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        vecchio = info.get("nome", "Lezione")
+        d = tk.Toplevel(self.root)
+        d.title("Rinomina la lezione")
+        d.configure(bg=WIN, padx=18, pady=16)
+        d.transient(self.root)
+        d.resizable(False, False)
+        tk.Label(d, text="Rinomina la lezione", bg=WIN, fg=INK, font=(FONT, 12, "bold")).pack(anchor="w")
+        e = tk.Entry(d, font=(FONT, 11), width=44, relief="flat", highlightthickness=1,
+                     highlightbackground=LINE, highlightcolor=BLUE)
+        e.pack(fill="x", ipady=5, pady=(8, 0))
+        e.insert(0, vecchio)
+        e.select_range(0, "end")
+        e.focus_set()
+        tk.Label(d, text="Cambia anche il nome di pacchetti e appunti.", bg=WIN, fg=MUTED,
+                 font=(FONT, 9)).pack(anchor="w", pady=(6, 0))
+        r = tk.Frame(d, bg=WIN)
+        r.pack(fill="x", pady=(12, 0))
+
+        def salva():
+            nuovo = e.get().strip()
+            d.destroy()
+            if nuovo and nuovo != vecchio:
+                try:
+                    self.applica_rinomina(cart, vecchio, nuovo)
+                except Exception:
+                    log.exception("rinomina")
+                    messagebox.showerror(APP, "Non sono riuscito a rinominare tutto.\n"
+                                              "Forse un file è aperto: chiudilo e riprova.")
+                self.aggiorna_archivio()
+        Bottone(r, "Salva", BLUE, BLUE_D, salva, grande=False).pack(side="right")
+        BottoneMini(r, "Annulla", d.destroy).pack(side="right", padx=(0, 8))
+        e.bind("<Return>", lambda ev: salva())
+        d.grab_set()
+
+    def applica_rinomina(self, cart, vecchio, nuovo):
+        vb, nb = el.nome_sicuro(vecchio), el.nome_sicuro(nuovo)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+
+        def cambia(percorso):
+            p = Path(percorso)
+            if p.exists() and vb in p.name:
+                q = p.with_name(p.name.replace(vb, nb, 1))
+                if not q.exists():
+                    p.rename(q)
+                    return str(q)
+            return str(p)
+        info["pacchetti"] = {k: cambia(v) for k, v in (info.get("pacchetti") or {}).items()}
+        info["appunti"] = {k: cambia(v) for k, v in (info.get("appunti") or {}).items()}
+        for p in cart.glob("Per Claude - *.pdf"):
+            cambia(p)
+        info["nome"] = nuovo
+        el.scrivi_json(cart / "info.json", info)
+        self.ricorda_materia(nuovo)
+        # anche la cartella della lezione: "AAAA-MM-GG HHMM - nome"
+        if " - " in cart.name:
+            nuova = cart.with_name(cart.name.split(" - ", 1)[0] + " - " + nb)
+            if not nuova.exists():
+                cart.rename(nuova)
+                if self.cartella_corrente == cart:
+                    self.cartella_corrente = nuova
+
+    def elimina(self, cart):
+        cart = Path(cart)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        quando = ""
+        try:
+            quando = f"{datetime.datetime.fromisoformat(info.get('inizio', '')):%d/%m/%Y ore %H:%M}"
+        except Exception:
+            pass
+        d = tk.Toplevel(self.root)
+        d.title("Eliminare la lezione?")
+        d.configure(bg=WIN, padx=18, pady=16)
+        d.transient(self.root)
+        d.resizable(False, False)
+        tk.Label(d, text="Eliminare questa lezione?", bg=WIN, fg=INK, font=(FONT, 12, "bold")).pack(anchor="w")
+        tk.Label(d, text=info.get("nome", cart.name), bg=WIN, fg=INK, font=(FONT, 11)).pack(anchor="w", pady=(6, 0))
+        tk.Label(d, text=quando, bg=WIN, fg=MUTED, font=(FONT, 9)).pack(anchor="w")
+        tk.Label(d, text="Vanno nel Cestino di Windows: registrazione, video, slide e testo.\n"
+                         "Se ti sbagli, la recuperi da lì.", bg=WIN, fg=MUTED, font=(FONT, 9),
+                 justify="left").pack(anchor="w", pady=(8, 0))
+        anche = tk.BooleanVar(value=False)
+        tk.Checkbutton(d, text="Elimina anche i pacchetti e gli appunti di questa lezione",
+                       variable=anche, bg=WIN, fg=INK, font=(FONT, 10), activebackground=WIN,
+                       anchor="w").pack(anchor="w", pady=(8, 0))
+        r = tk.Frame(d, bg=WIN)
+        r.pack(fill="x", pady=(12, 0))
+
+        def conferma():
+            d.destroy()
+            file_extra = []
+            if anche.get():
+                file_extra = [v for v in list((info.get("pacchetti") or {}).values()) +
+                              list((info.get("appunti") or {}).values()) if Path(v).exists()]
+            try:
+                al_cestino([cart] + [Path(f) for f in file_extra])
+            except Exception:
+                log.exception("elimina")
+                messagebox.showerror(APP, "Non sono riuscito a eliminare la lezione.\n"
+                                          "Forse un file è aperto: chiudilo e riprova.")
+            self.aggiorna_archivio()
+        Bottone(r, "🗑 Elimina", RED, RED_D, conferma, grande=False).pack(side="right")
+        BottoneMini(r, "Annulla", d.destroy).pack(side="right", padx=(0, 8))
+        d.grab_set()
 
     # ------------------------------------------------------------------ chiusura / errori
 
