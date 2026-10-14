@@ -369,7 +369,7 @@ function disegnaFine() {
       <div class="hint" style="margin-bottom:14px">${esc(det)}${inCorso ? t('fn.altri') : ''}</div>
       <button class="btn b-main" style="width:100%" id="fApri">${ico('doc', 18)}${t('fn.apri')}</button></div>${prev}</div>`;
   } else if (inCorso && R.appunti_on) {
-    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t(R.formato === 'esame' ? 'fn.claude.e.t' : 'fn.claude.t')}</b>
+    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t(S.formato === 'esame' ? 'fn.claude.e.t' : 'fn.claude.t')}</b>
       <div class="hint">${t('fn.claude')}</div></div><span class="spin"></span></div>`;
   } else {
     h = `<div class="row"><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t('fn.pac.t')}</b>
@@ -386,7 +386,7 @@ async function apriAppunti(cartella) {
   const l = await A.appunti_di(cartella);
   if (!l.length) { toast(t('ap.non')); return; }
   if (l.length === 1) { A.apri(l[0].file); return; }
-  const r = await dialogo({titolo: t('ap.quali'), bottoni: [{t: t('annulla'), v: null}, ...l.map((x, i) => ({t: esc(x.titolo), cls: 'b-main', v: i}))]});
+  const r = await dialogo({titolo: t('ap.quali'), bottoni: [{t: t('annulla'), v: null}, ...l.map((x, i) => ({t: esc(x.titolo), cls: x.formato === 'esame' ? 'b-pz' : 'b-cor', v: i}))]});
   if (r !== null && r !== false) A.apri(l[r].file);
 }
 
@@ -414,7 +414,7 @@ function disegnaLezioni() {
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
-    else if (l.n_appunti) { pill = l.formato === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('ar.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('ar.cornell')}</span>`; prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
+    else if (l.n_appunti) { pill = (l.formati || []).map(f => f === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('fmt.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('fmt.cornell')}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const sec = l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '';
@@ -435,7 +435,15 @@ async function azioneLezione(l, a, e) {
   if (a === 'pacchetti') return A.apri_pacchetti();
   if (a === 'cartella') return A.apri(c);
   if (a === 'completa') { const r = await A.completa(c); if (!r.ok) toast(r.msg); else { await aggiorna(); vai('reg'); } return; }
-  if (a === 'crea') { const r = await A.appunti_mancanti(c); if (r.ok) { await aggiorna(); vai('reg'); } return; }
+  if (a === 'crea') { const r = await A.appunti_mancanti(c, null); if (r.ok) { await aggiorna(); vai('reg'); } return; }
+  if (a.startsWith('anche:') || a.startsWith('compl:')) {
+    const f = a.split(':')[1];
+    if (a.startsWith('anche:')) {
+      const st = await A.stima_appunti(c);
+      if (!await conferma(t('ar.anche.t', {f: t('fmt.' + f)}), t('ar.anche', {n: l.nome, c: num(st.toFixed(2))}), t('ar.anche.si'), t('annulla'), f === 'esame' ? 'b-pz' : 'b-cor')) return;
+    }
+    const r = await A.appunti_mancanti(c, f); if (r.ok) { await aggiorna(); vai('reg'); } return;
+  }
   if (a === 'rifai') {
     const st = await A.stima_appunti(c);
     if (await conferma(t('ar.rifai.t'), t('ar.rifai.f', {n: l.nome, f: t('fmt.' + R.formato), c: num(st.toFixed(2))}), t('ar.rifai.si'), t('annulla'), 'b-cor')) {
@@ -471,7 +479,9 @@ function menuLezione(l, btn) {
   const m = document.createElement('div'); m.className = 'menu';
   const voci = [];
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
-  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.f', {f: t('fmt.' + R.formato)})]);
+  (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: t('fmt.' + f)})]));
+  (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: t('fmt.' + f)})]));
+  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: t('fmt.' + R.formato)})]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')], ['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
   voci.push(['elimina', 'trash', t('ar.m.el'), 'r']);

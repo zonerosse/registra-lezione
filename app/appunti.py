@@ -928,13 +928,61 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
         pdf.set_text_color(0, 0, 0)
 
 
-def appunti_lezione_completa(cartella, cartella_pacchetti):
-    """Se la lezione e' finita e tutte le parti hanno gli appunti, li mette in un PDF unico.
-    Con una parte sola il PDF unico e' quello della parte. Ritorna il percorso o None."""
+# --------------------------------------------------------------------------- due formati sulla stessa lezione
+# Cornell:  appunti_00k.json        info["appunti"]        info["appunti_completi"]
+# Esame:    appunti_esame_00k.json  info["appunti_esame"]  info["appunti_completi_esame"]
+FORMATI = ("cornell", "esame")
+
+
+def file_json(cartella, k, formato):
+    return Path(cartella) / (f"appunti_esame_{int(k):03d}.json" if formato == "esame" else f"appunti_{int(k):03d}.json")
+
+
+def chiave_info(formato):
+    return "appunti_esame" if formato == "esame" else "appunti"
+
+
+def chiave_completi(formato):
+    return "appunti_completi_esame" if formato == "esame" else "appunti_completi"
+
+
+def sistema_vecchi(cartella):
+    """Le lezioni fatte con le versioni 3.3-3.4 in Formato Esame avevano gli appunti nei posti del
+    Cornell: li sposto nei posti del Formato Esame (una volta sola)."""
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    if info.get("formato_appunti") != "esame" or info.get("appunti_esame") is not None or not info.get("appunti"):
+        return
+    for k in list(info.get("appunti") or {}):
+        vecchio, nuovo = file_json(cartella, k, "cornell"), file_json(cartella, k, "esame")
+        d = el.leggi_json(vecchio)
+        if d is not None and e_esame(d) and not nuovo.exists():
+            try:
+                vecchio.rename(nuovo)
+            except OSError:
+                pass
+    el.aggiorna_info(cartella, appunti_esame=info.get("appunti") or {}, appunti={},
+                     appunti_completi_esame=info.get("appunti_completi"), appunti_completi=None)
+
+
+def appunti_fatti(info, formato):
+    """{k: pdf} degli appunti di quel formato che esistono ancora."""
+    return {k: v for k, v in (info.get(chiave_info(formato)) or {}).items() if v and Path(v).exists()}
+
+
+def _nome_file(L, formato):
+    return tr("file_appunti_esame" if formato == "esame" else "file_appunti", L)
+
+
+def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None):
+    """Se la lezione e' finita e tutte le parti hanno gli appunti (di quel formato), li mette in un
+    PDF unico. Con una parte sola il PDF unico e' quello della parte. Senza formato: tutti e due."""
+    if formato is None:
+        return [appunti_lezione_completa(cartella, cartella_pacchetti, f) for f in FORMATI]
     cartella = Path(cartella)
     info = el.leggi_json(cartella / "info.json", {}) or {}
     pac = info.get("pacchetti") or {}
-    fatti = info.get("appunti") or {}
+    fatti = info.get(chiave_info(formato)) or {}
     if info.get("stato") != "pronta" or not pac or any(k not in fatti for k in pac):
         return None
     if len(pac) == 1:
@@ -942,7 +990,7 @@ def appunti_lezione_completa(cartella, cartella_pacchetti):
     else:
         parti = []
         for k in sorted(pac, key=int):
-            dati = el.leggi_json(cartella / f"appunti_{int(k):03d}.json")
+            dati = el.leggi_json(file_json(cartella, k, formato))
             if dati is None:
                 return None
             base = Path(pac[k]).stem
@@ -954,40 +1002,44 @@ def appunti_lezione_completa(cartella, cartella_pacchetti):
         primo = Path(pac[sorted(pac, key=int)[0]]).stem
         base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
         L = testi.lingua_di(info)
-        dest = str(Path(cartella_pacchetti) / f"{tr('file_appunti', L)} – {base} – {tr('lezione_completa', L)}.pdf")
+        dest = str(Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {base} – {tr('lezione_completa', L)}.pdf")
         pdf_appunti_parti(parti, info, dest)
-    el.aggiorna_info(cartella, appunti_completi=str(dest))
+    el.aggiorna_info(cartella, **{chiave_completi(formato): str(dest)})
     return dest
 
 
-def crea_appunti(cartella, k, chiave, cartella_pacchetti):
-    """Crea gli appunti della parte k. Ritorna (percorso PDF, spesa in dollari)."""
+def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
+    """Crea gli appunti della parte k nel formato indicato (di serie: quello scelto per la lezione).
+    Ritorna (percorso PDF, spesa in dollari)."""
     cartella = Path(cartella)
+    sistema_vecchi(cartella)
+    info0 = el.leggi_json(cartella / "info.json", {}) or {}
+    if formato not in FORMATI:
+        formato = "esame" if info0.get("formato_appunti") == "esame" else "cornell"
     zp, pdf_bytes = _pdf_del_pacchetto(cartella, k)
-    gia = el.leggi_json(cartella / f"appunti_{k:03d}.json")
+    gia = el.leggi_json(file_json(cartella, k, formato))
     spesa = 0.0
     if gia is None:
-        info0 = el.leggi_json(cartella / "info.json", {}) or {}
-        formato = "esame" if info0.get("formato_appunti") == "esame" else "cornell"
         dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
                                       lingua_appunti=testi.lingua_di(info0),
                                       lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato)
         dati["formato"] = formato
-        el.scrivi_json(cartella / f"appunti_{k:03d}.json", dati)
+        el.scrivi_json(file_json(cartella, k, formato), dati)
     else:
         dati = gia
     info = el.leggi_json(cartella / "info.json", {}) or {}
     # stesso nome del pacchetto: "<nome> – parte k (00h-01h)"
     base = zp.stem
-    etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', testi.lingua_di(info))} {k}"
-    dest = Path(cartella_pacchetti) / f"{tr('file_appunti', testi.lingua_di(info))} – {base}.pdf"
+    L = testi.lingua_di(info)
+    etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', L)} {k}"
+    dest = Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {base}.pdf"
     mappa = el.leggi_json(cartella / f"pacchetto_{k:03d}.json", []) or []
     slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None, m.get("inizio", 0))
              for m in mappa}
     pdf_appunti(dati, info, etichetta, dest, slide)
     info = el.leggi_json(cartella / "info.json", {}) or {}
-    appunti = info.get("appunti") or {}
+    appunti = info.get(chiave_info(formato)) or {}
     appunti[str(k)] = str(dest)
-    el.aggiorna_info(cartella, appunti=appunti,
+    el.aggiorna_info(cartella, **{chiave_info(formato): appunti},
                      spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
     return dest, spesa

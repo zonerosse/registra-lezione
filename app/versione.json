@@ -1,6 +1,6 @@
 {
- "versione": "3.4",
+ "versione": "3.5",
  "librerie": 2,
- "novita": "Aggiorna funziona al primo colpo: la versione nuova si copia subito e il programma si riapre già aggiornato. Contiene anche il Formato Esame.",
- "novita_en": "Update now works first time: the new version is copied straight away and the program reopens already updated. Also includes the Exam format."
+ "novita": "Una lezione può avere gli appunti in tutti e due i formati: in «Le mie registrazioni» ⋯ → «Crea anche in Formato Esame» (o in Cornell); «Apri appunti» chiede quale aprire.",
+ "novita_en": "A lecture can have notes in both formats: in «My recordings» ⋯ → «Also create in Exam format» (or Cornell); «Open notes» asks which one to open."
 }

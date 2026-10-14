@@ -216,8 +216,8 @@ class Api:
             log.exception("apri finestra")
 
     # ------------------------------------------------------------------ lezioni gia' registrate
-    def appunti_mancanti(self, cartella):
-        return self._m.appunti_mancanti(cartella)
+    def appunti_mancanti(self, cartella, formato=None):
+        return self._m.appunti_mancanti(cartella, formato)
 
     def stima_appunti(self, cartella):
         return self._m.stima_appunti(cartella)

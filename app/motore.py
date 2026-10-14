@@ -222,6 +222,7 @@ class Motore:
         self.finale = None             # None | (0..1) | "ok"
         self.accodate = set()
         self.appunti_lezione = False
+        self.formato_vista = "cornell"     # formato degli appunti mostrati/creati nella schermata di fine
         self.parte_sec = 3600
         self.vista = "pronto"          # pronto | reg | fine
         self.nome_rec = ""
@@ -320,13 +321,14 @@ class Motore:
             s["ha_appunti"] = any(p.get("ap") == "ok" for p in parti)
             s["spesa"] = self._spesa()
             s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
+            s["formato"] = self.formato_vista
             return s
 
     def _spesa(self):
         if not self.cartella_corrente:
             return None
         info = el.leggi_json(Path(self.cartella_corrente) / "info.json", {}) or {}
-        n = len(info.get("appunti") or {})
+        n = len(info.get("appunti") or {}) + len(info.get("appunti_esame") or {})
         if not n:
             return None
         return {"n": n, "dollari": round(float(info.get("spesa_appunti") or 0), 2)}
@@ -335,7 +337,10 @@ class Motore:
         """Le prime domande degli appunti, per la schermata di fine."""
         if not self.cartella_corrente:
             return None
-        for f in sorted(Path(self.cartella_corrente).glob("appunti_*.json")):
+        cart = Path(self.cartella_corrente)
+        files = sorted(cart.glob("appunti_esame_*.json")) if self.formato_vista == "esame" else \
+            [f for f in sorted(cart.glob("appunti_*.json")) if not f.name.startswith("appunti_esame_")]
+        for f in files:
             d = ap.normalizza(el.leggi_json(f, {}) or {})
             if ap.e_esame(d):
                 dom = d.get("domande_probabili") or []
@@ -494,6 +499,7 @@ class Motore:
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
+            self.formato_vista = self._formato()
             self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
             self.finale = None
             self.avviso_fine = ""
@@ -560,9 +566,9 @@ class Motore:
             self.accodate.add((str(cart), k))
             self.lavori.put(("parte", cart, k))
 
-    def accoda_appunti(self, cart, k):
+    def accoda_appunti(self, cart, k, formato=None):
         self.parti.setdefault(k, {"orario": self._orario(k), "stato": "ok"})["ap"] = "attesa"
-        self.lavori_appunti.put((cart, k))
+        self.lavori_appunti.put((cart, k, formato or self.formato_vista))
 
     def riprova_appunti(self, k):
         if not self.chiave():
@@ -572,13 +578,18 @@ class Motore:
 
     # ------------------------------------------------------------------ lezioni gia' registrate
 
-    def appunti_mancanti(self, cartella):
+    def appunti_mancanti(self, cartella, formato=None):
+        """Crea gli appunti che mancano, nel formato indicato (gli altri restano come sono)."""
         cart = Path(cartella)
+        ap.sistema_vecchi(cart)
         info = el.leggi_json(cart / "info.json", {}) or {}
-        pac, fatti = info.get("pacchetti") or {}, info.get("appunti") or {}
+        if formato not in ap.FORMATI:
+            formato = info.get("formato_appunti") or self._formato()
+        pac, fatti = info.get("pacchetti") or {}, info.get(ap.chiave_info(formato)) or {}
         if not info.get("formato_appunti"):
-            el.aggiorna_info(cart, formato_appunti=self._formato())
+            el.aggiorna_info(cart, formato_appunti=formato)
         with self._lock:
+            self.formato_vista = formato
             self.cartella_corrente = cart
             self.parti = {}
             for k in sorted(pac, key=int):
@@ -606,26 +617,30 @@ class Motore:
     def rifai_appunti(self, cartella):
         """Rifà pacchetti e appunti di una lezione già pronta (formato Cornell). Costa qualche centesimo."""
         cart = Path(cartella)
+        ap.sistema_vecchi(cart)
         info = el.leggi_json(cart / "info.json", {}) or {}
         pac = info.get("pacchetti") or {}
         if not pac or self.occupato:
             return {"ok": False}
+        formato = self._formato()
         for k in pac:
-            vecchio = (info.get("appunti") or {}).get(k)
-            for f in (cart / f"appunti_{int(k):03d}.json", Path(vecchio) if vecchio else None):
+            vecchio = (info.get(ap.chiave_info(formato)) or {}).get(k)
+            for f in (ap.file_json(cart, k, formato), Path(vecchio) if vecchio else None):
                 if f and f.exists():
                     try:
                         f.unlink()
                     except OSError:
                         pass
-        tutti = info.get("appunti_completi")
+        tutti = info.get(ap.chiave_completi(formato))
         if tutti and Path(tutti).exists() and len(pac) > 1:
             try:
                 Path(tutti).unlink()
             except OSError:
                 pass
-        el.aggiorna_info(cart, appunti={}, appunti_completi=None, formato_appunti=self._formato())
+        el.aggiorna_info(cart, **{ap.chiave_info(formato): {}, ap.chiave_completi(formato): None},
+                         formato_appunti=formato)
         with self._lock:
+            self.formato_vista = formato
             self.cartella_corrente = cart
             self.parti = {int(k): {"stato": "lav", "perc": 0.0, "orario": ""} for k in pac}
             self.appunti_lezione = True
@@ -657,7 +672,8 @@ class Motore:
             self.cartella_corrente = cart
             self.parte_sec = el.parte_secondi(cart)
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
-            fatti_ap = info.get("appunti") or {}
+            self.formato_vista = info.get("formato_appunti") or self._formato()
+            fatti_ap = info.get(ap.chiave_info(self.formato_vista)) or {}
             self.parti = {}
             for k, wav in parti.items():
                 fine_k = (k - 1) * self.parte_sec + el.durata_wav(wav)
@@ -688,13 +704,20 @@ class Motore:
         cart = Path(cartella) if cartella else self.cartella_corrente
         if not cart:
             return []
+        ap.sistema_vecchi(cart)
         info = el.leggi_json(Path(cart) / "info.json", {}) or {}
-        tutti = info.get("appunti_completi")
-        if tutti and Path(tutti).exists():
-            return [{"titolo": tr("app_tutti"), "file": tutti}]
-        return [{"titolo": tr("app_parte", k=k), "file": v}
-                for k, v in sorted((info.get("appunti") or {}).items(), key=lambda x: int(x[0]))
-                if Path(v).exists()]
+        out = []
+        for formato in ap.FORMATI:
+            nome = tr("fmt_esame" if formato == "esame" else "fmt_cornell")
+            tutti = info.get(ap.chiave_completi(formato))
+            if tutti and Path(tutti).exists():
+                out.append({"titolo": nome, "formato": formato, "file": tutti})
+                continue
+            parti = sorted(ap.appunti_fatti(info, formato).items(), key=lambda x: int(x[0]))
+            for k, v in parti:
+                out.append({"titolo": nome + (f" · {tr('app_parte', k=k)}" if len(parti) > 1 else ""),
+                            "formato": formato, "file": v})
+        return out
 
     def apri_lezione(self, cartella=None):
         cart = Path(cartella) if cartella else self.cartella_corrente
@@ -725,9 +748,13 @@ class Motore:
                 quando = f"{d:%d/%m/%Y} · {d:%H.%M}"
             except Exception:
                 pass
-            appunti = {k: v for k, v in (info.get("appunti") or {}).items() if Path(v).exists()}
+            ap.sistema_vecchi(cart)
+            info = el.leggi_json(cart / "info.json", {}) or {}
             pac = info.get("pacchetti") or {}
-            mancano = [k for k, z in pac.items() if Path(z).exists() and k not in appunti]
+            fatti = {f: ap.appunti_fatti(info, f) for f in ap.FORMATI}
+            appunti = {**fatti["cornell"], **fatti["esame"]}
+            mancano = {f: [k for k, z in pac.items() if Path(z).exists() and k not in fatti[f]] for f in ap.FORMATI}
+            puo = stato == "pronta" and ha_chiave and not self.occupato and bool(pac)
             nome = info.get("nome", cart.name)
             out.append({
                 "cartella": str(cart), "nome": nome, "quando": quando,
@@ -735,8 +762,13 @@ class Motore:
                 "n_slide": info.get("n_slide", 0), "stato": "in_corso" if in_corso else ("pronta" if stato == "pronta" else "da_completare"),
                 "video": str(video) if video else "", "video_testo": gb_testo(vb) if video else "",
                 "n_appunti": len(appunti), "n_pacchetti": len(pac),
-                "crea_appunti": bool(stato == "pronta" and mancano and ha_chiave and not self.occupato),
-                "rifai_appunti": bool(stato == "pronta" and appunti and not mancano and ha_chiave and not self.occupato),
+                "formati": [f for f in ap.FORMATI if fatti[f]],
+                # nessun appunto: si creano nel formato scelto; altrimenti si puo' creare anche l'altro formato
+                "crea_appunti": bool(puo and not appunti),
+                "crea_anche": [f for f in ap.FORMATI if puo and appunti and mancano[f]],
+                "completa_appunti": [f for f in ap.FORMATI if puo and fatti[f] and mancano[f]],
+                "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],
+                "rifai_appunti": bool(puo and fatti[self._formato()] and not mancano[self._formato()]),
                 "sigla": sigla(nome), "colore": colore_materia(nome),
                 "formato": info.get("formato_appunti") or "cornell",
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
@@ -775,9 +807,11 @@ class Motore:
                     return str(q)
             return str(p)
         info["pacchetti"] = {k: cambia(v) for k, v in (info.get("pacchetti") or {}).items()}
-        info["appunti"] = {k: cambia(v) for k, v in (info.get("appunti") or {}).items()}
-        if info.get("appunti_completi"):
-            info["appunti_completi"] = cambia(info["appunti_completi"])
+        for chiave in ("appunti", "appunti_esame"):
+            info[chiave] = {k: cambia(v) for k, v in (info.get(chiave) or {}).items()}
+        for chiave in ("appunti_completi", "appunti_completi_esame"):
+            if info.get(chiave):
+                info[chiave] = cambia(info[chiave])
         for p in cart.glob("Per Claude - *.pdf"):
             cambia(p)
         info["nome"] = nuovo
@@ -796,8 +830,8 @@ class Motore:
         extra = []
         if anche_pacchetti:
             extra = [v for v in list((info.get("pacchetti") or {}).values()) +
-                     list((info.get("appunti") or {}).values()) +
-                     ([info["appunti_completi"]] if info.get("appunti_completi") else []) if v and Path(v).exists()]
+                     list((info.get("appunti") or {}).values()) + list((info.get("appunti_esame") or {}).values()) +
+                     [info.get("appunti_completi"), info.get("appunti_completi_esame")] if v and Path(v).exists()]
         try:
             al_cestino([cart] + [Path(f) for f in extra])
             return {"ok": True}
@@ -896,13 +930,13 @@ class Motore:
 
     def _lavoratore_appunti(self):
         while True:
-            cart, k = self.lavori_appunti.get()
+            cart, k, formato = self.lavori_appunti.get()
             if k is None:
                 self._unisci_appunti(cart)
                 continue
             self.coda.put(("ap_inizio", k))
             try:
-                dest, spesa = ap.crea_appunti(cart, k, self.chiave(), self.cfg["cartella_pacchetti"])
+                dest, spesa = ap.crea_appunti(cart, k, self.chiave(), self.cfg["cartella_pacchetti"], formato)
                 log.info("appunti parte %s: %s (%.3f $)", k, dest, spesa)
                 self.coda.put(("ap_ok", (k, str(dest))))
                 self._unisci_appunti(cart)
@@ -1010,7 +1044,7 @@ class Motore:
             self.finale = float(dato)
         elif tipo == "finale_ok":
             self.finale = "ok"
-            self.lavori_appunti.put((dato, None))
+            self.lavori_appunti.put((dato, None, None))
             self.occupato = False
             self._sveglio_voluto = False
         elif tipo == "errore":

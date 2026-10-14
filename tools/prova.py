@@ -279,10 +279,10 @@ def prova_appunti(t):
               "info.json ricorda appunti e spesa")
     ap.crea_appunti(c, 2, "sk-ant-prova", pac)
     controlla(len(visti) == 1, "rifacendo il PDF non richiama Claude (risposta salvata)")
-    controlla(ap.appunti_lezione_completa(c, pac) is None, "appunti unici solo quando ci sono tutte le parti")
+    controlla(ap.appunti_lezione_completa(c, pac, "cornell") is None, "appunti unici solo quando ci sono tutte le parti")
     ap.crea_appunti(c, 1, "sk-ant-prova", pac)
     ap.crea_appunti(c, 3, "sk-ant-prova", pac)
-    unico = ap.appunti_lezione_completa(c, pac)
+    unico = ap.appunti_lezione_completa(c, pac, "cornell")
     controlla(unico and Path(unico).name.endswith("lezione completa.pdf") and Path(unico).exists(),
               f"appunti della lezione completa in un PDF: {Path(unico).name if unico else unico}")
     info = json.loads((c / "info.json").read_text(encoding="utf-8"))
