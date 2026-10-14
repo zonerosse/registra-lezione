@@ -130,6 +130,31 @@ def prova_ritaglio(t):
     controlla((c / "slide" / "slide_001.jpg").exists(), "la foto intera originale resta")
 
 
+def prova_pausa(t):
+    print("Pausa e durata delle parti")
+    import time as tm
+    r = rg.Registratore(t / "pausa", "Prova", 1800)
+    r.t0 = tm.monotonic()
+    tm.sleep(0.3)
+    r.pausa()
+    a = r.secondi()
+    tm.sleep(0.5)
+    controlla(abs(r.secondi() - a) < 0.02 and r.secondi_di_pausa() >= 0.5, "in pausa il tempo registrato resta fermo")
+    r.riprendi()
+    tm.sleep(0.2)
+    controlla(0.45 < r.secondi() < 0.65, f"dopo la pausa riparte da dove era ({r.secondi():.2f} s)")
+    vecchio = os.environ.pop("RL_PARTE_SECONDI")
+    try:
+        c = t / "durata"
+        c.mkdir()
+        controlla(el.parte_secondi(c) == 3600, "lezioni vecchie: parti da un'ora")
+        el.scrivi_json(c / "info.json", {"parte_secondi": 1800})
+        controlla(el.parte_secondi(c) == 1800, "lezioni nuove: la durata scelta (30 minuti)")
+        controlla(rg.Registratore(c, "x", 1800).parte_secondi == 1800, "il registratore usa la durata scelta")
+    finally:
+        os.environ["RL_PARTE_SECONDI"] = vecchio
+
+
 def prova_lavagna(t):
     print("Lavagna scritta a mano: foto unite")
     c = t / "lavagna"
@@ -332,6 +357,7 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
         prova_slide()
+        prova_pausa(t)
         prova_ritaglio(t)
         prova_lavagna(t)
         prova_lezione(t)

@@ -97,7 +97,7 @@ class RilevatoreSlide:
 
 
 class Registratore:
-    def __init__(self, cartella, nome):
+    def __init__(self, cartella, nome, parte_secondi=3600):
         self.cartella = Path(cartella)
         self.nome = nome
         self.stop_ev = threading.Event()
@@ -110,6 +110,10 @@ class Registratore:
         self._lock = threading.Lock()
         self._threads = []
         self.parte = 0              # ultima parte audio completata/chiusa
+        self.parte_secondi = int(os.environ.get("RL_PARTE_SECONDI") or parte_secondi)
+        self.in_pausa = False       # intervallo: non si registra niente
+        self._pausa_tot = 0.0       # secondi di pausa gia' passati
+        self._pausa_da = None
         self.on_parte = None        # funzione chiamata quando un'ora e' completa
 
     # ---------------------------------------------------------------- avvio / fine
@@ -125,9 +129,29 @@ class Registratore:
             self._threads.append(th)
 
     def secondi(self):
-        return time.monotonic() - self.t0
+        """Tempo di lezione REGISTRATO: le pause non contano."""
+        adesso = time.monotonic()
+        pausa = self._pausa_tot + ((adesso - self._pausa_da) if self.in_pausa else 0.0)
+        return adesso - self.t0 - pausa
+
+    def pausa(self):
+        if not self.in_pausa:
+            self._pausa_da = time.monotonic()
+            self.in_pausa = True
+            self.livello = 0.0
+            log.info("pausa a %.1f s", self.secondi())
+
+    def riprendi(self):
+        if self.in_pausa:
+            self._pausa_tot += time.monotonic() - self._pausa_da
+            self.in_pausa = False
+            log.info("ripresa a %.1f s", self.secondi())
+
+    def secondi_di_pausa(self):
+        return (time.monotonic() - self._pausa_da) if self.in_pausa else 0.0
 
     def ferma(self):
+        self.riprendi()
         self.durata = self.secondi()
         self.stop_ev.set()
         for th in self._threads:
@@ -140,7 +164,7 @@ class Registratore:
             dati = {"nome": self.nome, "inizio": self.inizio,
                     "audio_t0": self.audio_t0 or 0.0, "video_t0": self.video_t0 or 0.0,
                     "durata": getattr(self, "durata", None), "slides": list(self.slides),
-                    "errori": self.errori}
+                    "errori": self.errori, "parte_secondi": self.parte_secondi}
         p = self.cartella / "meta.json"
         tmp = p.with_suffix(".tmp")
         tmp.write_text(json.dumps(dati, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -175,13 +199,12 @@ class Registratore:
         try:
             import warnings
             sc = carica_soundcard()
-            from elaborazione import PARTE_SECONDI
             warnings.filterwarnings("ignore", category=sc.SoundcardRuntimeWarning)
             spk = sc.default_speaker()
             mic = sc.get_microphone(spk.id, include_loopback=True)
             rate = 48000
             blocco = rate // 10
-            per_parte = rate * PARTE_SECONDI
+            per_parte = rate * self.parte_secondi
             with mic.recorder(samplerate=rate) as rec:
                 k, scritti = 1, 0
                 w = self._apri_wav(k, rate)
@@ -189,6 +212,8 @@ class Registratore:
                 log.info("audio partito a %.3f s (dispositivo: %s)", self.audio_t0, spk.name)
                 while not self.stop_ev.is_set():
                     d = rec.record(numframes=blocco)
+                    if self.in_pausa:            # intervallo: si ascolta ma non si salva
+                        continue
                     mono = d.mean(axis=1) if d.ndim == 2 else d
                     self.livello = min(1.0, float(np.sqrt(np.mean(mono ** 2))) * 6)
                     w.writeframes((np.clip(mono, -1, 1) * 32767).astype("<i2").tobytes())
@@ -268,6 +293,9 @@ class Registratore:
                 fotogrammi = 0
                 ultimo_controllo = -1e9
                 while not self.stop_ev.is_set():
+                    if self.in_pausa:            # intervallo: niente video e niente slide
+                        self.stop_ev.wait(0.25)
+                        continue
                     shot = sct.grab(mon)
                     adesso = self.secondi()
                     if self.video_t0 is None:

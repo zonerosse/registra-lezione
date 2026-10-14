@@ -92,6 +92,8 @@ BG, WIN, INK, MUTED = "#e9edf2", "#ffffff", "#1d2430", "#6b7686"
 LINE, RED, RED_D, GREEN, BLUE, SOFT = "#dde2e9", "#d93636", "#b52a2a", "#1f9d55", "#2563eb", "#f6f8fb"
 DARK, DARK_D, GREEN_D, BLUE_D = "#333333", "#1f1f1f", "#18804a", "#1d4fc4"
 VIOLA, VIOLA_SOFT, GRIGIO_SW = "#7c3aed", "#f3edff", "#c7ced8"
+PAUSA, PAUSA_D, AMBRA = "#b45309", "#92400e", "#b45309"     # arancio scuro: scritta bianca leggibile
+RIPRENDI, RIPRENDI_D = "#18804a", "#136b3d"
 FONT = "Segoe UI"
 
 
@@ -103,6 +105,11 @@ def apri(percorso):
             subprocess.Popen(["xdg-open", str(percorso)])
     except Exception:
         messagebox.showerror(APP, f"Non riesco ad aprire:\n{percorso}")
+
+
+def gb_testo(byte):
+    gb = byte / 1e9
+    return (f"{gb:.1f} GB" if gb >= 0.1 else f"{byte / 1e6:.0f} MB").replace(".", ",")
 
 
 def al_cestino(percorsi):
@@ -206,6 +213,10 @@ class Bottone(tk.Label):
         self.bind("<Enter>", lambda e: self.config(bg=self.ch))
         self.bind("<Leave>", lambda e: self.config(bg=self.c))
         self.bind("<Button-1>", lambda e: self.cmd())
+
+    def colori(self, testo, colore, colore_hover):
+        self.c, self.ch = colore, colore_hover
+        self.config(text=testo, bg=colore)
 
 
 class BottoneMini(tk.Label):
@@ -349,9 +360,12 @@ class MiniFinestra(tk.Toplevel):
         b.pack(fill="x", pady=(8, 0))
         b.columnconfigure(0, weight=1, uniform="b")
         b.columnconfigure(1, weight=1, uniform="b")
-        BottoneMini(b, "Apri finestra", app.apri_finestra).grid(row=0, column=0, sticky="ew", padx=(0, 3))
+        self.btn_pausa = Bottone(b, "⏸ Pausa", PAUSA, PAUSA_D, app.pausa_o_riprendi, grande=False)
+        self.btn_pausa.grid(row=0, column=0, sticky="ew", padx=(0, 3))
         Bottone(b, "■ Fine lezione", DARK, DARK_D, app.fine_da_mini, grande=False).grid(
             row=0, column=1, sticky="ew", padx=(3, 0))
+        BottoneMini(b, "Apri finestra", app.apri_finestra).grid(row=1, column=0, columnspan=2,
+                                                                 sticky="ew", pady=(6, 0))
         # trascinamento
         self._da = None
         for w in [self, f, t, self.rec, self.nome, g] + list(g.winfo_children()):
@@ -371,9 +385,14 @@ class MiniFinestra(tk.Toplevel):
         if self._da:
             self.geometry(f"+{e.x_root - self._da[0]}+{e.y_root - self._da[1]}")
 
-    def aggiorna(self, nome, secondi, n_slide, gb, livello, parti, avviso):
+    def aggiorna(self, nome, secondi, n_slide, gb, livello, parti, avviso, pausa=None):
         self.nome.config(text=nome if len(nome) <= 26 else nome[:25] + "…")
-        self.rec.config(fg=RED if int(secondi * 2) % 2 == 0 else WIN)
+        if pausa is not None:
+            self.rec.config(text="⏸ PAUSA", fg=AMBRA)
+            m, s = divmod(int(pausa), 60)
+            parti = f"In pausa da {m:02d}:{s:02d}: non registro niente"
+        else:
+            self.rec.config(text="● REC", fg=RED if int(secondi * 2) % 2 == 0 else WIN)
         self.valori["tempo"].config(text=time.strftime("%H:%M:%S", time.gmtime(secondi)))
         self.valori["slide"].config(text=str(n_slide))
         self.valori["gb"].config(text=f"{gb:.1f} GB".replace(".", ","))
@@ -533,7 +552,8 @@ class App:
         r.pack(anchor="w")
         self.pallino = tk.Label(r, text="●", bg=WIN, fg=RED, font=(FONT, 12))
         self.pallino.pack(side="left")
-        tk.Label(r, text=" Sto registrando: ", bg=WIN, fg=INK, font=(FONT, 11, "bold")).pack(side="left")
+        self.lbl_stato_rec = tk.Label(r, text=" Sto registrando: ", bg=WIN, fg=INK, font=(FONT, 11, "bold"))
+        self.lbl_stato_rec.pack(side="left")
         self.lbl_nome_rec = tk.Label(r, text="", bg=WIN, fg=INK, font=(FONT, 11))
         self.lbl_nome_rec.pack(side="left")
         boxes = tk.Frame(f, bg=WIN)
@@ -557,6 +577,8 @@ class App:
         self.avviso_audio = tk.Label(f, text="", bg=WIN, fg=RED, font=(FONT, 10, "bold"),
                                      wraplength=540, justify="left")
         self.avviso_audio.pack(anchor="w", pady=(6, 0))
+        self.btn_pausa = Bottone(f, "⏸  Pausa (intervallo)", PAUSA, PAUSA_D, self.pausa_o_riprendi)
+        self.btn_pausa.pack(fill="x", pady=(8, 0))
         Bottone(f, "■  Fine lezione", DARK, DARK_D, self.fine).pack(fill="x", pady=(8, 0))
 
         # --- lezione finita
@@ -621,9 +643,13 @@ class App:
                                      highlightthickness=1, highlightbackground=LINE)
         self.lbl_cartella.pack(side="left", fill="x", expand=True)
         BottoneMini(r, "Scegli…", self.scegli_cartella).pack(side="left", padx=(8, 0))
-        r = tk.Frame(box, bg=SOFT)
-        r.pack(fill="x", pady=(8, 0))
-        chip(r, "Ogni ora di lezione preparo un pacchetto .zip da mandare a Claude", bg=WIN).pack(side="left")
+        tk.Label(box, text="Ogni quanto preparo un pacchetto per Claude", bg=SOFT, fg=INK,
+                 font=(FONT, 10, "bold")).pack(anchor="w", pady=(12, 0))
+        self.riga_durata = tk.Frame(box, bg=SOFT)
+        self.riga_durata.pack(anchor="w", pady=(6, 0))
+        self.disegna_durata()
+        tk.Label(box, text="Con 30 minuti gli appunti arrivano prima; il costo totale è quasi lo stesso.",
+                 bg=SOFT, fg=MUTED, font=(FONT, 8)).pack(anchor="w", pady=(4, 0))
 
         box = tk.Frame(f, bg=SOFT, highlightthickness=1, highlightbackground=LINE, padx=12, pady=10)
         box.pack(fill="x", pady=(12, 0))
@@ -639,12 +665,12 @@ class App:
         r.pack(fill="x", pady=(8, 0))
         self.sw = tk.Canvas(r, width=40, height=22, bg=SOFT, highlightthickness=0, cursor="hand2")
         self.sw.pack(side="left")
-        lb = tk.Label(r, text="Ogni ora, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
+        lb = tk.Label(r, text="Per ogni pacchetto, crea da solo gli appunti di studio (PDF)", bg=SOFT, fg=INK,
                       font=(FONT, 10), cursor="hand2")
         lb.pack(side="left", padx=(8, 0))
         for w in (self.sw, lb):
             w.bind("<Button-1>", lambda e: self.cambia_appunti())
-        tk.Label(box, text="Costo stimato: circa 0,20 $ per ogni ora di lezione.", bg=SOFT, fg=MUTED,
+        tk.Label(box, text="Costo stimato: circa 0,20 $ per ogni ora di lezione registrata.", bg=SOFT, fg=MUTED,
                  font=(FONT, 8)).pack(anchor="w", pady=(6, 0))
         self.disegna_appunti()
 
@@ -678,6 +704,24 @@ class App:
         self.riga_controlli.pack(fill="x", pady=(6, 0))
         self.disegna_interruttore(self.sw_mini, self.cfg.get("mini_finestra", True))
         self.disegna_interruttore(self.sw_dnd, self.cfg.get("promemoria_dnd", True))
+
+    def disegna_durata(self):
+        for w in self.riga_durata.winfo_children():
+            w.destroy()
+        scelto = int(self.cfg.get("parte_minuti", 30))
+        for minuti, testo in ((30, "30 minuti"), (60, "1 ora")):
+            on = minuti == scelto
+            lb = tk.Label(self.riga_durata, text=testo, bg=BLUE if on else WIN, fg="white" if on else INK,
+                          font=(FONT, 10, "bold" if on else "normal"), padx=14, pady=5, cursor="hand2",
+                          highlightthickness=1, highlightbackground=BLUE if on else LINE)
+            lb.pack(side="left")
+            lb.bind("<Button-1>", lambda e, m=minuti: self.scegli_durata(m))
+
+    def scegli_durata(self, minuti):
+        self.cfg["parte_minuti"] = minuti
+        salva_config(self.cfg)
+        self.disegna_durata()
+        self.aggiorna_riepilogo()
 
     def salva_dati(self):
         nuovi = {k: e.get().strip() for k, e in self.campi_dati.items()}
@@ -718,8 +762,9 @@ class App:
         app_on = bool(self.cfg.get("appunti_attivi")) and ha_chiave
         aud = getattr(self, "_audio_ok", None)
         lib = getattr(self, "_liberi", None)
+        m = int(self.cfg.get("parte_minuti", 30))
         righe = [
-            (True, f"Pacchetti in: {corta}"),
+            (True, f"Pacchetti in: {corta} · uno ogni {'ora' if m == 60 else f'{m} minuti'}"),
             (app_on, "Appunti automatici con Claude: " + ("accesi" if app_on else
                                                            ("spenti" if ha_chiave else "spenti (manca la chiave)"))),
         ]
@@ -810,8 +855,9 @@ class App:
         return f"{sec // 3600:02d}:{sec % 3600 // 60:02d}"
 
     def _orario(self, k, fine=None):
-        a = (k - 1) * el.PARTE_SECONDI
-        b = fine if fine is not None else k * el.PARTE_SECONDI
+        ps = getattr(self, "parte_sec", 3600)
+        a = (k - 1) * ps
+        b = fine if fine is not None else k * ps
         return f"{self._hhmm(a)} – {self._hhmm(b)}"
 
     def accoda_parte(self, cart, k):
@@ -914,15 +960,18 @@ class App:
         self.ricorda_materia(nome)
         cart = BASE / f"{datetime.datetime.now():%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
         cart.mkdir(parents=True, exist_ok=True)
+        self.parte_sec = int(os.environ.get("RL_PARTE_SECONDI") or int(self.cfg.get("parte_minuti", 30)) * 60)
         el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": datetime.datetime.now().isoformat(timespec="seconds"),
                                             "durata": 0, "n_slide": 0, "stato": "registrazione", "pacchetti": {},
-                                            "studente": self.cfg.get("studente") or {}})
+                                            "studente": self.cfg.get("studente") or {},
+                                            "parte_secondi": self.parte_sec})
         self.cartella_corrente = cart
         self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
         self.lbl_spesa.config(text="")
         self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
         self.finale = None
-        self.reg = rg.Registratore(cart, nome)
+        self.reg = rg.Registratore(cart, nome, self.parte_sec)
+        self.btn_pausa.colori("⏸  Pausa (intervallo)", PAUSA, PAUSA_D)
         self.reg.on_parte = lambda k: self.coda.put(("parte_finita", k))
         self.reg.avvia()
         self.occupato = True
@@ -1004,11 +1053,12 @@ class App:
         fatti = info.get("pacchetti") or {}
         parti = el.file_parti(cart)
         self.cartella_corrente = cart
+        self.parte_sec = el.parte_secondi(cart)
         self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
         fatti_ap = info.get("appunti") or {}
         self.parti = {}
         for k, wav in parti.items():
-            fine_k = (k - 1) * el.PARTE_SECONDI + el.durata_wav(wav)
+            fine_k = (k - 1) * el.parte_secondi(cart) + el.durata_wav(wav)
             if str(k) in fatti and Path(fatti[str(k)]).exists():
                 self.parti[k] = {"stato": "ok", "file": fatti[str(k)], "orario": self._orario(k, fine_k)}
                 if str(k) in fatti_ap and Path(fatti_ap[str(k)]).exists():
@@ -1032,6 +1082,20 @@ class App:
         self.ridisegna_parti()
         self.scheda("reg")
         self.mostra("fine")
+
+    def pausa_o_riprendi(self):
+        if not self.reg:
+            return
+        if self.reg.in_pausa:
+            self.reg.riprendi()
+            self.btn_pausa.colori("⏸  Pausa (intervallo)", PAUSA, PAUSA_D)
+            if getattr(self, "mini", None) is not None:
+                self.mini.btn_pausa.colori("⏸ Pausa", PAUSA, PAUSA_D)
+        else:
+            self.reg.pausa()
+            self.btn_pausa.colori("▶  Riprendi la lezione", RIPRENDI, RIPRENDI_D)
+            if getattr(self, "mini", None) is not None:
+                self.mini.btn_pausa.colori("▶ Riprendi", RIPRENDI, RIPRENDI_D)
 
     def apri_finestra(self):
         self.root.deiconify()
@@ -1285,7 +1349,16 @@ class App:
                 s = self.reg.secondi()
                 self.lbl_tempo.config(text=time.strftime("%H:%M:%S", time.gmtime(s)))
                 self.lbl_slide.config(text=str(self.reg.n_slide))
-                self.pallino.config(fg=RED if int(s * 2) % 2 == 0 else WIN)
+                in_pausa = self.reg.in_pausa
+                if in_pausa:
+                    self.silenzio_da = time.monotonic()      # in pausa il silenzio e' normale
+                    m_, s_ = divmod(int(self.reg.secondi_di_pausa()), 60)
+                    self.pallino.config(text="⏸", fg=AMBRA)
+                    self.lbl_stato_rec.config(text=f" In pausa da {m_:02d}:{s_:02d} (non registro niente): ",
+                                              fg=AMBRA)
+                else:
+                    self.pallino.config(text="●", fg=RED if int(s * 2) % 2 == 0 else WIN)
+                    self.lbl_stato_rec.config(text=" Sto registrando: ", fg=INK)
                 w = self.meter.winfo_width()
                 self.meter.coords(self.meter_bar, 0, 0, w * self.reg.livello, 8)
                 if self.reg.livello > 0.01:
@@ -1297,7 +1370,8 @@ class App:
                     elif time.monotonic() - self.silenzio_da > 60:
                         avv = "⚠ Nessun suono da 1 minuto: volume?"
                     self.mini.aggiorna(self.lbl_nome_rec.cget("text"), s, self.reg.n_slide, self.gb_registrati(),
-                                       self.reg.livello, self.testo_parti(), avv)
+                                       self.reg.livello, self.testo_parti(), avv,
+                                       self.reg.secondi_di_pausa() if in_pausa else None)
                 if "audio" in self.reg.errori:
                     self.avviso_audio.config(text="⚠ Problema con l'audio: registro solo lo schermo.")
                 elif time.monotonic() - self.silenzio_da > 60:
@@ -1321,7 +1395,7 @@ class App:
                         if k > ultima:
                             self.parti.pop(k)
                     if ultima:
-                        fine_audio = (ultima - 1) * el.PARTE_SECONDI + el.durata_wav(cart / f"audio_{ultima:03d}.wav")
+                        fine_audio = (ultima - 1) * el.parte_secondi(cart) + el.durata_wav(cart / f"audio_{ultima:03d}.wav")
                         p = self.parti.setdefault(ultima, {"stato": "attesa"})
                         p["orario"] = self._orario(ultima, fine_audio)
                         if p["stato"] == "reg":
@@ -1480,6 +1554,9 @@ class App:
         tk.Label(top, text=f"Le lezioni sono in: {BASE}", bg=WIN, fg=MUTED, font=(FONT, 9),
                  wraplength=420, justify="left").pack(side="left")
         BottoneMini(top, "Apri cartella", lambda: apri(BASE)).pack(side="right")
+        self.riga_video = tk.Frame(self.p_arch, bg=SOFT, highlightthickness=1, highlightbackground=LINE,
+                                   padx=12, pady=8)
+        self.riga_video.pack(fill="x", pady=(0, 6))
         cont = tk.Frame(self.p_arch, bg=WIN)
         cont.pack(fill="both", expand=True)
         self.canvas = tk.Canvas(cont, bg=WIN, highlightthickness=0)
@@ -1508,12 +1585,14 @@ class App:
             w.destroy()
         cartelle = sorted((p for p in BASE.iterdir() if p.is_dir() and (p / "info.json").exists()),
                           key=lambda p: p.name, reverse=True)
+        self.disegna_totale_video(cartelle)
         if not cartelle:
             tk.Label(self.lista, text="Nessuna lezione registrata, per ora.", bg=WIN, fg=MUTED,
                      font=(FONT, 11)).pack(pady=30)
             return
         for cart in cartelle:
             info = el.leggi_json(cart / "info.json", {}) or {}
+            video = self.video_di(cart) if info.get("stato") == "pronta" else None
             riga = tk.Frame(self.lista, bg=WIN)
             riga.pack(fill="x", pady=(10, 0))
             tk.Label(riga, text=info.get("nome", cart.name), bg=WIN, fg=INK, font=(FONT, 11, "bold"),
@@ -1532,6 +1611,7 @@ class App:
                 sotto = f"{quando} · {el.durata_leggibile(info.get('durata', 0))} · {info.get('n_slide', 0)} slide · {n_pac} pacchetti"
                 if appunti:
                     sotto += f" · {len(appunti)} appunti"
+                sotto += f" · 🎬 video {gb_testo(video.stat().st_size)}" if video else " · video eliminato"
             elif in_corso:
                 sotto = f"{quando} · in lavorazione…"
             else:
@@ -1556,6 +1636,9 @@ class App:
                 elif appunti:
                     btn("📄 Apri appunti", lambda a=appunti: self.apri_appunti(a))
                 btn("Trascrizione", lambda c=cart: self.apri_lezione(c))
+                if video:
+                    btn("▶ Video", lambda v=video: apri(v))
+                    btn("🗑 Video", lambda c=cart: self.elimina_video([c]), rosso=True)
             elif not in_corso:
                 btn("Completa", lambda c=cart: self.completa(c))
             if not in_corso:
@@ -1564,6 +1647,54 @@ class App:
             if not in_corso:
                 btn("🗑 Elimina", lambda c=cart: self.elimina(c), rosso=True)
             tk.Frame(self.lista, bg=LINE, height=1).pack(fill="x", pady=(10, 0))
+
+    @staticmethod
+    def video_di(cart):
+        for nome in ("video.mp4", "audio.m4a"):
+            p = Path(cart) / nome
+            if p.exists():
+                return p
+        return None
+
+    def disegna_totale_video(self, cartelle):
+        f = self.riga_video
+        for w in f.winfo_children():
+            w.destroy()
+        con_video = [c for c in cartelle
+                     if (el.leggi_json(c / "info.json", {}) or {}).get("stato") == "pronta"
+                     and not (c == self.cartella_corrente and self.occupato) and self.video_di(c)]
+        tot = sum(self.video_di(c).stat().st_size for c in con_video)
+        tk.Label(f, text=f"🎬 Video sul PC: {gb_testo(tot)}", bg=SOFT, fg=INK,
+                 font=(FONT, 10, "bold")).pack(side="left")
+        tk.Label(f, text="  (appunti e trascrizioni occupano pochissimo)", bg=SOFT, fg=MUTED,
+                 font=(FONT, 8)).pack(side="left")
+        if con_video:
+            b = BottoneMini(f, "Elimina tutti i video…", lambda: self.elimina_video(con_video), bg=WIN)
+            b.config(fg=RED)
+            b.pack(side="right")
+
+    def elimina_video(self, cartelle):
+        """Elimina DEFINITIVAMENTE i video (nel Cestino occuperebbero ancora spazio).
+        Appunti, slide, trascrizione e pacchetti restano."""
+        video = [v for v in (self.video_di(c) for c in cartelle) if v]
+        if not video:
+            return
+        tot = gb_testo(sum(v.stat().st_size for v in video))
+        if len(video) == 1:
+            info = el.leggi_json(Path(cartelle[0]) / "info.json", {}) or {}
+            testo = f"Eliminare il video di «{info.get('nome', '')}»?\n\nLibera {tot}."
+        else:
+            testo = f"Eliminare i video di {len(video)} lezioni?\n\nLibera {tot}."
+        testo += ("\n\nIl video si elimina definitivamente, così lo spazio si libera subito.\n"
+                  "Restano: appunti, slide, trascrizione e pacchetti.")
+        if not messagebox.askyesno(APP, testo):
+            return
+        for v in video:
+            try:
+                v.unlink()
+            except OSError:
+                log.exception("elimina video %s", v)
+        self.aggiorna_archivio()
 
     @staticmethod
     def apri_lezione(cart):

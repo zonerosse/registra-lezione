@@ -32,6 +32,19 @@ LINGUA = "it"
 # Durata di una parte (secondi). Per le prove si puo' accorciare con la variabile RL_PARTE_SECONDI.
 PARTE_SECONDI = int(os.environ.get("RL_PARTE_SECONDI", "3600"))
 
+
+def parte_secondi(cartella=None):
+    """Durata delle parti di QUESTA lezione (si sceglie in Impostazioni: 30 minuti o 1 ora).
+    Le lezioni registrate prima di poterla scegliere hanno parti da un'ora."""
+    if os.environ.get("RL_PARTE_SECONDI"):
+        return int(os.environ["RL_PARTE_SECONDI"])
+    if cartella is not None:
+        for nome in ("info.json", "meta.json"):
+            v = (leggi_json(Path(cartella) / nome, {}) or {}).get("parte_secondi")
+            if v:
+                return int(v)
+    return 3600
+
 NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
 
 
@@ -163,7 +176,7 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     segmenti, info = model.transcribe(
         audio_16k(wav), language=LINGUA, vad_filter=True, beam_size=1,
         condition_on_previous_text=False)
-    offset = (k - 1) * PARTE_SECONDI
+    offset = (k - 1) * parte_secondi(cartella)
     durata = info.duration or 1.0
     out = []
     for s in segmenti:
@@ -529,7 +542,7 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     info = leggi_json(cartella / "info.json", {}) or {}
     meta = leggi_json(cartella / "meta.json", {}) or {}
     segmenti = leggi_json(cartella / f"trascrizione_{k:03d}.json", []) or []
-    inizio = (k - 1) * PARTE_SECONDI
+    inizio = (k - 1) * parte_secondi(cartella)
     fine = inizio + durata_wav(cartella / f"audio_{k:03d}.wav")
     if fine <= inizio and segmenti:
         fine = max(s["fine"] for s in segmenti)
