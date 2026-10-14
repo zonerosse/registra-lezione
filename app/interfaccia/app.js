@@ -141,6 +141,7 @@ function inizializza() {
   $('btnCart').onclick = async () => { const r = await A.scegli_cartella(); if (r.ok) await rileggi(); };
   $('btnBase').onclick = () => A.apri_base();
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
+  $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('formato_appunti', o.dataset.f); await rileggi(); });
   document.querySelectorAll('.dati input').forEach(i => {
     i.addEventListener('change', salvaDati);
     i.addEventListener('blur', salvaDati);
@@ -226,7 +227,7 @@ function anteprimaNome() {
   $('nomeAnt').textContent = t('pr.ant', {n, d: `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${ora}`});
 }
 function disegnaPronto() {
-  $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-cor">${ico('spark', 13)}${t('pr.pill.ai')}</span>`
+  $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-cor">${ico('spark', 13)}${t(R.formato === 'esame' ? 'pr.pill.ai.e' : 'pr.pill.ai')}</span>`
     : `<span class="pill p-blue">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
   $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('pr.recenti')}</span>` +
     R.recenti.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('') : '';
@@ -358,14 +359,17 @@ function disegnaFine() {
   let h;
   if (S.ha_appunti) {
     const c = S.cornell;
-    const det = c ? t('fn.det', {n: c.n_domande, f: c.formulario ? t('fn.det.f') : '', e: c.esercizi ? t('fn.det.e') : ''}) : t('fn.det0');
-    const prev = c ? `<div class="cornell">${c.blocchi.map(b => `<div class="q">${esc(b.domanda)}</div><div class="a">${esc(b.appunto)}</div>`).join('')}${c.riassunto ? `<div class="s"><b>${t('fn.riass')}</b> — ${esc(c.riassunto)}</div>` : ''}</div>` : '';
-    h = `<div class="ap-card"><div><span class="pill p-cor">${ico('spark', 13)}${t('fn.cornell')}</span>
+    const esame = c && c.formato === 'esame';
+    const det = !c ? t('fn.det0') : esame ? t('fn.det.esame', {n: c.n_domande, k: c.n_kw, s: c.simulazione ? t('fn.det.sim') : ''})
+      : t('fn.det', {n: c.n_domande, f: c.formulario ? t('fn.det.f') : '', e: c.esercizi ? t('fn.det.e') : ''});
+    const stelle = n => '★'.repeat(Math.max(1, Math.min(3, n || 1))) + '☆'.repeat(3 - Math.max(1, Math.min(3, n || 1)));
+    const prev = c ? `<div class="cornell${esame ? ' esame' : ''}">${c.blocchi.map(b => `<div class="q">${esame ? `<span style="color:#ea580c">${stelle(b.stelle)}</span><br>` : ''}${esc(b.domanda)}</div><div class="a">${esc(b.appunto)}</div>`).join('')}${c.riassunto ? `<div class="s"><b>${t('fn.riass')}</b> — ${esc(c.riassunto)}</div>` : ''}</div>` : '';
+    h = `<div class="ap-card"><div><span class="pill ${esame ? 'p-warn' : 'p-cor'}">${ico('spark', 13)}${t(esame ? 'fn.esame' : 'fn.cornell')}</span>
       <div style="font-size:19px;font-weight:700;color:var(--ink);margin:8px 0 4px">${inCorso ? t('fn.primi') : t('fn.tuoi')}</div>
       <div class="hint" style="margin-bottom:14px">${esc(det)}${inCorso ? t('fn.altri') : ''}</div>
       <button class="btn b-main" style="width:100%" id="fApri">${ico('doc', 18)}${t('fn.apri')}</button></div>${prev}</div>`;
   } else if (inCorso && R.appunti_on) {
-    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t('fn.claude.t')}</b>
+    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t(R.formato === 'esame' ? 'fn.claude.e.t' : 'fn.claude.t')}</b>
       <div class="hint">${t('fn.claude')}</div></div><span class="spin"></span></div>`;
   } else {
     h = `<div class="row"><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t('fn.pac.t')}</b>
@@ -410,7 +414,7 @@ function disegnaLezioni() {
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
-    else if (l.n_appunti) { pill = `<span class="pill p-cor">${ico('spark', 12)}${t('ar.cornell')}</span>`; prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
+    else if (l.n_appunti) { pill = l.formato === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('ar.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('ar.cornell')}</span>`; prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const sec = l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '';
@@ -434,7 +438,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'crea') { const r = await A.appunti_mancanti(c); if (r.ok) { await aggiorna(); vai('reg'); } return; }
   if (a === 'rifai') {
     const st = await A.stima_appunti(c);
-    if (await conferma(t('ar.rifai.t'), t('ar.rifai', {n: l.nome, c: num(st.toFixed(2))}), t('ar.rifai.si'), t('annulla'), 'b-cor')) {
+    if (await conferma(t('ar.rifai.t'), t('ar.rifai.f', {n: l.nome, f: t('fmt.' + R.formato), c: num(st.toFixed(2))}), t('ar.rifai.si'), t('annulla'), 'b-cor')) {
       const r = await A.rifai_appunti(c); if (r.ok) { await aggiorna(); vai('reg'); }
     }
     return;
@@ -467,7 +471,7 @@ function menuLezione(l, btn) {
   const m = document.createElement('div'); m.className = 'menu';
   const voci = [];
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
-  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai')]);
+  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.f', {f: t('fmt.' + R.formato)})]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')], ['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
   voci.push(['elimina', 'trash', t('ar.m.el'), 'r']);
@@ -511,11 +515,13 @@ function disegnaImpostazioni() {
   }
   $('segDur').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === R.minuti));
   $('segLingua').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === LINGUA));
+  $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.f === R.formato));
   $('swMini').classList.toggle('on', !!R.mini);
   $('swDnd').classList.toggle('on', !!R.dnd);
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
+  $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('formato_appunti', o.dataset.f); await rileggi(); });
   document.querySelectorAll('.dati input').forEach(i => { if (document.activeElement !== i) i.value = (R.studente || {})[i.dataset.k] || ''; });
 }
 async function sceltaAI(claude) {

@@ -1,6 +1,6 @@
 {
- "versione": "3.2",
+ "versione": "3.3",
  "librerie": 2,
- "novita": "Corretti la mini finestra che non compariva (schermi con zoom al 125-150%) e il blocco quando si ferma la registrazione; la mini finestra non finisce più nel video.",
- "novita_en": "Fixed the mini window not appearing (screens zoomed to 125-150%) and the freeze when stopping a recording; the mini window no longer ends up in the video."
+ "novita": "Nuovo Formato Esame per gli appunti: domande probabili con le stelle, schema della risposta, parole chiave e simulazione d'esame (si sceglie in Impostazioni). Dopo Aggiorna il programma si riapre già con la versione nuova.",
+ "novita_en": "New Exam format for notes: likely questions with stars, answer outlines, keywords and a mock exam (choose it in Settings). After Update the program reopens with the new version."
 }

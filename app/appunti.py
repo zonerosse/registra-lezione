@@ -183,9 +183,68 @@ SCHEMA = {
 }
 
 
+ISTRUZIONI_ESAME = """Sei un tutor universitario esperto di esami. Ricevi il PDF di un tratto di lezione registrata:
+per ogni slide mostrata dal docente c'e' l'immagine e, sotto, la trascrizione automatica di cio' che il
+docente ha detto (con l'orario dall'inizio della lezione). La trascrizione puo' contenere errori.
+
+Prepara gli appunti in FORMATO ESAME, in italiano, per uno studente che deve prepararsi a RISPONDERE
+alle domande d'esame su questo tratto di lezione:
+- "domande_probabili": 4-10 domande d'esame probabili, ORDINATE dalla piu' probabile. Per ognuna:
+  * "domanda": formulata come la farebbe il docente all'esame;
+  * "stelle": 3 se il docente ci ha insistito, l'ha ripetuta o ha detto che e' da esame; 2 se e' un
+    argomento centrale della lezione; 1 se e' secondaria ma puo' capitare;
+  * "perche": in poche parole perche' e' probabile (es. una breve frase del docente tra virgolette);
+  * "schema": 3-6 passi BREVI (massimo ~15 parole l'uno): la scaletta della risposta ideale, nell'ordine
+    in cui esporla (definizione, formula, passaggi, esempio, conclusione). Non frasi da imparare a memoria;
+  * "parole_chiave": 2-5 termini, simboli o formule da memorizzare per quella risposta;
+  * "errore": l'errore tipico da evitare in quella risposta (stringa vuota se non c'e');
+  * "dove": slide e orario (es. "slide 3, 00:25");
+  * "slide": il numero N della slide del PDF ("Slide N") da mostrare accanto, SOLO se l'immagine aiuta
+    davvero (grafico, schema, figura, formula o passaggi scritti); altrimenti 0. Mai la stessa due volte.
+- "parole_chiave": TUTTE le parole chiave, i simboli e le formule della lezione, ciascuna con il
+  significato in UNA riga (la legenda da tenere sott'occhio). Formule in testo semplice con simboli
+  Unicode (es. lim x→0 sin(x)/x = 1, ∑, √, ≤, ∞, x², xᵢ). Niente LaTeX.
+- "simulazione": 3-6 domande d'esame come le farebbe il docente (anche esercizi brevi), ciascuna con
+  "deve_contenere": gli elementi che una buona risposta deve toccare, o il risultato per gli esercizi.
+- "da_controllare": i punti dove l'audio sembra trascritto male, o slide e parole non tornano, con l'orario.
+Basati solo su slide e parole del docente. Non inventare contenuti; se completi un passaggio con
+conoscenze generali, dillo. Meglio poche domande ben scelte che tante domande simili.
+Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
+
+SCHEMA_ESAME = {
+    "type": "object",
+    "properties": {
+        "titolo": {"type": "string", "description": "argomento principale, breve"},
+        "domande_probabili": {"type": "array", "items": {"type": "object", "properties": {
+            "domanda": {"type": "string"},
+            "stelle": {"type": "integer", "description": "1, 2 o 3"},
+            "perche": {"type": "string"},
+            "schema": {"type": "array", "items": {"type": "string"}},
+            "parole_chiave": {"type": "array", "items": {"type": "string"}},
+            "errore": {"type": "string"},
+            "dove": {"type": "string"},
+            "slide": _SLIDE},
+            "required": ["domanda", "stelle", "schema"]}},
+        "parole_chiave": {"type": "array", "items": {"type": "object", "properties": {
+            "parola": {"type": "string"}, "significato": {"type": "string"}},
+            "required": ["parola", "significato"]}},
+        "simulazione": {"type": "array", "items": {"type": "object", "properties": {
+            "domanda": {"type": "string"}, "deve_contenere": {"type": "string"}},
+            "required": ["domanda"]}},
+        "da_controllare": {"type": "array", "items": {"type": "string"}},
+    },
+    "required": ["titolo", "domande_probabili", "parole_chiave", "simulazione"],
+}
+
+
+def e_esame(dati):
+    """True se gli appunti sono nel Formato Esame."""
+    return dati.get("formato") == "esame" or "domande_probabili" in dati
+
+
 def normalizza(dati):
     """Gli appunti fatti prima del formato Cornell (concetti/legenda/domande) diventano blocchi."""
-    if "blocchi" in dati:
+    if "blocchi" in dati or e_esame(dati):
         return dati
     blocchi = [{"domanda": c.get("titolo", ""), "parole_chiave": [],
                 "appunti": [c.get("spiegazione", "")], "dove": c.get("dove", ""), "slide": c.get("slide", 0)}
@@ -208,7 +267,7 @@ def _pdf_del_pacchetto(cartella, k):
         return Path(zp), z.read(nome)
 
 
-def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it"):
+def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell"):
     """Le istruzioni, con la lingua degli appunti e quella in cui parla il docente."""
     nome_app = {"it": "ITALIANO", "en": "INGLESE (English)"}.get(lingua_appunti, "ITALIANO")
     extra = (f"\n\nLINGUA DEGLI APPUNTI: {nome_app}. Scrivi TUTTO in questa lingua: titolo, domande, "
@@ -221,16 +280,19 @@ def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it"):
             orig = testi.nome_lingua(lingua_lezione, "it")
             extra += (f" La lezione e' in {orig}: traduci il contenuto e per i termini tecnici aggiungi tra "
                       f"parentesi il termine originale in {orig}, come compare sulle slide.")
+    if formato == "esame":
+        return ISTRUZIONI_ESAME.replace("in FORMATO ESAME, in italiano,", "in FORMATO ESAME") + extra
     return ISTRUZIONI.replace("con il METODO CORNELL, in italiano,", "con il METODO CORNELL") + extra
 
 
-def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it"):
+def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
+                    formato="cornell"):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
-        "system": istruzioni_lingua(lingua_appunti, lingua_lezione),
+        "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato),
         "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di studio dell'ora di lezione.",
-                   "input_schema": SCHEMA}],
+                   "input_schema": SCHEMA_ESAME if formato == "esame" else SCHEMA}],
         # Sonnet 5.5 non accetta tool_choice "tool"/"any" (errore 400): si usa "auto"
         # e le istruzioni chiedono di chiamare lo strumento; c'e' comunque il piano B sotto.
         "tool_choice": {"type": "auto"},
@@ -276,7 +338,8 @@ def _json_dal_testo(testo):
         dati = json.loads(testo[inizio:fine + 1])
     except ValueError:
         return None
-    return dati if isinstance(dati, dict) and ("blocchi" in dati or "concetti" in dati) else None
+    return dati if isinstance(dati, dict) and ("blocchi" in dati or "concetti" in dati
+                                                or "domande_probabili" in dati) else None
 
 
 def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
@@ -397,16 +460,27 @@ def pdf_appunti_parti(parti, info, destinazione):
     for indice, (dati, etichetta, slide) in enumerate(parti):
         stato["slide"], stato["usate"] = slide or {}, set()
         pdf.add_page()
-        if indice == 0:
+        esame = e_esame(parti[0][0])
+        if indice == 0 and esame:
+            nd = sum(len(d.get("domande_probabili") or []) for d, _, _ in parti)
+            nk = sum(len(d.get("parole_chiave") or []) for d, _, _ in parti)
+            etichette = [tr("es_b_dom", L, n=nd) if nd else "", tr("es_b_kw", L, n=nk) if nk else "",
+                         tr("pdf_parti", L, n=len(parti)) if completa else "",
+                         tr("es_b_sim", L) if any(d.get("simulazione") for d, _, _ in parti) else ""]
+        elif indice == 0:
             nd = sum(len(normalizza(d).get("blocchi") or []) for d, _, _ in parti)
             etichette = [tr("pdf_domande", L, n=nd) if nd else "", tr("pdf_parti", L, n=len(parti)) if completa else "",
                          tr("pdf_formulario_b", L) if any(normalizza(d).get("formulario") for d, _, _ in parti) else "",
                          tr("pdf_esercizi_b", L) if any(normalizza(d).get("esercizi_svolti") for d, _, _ in parti) else ""]
+        if indice == 0:
             ll = info.get("lingua_lezione")
             if ll and ll != L:
                 etichette.append(tr("pdf_lingua", L, l=testi.nome_lingua(ll, L)))
-            _copertina(pdf, font, t, info,
-                       tr("pdf_occhiello_tutti", L) if completa else tr("pdf_occhiello", L, e=etichetta.upper()),
+            if esame:
+                occhiello = tr("es_occhiello_tutti", L) if completa else tr("es_occhiello", L, e=etichetta.upper())
+            else:
+                occhiello = tr("pdf_occhiello_tutti", L) if completa else tr("pdf_occhiello", L, e=etichetta.upper())
+            _copertina(pdf, font, t, info, occhiello,
                        info.get("nome", "Lezione"), [x for x in etichette if x])
         if completa and indice == 0:
             pdf.set_font(font, "B", 9)
@@ -422,8 +496,12 @@ def pdf_appunti_parti(parti, info, destinazione):
             testo(tr("pdf_controlla", L), 4.6)
             pdf.set_text_color(0, 0, 0)
             pdf.add_page()
-        _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO,
-                      copertina=(indice == 0 and not completa))
+        if e_esame(dati):
+            _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO,
+                          copertina=(indice == 0 and not completa))
+        else:
+            _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO,
+                          copertina=(indice == 0 and not completa))
     pdf.output(str(destinazione))
 
 
@@ -656,6 +734,200 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_text_color(0, 0, 0)
 
 
+def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False):
+    """Una parte di appunti nel Formato Esame: domande probabili (con stelle, schema della risposta,
+    parole chiave, errore da evitare), legenda delle parole chiave, simulazione d'esame."""
+    from fpdf.enums import MethodReturnValue
+    L = testi.lingua_di(info)
+    ARANCIO, ARANCIO_SCURO, ARANCIO_CHIARO, BORDO = (194, 65, 12), (124, 45, 18), (255, 247, 237), (253, 186, 116)
+    GIALLO, GIALLO_BORDO, GIALLO_TESTO = (254, 243, 199), (252, 211, 77), (146, 64, 14)
+    larg = pdf.w - pdf.l_margin - pdf.r_margin
+    fondo = pdf.h - pdf.b_margin
+
+    pdf.set_font(font, "B", 17)
+    if copertina:
+        testo(dati.get("titolo", "") or tr("pdf_appunti_di", L, e=etichetta), 8)
+    elif completa:
+        testo(f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}", 8)
+    else:
+        testo(tr("pdf_titolo_parte", L, nome=info.get('nome', 'Lezione'), e=etichetta), 8)
+    pdf.set_font(font, "", 9)
+    pdf.set_text_color(*GRIGIO)
+    testo(tr("pdf_controlla", L), 4.6)
+    pdf.set_text_color(*ARANCIO)
+    pdf.set_font(font, "", 8.5)
+    testo(tr("es_uso", L), 4.4)
+    pdf.set_text_color(0, 0, 0)
+
+    def titolo_sezione(s_):
+        if pdf.get_y() + 20 > fondo:
+            pdf.add_page()
+        pdf.ln(4)
+        pdf.set_font(font, "B", 10)
+        pdf.set_text_color(*ARANCIO)
+        pdf.cell(0, 6, t(s_.upper()), new_x="LMARGIN", new_y="NEXT")
+        pdf.set_draw_color(*ARANCIO)
+        pdf.set_line_width(0.4)
+        pdf.line(pdf.l_margin, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
+        pdf.set_line_width(0.2)
+        pdf.ln(2.5)
+        pdf.set_text_color(0, 0, 0)
+
+    def righe(w, h, s_):
+        return len(pdf.multi_cell(w, h, t(s_), dry_run=True, output=MethodReturnValue.LINES)) * h
+
+    def etichette_gialle(parole, x0, w):
+        """Parole chiave come etichette gialle, una dopo l'altra (vanno a capo)."""
+        pdf.set_font(font, "B", 8)
+        x, y = x0, pdf.get_y()
+        for k in parole:
+            k = str(k)
+            wk = min(w, pdf.get_string_width(t(k)) + 4)
+            if x + wk > x0 + w:
+                x, y = x0, y + 5.4
+            pdf.set_fill_color(*GIALLO)
+            pdf.set_draw_color(*GIALLO_BORDO)
+            pdf.rect(x, y, wk, 4.6, style="DF", round_corners=True, corner_radius=1)
+            pdf.set_xy(x, y)
+            pdf.set_text_color(*GIALLO_TESTO)
+            pdf.cell(wk, 4.6, t(k), align="C")
+            x += wk + 2
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_xy(x0, y + 6)
+
+    titolo_sezione(tr("es_h_dom", L))
+    for n, d in enumerate(dati.get("domande_probabili") or [], 1):
+        try:
+            stelle = max(1, min(3, int(d.get("stelle") or 1)))
+        except (TypeError, ValueError):
+            stelle = 1
+        domanda = f"{n}. {d.get('domanda', '')}"
+        passi = [p_ for p_ in (d.get("schema") or []) if p_]
+        chiavi = [k for k in (d.get("parole_chiave") or []) if k]
+        errore, dove, perche = d.get("errore") or "", d.get("dove") or "", d.get("perche") or ""
+        try:
+            ns = int(d.get("slide") or 0)
+        except (TypeError, ValueError):
+            ns = 0
+        img = immagine.slide_info(ns)
+        wtxt = larg - 8 - (52 if img else 0)
+        # altezza del riquadro, per non spezzarlo a meta' pagina se ci sta nella successiva
+        pdf.set_font(font, "B", 10.5)
+        h_tit = righe(larg - 26, 5.2, domanda) + 3
+        pdf.set_font(font, "", 9.8)
+        h_corpo = sum(righe(wtxt - 6, 4.8, p_) for p_ in passi) + (6 if chiavi else 0) + \
+            (righe(wtxt, 4.4, errore) if errore else 0) + (4.4 if (dove or perche) else 0) + 4
+        if img:
+            h_corpo = max(h_corpo, 34)
+        if pdf.get_y() + h_tit + h_corpo > fondo and h_tit + h_corpo < fondo - pdf.t_margin:
+            pdf.add_page()
+        x0, y0 = pdf.l_margin, pdf.get_y()
+        # testata arancio chiaro con le stelle
+        pdf.set_fill_color(*ARANCIO_CHIARO)
+        pdf.set_draw_color(*BORDO)
+        pdf.rect(x0, y0, larg, h_tit, style="DF")
+        pdf.set_xy(x0 + 3, y0 + 1.5)
+        pdf.set_font(font, "B", 10.5)
+        pdf.set_text_color(*ARANCIO_SCURO)
+        pdf.multi_cell(larg - 26, 5.2, t(domanda), new_x="LEFT", new_y="NEXT")
+        pdf.set_xy(x0 + larg - 20, y0 + 1.5)
+        pdf.set_font(font, "B", 11)
+        pdf.set_text_color(234, 88, 12)
+        pdf.cell(17, 5.2, t("★" * stelle + "☆" * (3 - stelle)), align="R")
+        # corpo: schema numerato, parole chiave, errore, da dove viene
+        yc = y0 + h_tit + 2
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font(font, "", 9.8)
+        pdf.set_xy(x0 + 4, yc)
+        for i, p_ in enumerate(passi, 1):
+            pdf.set_x(x0 + 4)
+            pdf.cell(6, 4.8, f"{i}.")
+            pdf.multi_cell(wtxt - 6, 4.8, t(p_), new_x="LEFT", new_y="NEXT")
+        if chiavi:
+            pdf.set_y(pdf.get_y() + 1)
+            etichette_gialle(chiavi, x0 + 4, wtxt)
+        if errore:
+            pdf.set_x(x0 + 4)
+            pdf.set_font(font, "", 9)
+            pdf.set_text_color(190, 18, 60)
+            pdf.multi_cell(wtxt, 4.4, t(tr("es_err", L) + errore), new_x="LEFT", new_y="NEXT")
+        if dove or perche:
+            pdf.set_x(x0 + 4)
+            pdf.set_font(font, "", 8)
+            pdf.set_text_color(*GRIGIO)
+            pdf.multi_cell(wtxt, 4.4, t("→ " + " · ".join(x for x in (perche, dove) if x)), new_x="LEFT", new_y="NEXT")
+        pdf.set_text_color(0, 0, 0)
+        y_fine = pdf.get_y() + 2
+        if img:
+            percorso, inizio = img
+            from PIL import Image
+            with Image.open(percorso) as im:
+                wpx, hpx = im.size
+            wi = 48.0
+            hi = wi * hpx / wpx
+            if hi > 40:
+                hi, wi = 40.0, 40.0 * wpx / hpx
+            xi = x0 + larg - wi - 3
+            pdf.image(str(percorso), x=xi, y=yc, w=wi, h=hi)
+            pdf.set_draw_color(*GRIGIO)
+            pdf.rect(xi, yc, wi, hi)
+            pdf.set_xy(xi, yc + hi)
+            pdf.set_font(font, "", 7.5)
+            pdf.set_text_color(*GRIGIO)
+            pdf.cell(wi, 4, t(f"Slide {ns} · {el.hms(inizio)}"), align="C")
+            pdf.set_text_color(0, 0, 0)
+            y_fine = max(y_fine, yc + hi + 6)
+        pdf.set_draw_color(*BORDO)
+        if y_fine > y0 + h_tit:
+            pdf.line(x0, y0 + h_tit, x0, y_fine)
+            pdf.line(x0 + larg, y0 + h_tit, x0 + larg, y_fine)
+            pdf.line(x0, y_fine, x0 + larg, y_fine)
+        pdf.set_xy(x0, y_fine + 3)
+
+    pdf.set_font(font, "", 8)
+    pdf.set_text_color(*GRIGIO)
+    testo(tr("es_leg", L), 4.2)
+    pdf.set_text_color(0, 0, 0)
+
+    if dati.get("parole_chiave"):
+        titolo_sezione(tr("es_h_kw", L))
+        pdf.set_font(font, "", 9.6)
+        pdf.set_draw_color(*BORDO)
+        with pdf.table(col_widths=(40, 60), line_height=5.4, text_align="LEFT") as tab:
+            r = tab.row()
+            r.cell(t(tr("es_kw1", L)))
+            r.cell(t(tr("es_kw2", L)))
+            for v in dati["parole_chiave"]:
+                r = tab.row()
+                r.cell(t(v.get("parola", "")))
+                r.cell(t(v.get("significato", "")))
+
+    if dati.get("simulazione"):
+        titolo_sezione(tr("es_h_sim", L))
+        for i, q in enumerate(dati["simulazione"], 1):
+            pdf.set_font(font, "B", 10)
+            testo(f"{i}. «{q.get('domanda', '')}»", 5.2)
+            if q.get("deve_contenere"):
+                pdf.set_font(font, "", 9)
+                pdf.set_text_color(*GRIGIO)
+                pdf.set_x(pdf.l_margin + 5)
+                pdf.multi_cell(larg - 5, 4.6, t(tr("es_deve", L) + q["deve_contenere"]), new_x="LMARGIN", new_y="NEXT")
+                pdf.set_text_color(0, 0, 0)
+            pdf.ln(1.2)
+        pdf.set_font(font, "", 8.5)
+        pdf.set_text_color(*GRIGIO)
+        testo(tr("es_sim_nota", L), 4.4)
+        pdf.set_text_color(0, 0, 0)
+
+    if dati.get("da_controllare"):
+        titolo_sezione(tr("pdf_controllare", L))
+        pdf.set_font(font, "", 9.5)
+        pdf.set_text_color(*GRIGIO)
+        for d in dati["da_controllare"]:
+            testo(f"• {d}", 4.8)
+        pdf.set_text_color(0, 0, 0)
+
+
 def appunti_lezione_completa(cartella, cartella_pacchetti):
     """Se la lezione e' finita e tutte le parti hanno gli appunti, li mette in un PDF unico.
     Con una parte sola il PDF unico e' quello della parte. Ritorna il percorso o None."""
@@ -696,9 +968,11 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti):
     spesa = 0.0
     if gia is None:
         info0 = el.leggi_json(cartella / "info.json", {}) or {}
+        formato = "esame" if info0.get("formato_appunti") == "esame" else "cornell"
         dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
                                       lingua_appunti=testi.lingua_di(info0),
-                                      lingua_lezione=info0.get("lingua_lezione") or "it")
+                                      lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato)
+        dati["formato"] = formato
         el.scrivi_json(cartella / f"appunti_{k:03d}.json", dati)
     else:
         dati = gia

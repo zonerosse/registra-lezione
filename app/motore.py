@@ -337,10 +337,19 @@ class Motore:
             return None
         for f in sorted(Path(self.cartella_corrente).glob("appunti_*.json")):
             d = ap.normalizza(el.leggi_json(f, {}) or {})
+            if ap.e_esame(d):
+                dom = d.get("domande_probabili") or []
+                if not dom:
+                    continue
+                return {"formato": "esame",
+                        "blocchi": [{"domanda": q.get("domanda", ""), "stelle": q.get("stelle", 1),
+                                     "appunto": " → ".join((q.get("schema") or [])[:3])} for q in dom[:2]],
+                        "riassunto": "", "n_domande": len(dom), "n_kw": len(d.get("parole_chiave") or []),
+                        "simulazione": bool(d.get("simulazione"))}
             blocchi = d.get("blocchi") or []
             if not blocchi:
                 continue
-            return {"blocchi": [{"domanda": b.get("domanda", ""),
+            return {"formato": "cornell", "blocchi": [{"domanda": b.get("domanda", ""),
                                  "appunto": (b.get("appunti") or [""])[0]} for b in blocchi[:2]],
                     "riassunto": d.get("riassunto", ""), "n_domande": len(blocchi),
                     "formulario": bool(d.get("formulario")), "esercizi": bool(d.get("esercizi_svolti"))}
@@ -373,6 +382,7 @@ class Motore:
         ha_chiave = bool(self.chiave())
         return {"lingua": testi.LINGUA, "lingua_scelta": self.cfg.get("lingua") in testi.T,
                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
+                "formato": "esame" if self.cfg.get("formato_appunti") == "esame" else "cornell",
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
@@ -395,6 +405,8 @@ class Motore:
                 self.cfg["cartella_pacchetti"] = nuova
             if self.cfg.get("lingua_lezione") in (None, "it", "en") and not self.cfg.get("lingua_lezione_scelta"):
                 self.cfg["lingua_lezione"] = valore
+        elif campo == "formato_appunti":
+            self.cfg["formato_appunti"] = "esame" if valore == "esame" else "cornell"
         elif campo == "lingua_lezione":
             if valore not in testi.LEZIONE:
                 return {"ok": False, "msg": "?"}
@@ -478,6 +490,7 @@ class Motore:
                                                 "studente": self.cfg.get("studente") or {},
                                                 "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA,
+                                                "formato_appunti": self._formato(),
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
@@ -563,6 +576,8 @@ class Motore:
         cart = Path(cartella)
         info = el.leggi_json(cart / "info.json", {}) or {}
         pac, fatti = info.get("pacchetti") or {}, info.get("appunti") or {}
+        if not info.get("formato_appunti"):
+            el.aggiorna_info(cart, formato_appunti=self._formato())
         with self._lock:
             self.cartella_corrente = cart
             self.parti = {}
@@ -579,6 +594,9 @@ class Motore:
             self.avviso_fine = ""
             self.vista = "fine"
         return {"ok": True}
+
+    def _formato(self):
+        return "esame" if self.cfg.get("formato_appunti") == "esame" else "cornell"
 
     def stima_appunti(self, cartella):
         info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
@@ -606,7 +624,7 @@ class Motore:
                 Path(tutti).unlink()
             except OSError:
                 pass
-        el.aggiorna_info(cart, appunti={}, appunti_completi=None)
+        el.aggiorna_info(cart, appunti={}, appunti_completi=None, formato_appunti=self._formato())
         with self._lock:
             self.cartella_corrente = cart
             self.parti = {int(k): {"stato": "lav", "perc": 0.0, "orario": ""} for k in pac}
@@ -720,6 +738,7 @@ class Motore:
                 "crea_appunti": bool(stato == "pronta" and mancano and ha_chiave and not self.occupato),
                 "rifai_appunti": bool(stato == "pronta" and appunti and not mancano and ha_chiave and not self.occupato),
                 "sigla": sigla(nome), "colore": colore_materia(nome),
+                "formato": info.get("formato_appunti") or "cornell",
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
         try:
