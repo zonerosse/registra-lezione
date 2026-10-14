@@ -2,7 +2,7 @@
 'use strict';
 const TESTI = {
   it: {
-    'nav.reg': 'Registra', 'nav.arch': 'Le mie registrazioni', 'nav.imp': 'Impostazioni', 'nav.info': 'Informazioni',
+    'nav.reg': 'Registra', 'nav.arch': 'Le mie registrazioni', 'nav.imp': 'Impostazioni', 'nav.info': 'Informazioni', 'nav.guida': 'Guida',
     'ver': 'Versione {v}', 'agg': 'Aggiorna',
     'spl.1': 'Avvio…', 'spl.2': 'Preparo la registrazione…', 'spl.3': "Controllo l'audio del PC…", 'spl.4': 'Quasi pronto…', 'spl.ok': 'Pronto!', 'spl.err': 'Il programma non è partito: ',
     'ok': 'OK', 'si': 'Sì', 'annulla': 'Annulla', 'chiudi': 'Chiudi',
@@ -91,7 +91,7 @@ const TESTI = {
     lingueTit: {it: 'Italiano', en: 'Inglese', fr: 'Francese', es: 'Spagnolo', de: 'Tedesco', auto: 'Riconosci da solo'},
   },
   en: {
-    'nav.reg': 'Record', 'nav.arch': 'My recordings', 'nav.imp': 'Settings', 'nav.info': 'About',
+    'nav.reg': 'Record', 'nav.arch': 'My recordings', 'nav.imp': 'Settings', 'nav.info': 'About', 'nav.guida': 'Guide',
     'ver': 'Version {v}', 'agg': 'Update',
     'spl.1': 'Starting…', 'spl.2': 'Getting the recorder ready…', 'spl.3': 'Checking the PC audio…', 'spl.4': 'Almost ready…', 'spl.ok': 'Ready!', 'spl.err': 'The program did not start: ',
     'ok': 'OK', 'si': 'Yes', 'annulla': 'Cancel', 'chiudi': 'Close',

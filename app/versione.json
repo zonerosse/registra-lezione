@@ -1,6 +1,6 @@
 {
- "versione": "3.6",
+ "versione": "3.7",
  "librerie": 2,
- "novita": "Trascrizione più veloce dopo la fine (più processore, modello già caricato, niente controlli su internet); impostazioni salvate anche se l'antivirus tiene occupato il file.",
- "novita_en": "Faster transcription after stopping (more CPU, model kept loaded, no internet checks); settings are saved even if the antivirus briefly locks the file."
+ "novita": "Nuova Guida nel menu a sinistra: come si usa il programma, le impostazioni e le funzioni, in italiano e in inglese.",
+ "novita_en": "New Guide in the left menu: how to use the program, its settings and features, in Italian and English."
 }

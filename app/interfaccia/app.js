@@ -101,13 +101,14 @@ window.chiusura = async c => {
 function vai(p) {
   pagina = p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === p));
-  ['pronto', 'reg', 'fine', 'arch', 'imp', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'reg', 'fine', 'arch', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + (S.vista || 'pronto')).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'imp') disegnaImpostazioni();
   if (p === 'info') disegnaAgg();
+  if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
 }
 
@@ -141,6 +142,7 @@ function inizializza() {
   $('btnCart').onclick = async () => { const r = await A.scegli_cartella(); if (r.ok) await rileggi(); };
   $('btnBase').onclick = () => A.apri_base();
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
+  $('segGuida').querySelectorAll('span').forEach(s => s.onclick = () => disegnaGuida(s.dataset.l));
   $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('formato_appunti', o.dataset.f); await rileggi(); });
   document.querySelectorAll('.dati input').forEach(i => {
     i.addEventListener('change', salvaDati);
@@ -165,6 +167,7 @@ async function cambiaLingua(l) {
   if (S.vista === 'fine') disegnaFine();
   if (S.vista === 'reg') disegnaReg();
   if (pagina === 'info') disegnaAgg();
+  if (pagina === 'guida') { linguaGuida = LINGUA; disegnaGuida(LINGUA); }
 }
 function benvenuto() {
   const v = document.createElement('div');
@@ -545,6 +548,17 @@ async function salvaDati() {
   document.querySelectorAll('.dati input').forEach(i => d[i.dataset.k] = i.value.trim());
   await A.imposta('studente', d);
   R.studente = d;
+}
+
+/* ------------------------------------------------------------------ guida */
+let linguaGuida = null;
+function disegnaGuida(l) {
+  linguaGuida = l;
+  const G = GUIDA[l] || GUIDA.it;
+  $('gT').textContent = G.titolo; $('gS').textContent = G.sotto;
+  const aperti = [...document.querySelectorAll('#gCap details')].map(d => d.open);
+  $('gCap').innerHTML = G.capitoli.map((c, i) => `<details class="cap"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${i + 1}</span><span class="ico i-blue">${ico(c.ico)}</span>${esc(c.t)}<span class="fr">›</span></summary><ol>${c.p.map(x => `<li>${x}</li>`).join('')}</ol></details>`).join('');
+  $('segGuida').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === l));
 }
 
 /* ------------------------------------------------------------------ aggiornamenti */
