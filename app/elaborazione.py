@@ -193,11 +193,59 @@ def scarica_modello():
 
 # --------------------------------------------------------------------------- slide + parole
 
-def slide_in_tempo_audio(meta):
-    """Orari delle slide riportati sull'orologio dell'audio (0 = inizio audio)."""
+def slide_in_tempo_audio(meta, cartella=None):
+    """Orari delle slide riportati sull'orologio dell'audio (0 = inizio audio).
+    Con la cartella, le foto che sono solo la continuazione della precedente
+    (lavagna scritta a mano poco alla volta) diventano una sola: l'ultima, completa."""
     a0 = float(meta.get("audio_t0") or 0)
-    return sorted(({"file": s["file"], "t": max(0.0, float(s["t"]) - a0)}
-                   for s in meta.get("slides", [])), key=lambda s: s["t"])
+    slides = sorted(({"file": s["file"], "t": max(0.0, float(s["t"]) - a0)}
+                     for s in meta.get("slides", [])), key=lambda s: s["t"])
+    if cartella is not None:
+        slides = unisci_progressive(slides, Path(cartella) / "slide")
+    return slides
+
+
+def _grigio_ridotto(percorso):
+    import numpy as np
+    from PIL import Image
+    with Image.open(percorso) as im:
+        return np.asarray(im.convert("L").resize((320, 180), Image.BILINEAR), dtype=np.int16)
+
+
+def continuazione(a, b):
+    """True se l'immagine b e' l'immagine a con solo cose AGGIUNTE (nulla cancellato).
+    a, b: matrici in grigio della stessa misura.
+    Sfondo = il grigio piu' frequente di a. Si contano:
+      - aggiunte:  in a era sfondo, in b non piu'  (il docente ha scritto)
+      - cancellate: in a c'era qualcosa, in b e' tornato sfondo (lavagna cancellata, slide cambiata)
+    Le zone che cambiano senza essere sfondo (il riquadro con la faccia del docente) non contano."""
+    import numpy as np
+    sfondo = int(np.bincount((a // 8).ravel().astype(np.int64)).argmax()) * 8 + 4
+    fa = np.abs(a - sfondo) <= 40
+    fb = np.abs(b - sfondo) <= 40
+    aggiunte = int((fa & ~fb).sum())
+    cancellate = int((~fa & fb).sum())
+    if aggiunte + cancellate == 0:
+        return True                         # identiche
+    return cancellate <= 0.004 * a.size and cancellate <= 0.15 * (aggiunte + cancellate)
+
+
+def unisci_progressive(slides, cartella_slide):
+    out, ultima = [], None
+    for s in slides:
+        p = Path(cartella_slide) / s["file"]
+        try:
+            img = _grigio_ridotto(p)
+        except Exception:
+            out.append(dict(s))
+            ultima = None
+            continue
+        if out and ultima is not None and continuazione(ultima, img):
+            out[-1]["file"] = s["file"]          # tengo l'orario d'inizio, ma la foto piu' completa
+        else:
+            out.append(dict(s))
+        ultima = img
+    return out
 
 
 def raggruppa(slides, segmenti, inizio, fine):
@@ -359,39 +407,42 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
     pdf.set_text_color(0, 0, 0)
 
     larg = pdf.w - 30
+    pdf.ln(4)
     for n, g in enumerate(gruppi, 1):
-        if n > 1:
-            pdf.add_page()
-        else:
-            pdf.ln(6)
-        pdf.set_font(font, "B", 12)
-        pdf.set_text_color(37, 99, 235)
-        pdf.cell(0, 7, t(f"Slide {n}  ·  {hms(g['inizio'])} - {hms(g['fine'])}"),
-                 new_x="LMARGIN", new_y="NEXT")
-        pdf.set_text_color(0, 0, 0)
-        pdf.ln(1)
+        # niente pagina nuova per ogni slide: una dopo l'altra, piu' piccole
+        alt, w_mm = 0.0, 0.0
         if g["slide"]:
             p = cartella / "slide" / g["slide"]
             with Image.open(p) as im:
                 w, h = im.size
-            alt = larg * h / w
-            w_mm = larg
-            if alt > 120:
-                alt = 120
-                w_mm = alt * w / h
-            if pdf.get_y() + alt > pdf.h - 15:
-                pdf.add_page()
+            w_mm = min(110.0, larg)
+            alt = w_mm * h / w
+            if alt > 65:
+                alt, w_mm = 65.0, 65.0 * w / h
+        if pdf.get_y() + 10 + alt + 12 > pdf.h - 15:
+            pdf.add_page()
+        if n > 1:
+            pdf.set_draw_color(221, 226, 233)
+            pdf.line(15, pdf.get_y(), pdf.w - 15, pdf.get_y())
+            pdf.ln(3)
+        pdf.set_font(font, "B", 10.5)
+        pdf.set_text_color(37, 99, 235)
+        pdf.cell(0, 6, t(f"Slide {n}  ·  {hms(g['inizio'])} - {hms(g['fine'])}"),
+                 new_x="LMARGIN", new_y="NEXT")
+        pdf.set_text_color(0, 0, 0)
+        if g["slide"]:
             pdf.image(str(p), x=15 + (larg - w_mm) / 2, w=w_mm, h=alt)
-            pdf.ln(4)
-        pdf.set_font(font, "", 11)
+            pdf.ln(2)
+        pdf.set_font(font, "", 10)
         if g["paragrafi"]:
             for par in g["paragrafi"]:
-                pdf.multi_cell(0, 5.6, t(par), new_x="LMARGIN", new_y="NEXT")
-                pdf.ln(2)
+                pdf.multi_cell(0, 5, t(par), new_x="LMARGIN", new_y="NEXT")
+                pdf.ln(1)
         else:
             pdf.set_text_color(110, 118, 134)
-            pdf.multi_cell(0, 5.6, t("(nessuna parola in questo tratto)"), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 5, t("(nessuna parola in questo tratto)"), new_x="LMARGIN", new_y="NEXT")
             pdf.set_text_color(0, 0, 0)
+        pdf.ln(3)
     pdf.output(str(destinazione))
 
 
@@ -421,7 +472,7 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     fine = inizio + durata_wav(cartella / f"audio_{k:03d}.wav")
     if fine <= inizio and segmenti:
         fine = max(s["fine"] for s in segmenti)
-    gruppi = raggruppa(slide_in_tempo_audio(meta), segmenti, inizio, fine)
+    gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, inizio, fine)
 
     etichetta = f"parte {k} ({ore_min(inizio)}-{ore_min(fine)})"
     # data e ora nel nome: due lezioni con lo stesso nome non si sovrascrivono i pacchetti
@@ -527,7 +578,7 @@ def elabora_finale(cartella, cartella_pacchetti, avanzamento=lambda f: None, thr
     # 3. lezione completa
     info = leggi_json(cartella / "info.json", {}) or {}
     durata = info.get("durata") or sum(durata_wav(p) for p in file_parti(cartella).values())
-    gruppi = raggruppa(slide_in_tempo_audio(meta), segmenti, 0, max(durata, 1))
+    gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, 0, max(durata, 1))
     info = aggiorna_info(cartella, durata=round(durata), n_slide=len([g for g in gruppi if g["slide"]]))
     crea_html(cartella, info, gruppi)
     avanzamento(0.92)

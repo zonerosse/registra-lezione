@@ -74,6 +74,41 @@ def prova_slide():
     controlla(n == 1, "solo videocamera a tutto schermo -> nessuna foto in piu'")
 
 
+def lavagna(righe, faccia, cancellata=0):
+    """Lavagna bianca scritta a mano poco alla volta, con il riquadro del docente che si muove."""
+    im = Image.new("RGB", (W, H), (250, 250, 248))
+    d = ImageDraw.Draw(im)
+    fn = font(54)
+    testi = ["lim x→∞ ln(1 + 1/x) / (1/x)", "pongo t = 1/x", "x → ∞  ⇒  t → 0",
+             "= lim t→0 ln(1 + t) / t", "= 1", "ln(1 + x) ~ x  per x → 0"]
+    for i in range(righe):
+        d.text((120, 120 + i * 140), testi[(i + cancellata) % len(testi)], fill=(20, 20, 20), font=fn)
+    d.rectangle((1560, 40, 1880, 280), fill=(60, 60, 60))
+    d.ellipse((1640 + faccia, 80, 1800 + faccia, 240), fill=(220, 180, 150))
+    return im
+
+
+def prova_lavagna(t):
+    print("Lavagna scritta a mano: foto unite")
+    c = t / "lavagna"
+    (c / "slide").mkdir(parents=True)
+    slides, n = [], 0
+    # lavagna 1: 6 righe aggiunte una alla volta; poi cancellata e lavagna 2 con 4 righe; poi 3 slide diverse
+    sequenza = [lavagna(r, (r * 23) % 40) for r in range(1, 7)] + \
+               [lavagna(r, (r * 17) % 40, cancellata=3) for r in range(1, 5)] + \
+               [schermo(k, (k * 11) % 40) for k in (1, 2, 3)]
+    for i, im in enumerate(sequenza):
+        n += 1
+        nome = f"slide_{n:03d}.jpg"
+        im.save(c / "slide" / nome, "JPEG", quality=80)
+        slides.append({"file": nome, "t": i * 12.0})
+    unite = el.slide_in_tempo_audio({"audio_t0": 0, "slides": slides}, c)
+    controlla([s["file"] for s in unite] == ["slide_006.jpg", "slide_010.jpg", "slide_011.jpg",
+                                              "slide_012.jpg", "slide_013.jpg"],
+              f"13 foto -> 5: lavagna 1 completa, lavagna 2 completa, 3 slide ({[s['file'] for s in unite]})")
+    controlla([s["t"] for s in unite][:2] == [0.0, 72.0], "ogni lavagna tiene l'orario in cui e' iniziata")
+
+
 def prova_lezione(t):
     print("Lezione di 50 s in parti da 20 s")
     c = t / "lezione"
@@ -247,6 +282,7 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
         prova_slide()
+        prova_lavagna(t)
         prova_lezione(t)
         prova_appunti(t)
         prova_richiesta_claude()
