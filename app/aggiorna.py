@@ -85,6 +85,7 @@ def cerca():
     return {
         "versione": remota.get("versione"),
         "novita": remota.get("novita", ""),
+        "novita_en": remota.get("novita_en", ""),
         "completo": int(remota.get("librerie", 1)) != librerie_installate(),
         "url_zip": asset["aggiornamento.zip"]["browser_download_url"],
         "peso": asset["aggiornamento.zip"].get("size", 0),

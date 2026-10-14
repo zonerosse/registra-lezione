@@ -25,27 +25,30 @@
 </style>
 </head>
 <body>
-  <div class="h pywebview-drag-region"><span class="tag" id="tag"><i></i>REC</span><span style="opacity:.7" class="pywebview-drag-region">⠿ trascina</span></div>
+  <div class="h pywebview-drag-region"><span class="tag" id="tag"><i></i>REC</span><span style="opacity:.7" class="pywebview-drag-region" data-t="mn.trascina">⠿ trascina</span></div>
   <div class="tm pywebview-drag-region" id="tm">00:00:00</div>
   <div class="nm pywebview-drag-region" id="nm"></div>
   <div class="wave pywebview-drag-region" id="wv"></div>
   <div class="av hidden" id="av"></div>
-  <div class="bt"><button class="btn b-pz" id="bp"><svg><use href="#i-pause"/></svg>Pausa</button><button class="btn b-end" id="bf"><svg><use href="#i-stop"/></svg>Fine</button></div>
-  <button class="lnk2" id="big">Apri la finestra grande ↗</button>
-  <div class="conf hidden" id="conf"><b>Fermo la registrazione?</b><div class="bt"><button class="btn b-ghost" id="no">Continua</button><button class="btn b-end" id="si" style="background:#e11d48">Sì, ferma</button></div></div>
+  <div class="bt"><button class="btn b-pz" id="bp"><svg><use href="#i-pause"/></svg><span data-t="mn.pausa">Pausa</span></button><button class="btn b-end" id="bf"><svg><use href="#i-stop"/></svg><span data-t="mn.fine">Fine</span></button></div>
+  <button class="lnk2" id="big" data-t="mn.grande">Apri la finestra grande ↗</button>
+  <div class="conf hidden" id="conf"><b data-t="fine.t">Fermo la registrazione?</b><div class="bt"><button class="btn b-ghost" id="no" data-t="continua">Continua</button><button class="btn b-end" id="si" style="background:#e11d48" data-t="fine.si">Sì, ferma</button></div></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
   <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
 </svg>
+<script src="testi.js"></script>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
 const due = n => String(n).padStart(2, '0');
 let A = null;
 for (let i = 0; i < 40; i++) $('wv').appendChild(document.createElement('i'));
-function via() {
+async function via() {
+  try { const r = await A.riepilogo(); LINGUA = r.lingua || 'it'; } catch (e) {}
+  traduciPagina();
   $('bp').onclick = () => A.pausa().then(giro);
   $('bf').onclick = () => $('conf').classList.remove('hidden');
   $('no').onclick = () => $('conf').classList.add('hidden');
@@ -59,14 +62,14 @@ async function giro() {
   if (!S.registro) return;
   const s = S.secondi || 0;
   $('tm').textContent = due(Math.floor(s / 3600)) + ':' + due(Math.floor(s / 60) % 60) + ':' + due(s % 60);
-  $('nm').textContent = `${S.nome} · ${S.slide} slide · ${S.pronti} pacchetti pronti`;
+  $('nm').textContent = t('mn.info', {n: S.nome, s: S.slide, p: S.pronti});
   document.body.classList.toggle('pz', !!S.pausa);
   $('tag').className = 'tag' + (S.pausa ? ' pz' : '');
-  $('tag').innerHTML = S.pausa ? `❚❚ PAUSA ${due(Math.floor(S.pausa_sec / 60))}:${due(S.pausa_sec % 60)}` : '<i></i>REC';
+  $('tag').innerHTML = S.pausa ? t('mn.pz', {t: due(Math.floor(S.pausa_sec / 60)) + ':' + due(S.pausa_sec % 60)}) : '<i></i>REC';
   const lv = (S.livelli || []).slice(-40);
   $('wv').querySelectorAll('i').forEach((b, i) => { b.style.height = Math.max(8, Math.min(100, Math.sqrt(lv[i] || 0) * 160)) + '%'; });
   $('bp').className = 'btn ' + (S.pausa ? 'b-ri' : 'b-pz');
-  $('bp').innerHTML = S.pausa ? '<svg><use href="#i-play"/></svg>Riprendi' : '<svg><use href="#i-pause"/></svg>Pausa';
+  $('bp').innerHTML = S.pausa ? '<svg><use href="#i-play"/></svg>' + t('mn.riprendi') : '<svg><use href="#i-pause"/></svg>' + t('mn.pausa');
   $('av').classList.toggle('hidden', !S.avviso);
   $('av').textContent = S.avviso ? '⚠ ' + S.avviso : '';
 }

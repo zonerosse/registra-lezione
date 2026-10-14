@@ -23,6 +23,8 @@ import zipfile
 from pathlib import Path
 
 import elaborazione as el
+import testi
+from testi import tr
 
 log = logging.getLogger("registra_lezione")
 
@@ -97,14 +99,14 @@ def _richiesta(chiave, percorso, corpo=None, timeout=60):
             msg = ""
         log.warning("API %s: %s %s", percorso, e.code, msg)
         if e.code in (401, 403):
-            raise ErroreAppunti("chiave non valida o disattivata")
+            raise ErroreAppunti(tr("ap_chiave"))
         if e.code == 400 and "usage limit" in msg.lower():
-            raise ErroreAppunti("limite di spesa raggiunto (si cambia su platform.claude.com)")
+            raise ErroreAppunti(tr("ap_limite"))
         if e.code == 400 and "credit" in msg.lower():
-            raise ErroreAppunti("credito finito (si ricarica su platform.claude.com)")
+            raise ErroreAppunti(tr("ap_credito"))
         if e.code in (429, 500, 502, 503, 504, 529):
             raise _Riprova(msg or str(e.code))
-        raise ErroreAppunti(f"errore da Claude ({e.code}) {msg}".strip())
+        raise ErroreAppunti(tr("ap_errore", c=e.code, m=msg).strip())
     except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
         raise _Riprova(str(e))
 
@@ -117,11 +119,11 @@ def prova_chiave(chiave):
     """True se la chiave funziona. Altrimenti ErroreAppunti con il motivo."""
     chiave = (chiave or "").strip()
     if not chiave.startswith("sk-ant-"):
-        raise ErroreAppunti("la chiave deve iniziare con sk-ant-: controlla di averla copiata tutta")
+        raise ErroreAppunti(tr("ap_sk"))
     try:
         _richiesta(chiave, "models?limit=1", timeout=30)
     except _Riprova:
-        raise ErroreAppunti("non riesco a collegarmi: serve internet")
+        raise ErroreAppunti(tr("ap_rete"))
     return True
 
 
@@ -198,19 +200,35 @@ def _pdf_del_pacchetto(cartella, k):
     info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
     zp = (info.get("pacchetti") or {}).get(str(k))
     if not zp or not Path(zp).exists():
-        raise ErroreAppunti("il pacchetto di questa parte non si trova piu'")
+        raise ErroreAppunti(tr("ap_pacchetto"))
     with zipfile.ZipFile(zp) as z:
         nome = next((n for n in z.namelist() if n.lower().endswith(".pdf")), None)
         if not nome:
-            raise ErroreAppunti("nel pacchetto manca il PDF")
+            raise ErroreAppunti(tr("ap_pdf"))
         return Path(zp), z.read(nome)
 
 
-def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
+def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it"):
+    """Le istruzioni, con la lingua degli appunti e quella in cui parla il docente."""
+    nome_app = {"it": "ITALIANO", "en": "INGLESE (English)"}.get(lingua_appunti, "ITALIANO")
+    extra = (f"\n\nLINGUA DEGLI APPUNTI: {nome_app}. Scrivi TUTTO in questa lingua: titolo, domande, "
+             "parole chiave, appunti, riassunto, formulario, esercizi e punti da controllare.")
+    if lingua_lezione != lingua_appunti:
+        if lingua_lezione in (None, "", "auto"):
+            extra += (" Il docente puo' parlare in un'altra lingua: in quel caso traduci, e per i termini "
+                      "tecnici aggiungi tra parentesi il termine originale usato a lezione.")
+        else:
+            orig = testi.nome_lingua(lingua_lezione, "it")
+            extra += (f" La lezione e' in {orig}: traduci il contenuto e per i termini tecnici aggiungi tra "
+                      f"parentesi il termine originale in {orig}, come compare sulle slide.")
+    return ISTRUZIONI.replace("con il METODO CORNELL, in italiano,", "con il METODO CORNELL") + extra
+
+
+def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it"):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
-        "system": ISTRUZIONI,
+        "system": istruzioni_lingua(lingua_appunti, lingua_lezione),
         "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di studio dell'ora di lezione.",
                    "input_schema": SCHEMA}],
         # Sonnet 5.5 non accetta tool_choice "tool"/"any" (errore 400): si usa "auto"
@@ -231,7 +249,7 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
         except _Riprova as e:
             log.warning("Claude occupato o rete assente (%s): riprovo tra %s s", e, attesa)
             if n == tentativi - 1:
-                raise ErroreAppunti("Claude non risponde o manca internet: tocca Riprova piu' tardi")
+                raise ErroreAppunti(tr("ap_occupato"))
             time.sleep(attesa)
             attesa *= 2
     uso = r.get("usage", {})
@@ -244,7 +262,7 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto=""):
     dati = _json_dal_testo(testo)
     if dati is None:
         log.warning("risposta senza appunti: %s", testo[:500])
-        raise ErroreAppunti("risposta di Claude senza appunti: tocca Riprova")
+        raise ErroreAppunti(tr("ap_vuoto"))
     return dati, spesa
 
 
@@ -286,7 +304,7 @@ def pdf_appunti_parti(parti, info, destinazione):
             self.set_xy(22, y - 0.6)
             self.set_font(self._f, "", 7.5)
             self.set_text_color(120, 132, 150)
-            self.cell(120, 4.6, self._t("Creato con Registra Lezione · Punto Web Ferrara"))
+            self.cell(120, 4.6, self._t(self._creato))
             self.set_xy(self.w - 16 - 40, y - 0.6)
             self.cell(40, 4.6, f"{self.page_no()} / {{nb}}", align="R")
             self.set_text_color(0, 0, 0)
@@ -313,7 +331,8 @@ def pdf_appunti_parti(parti, info, destinazione):
         if solo_latin:
             return s.encode("latin-1", "replace").decode("latin-1")
         return s
-    pdf._f, pdf._t = font, t
+    L = testi.lingua_di(info)
+    pdf._f, pdf._t, pdf._creato = font, t, tr("pdf_creato", L)
 
     def sezione(titolo):
         pdf.ln(4)
@@ -380,17 +399,19 @@ def pdf_appunti_parti(parti, info, destinazione):
         pdf.add_page()
         if indice == 0:
             nd = sum(len(normalizza(d).get("blocchi") or []) for d, _, _ in parti)
-            etichette = [f"{nd} domande" if nd else "", f"{len(parti)} parti" if completa else "",
-                         "formulario" if any(normalizza(d).get("formulario") for d, _, _ in parti) else "",
-                         "esercizi svolti" if any(normalizza(d).get("esercizi_svolti") for d, _, _ in parti) else ""]
+            etichette = [tr("pdf_domande", L, n=nd) if nd else "", tr("pdf_parti", L, n=len(parti)) if completa else "",
+                         tr("pdf_formulario_b", L) if any(normalizza(d).get("formulario") for d, _, _ in parti) else "",
+                         tr("pdf_esercizi_b", L) if any(normalizza(d).get("esercizi_svolti") for d, _, _ in parti) else ""]
+            ll = info.get("lingua_lezione")
+            if ll and ll != L:
+                etichette.append(tr("pdf_lingua", L, l=testi.nome_lingua(ll, L)))
             _copertina(pdf, font, t, info,
-                       "APPUNTI DELLA LEZIONE COMPLETA · FORMATO CORNELL" if completa else
-                       f"APPUNTI DI STUDIO · FORMATO CORNELL · {etichetta.upper()}",
+                       tr("pdf_occhiello_tutti", L) if completa else tr("pdf_occhiello", L, e=etichetta.upper()),
                        info.get("nome", "Lezione"), [x for x in etichette if x])
         if completa and indice == 0:
             pdf.set_font(font, "B", 9)
             pdf.set_text_color(13, 66, 117)
-            testo("INDICE DELLE PARTI", 6)
+            testo(tr("pdf_indice", L), 6)
             pdf.set_text_color(0, 0, 0)
             pdf.set_font(font, "", 10.5)
             for d, et, _ in parti:
@@ -398,7 +419,7 @@ def pdf_appunti_parti(parti, info, destinazione):
             pdf.ln(3)
             pdf.set_font(font, "", 9)
             pdf.set_text_color(*GRIGIO)
-            testo("Appunti creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 4.6)
+            testo(tr("pdf_controlla", L), 4.6)
             pdf.set_text_color(0, 0, 0)
             pdf.add_page()
         _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO,
@@ -453,30 +474,29 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
     riassunto in fondo; poi formulario, esercizi svolti, punti da controllare."""
     from fpdf.enums import MethodReturnValue
     dati = normalizza(dati)
+    L = testi.lingua_di(info)
     VIOLA, VIOLA_CHIARO, LINEA = (124, 58, 237), (243, 237, 255), (214, 204, 245)
     pdf.set_font(font, "B", 17)
     if copertina:
-        testo(dati.get("titolo", "") or f"Appunti {etichetta}", 8)
+        testo(dati.get("titolo", "") or tr("pdf_appunti_di", L, e=etichetta), 8)
     else:
         testo((f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}" if completa
-               else f"{info.get('nome', 'Lezione')} · Appunti {etichetta}"), 8)
+               else tr("pdf_titolo_parte", L, nome=info.get('nome', 'Lezione'), e=etichetta)), 8)
     if copertina:
         pdf.set_font(font, "", 9.5)
         pdf.set_text_color(*GRIGIO)
-        testo("Appunti creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+        testo(tr("pdf_controlla", L), 5)
         pdf.set_text_color(0, 0, 0)
     elif not completa:
         pdf.set_font(font, "", 9.5)
         pdf.set_text_color(*GRIGIO)
         if el.riga_studente(info):
             testo(el.riga_studente(info), 5)
-        testo(f"{el._data_it(info.get('inizio', ''))} · {dati.get('titolo', '')} · appunti in formato Cornell "
-              "creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+        testo(tr("pdf_sotto", L, data=el._data_it(info.get('inizio', '')), tit=dati.get('titolo', '')), 5)
         pdf.set_text_color(0, 0, 0)
     pdf.set_font(font, "", 8.5)
     pdf.set_text_color(124, 58, 237)
-    testo("Come si studia: copri la colonna APPUNTI e prova a rispondere alle domande a sinistra; "
-          "poi controlla. Il riassunto in fondo dice l'essenziale.", 4.4)
+    testo(tr("pdf_studia", L), 4.4)
     pdf.set_text_color(0, 0, 0)
 
     xl, wl = pdf.l_margin, 52.0
@@ -493,9 +513,9 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_text_color(*VIOLA)
         y = pdf.get_y()
         pdf.set_xy(xl, y)
-        pdf.cell(wl, 5, t("DOMANDE E PAROLE CHIAVE"))
+        pdf.cell(wl, 5, t(tr("pdf_col_dom", L)))
         pdf.set_xy(xr, y)
-        pdf.cell(wr, 5, t("APPUNTI"), new_x="LMARGIN", new_y="NEXT")
+        pdf.cell(wr, 5, t(tr("pdf_col_app", L)), new_x="LMARGIN", new_y="NEXT")
         pdf.set_draw_color(*VIOLA)
         pdf.line(xl, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
         pdf.set_text_color(0, 0, 0)
@@ -592,7 +612,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_xy(xl + 4, y + 2.5)
         pdf.set_font(font, "B", 8.5)
         pdf.set_text_color(*VIOLA)
-        pdf.cell(0, 4.5, t("RIASSUNTO"), new_x="LEFT", new_y="NEXT")
+        pdf.cell(0, 4.5, t(tr("pdf_riassunto", L)), new_x="LEFT", new_y="NEXT")
         pdf.set_x(xl + 4)
         pdf.set_font(font, "", 10)
         pdf.set_text_color(0, 0, 0)
@@ -601,19 +621,19 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_y(y + h + 2)
 
     if dati.get("formulario"):
-        sezione("Formulario: simboli e formule")
+        sezione(tr("pdf_formulario", L))
         pdf.set_font(font, "", 10)
         with pdf.table(col_widths=(42, 58), line_height=5.6, text_align="LEFT") as tab:
             r = tab.row()
-            r.cell(t("Simbolo / formula"))
-            r.cell(t("Significato"))
+            r.cell(t(tr("pdf_simbolo", L)))
+            r.cell(t(tr("pdf_significato", L)))
             for v in dati["formulario"]:
                 r = tab.row()
                 r.cell(t(v.get("simbolo", "")))
                 r.cell(t(v.get("significato", "")))
 
     if dati.get("esercizi_svolti"):
-        sezione("Esercizi svolti")
+        sezione(tr("pdf_esercizi", L))
         for e in dati["esercizi_svolti"]:
             pdf.set_font(font, "B", 10.5)
             testo(e.get("titolo", "") + (f"  ({e['dove']})" if e.get("dove") else ""))
@@ -624,12 +644,12 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
             pdf.ln(2)
 
     if dati.get("domande_esame"):
-        sezione("Altre domande d'esame")
+        sezione(tr("pdf_altre", L))
         for k, d in enumerate(dati["domande_esame"], 1):
             testo(f"{k}. {d}")
 
     if dati.get("da_controllare"):
-        sezione("Da controllare")
+        sezione(tr("pdf_controllare", L))
         pdf.set_text_color(*GRIGIO)
         for d in dati["da_controllare"]:
             testo(f"• {d}")
@@ -654,14 +674,15 @@ def appunti_lezione_completa(cartella, cartella_pacchetti):
             if dati is None:
                 return None
             base = Path(pac[k]).stem
-            etichetta = base.split(" – ")[-1] if " – " in base else f"parte {k}"
+            etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', testi.lingua_di(info))} {k}"
             mappa = el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or []
             slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None,
                               m.get("inizio", 0)) for m in mappa}
             parti.append((dati, etichetta, slide))
         primo = Path(pac[sorted(pac, key=int)[0]]).stem
         base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
-        dest = str(Path(cartella_pacchetti) / f"Appunti – {base} – lezione completa.pdf")
+        L = testi.lingua_di(info)
+        dest = str(Path(cartella_pacchetti) / f"{tr('file_appunti', L)} – {base} – {tr('lezione_completa', L)}.pdf")
         pdf_appunti_parti(parti, info, dest)
     el.aggiorna_info(cartella, appunti_completi=str(dest))
     return dest
@@ -675,15 +696,17 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti):
     spesa = 0.0
     if gia is None:
         info0 = el.leggi_json(cartella / "info.json", {}) or {}
-        dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0))
+        dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
+                                      lingua_appunti=testi.lingua_di(info0),
+                                      lingua_lezione=info0.get("lingua_lezione") or "it")
         el.scrivi_json(cartella / f"appunti_{k:03d}.json", dati)
     else:
         dati = gia
     info = el.leggi_json(cartella / "info.json", {}) or {}
     # stesso nome del pacchetto: "<nome> – parte k (00h-01h)"
     base = zp.stem
-    etichetta = base.split(" – ")[-1] if " – " in base else f"parte {k}"
-    dest = Path(cartella_pacchetti) / f"Appunti – {base}.pdf"
+    etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', testi.lingua_di(info))} {k}"
+    dest = Path(cartella_pacchetti) / f"{tr('file_appunti', testi.lingua_di(info))} – {base}.pdf"
     mappa = el.leggi_json(cartella / f"pacchetto_{k:03d}.json", []) or []
     slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None, m.get("inizio", 0))
              for m in mappa}

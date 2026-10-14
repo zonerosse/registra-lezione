@@ -37,28 +37,42 @@ def al_cestino(percorsi):
     return motore.al_cestino(percorsi)
 
 
-def finestra_nuova_possibile():
-    """True se si puo' usare la finestra nuova (libreria pywebview + Edge WebView2)."""
+def perche_no():
+    """None se si puo' usare la finestra nuova; "edge" se manca Edge WebView2; "altro" per altri motivi."""
     if os.environ.get("RL_FINESTRA") == "classica":
-        return False
+        return "altro"
+    if os.environ.get("RL_FINESTRA") == "senza_edge":
+        return "edge"
     try:
         import webview  # noqa: F401
         if sys.platform == "win32":
             from webview.platforms import winforms
-            return winforms.renderer == "edgechromium"
-        return True
+            return None if winforms.renderer == "edgechromium" else "edge"
+        return None
     except Exception:
         logging.getLogger("registra_lezione").exception("finestra nuova non disponibile")
-        return False
+        return "altro"
+
+
+def finestra_nuova_possibile():
+    """True se si puo' usare la finestra nuova (libreria pywebview + Edge WebView2)."""
+    return perche_no() is None
 
 
 def main():
-    if finestra_nuova_possibile():
+    motivo = perche_no()
+    if motivo is None:
         import finestra_web
         finestra_web.main()
-    else:
-        import classica
-        classica.main()
+        return
+    if motivo == "edge":
+        try:
+            import manca_edge
+            manca_edge.mostra()
+        except Exception:
+            logging.getLogger("registra_lezione").exception("avviso Edge")
+    import classica
+    classica.main()
 
 
 if __name__ == "__main__":

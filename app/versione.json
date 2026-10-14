@@ -1,5 +1,6 @@
 {
- "versione": "3.0",
+ "versione": "3.1",
  "librerie": 2,
- "novita": "Nuova grafica Punto Web Ferrara: menu a lato, pulsante REGISTRA, onda dell'audio e ultime slide mentre registri, ricerca nelle registrazioni, appunti con copertina. Si installa col Setup (una volta sola)."
+ "novita": "Programma anche in inglese; scegli in che lingua parla il docente (gli appunti arrivano nella tua lingua); avviso se manca il componente di Edge.",
+ "novita_en": "The program is now also in English; choose the lecturer's language (notes arrive in your language); warning if the Edge component is missing."
 }

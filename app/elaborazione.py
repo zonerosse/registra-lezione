@@ -26,6 +26,9 @@ from pathlib import Path
 
 log = logging.getLogger("registra_lezione")
 
+import testi                     # noqa: E402
+from testi import tr             # noqa: E402
+
 # Modello di trascrizione: "small" e' un buon compromesso velocita'/qualita'.
 MODELLO_WHISPER = os.environ.get("RL_MODELLO", "small")
 LINGUA = "it"
@@ -129,7 +132,8 @@ def riga_studente(info):
     d = info.get("studente") or {}
     corso = d.get("corso", "")
     if d.get("anno"):
-        corso = f"{corso}, {d['anno']} anno" if corso else f"{d['anno']} anno"
+        anno = tr("anno", testi.lingua_di(info))
+        corso = f"{corso}, {d['anno']} {anno}" if corso else f"{d['anno']} {anno}"
     return " · ".join(x for x in (d.get("nome", ""), corso, d.get("universita", "")) if x)
 
 
@@ -173,9 +177,12 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     if threads is None:
         threads = max(1, (os.cpu_count() or 2) - 1)
     model = WhisperModel(MODELLO_WHISPER, device="cpu", compute_type="int8", cpu_threads=threads)
+    lingua = (leggi_json(cartella / "info.json", {}) or {}).get("lingua_lezione") or LINGUA
     segmenti, info = model.transcribe(
-        audio_16k(wav), language=LINGUA, vad_filter=True, beam_size=1,
+        audio_16k(wav), language=None if lingua == "auto" else lingua, vad_filter=True, beam_size=1,
         condition_on_previous_text=False)
+    if lingua == "auto" and getattr(info, "language", None):
+        aggiorna_info(cartella, lingua_rilevata=info.language)
     offset = (k - 1) * parte_secondi(cartella)
     durata = info.duration or 1.0
     out = []
@@ -367,9 +374,10 @@ def raggruppa(slides, segmenti, inizio, fine):
 
 def crea_html(cartella, info, gruppi):
     cartella = Path(cartella)
+    L = testi.lingua_di(info)
     nome = html.escape(info.get("nome", "Lezione"))
     n_sl = len([g for g in gruppi if g["slide"]])
-    sottotitolo = f"{_data_it(info.get('inizio', ''))} · durata {durata_leggibile(info.get('durata', 0))} · {n_sl} slide"
+    sottotitolo = f"{_data_it(info.get('inizio', ''))} · {tr('tr_durata', L)} {durata_leggibile(info.get('durata', 0))} · {n_sl} slide"
     indice, blocchi = [], []
     for n, g in enumerate(gruppi, 1):
         ora = f"{hms(g['inizio'])} – {hms(g['fine'])}"
@@ -377,14 +385,14 @@ def crea_html(cartella, info, gruppi):
             dati = base64.b64encode(immagine_slide(cartella, g["slide"]).read_bytes()).decode()
             img = f'<a href="#" class="zoom"><img src="data:image/jpeg;base64,{dati}" alt="Slide {n}"></a>'
         else:
-            img = '<div class="noimg">Nessuna slide catturata</div>'
+            img = f'<div class="noimg">{tr("tr_noimg", L)}</div>'
         testo = "".join(f"<p>{html.escape(p)}</p>" for p in g["paragrafi"]) or \
-            '<p class="vuoto">(in questo tratto il docente non ha parlato, o l\'audio non si sentiva)</p>'
+            f'<p class="vuoto">{html.escape(tr("tr_silenzio", L))}</p>'
         indice.append(f'<a href="#s{n}"><b>{n}</b> <span>{hms(g["inizio"])}</span></a>')
         blocchi.append(f'<section id="s{n}"><div class="ora">Slide {n} · {ora}</div>{img}<div class="t">{testo}</div></section>')
 
     pagina = f"""<!doctype html>
-<html lang="it"><head><meta charset="utf-8">
+<html lang="{L}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{nome}</title>
 <style>
@@ -411,7 +419,7 @@ section img{{width:100%;border:1px solid var(--line);border-radius:4px;display:b
 @media print{{body{{background:#fff}}nav,#big{{display:none}}section{{break-inside:avoid}}}}
 </style></head><body><main>
 <header><h1>{nome}</h1><div class="sub">{sottotitolo}</div>{('<div class="sub">' + html.escape(riga_studente(info)) + '</div>') if riga_studente(info) else ''}
-<div class="nota">Il testo è una trascrizione automatica: può contenere qualche parola sbagliata. Tocca una slide per ingrandirla.</div>
+<div class="nota">{html.escape(tr("tr_nota", L))}</div>
 <nav>{''.join(indice)}</nav></header>
 {''.join(blocchi)}
 </main><div id="big"><img alt=""></div>
@@ -455,6 +463,7 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
             return s.encode("latin-1", "replace").decode("latin-1")
         return s
 
+    L = testi.lingua_di(info)
     n_sl = len([g for g in gruppi if g["slide"]])
     pdf.add_page()
     pdf.set_font(font, "B", 18)
@@ -464,7 +473,7 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
     if sottotitolo_extra:
         riga += f" - {sottotitolo_extra}"
     else:
-        riga += f" - durata {durata_leggibile(info.get('durata', 0))}"
+        riga += f" - {tr('tr_durata', L)} {durata_leggibile(info.get('durata', 0))}"
     riga += f" - {n_sl} slide"
     pdf.multi_cell(0, 6, t(riga), new_x="LMARGIN", new_y="NEXT")
     if riga_studente(info):
@@ -472,11 +481,7 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
     pdf.ln(3)
     pdf.set_font(font, "", 9.5)
     pdf.set_text_color(90, 100, 115)
-    pdf.multi_cell(0, 5, t("Registrazione di una lezione universitaria seguita su Google Meet. "
-                           "Ogni sezione contiene l'immagine della slide mostrata dal docente e, sotto, "
-                           "la trascrizione automatica di quello che il docente ha detto mentre quella slide era "
-                           "sullo schermo (con l'orario dall'inizio della lezione). "
-                           "La trascrizione può contenere errori di riconoscimento."),
+    pdf.multi_cell(0, 5, t(tr("tr_intro", L)),
                    new_x="LMARGIN", new_y="NEXT")
     pdf.set_text_color(0, 0, 0)
 
@@ -514,7 +519,7 @@ def crea_pdf(cartella, info, gruppi, destinazione, sottotitolo_extra=""):
                 pdf.ln(1)
         else:
             pdf.set_text_color(110, 118, 134)
-            pdf.multi_cell(0, 5, t("(nessuna parola in questo tratto)"), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 5, t(tr("tr_nessuna", L)), new_x="LMARGIN", new_y="NEXT")
             pdf.set_text_color(0, 0, 0)
         pdf.ln(3)
     pdf.output(str(destinazione))
@@ -525,10 +530,10 @@ def crea_txt(info, gruppi, segmenti, destinazione, titolo_extra=""):
              _data_it(info.get("inizio", "")), ""]
     for n, g in enumerate(gruppi, 1):
         righe.append(f"=== Slide {n} ({hms(g['inizio'])} - {hms(g['fine'])}) ===")
-        righe += g["paragrafi"] or ["(nessuna parola)"]
+        righe += g["paragrafi"] or [tr("tr_nessuna_breve", testi.lingua_di(info))]
         righe.append("")
     righe.append("")
-    righe.append("=== Trascrizione completa con orari ===")
+    righe.append(f"=== {tr('tr_completa', testi.lingua_di(info))} ===")
     for s in segmenti:
         righe.append(f"[{hms(s['inizio'])}] {s['testo']}")
     Path(destinazione).write_text("\n".join(righe), encoding="utf-8")
@@ -548,10 +553,13 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
         fine = max(s["fine"] for s in segmenti)
     gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, inizio, fine)
 
-    etichetta = f"parte {k} ({ore_min(inizio)}-{ore_min(fine)})"
+    L = testi.lingua_di(info)
+    etichetta = f"{tr('parte', L)} {k} ({ore_min(inizio)}-{ore_min(fine)})"
     # data e ora nel nome: due lezioni con lo stesso nome non si sovrascrivono i pacchetti
     try:
-        quando = datetime.datetime.fromisoformat(info.get("inizio", "")).strftime("%d-%m ore %H.%M")
+        ore = tr("ore", L)
+        quando = datetime.datetime.fromisoformat(info.get("inizio", "")).strftime(
+            f"%d-%m {ore} %H.%M" if ore else "%d-%m %H.%M")
     except Exception:
         quando = ""
     base = " – ".join(x for x in (nome_sicuro(info.get("nome")), quando, etichetta) if x)
@@ -560,7 +568,7 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     pdf = lavoro / f"{base}.pdf"
     txt = lavoro / f"{base}.txt"
     crea_pdf(cartella, info, gruppi, pdf,
-             sottotitolo_extra=f"{etichetta} della lezione, da {hms(inizio)} a {hms(fine)}")
+             sottotitolo_extra=tr("tr_parte_di", L, e=etichetta, a=hms(inizio), b=hms(fine)))
     crea_txt(info, gruppi, segmenti, txt, titolo_extra=etichetta)
 
     dest = Path(cartella_pacchetti)

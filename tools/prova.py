@@ -262,7 +262,7 @@ def prova_appunti(t):
              "domande_esame": ["Definisci il limite."], "da_controllare": ["00:31 audio poco chiaro"]}
     visti = []
 
-    def chiedi(chiave, pdf_bytes, tentativi=4, contesto=""):
+    def chiedi(chiave, pdf_bytes, tentativi=4, contesto="", **kw):
         visti.append((chiave, pdf_bytes[:5], contesto))
         return finta, 0.19
     ap.chiedi_a_claude = chiedi

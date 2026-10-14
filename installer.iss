@@ -26,11 +26,17 @@ UninstallDisplayName=Registra Lezione
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+ShowLanguageDialog=auto
 WizardImageFile=grafica\installa-0.bmp,grafica\installa-1.bmp,grafica\installa-2.bmp,grafica\installa-3.bmp
 WizardSmallImageFile=grafica\installa-piccola-0.bmp,grafica\installa-piccola-1.bmp,grafica\installa-piccola-2.bmp,grafica\installa-piccola-3.bmp
 
 [Languages]
 Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "en"; MessagesFile: "compiler:Default.isl"
+
+[CustomMessages]
+it.Apri=Apri Registra Lezione
+en.Apri=Open Registra Lezione
 
 [InstallDelete]
 ; una reinstallazione rimette il codice del pacchetto, togliendo aggiornamenti a meta'
@@ -47,7 +53,7 @@ Name: "{userdesktop}\Registra Lezione"; Filename: "{app}\Registra Lezione.exe"; 
 Name: "{userprograms}\Registra Lezione"; Filename: "{app}\Registra Lezione.exe"; WorkingDir: "{app}"
 
 [Run]
-Filename: "{app}\Registra Lezione.exe"; Description: "Apri Registra Lezione"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\Registra Lezione.exe"; Description: "{cm:Apri}"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
 ; le lezioni registrate restano in Documenti: qui si toglie solo il programma

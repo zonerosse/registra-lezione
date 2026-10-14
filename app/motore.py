@@ -42,7 +42,21 @@ def cartella_documenti():
     return Path.home() / "Documents"
 
 
-BASE = cartella_documenti() / "Lezioni registrate"
+def _base():
+    """Cartella delle registrazioni: "Lezioni registrate" (o "Recorded lectures" su un Windows non italiano)."""
+    it = cartella_documenti() / "Lezioni registrate"
+    en = cartella_documenti() / "Recorded lectures"
+    if it.exists() or not en.exists() and _lingua_pc() == "it":
+        return it
+    return en
+
+
+def _lingua_pc():
+    import testi
+    return testi.lingua_windows()
+
+
+BASE = _base()
 BASE.mkdir(parents=True, exist_ok=True)
 CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / "RegistraLezione" / "config.json"
 
@@ -55,11 +69,14 @@ import aggiorna as agg               # noqa: E402
 import appunti as ap                 # noqa: E402
 import elaborazione as el            # noqa: E402
 import registratore as rg            # noqa: E402
+import testi                         # noqa: E402
+from testi import tr                 # noqa: E402
 
 
 def leggi_config():
     c = el.leggi_json(CONFIG, {}) or {}
-    c.setdefault("cartella_pacchetti", str(cartella_documenti() / "Pacchetti per Claude"))
+    testi.LINGUA = c.get("lingua") if c.get("lingua") in testi.T else testi.lingua_windows()
+    c.setdefault("cartella_pacchetti", str(cartella_documenti() / tr("pacchetti_cartella")))
     c.setdefault("appunti_attivi", False)
     c.setdefault("chiave", "")
     return c
@@ -284,9 +301,9 @@ class Motore:
                 pausa = r.in_pausa
                 avviso = ""
                 if "audio" in r.errori:
-                    avviso = "Problema con l'audio: registro solo lo schermo."
+                    avviso = tr("avviso_audio_err")
                 elif not pausa and time.monotonic() - self.silenzio_da > 60:
-                    avviso = "Da un minuto non sento nessun suono: controlla che il volume del PC non sia a zero."
+                    avviso = tr("avviso_silenzio")
                 s.update(secondi=int(r.secondi()), slide=r.n_slide, gb=round(self.gb_registrati(), 2),
                          livello=float(r.livello), livelli=list(self._livelli), pausa=pausa,
                          pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso)
@@ -354,7 +371,9 @@ class Motore:
     def riepilogo(self):
         cart = Path(self.cfg["cartella_pacchetti"])
         ha_chiave = bool(self.chiave())
-        return {"cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
+        return {"lingua": testi.LINGUA, "lingua_scelta": self.cfg.get("lingua") in testi.T,
+                "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
+                "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
                 "studente": self.cfg.get("studente") or {}, "recenti": self.cfg.get("materie_recenti") or [],
@@ -364,15 +383,32 @@ class Motore:
     # ------------------------------------------------------------------ impostazioni
 
     def imposta(self, campo, valore):
-        if campo == "parte_minuti":
+        if campo == "lingua":
+            if valore not in testi.T:
+                return {"ok": False, "msg": "?"}
+            vecchia = str(cartella_documenti() / tr("pacchetti_cartella"))
+            self.cfg["lingua"] = testi.LINGUA = valore
+            nuova = str(cartella_documenti() / tr("pacchetti_cartella"))
+            # la cartella dei pacchetti di serie prende il nome nella lingua scelta (se e' ancora vuota)
+            c = Path(self.cfg.get("cartella_pacchetti", ""))
+            if str(c) == vecchia and vecchia != nuova and (not c.exists() or not any(c.iterdir())):
+                self.cfg["cartella_pacchetti"] = nuova
+            if self.cfg.get("lingua_lezione") in (None, "it", "en") and not self.cfg.get("lingua_lezione_scelta"):
+                self.cfg["lingua_lezione"] = valore
+        elif campo == "lingua_lezione":
+            if valore not in testi.LEZIONE:
+                return {"ok": False, "msg": "?"}
+            self.cfg["lingua_lezione"] = valore
+            self.cfg["lingua_lezione_scelta"] = True
+        elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
         elif campo in ("mini_finestra", "promemoria_dnd"):
             self.cfg[campo] = bool(valore)
         elif campo == "appunti_attivi":
             if self.reg is not None:
-                return {"ok": False, "msg": "Si cambia prima di iniziare la registrazione."}
+                return {"ok": False, "msg": tr("imp_prima")}
             if valore and not self.chiave():
-                return {"ok": False, "msg": "Prima inserisci la chiave di Claude."}
+                return {"ok": False, "msg": tr("imp_chiave")}
             self.cfg["appunti_attivi"] = bool(valore)
         elif campo == "studente":
             self.cfg["studente"] = {k: str(v).strip() for k, v in (valore or {}).items()}
@@ -386,18 +422,18 @@ class Motore:
     def prova_chiave(self, k):
         k = (k or "").strip()
         if not k:
-            return {"ok": False, "msg": "Incolla la chiave."}
+            return {"ok": False, "msg": tr("chiave_vuota")}
         try:
             ap.prova_chiave(k)
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
         except Exception:
             log.exception("prova chiave")
-            return {"ok": False, "msg": "Non riesco a provarla: riprova."}
+            return {"ok": False, "msg": tr("chiave_non_provata")}
         self.cfg["chiave"] = ap.nascondi_chiave(k)
         self.cfg["appunti_attivi"] = True
         salva_config(self.cfg)
-        return {"ok": True, "msg": "Chiave valida, salvata. Appunti automatici accesi."}
+        return {"ok": True, "msg": tr("chiave_ok")}
 
     def togli_chiave(self):
         self.cfg["chiave"] = ""
@@ -440,7 +476,9 @@ class Motore:
             el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": datetime.datetime.now().isoformat(timespec="seconds"),
                                                 "durata": 0, "n_slide": 0, "stato": "registrazione", "pacchetti": {},
                                                 "studente": self.cfg.get("studente") or {},
-                                                "parte_secondi": self.parte_sec})
+                                                "parte_secondi": self.parte_sec,
+                                                "lingua_appunti": testi.LINGUA,
+                                                "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
@@ -499,7 +537,7 @@ class Motore:
 
     def nuova(self):
         if self.occupato:
-            return {"ok": False, "msg": "Aspetta che finisca di preparare la lezione completa."}
+            return {"ok": False, "msg": tr("aspetta_completa")}
         self.vista = "pronto"
         threading.Thread(target=self.controlli, daemon=True).start()
         return {"ok": True}
@@ -515,7 +553,7 @@ class Motore:
 
     def riprova_appunti(self, k):
         if not self.chiave():
-            return {"ok": False, "msg": "Manca la chiave di Claude (Impostazioni)."}
+            return {"ok": False, "msg": tr("manca_chiave")}
         self.accoda_appunti(self.cartella_corrente, int(k))
         return {"ok": True}
 
@@ -592,7 +630,7 @@ class Motore:
     def completa(self, cartella):
         """Finisce una lezione rimasta a meta' (es. PC spento mentre preparava i file)."""
         if self.occupato:
-            return {"ok": False, "msg": "Aspetta che finisca il lavoro in corso."}
+            return {"ok": False, "msg": tr("aspetta_lavoro")}
         cart = Path(cartella)
         info = el.leggi_json(cart / "info.json", {}) or {}
         fatti = info.get("pacchetti") or {}
@@ -635,8 +673,8 @@ class Motore:
         info = el.leggi_json(Path(cart) / "info.json", {}) or {}
         tutti = info.get("appunti_completi")
         if tutti and Path(tutti).exists():
-            return [{"titolo": "Appunti della lezione", "file": tutti}]
-        return [{"titolo": f"Appunti parte {k}", "file": v}
+            return [{"titolo": tr("app_tutti"), "file": tutti}]
+        return [{"titolo": tr("app_parte", k=k), "file": v}
                 for k, v in sorted((info.get("appunti") or {}).items(), key=lambda x: int(x[0]))
                 if Path(v).exists()]
 
@@ -682,6 +720,7 @@ class Motore:
                 "crea_appunti": bool(stato == "pronta" and mancano and ha_chiave and not self.occupato),
                 "rifai_appunti": bool(stato == "pronta" and appunti and not mancano and ha_chiave and not self.occupato),
                 "sigla": sigla(nome), "colore": colore_materia(nome),
+                "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
         try:
             liberi = shutil.disk_usage(BASE).free
@@ -702,7 +741,7 @@ class Motore:
             return {"ok": True}
         except Exception:
             log.exception("rinomina")
-            return {"ok": False, "msg": "Non sono riuscito a rinominare tutto. Forse un file è aperto: chiudilo e riprova."}
+            return {"ok": False, "msg": tr("rinomina_err")}
 
     def _applica_rinomina(self, cart, vecchio, nuovo):
         vb, nb = el.nome_sicuro(vecchio), el.nome_sicuro(nuovo)
@@ -745,7 +784,7 @@ class Motore:
             return {"ok": True}
         except Exception:
             log.exception("elimina")
-            return {"ok": False, "msg": "Non sono riuscito a eliminare la registrazione. Forse un file è aperto: chiudilo e riprova."}
+            return {"ok": False, "msg": tr("elimina_err")}
 
     def elimina_video(self, cartelle):
         """Elimina DEFINITIVAMENTE i video (nel Cestino occuperebbero ancora spazio)."""
@@ -764,23 +803,23 @@ class Motore:
 
     def cerca_aggiornamenti(self):
         if self.occupato:
-            self.agg = {"tipo": "msg", "testo": "Sto registrando o preparando una lezione: l'aggiornamento si fa quando ho finito."}
+            self.agg = {"tipo": "msg", "testo": tr("agg_occupato")}
             return
-        self.agg = {"tipo": "cerco", "testo": "Cerco aggiornamenti…"}
+        self.agg = {"tipo": "cerco", "testo": tr("agg_cerco")}
 
         def lavoro():
             try:
                 t = agg.cerca()
                 if t is None:
-                    self.agg = {"tipo": "ok", "testo": "Hai già l'ultima versione."}
+                    self.agg = {"tipo": "ok", "testo": tr("agg_ultima")}
                 else:
                     self.agg = {"tipo": "trovato", "dato": t}
             except agg.NonTrovato:
                 log.exception("aggiorna")
-                self.agg = {"tipo": "msg", "testo": "Non trovo gli aggiornamenti su GitHub."}
+                self.agg = {"tipo": "msg", "testo": tr("agg_404")}
             except Exception:
                 log.exception("aggiorna")
-                self.agg = {"tipo": "msg", "testo": "Non riesco a collegarmi a GitHub. Riprova più tardi."}
+                self.agg = {"tipo": "msg", "testo": tr("agg_rete")}
         threading.Thread(target=lavoro, daemon=True).start()
 
     def installa_aggiornamento(self):
@@ -795,14 +834,14 @@ class Motore:
         def lavoro():
             try:
                 agg.installa(dato, lambda f: self.agg.update(perc=f))
-                self.agg = {"tipo": "fatto", "testo": f"Aggiornato alla versione {dato['versione']}. Il programma si riavvia…"}
+                self.agg = {"tipo": "fatto", "testo": tr("agg_fatto", v=dato['versione'])}
                 time.sleep(1.5)
                 agg.riavvia()
                 if self.on_riavvia:
                     self.on_riavvia()
             except Exception:
                 log.exception("installa aggiornamento")
-                self.agg = {"tipo": "msg", "testo": "Aggiornamento non riuscito. Riprova più tardi."}
+                self.agg = {"tipo": "msg", "testo": tr("agg_err")}
         threading.Thread(target=lavoro, daemon=True).start()
 
     def chiudi_agg(self):
@@ -850,7 +889,7 @@ class Motore:
                 self.coda.put(("ap_err", (k, str(e))))
             except Exception:
                 log.exception("appunti parte %s", k)
-                self.coda.put(("ap_err", (k, "errore imprevisto (dettagli nel file registra_lezione.log)")))
+                self.coda.put(("ap_err", (k, tr("ap_imprevisto"))))
 
     def _unisci_appunti(self, cart):
         try:
@@ -862,12 +901,12 @@ class Motore:
         try:
             if el.modello_presente():
                 return
-            self.modello_msg = "Scarico il modello per la trascrizione (una volta sola)…"
+            self.modello_msg = tr("modello_scarico")
             el.scarica_modello()
             self.modello_msg = ""
         except Exception:
             log.exception("modello")
-            self.modello_msg = "Modello per la trascrizione non scaricato: serve internet."
+            self.modello_msg = tr("modello_err")
 
     def _ciclo(self):
         """Ogni quarto di secondo: messaggi dei lavori, livello dell'audio, PC sveglio."""
@@ -919,9 +958,9 @@ class Motore:
             self.lavori.put(("finale", cart))
             avvisi = []
             if "audio" in errori:
-                avvisi.append("L'audio non è stato registrato.")
+                avvisi.append(tr("fine_audio"))
             if "video" in errori or "schermo" in errori:
-                avvisi.append("Il video ha avuto un problema (le slide catturate ci sono).")
+                avvisi.append(tr("fine_video"))
             self.avviso_fine = " ".join(avvisi)
         elif tipo == "parte_perc":
             k, f = dato
@@ -958,9 +997,7 @@ class Motore:
             self._sveglio_voluto = False
             self.finale = None
             self.vista = "pronto"
-            self._messaggio("Qualcosa è andato storto",
-                            "La registrazione è salvata: in «Le mie registrazioni» tocca «Completa» per riprovare.\n\n"
-                            + dato.strip().splitlines()[-1])
+            self._messaggio(tr("err_tit"), tr("err_testo") + "\n\n" + dato.strip().splitlines()[-1])
 
     # ------------------------------------------------------------------ chiusura
 
