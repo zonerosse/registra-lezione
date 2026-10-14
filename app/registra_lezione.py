@@ -107,6 +107,45 @@ def mostra_file(percorso):
         apri(p.parent)
 
 
+def menu_tasto_destro(root):
+    """Menu del tasto destro (Taglia, Copia, Incolla, Seleziona tutto) in tutti i campi di testo."""
+    menu = tk.Menu(root, tearoff=0)
+    stato = {"w": None}
+
+    def fai(evento):
+        w = stato["w"]
+        if w is not None:
+            w.focus_set()
+            w.event_generate(evento)
+
+    def seleziona_tutto():
+        w = stato["w"]
+        if w is not None:
+            w.focus_set()
+            w.select_range(0, "end")
+            w.icursor("end")
+
+    menu.add_command(label="Taglia", command=lambda: fai("<<Cut>>"))
+    menu.add_command(label="Copia", command=lambda: fai("<<Copy>>"))
+    menu.add_command(label="Incolla", command=lambda: fai("<<Paste>>"))
+    menu.add_separator()
+    menu.add_command(label="Seleziona tutto", command=seleziona_tutto)
+
+    def apri_menu(e):
+        stato["w"] = e.widget
+        nascosto = str(e.widget.cget("show") or "") != ""
+        # da un campo nascosto (la chiave) non si taglia ne' copia
+        menu.entryconfigure("Taglia", state="disabled" if nascosto else "normal")
+        menu.entryconfigure("Copia", state="disabled" if nascosto else "normal")
+        try:
+            menu.tk_popup(e.x_root, e.y_root)
+        finally:
+            menu.grab_release()
+
+    root.bind_class("Entry", "<Button-3>", apri_menu)
+    return menu
+
+
 class Bottone(tk.Label):
     """Bottone piatto e colorato come nell'anteprima."""
 
@@ -237,6 +276,7 @@ class App:
         root.minsize(540, 640)
         root.protocol("WM_DELETE_WINDOW", self.chiudi)
         root.report_callback_exception = self.errore_tk
+        self.menu_testo = menu_tasto_destro(root)
         if sys.platform == "win32":
             try:
                 root.iconbitmap(default=str(QUI / "icona.ico"))
