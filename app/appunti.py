@@ -127,51 +127,71 @@ def prova_chiave(chiave):
 
 # --------------------------------------------------------------------------- appunti
 
-ISTRUZIONI = """Sei un tutor universitario. Ricevi il PDF di un'ora di lezione registrata: per ogni slide
+ISTRUZIONI = """Sei un tutor universitario. Ricevi il PDF di un tratto di lezione registrata: per ogni slide
 mostrata dal docente c'e' l'immagine e, sotto, la trascrizione automatica di cio' che il docente
 ha detto (con l'orario dall'inizio della lezione). La trascrizione puo' contenere errori.
 
-Prepara gli appunti di studio di quest'ora, in italiano, per uno studente che deve prepararci
-l'esame. Regole:
-- Basati solo su slide e parole del docente. Non inventare contenuti. Se completi un passaggio
-  con conoscenze generali, dillo esplicitamente.
-- Per ogni concetto indica dove si trova: numero di slide e orario (es. "slide 3, 00:25").
-- Nel campo "slide" di concetti ed esempi metti il numero N della slide del PDF ("Slide N") da
-  mostrare accanto, SOLO se l'immagine aiuta davvero a capire: grafici, schemi, figure, tabelle,
-  formule o passaggi scritti. Metti 0 se la slide e' solo testo gia' riportato negli appunti, se e'
-  un titolo o un indice, o se mostra solo il docente. Non ripetere la stessa slide due volte.
-- Nella legenda metti TUTTI i simboli, le sigle e le formule usati, ciascuno con il significato,
-  in forma breve da tenere sott'occhio. Scrivi le formule in testo semplice con simboli Unicode
-  (es. lim x→0 sin(x)/x = 1, ∑, √, ≤, ∞, x², xᵢ). Niente LaTeX.
-- Gli esempi svolti vanno riportati passo per passo.
-- Le domande d'esame devono essere quelle che un docente farebbe davvero su quest'ora.
-- In "da controllare" segnala i punti dove l'audio sembra trascritto male, o slide e parole non
-  tornano, con l'orario.
+Prepara gli appunti di studio con il METODO CORNELL, in italiano, per uno studente che deve
+prepararci l'esame:
+- "blocchi": la lezione divisa in pochi blocchi, uno per idea. Per ogni blocco:
+  * "domanda": la domanda di ripasso a cui il blocco risponde (andra' nella colonna di sinistra:
+    lo studente copre la destra e prova a rispondere);
+  * "parole_chiave": 1-4 parole o simboli chiave;
+  * "appunti": 2-6 punti BREVI e densi (massimo ~20 parole l'uno): definizioni, formule,
+    passaggi, condizioni, avvertenze del docente. NON copiare la trascrizione e non ripetere le
+    frasi del docente: riformula in modo sintetico, come farebbe il miglior studente del corso;
+  * "dove": slide e orario (es. "slide 3, 00:25");
+  * "slide": il numero N della slide del PDF ("Slide N") da mostrare accanto, SOLO se l'immagine
+    aiuta davvero (grafico, schema, figura, tabella, formula o passaggi scritti); altrimenti 0.
+    Non ripetere la stessa slide due volte.
+- "riassunto": 3-5 righe che dicono l'essenziale di questo tratto (la fascia in fondo del Cornell).
+- "formulario": TUTTI i simboli, le sigle e le formule usati, ciascuno con il significato in
+  breve, da tenere sott'occhio. Formule in testo semplice con simboli Unicode (es. lim x→0
+  sin(x)/x = 1, ∑, √, ≤, ∞, x², xᵢ). Niente LaTeX.
+- "esercizi_svolti": gli esempi svolti dal docente, passo per passo, con slide se utile.
+- "da_controllare": i punti dove l'audio sembra trascritto male, o slide e parole non tornano,
+  con l'orario.
+Basati solo su slide e parole del docente. Non inventare contenuti; se completi un passaggio con
+conoscenze generali, dillo. Meglio pochi blocchi chiari che tanti blocchi ripetitivi.
 Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
 
+_SLIDE = {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}
 SCHEMA = {
     "type": "object",
     "properties": {
-        "titolo": {"type": "string", "description": "argomento principale dell'ora, breve"},
-        "di_cosa_si_parla": {"type": "string", "description": "riassunto di 3-6 frasi"},
-        "concetti": {"type": "array", "items": {"type": "object", "properties": {
-            "titolo": {"type": "string"}, "spiegazione": {"type": "string"},
+        "titolo": {"type": "string", "description": "argomento principale, breve"},
+        "blocchi": {"type": "array", "items": {"type": "object", "properties": {
+            "domanda": {"type": "string"},
+            "parole_chiave": {"type": "array", "items": {"type": "string"}},
+            "appunti": {"type": "array", "items": {"type": "string"}},
             "dove": {"type": "string", "description": "slide e orario"},
-            "slide": {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}},
-            "required": ["titolo", "spiegazione", "dove"]}},
-        "legenda": {"type": "array", "items": {"type": "object", "properties": {
+            "slide": _SLIDE},
+            "required": ["domanda", "appunti"]}},
+        "riassunto": {"type": "string", "description": "3-5 righe"},
+        "formulario": {"type": "array", "items": {"type": "object", "properties": {
             "simbolo": {"type": "string"}, "significato": {"type": "string"}},
             "required": ["simbolo", "significato"]}},
-        "esempi_svolti": {"type": "array", "items": {"type": "object", "properties": {
+        "esercizi_svolti": {"type": "array", "items": {"type": "object", "properties": {
             "titolo": {"type": "string"}, "passaggi": {"type": "array", "items": {"type": "string"}},
-            "dove": {"type": "string"},
-            "slide": {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}},
+            "dove": {"type": "string"}, "slide": _SLIDE},
             "required": ["titolo", "passaggi"]}},
-        "domande_esame": {"type": "array", "items": {"type": "string"}},
         "da_controllare": {"type": "array", "items": {"type": "string"}},
     },
-    "required": ["titolo", "di_cosa_si_parla", "concetti", "legenda", "domande_esame", "da_controllare"],
+    "required": ["titolo", "blocchi", "riassunto", "formulario", "da_controllare"],
 }
+
+
+def normalizza(dati):
+    """Gli appunti fatti prima del formato Cornell (concetti/legenda/domande) diventano blocchi."""
+    if "blocchi" in dati:
+        return dati
+    blocchi = [{"domanda": c.get("titolo", ""), "parole_chiave": [],
+                "appunti": [c.get("spiegazione", "")], "dove": c.get("dove", ""), "slide": c.get("slide", 0)}
+               for c in dati.get("concetti", [])]
+    return {"titolo": dati.get("titolo", ""), "blocchi": blocchi,
+            "riassunto": dati.get("di_cosa_si_parla", ""),
+            "formulario": dati.get("legenda", []), "esercizi_svolti": dati.get("esempi_svolti", []),
+            "domande_esame": dati.get("domande_esame", []), "da_controllare": dati.get("da_controllare", [])}
 
 
 def _pdf_del_pacchetto(cartella, k):
@@ -238,7 +258,7 @@ def _json_dal_testo(testo):
         dati = json.loads(testo[inizio:fine + 1])
     except ValueError:
         return None
-    return dati if isinstance(dati, dict) and "concetti" in dati else None
+    return dati if isinstance(dati, dict) and ("blocchi" in dati or "concetti" in dati) else None
 
 
 def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
@@ -320,6 +340,18 @@ def pdf_appunti_parti(parti, info, destinazione):
         pdf.set_font(font, "", 10.5)
         pdf.ln(1)
 
+    def slide_info(n):
+        """(percorso, inizio) della slide n, se c'e' e non e' gia' stata usata; la segna usata."""
+        slide, usate = stato["slide"], stato["usate"]
+        if n <= 0 or n in usate or n not in slide:
+            return None
+        percorso, inizio = slide[n]
+        if not percorso or not Path(percorso).exists():
+            return None
+        usate.add(n)
+        return percorso, inizio
+    immagine.slide_info = slide_info
+
     completa = len(parti) > 1
     for indice, (dati, etichetta, slide) in enumerate(parti):
         stato["slide"], stato["usate"] = slide or {}, set()
@@ -343,6 +375,11 @@ def pdf_appunti_parti(parti, info, destinazione):
 
 
 def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO):
+    """Una parte di appunti nel formato Cornell: domande a sinistra, appunti a destra,
+    riassunto in fondo; poi formulario, esercizi svolti, punti da controllare."""
+    from fpdf.enums import MethodReturnValue
+    dati = normalizza(dati)
+    VIOLA, VIOLA_CHIARO, LINEA = (124, 58, 237), (243, 237, 255), (214, 204, 245)
     pdf.set_font(font, "B", 17)
     testo((f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}" if completa
            else f"{info.get('nome', 'Lezione')} · Appunti {etichetta}"), 8)
@@ -355,51 +392,154 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
               "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
         pdf.set_text_color(0, 0, 0)
 
-    sezione("Di cosa si è parlato")
-    testo(dati.get("di_cosa_si_parla", ""))
+    xl, wl = pdf.l_margin, 52.0
+    xr = xl + wl + 5
+    wr = pdf.w - pdf.r_margin - xr
+    fondo = pdf.h - pdf.b_margin
 
-    if dati.get("concetti"):
-        sezione("Concetti chiave")
-        for c in dati["concetti"]:
-            pdf.set_font(font, "B", 10.5)
-            testo(c.get("titolo", ""))
-            pdf.set_font(font, "", 10.5)
-            testo(c.get("spiegazione", ""))
-            if c.get("dove"):
-                pdf.set_text_color(*GRIGIO)
-                pdf.set_font(font, "", 9)
-                testo(f"→ {c['dove']}", 4.6)
-                pdf.set_text_color(0, 0, 0)
-            immagine(c.get("slide"))
-            pdf.ln(2)
+    def altezza(w, h, s):
+        righe = pdf.multi_cell(w, h, t(s), dry_run=True, output=MethodReturnValue.LINES)
+        return len(righe) * h
 
-    if dati.get("legenda"):
-        sezione("Legenda di simboli e formule")
+    def intestazione_colonne():
+        pdf.set_font(font, "B", 8.5)
+        pdf.set_text_color(*VIOLA)
+        y = pdf.get_y()
+        pdf.set_xy(xl, y)
+        pdf.cell(wl, 5, t("DOMANDE E PAROLE CHIAVE"))
+        pdf.set_xy(xr, y)
+        pdf.cell(wr, 5, t("APPUNTI"), new_x="LMARGIN", new_y="NEXT")
+        pdf.set_draw_color(*VIOLA)
+        pdf.line(xl, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
+        pdf.set_text_color(0, 0, 0)
+        pdf.ln(2)
+
+    pdf.ln(3)
+    intestazione_colonne()
+    for b in dati.get("blocchi", []):
+        domanda = b.get("domanda", "")
+        chiavi = " · ".join(b.get("parole_chiave") or [])
+        punti = "\n".join(f"• {p}" for p in (b.get("appunti") or []) if p)
+        dove = b.get("dove", "")
+        # immagine (se Claude l'ha scelta)
+        img, img_h, img_w = None, 0.0, 0.0
+        try:
+            n = int(b.get("slide") or 0)
+        except (TypeError, ValueError):
+            n = 0
+        dati_slide = immagine.slide_info(n)
+        if dati_slide:
+            img, inizio_img = dati_slide
+            from PIL import Image
+            with Image.open(img) as im:
+                w_px, h_px = im.size
+            img_w = min(wr, 100.0)
+            img_h = img_w * h_px / w_px
+            if img_h > 58:
+                img_h, img_w = 58.0, 58.0 * w_px / h_px
+        pdf.set_font(font, "B", 9.5)
+        h_sx = altezza(wl, 4.6, domanda)
+        pdf.set_font(font, "", 8.5)
+        h_sx += altezza(wl, 4.2, chiavi) + 1 if chiavi else 0
         pdf.set_font(font, "", 10)
-        with pdf.table(col_widths=(40, 60), line_height=5.6, text_align="LEFT") as tab:
+        h_dx = altezza(wr, 5.0, punti) + (altezza(wr, 4.2, f"→ {dove}") if dove else 0)
+        h_dx += (img_h + 7) if img else 0
+        alto = max(h_sx, h_dx) + 2
+        if pdf.get_y() + min(alto, fondo - pdf.t_margin - 10) > fondo:
+            pdf.add_page()
+            intestazione_colonne()
+        y0 = pdf.get_y()
+        # sinistra: domanda + parole chiave
+        pdf.set_xy(xl, y0)
+        pdf.set_font(font, "B", 9.5)
+        pdf.set_text_color(*VIOLA)
+        pdf.multi_cell(wl, 4.6, t(domanda), align="L", new_x="LEFT", new_y="NEXT")
+        if chiavi:
+            pdf.set_font(font, "", 8.5)
+            pdf.set_text_color(*GRIGIO)
+            pdf.set_x(xl)
+            pdf.multi_cell(wl, 4.2, t(chiavi), align="L", new_x="LEFT", new_y="NEXT")
+        y_sx = pdf.get_y()
+        # destra: appunti
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font(font, "", 10)
+        pdf.set_xy(xr, y0)
+        pdf.multi_cell(wr, 5.0, t(punti), align="L", new_x="LEFT", new_y="NEXT")
+        if dove:
+            pdf.set_font(font, "", 8.5)
+            pdf.set_text_color(*GRIGIO)
+            pdf.set_x(xr)
+            pdf.multi_cell(wr, 4.2, t(f"→ {dove}"), new_x="LEFT", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+        if img:
+            if pdf.get_y() + img_h + 6 > fondo:
+                pdf.add_page()
+                intestazione_colonne()
+                y0 = pdf.get_y()
+            yi = pdf.get_y() + 1
+            pdf.image(str(img), x=xr, y=yi, w=img_w, h=img_h)
+            pdf.set_draw_color(*GRIGIO)
+            pdf.rect(xr, yi, img_w, img_h)
+            pdf.set_xy(xr, yi + img_h)
+            pdf.set_font(font, "", 8)
+            pdf.set_text_color(*GRIGIO)
+            pdf.cell(img_w, 4.5, t(f"Slide {n} · {el.hms(inizio_img)}"), align="C", new_x="LEFT", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+        y1 = max(y_sx, pdf.get_y()) + 2
+        if y1 > y0:
+            pdf.set_draw_color(*LINEA)
+            pdf.line(xr - 2.5, y0, xr - 2.5, y1 - 1)
+            pdf.line(xl, y1, pdf.w - pdf.r_margin, y1)
+        pdf.set_xy(xl, y1 + 2)
+
+    # riassunto: la fascia in fondo del Cornell
+    if dati.get("riassunto"):
+        pdf.set_font(font, "", 10)
+        h = altezza(pdf.w - pdf.l_margin - pdf.r_margin - 8, 5.0, dati["riassunto"]) + 12
+        if pdf.get_y() + h > fondo:
+            pdf.add_page()
+        y = pdf.get_y() + 1
+        pdf.set_fill_color(*VIOLA_CHIARO)
+        pdf.set_draw_color(*VIOLA)
+        pdf.rect(xl, y, pdf.w - pdf.l_margin - pdf.r_margin, h, style="DF")
+        pdf.set_xy(xl + 4, y + 2.5)
+        pdf.set_font(font, "B", 8.5)
+        pdf.set_text_color(*VIOLA)
+        pdf.cell(0, 4.5, t("RIASSUNTO"), new_x="LEFT", new_y="NEXT")
+        pdf.set_x(xl + 4)
+        pdf.set_font(font, "", 10)
+        pdf.set_text_color(0, 0, 0)
+        pdf.multi_cell(pdf.w - pdf.l_margin - pdf.r_margin - 8, 5.0, t(dati["riassunto"]),
+                       new_x="LMARGIN", new_y="NEXT")
+        pdf.set_y(y + h + 2)
+
+    if dati.get("formulario"):
+        sezione("Formulario: simboli e formule")
+        pdf.set_font(font, "", 10)
+        with pdf.table(col_widths=(42, 58), line_height=5.6, text_align="LEFT") as tab:
             r = tab.row()
             r.cell(t("Simbolo / formula"))
             r.cell(t("Significato"))
-            for v in dati["legenda"]:
+            for v in dati["formulario"]:
                 r = tab.row()
                 r.cell(t(v.get("simbolo", "")))
                 r.cell(t(v.get("significato", "")))
 
-    if dati.get("esempi_svolti"):
-        sezione("Esempi svolti")
-        for e in dati["esempi_svolti"]:
+    if dati.get("esercizi_svolti"):
+        sezione("Esercizi svolti")
+        for e in dati["esercizi_svolti"]:
             pdf.set_font(font, "B", 10.5)
             testo(e.get("titolo", "") + (f"  ({e['dove']})" if e.get("dove") else ""))
             pdf.set_font(font, "", 10.5)
-            for i, p in enumerate(e.get("passaggi", []), 1):
-                testo(f"{i}. {p}")
+            for k, p in enumerate(e.get("passaggi", []), 1):
+                testo(f"{k}. {p}")
             immagine(e.get("slide"))
             pdf.ln(2)
 
     if dati.get("domande_esame"):
-        sezione("Domande d'esame probabili")
-        for i, d in enumerate(dati["domande_esame"], 1):
-            testo(f"{i}. {d}")
+        sezione("Altre domande d'esame")
+        for k, d in enumerate(dati["domande_esame"], 1):
+            testo(f"{k}. {d}")
 
     if dati.get("da_controllare"):
         sezione("Da controllare")
