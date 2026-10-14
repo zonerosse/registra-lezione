@@ -18,7 +18,7 @@ jobs:
   exe:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Leggi la versione
         id: v
@@ -40,7 +40,7 @@ jobs:
           }
           exit 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         if: steps.v.outputs.nuova == '1'
         with:
           python-version: '3.12'
@@ -110,12 +110,11 @@ jobs:
 
       - name: Pubblica la release
         if: steps.v.outputs.nuova == '1'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.v.outputs.tag }}
-          name: Registra Lezione ${{ steps.v.outputs.versione }}
-          body_path: note.md
-          files: |
-            RegistraLezione-${{ steps.v.outputs.versione }}.zip
-            aggiornamento.zip
-            versione.json
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = "${{ steps.v.outputs.versione }}"
+          gh release create "${{ steps.v.outputs.tag }}" "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
+            --title "Registra Lezione $v" --notes-file note.md --target $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) { exit 1 }
