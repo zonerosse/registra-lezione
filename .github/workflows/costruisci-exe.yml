@@ -76,8 +76,18 @@ jobs:
           Copy-Item LEGGIMI.txt $dest
 
           $p = Start-Process -FilePath "$dest/Registra Lezione.exe" -ArgumentList "--prova" -Wait -PassThru
-          Get-Content "$dest/prova_avvio.txt" -Encoding utf8
-          if ($p.ExitCode -ne 0) { Write-Error "La prova dell'exe e' fallita"; exit 1 }
+          $esito = ""
+          foreach ($f in "prova_avvio.txt", "errore_avvio.txt") {
+            if (Test-Path "$dest/$f") { $esito += "== $f ==`n" + (Get-Content "$dest/$f" -Raw -Encoding utf8) + "`n" }
+          }
+          if (-not $esito) { $esito = "Nessun file di esito: l'exe non e' partito (codice $($p.ExitCode))" }
+          Write-Host $esito
+          if ($p.ExitCode -ne 0 -or $esito -notmatch "TUTTO A POSTO") {
+            # l'errore va nelle annotazioni, cosi' si legge anche senza aprire il log completo
+            $msg = ($esito -replace "%", "%25" -replace "`r", "" -replace "`n", "%0A")
+            Write-Host "::error title=Prova dell'exe fallita::$msg"
+            exit 1
+          }
           Remove-Item "$dest/prova_avvio.txt"
           Get-ChildItem "$dest/app" -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
 
