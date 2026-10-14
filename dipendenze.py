@@ -9,7 +9,7 @@ numero diverso non possono aggiornarsi col tasto Aggiorna: serve il pacchetto co
 """
 import os
 
-LIBRERIE = 1
+LIBRERIE = 2
 
 # Moduli leggeri: importati davvero.
 import base64, ctypes, datetime, html, importlib, io, json, logging, queue, re  # noqa: E401,F401
@@ -35,3 +35,11 @@ if os.environ.get("RL_MAI_VERO_123"):
     import onnxruntime                 # noqa: F401
     import huggingface_hub             # noqa: F401
     import tokenizers                  # noqa: F401
+    import webview                     # noqa: F401  (finestra nuova con Edge WebView2)
+    import webview.platforms.winforms  # noqa: F401
+    import webview.platforms.edgechromium  # noqa: F401
+    import clr                         # noqa: F401
+    import clr_loader                  # noqa: F401
+    import pythonnet                   # noqa: F401
+    import bottle                      # noqa: F401
+    import proxy_tools                 # noqa: F401

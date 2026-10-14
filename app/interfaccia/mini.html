@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<title>Registra Lezione – in registrazione</title>
+<link rel="stylesheet" href="stile.css">
+<style>
+  body{background:linear-gradient(150deg,#0d4275,#0369a1);color:#fff;overflow:hidden;height:100vh;transition:background .4s}
+  body.pz{background:linear-gradient(150deg,#7c2d12,#c2410c)}
+  .h{display:flex;align-items:center;justify-content:space-between;padding:10px 12px 0;font-size:11.5px;cursor:move}
+  .h .tag{font-size:11px;padding:2px 9px;gap:6px}
+  .h .tag i{width:7px;height:7px}
+  .tm{font-size:34px;font-weight:700;padding:2px 14px 0;font-variant-numeric:tabular-nums;line-height:1.15;cursor:move}
+  .nm{padding:0 14px;font-size:12px;opacity:.88;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:move}
+  .wave{height:22px;margin:6px 14px 0;gap:2px}
+  .wave i{max-width:4px}
+  .av{margin:6px 12px 0;font-size:11.5px;font-weight:700;background:rgba(0,0,0,.25);border-radius:8px;padding:4px 8px}
+  .bt{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 12px 6px}
+  .bt .btn{padding:9px;font-size:13px;border-radius:11px}
+  .lnk2{display:block;text-align:center;font-size:11.5px;opacity:.8;cursor:pointer;padding:2px 0 8px;color:#fff;background:none;border:0;width:100%}
+  .lnk2:hover{opacity:1;text-decoration:underline}
+  .conf{position:fixed;inset:0;background:rgba(6,30,54,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
+  .conf b{font-size:16px}
+  .conf .bt{width:100%;padding:0}
+</style>
+</head>
+<body>
+  <div class="h pywebview-drag-region"><span class="tag" id="tag"><i></i>REC</span><span style="opacity:.7" class="pywebview-drag-region">⠿ trascina</span></div>
+  <div class="tm pywebview-drag-region" id="tm">00:00:00</div>
+  <div class="nm pywebview-drag-region" id="nm"></div>
+  <div class="wave pywebview-drag-region" id="wv"></div>
+  <div class="av hidden" id="av"></div>
+  <div class="bt"><button class="btn b-pz" id="bp"><svg><use href="#i-pause"/></svg>Pausa</button><button class="btn b-end" id="bf"><svg><use href="#i-stop"/></svg>Fine</button></div>
+  <button class="lnk2" id="big">Apri la finestra grande ↗</button>
+  <div class="conf hidden" id="conf"><b>Fermo la registrazione?</b><div class="bt"><button class="btn b-ghost" id="no">Continua</button><button class="btn b-end" id="si" style="background:#e11d48">Sì, ferma</button></div></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+</svg>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const due = n => String(n).padStart(2, '0');
+let A = null;
+for (let i = 0; i < 40; i++) $('wv').appendChild(document.createElement('i'));
+function via() {
+  $('bp').onclick = () => A.pausa().then(giro);
+  $('bf').onclick = () => $('conf').classList.remove('hidden');
+  $('no').onclick = () => $('conf').classList.add('hidden');
+  $('si').onclick = () => { $('conf').classList.add('hidden'); A.fine(); };
+  $('big').onclick = () => A.apri_finestra();
+  setInterval(giro, 400); giro();
+}
+async function giro() {
+  let S;
+  try { S = await A.stato(); } catch (e) { return; }
+  if (!S.registro) return;
+  const s = S.secondi || 0;
+  $('tm').textContent = due(Math.floor(s / 3600)) + ':' + due(Math.floor(s / 60) % 60) + ':' + due(s % 60);
+  $('nm').textContent = `${S.nome} · ${S.slide} slide · ${S.pronti} pacchetti pronti`;
+  document.body.classList.toggle('pz', !!S.pausa);
+  $('tag').className = 'tag' + (S.pausa ? ' pz' : '');
+  $('tag').innerHTML = S.pausa ? `❚❚ PAUSA ${due(Math.floor(S.pausa_sec / 60))}:${due(S.pausa_sec % 60)}` : '<i></i>REC';
+  const lv = (S.livelli || []).slice(-40);
+  $('wv').querySelectorAll('i').forEach((b, i) => { b.style.height = Math.max(8, Math.min(100, Math.sqrt(lv[i] || 0) * 160)) + '%'; });
+  $('bp').className = 'btn ' + (S.pausa ? 'b-ri' : 'b-pz');
+  $('bp').innerHTML = S.pausa ? '<svg><use href="#i-play"/></svg>Riprendi' : '<svg><use href="#i-pause"/></svg>Pausa';
+  $('av').classList.toggle('hidden', !S.avviso);
+  $('av').textContent = S.avviso ? '⚠ ' + S.avviso : '';
+}
+if (window.pywebview && window.pywebview.api) { A = window.pywebview.api; via(); }
+else window.addEventListener('pywebviewready', () => { A = window.pywebview.api; via(); }, {once: true});
+if (location.protocol.startsWith('http')) setTimeout(() => { if (A) return;
+  A = new Proxy({}, {get: (t, n) => (...a) => fetch('/api/' + n, {method: 'POST', body: JSON.stringify(a)}).then(r => r.json())}); via(); }, 300);
+</script>
+</body>
+</html>

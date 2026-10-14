@@ -19,6 +19,39 @@ class _Salta(Exception):
     pass
 
 
+def prova_finestra():
+    """La finestra nuova: Edge WebView2 c'e', la pagina si carica e parla con Python."""
+    import threading
+    import time
+    import webview
+    from webview.platforms import winforms
+    assert winforms.renderer == "edgechromium", f"la pagina userebbe {winforms.renderer}, non Edge WebView2"
+    import registra_lezione as rl
+    assert rl.finestra_nuova_possibile(), "finestra nuova non disponibile"
+    esito = {}
+
+    class Api:
+        def pronto(self):
+            esito["pronto"] = time.monotonic()
+            return {"pronto": False}
+
+    pagina = Path(__file__).resolve().parent / "interfaccia" / "index.html"
+    w = webview.create_window("prova", url=str(pagina), js_api=Api(), width=900, height=600)
+
+    def attendi():
+        t0 = time.monotonic()
+        while "pronto" not in esito and time.monotonic() - t0 < 90:
+            time.sleep(0.3)
+        try:
+            esito["titolo"] = w.evaluate_js("document.title + ' / ' + document.querySelectorAll('section').length")
+        except Exception as e:
+            esito["titolo"] = f"errore: {e}"
+        w.destroy()
+    webview.start(lambda: threading.Thread(target=attendi, daemon=True).start())
+    assert "pronto" in esito, "la pagina non ha chiamato Python entro 90 secondi"
+    return f"finestra nuova (Edge WebView2): ok ({esito.get('titolo')})"
+
+
 def main(radice):
     esito = Path(radice) / "prova_avvio.txt"
     righe = []
@@ -150,6 +183,8 @@ def main(radice):
             rl.al_cestino([cart, f])
             assert not cart.exists() and not f.exists(), "elimina nel Cestino non riuscita"
         righe.append("elimina nel Cestino: ok")
+        if sys.platform == "win32":
+            righe.append(prova_finestra())
         righe.append("TUTTO A POSTO")
         esito.write_text("\n".join(righe), encoding="utf-8")
         return 0

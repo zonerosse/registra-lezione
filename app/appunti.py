@@ -270,9 +270,30 @@ def pdf_appunti_parti(parti, info, destinazione):
     """Uno o piu' blocchi di appunti nello stesso PDF: parti = [(dati, etichetta, slide), ...].
     Con piu' parti diventa "Appunti della lezione completa"."""
     from fpdf import FPDF
+
+    class PDF(FPDF):
+        def footer(self):
+            """A pie' di ogni pagina: marchio e numero di pagina."""
+            if not getattr(self, "_f", None):
+                return
+            y = self.h - 10.5
+            self.set_fill_color(13, 66, 117)
+            self.rect(16, y - 0.6, 4.6, 4.6, style="F", round_corners=True, corner_radius=0.9)
+            self.set_xy(16, y - 0.6)
+            self.set_font(self._f, "B", 5.2)
+            self.set_text_color(255, 255, 255)
+            self.cell(4.6, 4.6, "PW", align="C")
+            self.set_xy(22, y - 0.6)
+            self.set_font(self._f, "", 7.5)
+            self.set_text_color(120, 132, 150)
+            self.cell(120, 4.6, self._t("Creato con Registra Lezione · Punto Web Ferrara"))
+            self.set_xy(self.w - 16 - 40, y - 0.6)
+            self.cell(40, 4.6, f"{self.page_no()} / {{nb}}", align="R")
+            self.set_text_color(0, 0, 0)
+
     stato = {"slide": {}, "usate": set()}
-    pdf = FPDF(format="A4")
-    pdf.set_auto_page_break(True, margin=15)
+    pdf = PDF(format="A4")
+    pdf.set_auto_page_break(True, margin=16)
     pdf.set_margins(16, 15, 16)
     font, solo_latin = el._font_pdf(pdf)
     # simboli matematici che Arial non ha (es. ᵢ, ∮): li prende da Segoe UI Symbol / DejaVu
@@ -292,6 +313,7 @@ def pdf_appunti_parti(parti, info, destinazione):
         if solo_latin:
             return s.encode("latin-1", "replace").decode("latin-1")
         return s
+    pdf._f, pdf._t = font, t
 
     def sezione(titolo):
         pdf.ln(4)
@@ -356,34 +378,94 @@ def pdf_appunti_parti(parti, info, destinazione):
     for indice, (dati, etichetta, slide) in enumerate(parti):
         stato["slide"], stato["usate"] = slide or {}, set()
         pdf.add_page()
+        if indice == 0:
+            nd = sum(len(normalizza(d).get("blocchi") or []) for d, _, _ in parti)
+            etichette = [f"{nd} domande" if nd else "", f"{len(parti)} parti" if completa else "",
+                         "formulario" if any(normalizza(d).get("formulario") for d, _, _ in parti) else "",
+                         "esercizi svolti" if any(normalizza(d).get("esercizi_svolti") for d, _, _ in parti) else ""]
+            _copertina(pdf, font, t, info,
+                       "APPUNTI DELLA LEZIONE COMPLETA · FORMATO CORNELL" if completa else
+                       f"APPUNTI DI STUDIO · FORMATO CORNELL · {etichetta.upper()}",
+                       info.get("nome", "Lezione"), [x for x in etichette if x])
         if completa and indice == 0:
-            pdf.set_font(font, "B", 19)
-            testo(f"{info.get('nome', 'Lezione')} · Appunti della lezione completa", 9)
-            pdf.set_font(font, "", 9.5)
-            pdf.set_text_color(*GRIGIO)
-            if el.riga_studente(info):
-                testo(el.riga_studente(info), 5)
-            testo(f"{el._data_it(info.get('inizio', ''))} · {len(parti)} parti · appunti in formato Cornell creati da Claude "
-                  "dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+            pdf.set_font(font, "B", 9)
+            pdf.set_text_color(13, 66, 117)
+            testo("INDICE DELLE PARTI", 6)
             pdf.set_text_color(0, 0, 0)
-            pdf.ln(4)
+            pdf.set_font(font, "", 10.5)
             for d, et, _ in parti:
                 testo(f"• {et}: {d.get('titolo', '')}")
+            pdf.ln(3)
+            pdf.set_font(font, "", 9)
+            pdf.set_text_color(*GRIGIO)
+            testo("Appunti creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 4.6)
+            pdf.set_text_color(0, 0, 0)
             pdf.add_page()
-        _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO)
+        _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO,
+                      copertina=(indice == 0 and not completa))
     pdf.output(str(destinazione))
 
 
-def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO):
+def _copertina(pdf, font, t, info, occhiello, titolo, etichette):
+    """Fascia blu in cima alla prima pagina, col marchio Punto Web Ferrara."""
+    from fpdf.pattern import LinearGradient
+    h = 50.0
+    with pdf.use_pattern(LinearGradient(0, 0, pdf.w, h, ["#061e36", "#0d4275", "#0369a1"])):
+        pdf.rect(0, 0, pdf.w, h, style="F")
+    # cerchi decorativi
+    pdf.set_draw_color(60, 150, 200)
+    pdf.set_line_width(0.4)
+    for r in (34, 24, 14):
+        pdf.circle(pdf.w - 14, 6, r, style="D")
+    pdf.set_line_width(0.2)
+    pdf.set_text_color(170, 220, 245)
+    pdf.set_font(font, "B", 7.5)
+    pdf.set_xy(16, 10)
+    pdf.cell(0, 4, t(occhiello))
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font(font, "B", 20)
+    pdf.set_xy(16, 16)
+    pdf.multi_cell(pdf.w - 60, 8.5, t(titolo), new_x="LMARGIN", new_y="NEXT", max_line_height=8.5)
+    pdf.set_font(font, "", 9)
+    pdf.set_text_color(214, 230, 247)
+    righe = [el._data_it(info.get("inizio", "")), el.riga_studente(info)]
+    pdf.set_x(16)
+    pdf.multi_cell(pdf.w - 60, 4.6, t(" · ".join(r for r in righe if r)), new_x="LMARGIN", new_y="NEXT")
+    if etichette:
+        x, y = 16, h - 10
+        pdf.set_font(font, "", 7.5)
+        for e in etichette:
+            w = pdf.get_string_width(t(e)) + 7
+            pdf.set_draw_color(120, 190, 230)
+            pdf.set_fill_color(25, 85, 140)
+            pdf.rect(x, y, w, 5.5, style="DF", round_corners=True, corner_radius=2.7)
+            pdf.set_xy(x, y)
+            pdf.set_text_color(255, 255, 255)
+            pdf.cell(w, 5.5, t(e), align="C")
+            x += w + 3
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_draw_color(0, 0, 0)
+    pdf.set_xy(16, h + 7)
+
+
+def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False):
     """Una parte di appunti nel formato Cornell: domande a sinistra, appunti a destra,
     riassunto in fondo; poi formulario, esercizi svolti, punti da controllare."""
     from fpdf.enums import MethodReturnValue
     dati = normalizza(dati)
     VIOLA, VIOLA_CHIARO, LINEA = (124, 58, 237), (243, 237, 255), (214, 204, 245)
     pdf.set_font(font, "B", 17)
-    testo((f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}" if completa
-           else f"{info.get('nome', 'Lezione')} · Appunti {etichetta}"), 8)
-    if not completa:
+    if copertina:
+        testo(dati.get("titolo", "") or f"Appunti {etichetta}", 8)
+    else:
+        testo((f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}" if completa
+               else f"{info.get('nome', 'Lezione')} · Appunti {etichetta}"), 8)
+    if copertina:
+        pdf.set_font(font, "", 9.5)
+        pdf.set_text_color(*GRIGIO)
+        testo("Appunti creati da Claude dalla registrazione: controlla sempre sulle slide e sul libro.", 5)
+        pdf.set_text_color(0, 0, 0)
+    elif not completa:
         pdf.set_font(font, "", 9.5)
         pdf.set_text_color(*GRIGIO)
         if el.riga_studente(info):

@@ -10,7 +10,9 @@
 AppId={{6C1E5D0B-3F1A-4E7C-9C2B-5A7D2E8F4B10}
 AppName=Registra Lezione
 AppVersion={#Versione}
-AppPublisher=Paolo Boldrini
+AppPublisher=Punto Web Ferrara
+AppPublisherURL=https://puntowebferrara.com/
+AppSupportURL=https://puntowebferrara.com/contatti/
 DefaultDirName={localappdata}\Programs\RegistraLezione
 PrivilegesRequired=lowest
 DisableDirPage=yes
@@ -24,6 +26,8 @@ UninstallDisplayName=Registra Lezione
 Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
+WizardImageFile=grafica\installa-0.bmp,grafica\installa-1.bmp,grafica\installa-2.bmp,grafica\installa-3.bmp
+WizardSmallImageFile=grafica\installa-piccola-0.bmp,grafica\installa-piccola-1.bmp,grafica\installa-piccola-2.bmp,grafica\installa-piccola-3.bmp
 
 [Languages]
 Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"

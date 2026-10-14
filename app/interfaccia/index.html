@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registra Lezione</title>
+<link rel="stylesheet" href="stile.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5.2" fill="#fff"/><circle cx="12" cy="12" r="8.6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6"/></symbol>
+  <symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></symbol>
+  <symbol id="i-lib" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M8 4v5"/></symbol>
+  <symbol id="i-set" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2.2"/><circle cx="8" cy="17" r="2.2"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
+  <symbol id="i-scr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
+  <symbol id="i-aud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h4l5 4V6L8 10H4z"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11"/></symbol>
+  <symbol id="i-sli" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l3-3 3 3 4-5"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.6L19.5 9l-5.7 1.6L12 16l-1.8-5.4L4.5 9l5.7-1.4z"/><path d="M19 14l.9 2.6 2.6.9-2.6.9L19 21l-.9-2.6-2.6-.9 2.6-.9z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-zip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M12 11v5M10 14l2 2 2-2"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+  <symbol id="i-srch" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+  <symbol id="i-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 10h16M4 14h10M4 18h7"/></symbol>
+  <symbol id="i-redo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M3 15h18M8 5v14M16 5v14"/></symbol>
+</svg>
+
+<!-- AVVIO -->
+<div class="splash" id="splash">
+  <div class="logo"><svg width="40" height="40"><use href="#i-logo"/></svg></div>
+  <h1>Registra Lezione</h1>
+  <div class="by">by <b>Punto Web Ferrara</b></div>
+  <div class="ld"><div class="bar"><i id="splBar" style="width:5%"></i></div><small id="splTxt">Avvio…</small></div>
+  <div class="err hidden" id="splErr"></div>
+</div>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo"><svg width="22" height="22"><use href="#i-logo"/></svg></div><div><b>Registra Lezione</b><small>by Punto Web Ferrara</small></div></div>
+    <nav class="nav" id="nav">
+      <a data-p="reg" class="on"><svg><use href="#i-rec"/></svg>Registra<span class="recdot hidden" id="navRec"></span></a>
+      <a data-p="arch"><svg><use href="#i-lib"/></svg>Le mie registrazioni<span class="cnt hidden" id="navCnt"></span></a>
+      <a data-p="imp"><svg><use href="#i-set"/></svg>Impostazioni</a>
+      <a data-p="info"><svg><use href="#i-info"/></svg>Informazioni</a>
+    </nav>
+    <div class="foot">
+      <div class="statobox" id="statobox"></div>
+      <span id="footVer">Versione</span> · <a id="footAgg">Aggiorna</a>
+    </div>
+  </aside>
+
+  <main class="main" id="main">
+
+    <!-- REGISTRA: pronto -->
+    <section class="pg" id="v-pronto">
+      <div class="hd"><div><h2>Pronto a registrare</h2><p>Schermo, audio del PC e slide: penso a tutto io.</p></div><span id="pillAI"></span></div>
+      <div class="card">
+        <div class="lbl">Che cosa registri?</div>
+        <input class="in" id="nome" placeholder="Es. Analisi 1 – Limiti" maxlength="90" autocomplete="off">
+        <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
+        <div class="chips" id="recenti"></div>
+      </div>
+      <div class="grid3 mt">
+        <div class="src"><span class="ico i-blue"><svg><use href="#i-scr"/></svg></span><div><b>Schermo</b><small class="okt" id="srcScr">✓ Schermo principale</small></div></div>
+        <div class="src"><span class="ico i-teal"><svg><use href="#i-aud"/></svg></span><div><b>Audio del PC</b><small id="srcAud" class="mutt">Controllo…</small></div></div>
+        <div class="src"><span class="ico i-vio"><svg><use href="#i-sli"/></svg></span><div><b>Slide</b><small class="okt">✓ Cattura automatica</small></div></div>
+      </div>
+      <div class="recwrap mt">
+        <button class="recbtn" id="btnRec"><span></span>REGISTRA</button>
+        <div class="hint" id="recHint"></div>
+        <div class="hint" id="recModello" style="color:var(--blue);font-weight:600"></div>
+      </div>
+      <div class="hint" style="text-align:center;margin-top:12px">Prima di iniziare entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo schermo principale, con il volume acceso.</div>
+    </section>
+
+    <!-- REGISTRA: in registrazione -->
+    <section class="pg hidden" id="v-reg">
+      <div class="live" id="live">
+        <span class="tag" id="lTag"><i></i>REC</span>
+        <div class="big" id="lT">00:00:00</div>
+        <div class="nm" id="lNm"></div>
+        <div class="wave" id="lWave"></div>
+        <div class="stats"><div><b id="lSl">0</b><small>slide catturate</small></div><div><b id="lGb">0 MB</b><small>registrati</small></div><div><b id="lPk">0</b><small>pacchetti pronti</small></div></div>
+      </div>
+      <div class="avviso mt hidden" id="lAvv"></div>
+      <div class="card mt">
+        <div class="row" style="margin-bottom:10px"><div class="lbl" style="margin:0">Ultime slide</div><span class="sp"></span><span class="pill p-blue">si aggiornano da sole</span></div>
+        <div class="thumbs" id="thumbs"><div class="vuoto">Le slide compaiono qui appena cambiano sullo schermo.</div></div>
+      </div>
+      <div class="card mt">
+        <div class="lbl">Pacchetti e appunti</div>
+        <div class="parts" id="lParti"></div>
+      </div>
+      <div class="row mt">
+        <button class="btn b-pz sp" id="btnPausa"><svg><use href="#i-pause"/></svg>Pausa (intervallo)</button>
+        <button class="btn b-end sp" id="btnFine"><svg><use href="#i-stop"/></svg>Fine</button>
+      </div>
+      <div class="hint" style="text-align:center;margin-top:10px">Puoi ridurre questa finestra: la registrazione continua.</div>
+    </section>
+
+    <!-- REGISTRA: fine -->
+    <section class="pg hidden" id="v-fine">
+      <div class="hero-ok" id="fHero">
+        <div class="check" id="fCheck"><svg><use href="#i-check"/></svg></div>
+        <div class="sp"><div style="font-size:21px;font-weight:700;color:var(--ink)" id="fTit"></div><div class="hint" style="font-size:13.5px" id="fSub"></div>
+          <div class="bar hidden" id="fBar" style="max-width:360px"><i style="width:0"></i></div></div>
+      </div>
+      <div class="avviso mt hidden" id="fAvv"></div>
+      <div class="card mt" id="fAp"></div>
+      <div class="card mt">
+        <div class="lbl">Pacchetti e appunti</div>
+        <div class="parts" id="fParti"></div>
+      </div>
+      <div class="grid3 mt">
+        <button class="btn b-ghost b-sm" id="fTras"><svg><use href="#i-text"/></svg>Slide e trascrizione</button>
+        <button class="btn b-ghost b-sm" id="fPac"><svg><use href="#i-zip"/></svg>Cartella dei pacchetti</button>
+        <button class="btn b-ghost b-sm" id="fNuova"><svg><use href="#i-rec"/></svg>Nuova registrazione</button>
+      </div>
+    </section>
+
+    <!-- LE MIE REGISTRAZIONI -->
+    <section class="pg hidden" id="v-arch">
+      <div class="hd"><div><h2>Le mie registrazioni</h2><p id="aSub"></p></div><button class="btn b-ghost b-sm" id="aCart"><svg><use href="#i-folder"/></svg>Apri cartella</button></div>
+      <div class="toolbar">
+        <div class="search"><svg><use href="#i-srch"/></svg><input class="in" id="cerca" placeholder="Cerca per nome o data…" autocomplete="off"></div>
+        <div class="disk card"><svg width="16" height="16" style="color:var(--mut)"><use href="#i-film"/></svg>Video sul PC <b id="aVid">–</b><div class="bar"><i id="aVidBar" style="width:0"></i></div><button class="lnk hidden" id="aVidDel" style="color:#be123c">Elimina tutti</button></div>
+      </div>
+      <div id="lista"></div>
+    </section>
+
+    <!-- IMPOSTAZIONI -->
+    <section class="pg hidden" id="v-imp">
+      <div class="hd"><div><h2>Impostazioni</h2><p>Si salvano da sole.</p></div></div>
+      <div class="card">
+        <div class="lbl">Intelligenza artificiale</div>
+        <div class="ai">
+          <div class="aiopt" id="aiA"><span class="rd"></span><span class="ico i-org"><svg><use href="#i-spark"/></svg></span><b>Appunti automatici con Claude</b>
+            <small>Con la tua chiave di Claude gli appunti in formato Cornell arrivano da soli, mentre registri. Costo: circa 0,20 $ per ogni ora registrata.</small>
+            <div id="chiaveBox"></div>
+          </div>
+          <div class="aiopt" id="aiB"><span class="rd"></span><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><b>Cartella per l'AI che vuoi</b>
+            <small>Nessuna chiave: preparo i pacchetti (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
+        </div>
+      </div>
+      <div class="card mt">
+        <div class="set"><div class="t"><b>Ogni quanto preparo un pacchetto</b><span>Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30">30 min</span><span data-v="60">1 ora</span></div></div>
+        <div class="set"><div class="t"><b>Mini finestra durante la registrazione</b><span>Piccola, sempre in primo piano, con Pausa e Fine.</span></div><div class="sw" id="swMini"></div></div>
+        <div class="set"><div class="t"><b>Ricordami «Non disturbare»</b><span>Così i suoni delle notifiche non finiscono nella registrazione.</span></div><div class="sw" id="swDnd"></div></div>
+        <div class="set"><div class="t"><b>Dove salvo i pacchetti</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart">Cambia…</button></div>
+        <div class="set"><div class="t"><b>Le registrazioni sono in</b><span id="impBase"></span></div><button class="btn b-ghost b-sm" id="btnBase">Apri</button></div>
+      </div>
+      <div class="card mt">
+        <div class="lbl">I tuoi dati</div>
+        <div class="hint">Compaiono in testa agli appunti e aiutano Claude a scriverli adatti al tuo corso.</div>
+        <div class="dati">
+          <div><label for="dNome">Nome e cognome</label><input class="in sm" id="dNome" data-k="nome"></div>
+          <div><label for="dUni">Università</label><input class="in sm" id="dUni" data-k="universita"></div>
+          <div><label for="dCorso">Corso di laurea</label><input class="in sm" id="dCorso" data-k="corso"></div>
+          <div><label for="dAnno">Anno</label><input class="in sm" id="dAnno" data-k="anno"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFORMAZIONI -->
+    <section class="pg hidden" id="v-info">
+      <div class="card about">
+        <div class="logo"><svg width="44" height="44"><use href="#i-logo"/></svg></div>
+        <div style="font-size:24px;font-weight:700;color:var(--ink)">Registra Lezione</div>
+        <div class="hint" style="font-size:13.5px" id="infoVer"></div>
+        <div style="max-width:440px;margin:16px auto;font-size:13.5px;line-height:1.55">Registra lezioni, webinar e riunioni online. Trascrive sul tuo PC, senza mandare l'audio su internet, e prepara appunti di studio in formato Cornell.</div>
+        <div class="aggbox" id="aggBox"></div>
+        <div class="row" style="justify-content:center;gap:10px;margin:22px 0 6px">
+          <span class="pw">PW</span>
+          <div style="text-align:left"><b style="color:var(--navy)">Punto Web Ferrara</b><div class="hint">puntowebferrara.com</div></div>
+        </div>
+        <div class="row" style="justify-content:center;margin-top:14px"><button class="btn b-main b-sm" id="btnAss">Assistenza</button><button class="btn b-ghost b-sm" id="btnCercaAgg">Cerca aggiornamenti</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

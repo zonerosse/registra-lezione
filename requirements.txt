@@ -5,3 +5,5 @@ Pillow==12.3.0
 imageio-ffmpeg==0.6.0
 faster-whisper==1.2.1
 fpdf2==2.8.9
+pywebview==6.1
+pythonnet==3.0.5; sys_platform == "win32"

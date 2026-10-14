@@ -1,5 +1,5 @@
 {
- "versione": "2.4",
- "librerie": 1,
- "novita": "Appunti in formato Cornell (domande a sinistra, appunti a destra, riassunto) e pulsante 'Rifai appunti' per le lezioni già registrate"
+ "versione": "3.0",
+ "librerie": 2,
+ "novita": "Nuova grafica Punto Web Ferrara: menu a lato, pulsante REGISTRA, onda dell'audio e ultime slide mentre registri, ricerca nelle registrazioni, appunti con copertina. Si installa col Setup (una volta sola)."
 }
