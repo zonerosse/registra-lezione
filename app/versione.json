@@ -1,6 +1,6 @@
 {
- "versione": "3.16",
+ "versione": "3.17",
  "librerie": 2,
- "novita": "Non solo lezioni: scegli Lezione, Riunione di lavoro (verbale con decisioni e cose da fare) o Webinar (punti chiave). Capitoli con il minuto, infografica in una pagina e «Il mio formato» per gli appunti come li vuoi tu.",
- "novita_en": "Not just lectures: choose Lecture, Work meeting (minutes with decisions and action items) or Webinar (key points). Chapters with the minute, one-page infographic and «My format» for notes the way you want."
+ "novita": "Calendario: collega Google Calendar o Outlook (oppure scrivi l'orario delle lezioni). Due minuti prima di un impegno ti avviso con «Apri e registra», oppure registro da solo; a fine impegno ti chiedo se fermare.",
+ "novita_en": "Calendar: connect Google Calendar or Outlook (or type your lecture timetable). Two minutes before an event I remind you with «Open and record», or I record by myself; when it ends I ask whether to stop."
 }

@@ -117,7 +117,7 @@ function vai(p) {
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
-  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); }
+  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); }
   if (p === 'info') disegnaAgg();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
@@ -225,6 +225,7 @@ async function aggiorna() {
   disegnaStato();
   if (pagina === 'info') disegnaAgg();
   if (pagina === 'arch' && ++contaLz % 8 === 0) caricaLezioni();
+  avvisiCalendario();
   for (const m of S.messaggi || []) { A.letto(m.id); await dialogo({titolo: m.titolo, testo: m.testo}); }
 }
 
@@ -312,6 +313,7 @@ function disegnaSorgenti() {
   const lib = S.liberi != null ? t('pr.liberi', {g: Math.round(S.liberi)}) : '';
   $('recHint').textContent = t('pr.hint', {p: R.minuti === 60 ? t('pr.ora') : t('pr.30')}) + lib + (R.dnd ? t('pr.dnd') : '');
   $('recModello').textContent = S.modello || '';
+  disegnaCalOra();
 }
 
 async function inizia() {
@@ -895,6 +897,82 @@ async function apriMappa(l, rifai = false) {
   disegnaMappa();
   if (r.nuova) caricaLezioni();
 }
+/* ------------------------------------------------------------------ calendario */
+const CAL_VISTI = new Set();
+function avvisiCalendario() {
+  const a = S.cal_avviso;
+  if (a && !CAL_VISTI.has(a.id)) {
+    CAL_VISTI.add(a.id);
+    const tit = a.minuti > 0 ? t('cal.av.t', {m: a.minuti, t: a.titolo}) : t('cal.av.t0', {t: a.titolo});
+    dialogo({titolo: tit, testo: t('cal.av', {o: a.ora, l: a.link ? t('cal.av.link') : ''}) + (a.partecipanti.length ? t('cal.part', {n: a.partecipanti.length}) : ''),
+             bottoni: [{t: t('cal.av.no'), v: false}, {t: a.link ? t('cal.av.si') : t('cal.av.si2'), cls: 'b-rec', v: true}]})
+      .then(async v => { await A.cal_rispondi(a.id, !!v); if (v) { await aggiorna(); vai('reg'); } });
+  }
+  const f = S.cal_fine;
+  if (f && !CAL_VISTI.has('fine' + f.id)) {
+    CAL_VISTI.add('fine' + f.id);
+    dialogo({titolo: t('cal.fi.t', {t: f.titolo, f: f.fine}), testo: t('cal.fi'),
+             bottoni: [{t: t('cal.fi.no'), v: false}, {t: t('cal.fi.si'), cls: 'b-end', v: true}]})
+      .then(async v => { await A.cal_fine_rispondi(!!v); await aggiorna(); });
+  }
+}
+function disegnaCalOra() {
+  const c = S.cal_ora, e = $('calOra');
+  if (!c || S.registro || S.occupato) { e.classList.add('hidden'); e.dataset.h = ''; return; }
+  const h = `<span class="sp">${t('cal.dal', {t: esc(c.titolo), o: esc(c.ora), p: c.partecipanti.length ? t('cal.part', {n: c.partecipanti.length}) : ''})}</span><button class="btn b-ghost b-sm" id="calUsa">${esc(t('cal.usa'))}</button>`;
+  e.classList.remove('hidden');
+  if (e.dataset.h === h) return;
+  e.dataset.h = h; e.innerHTML = h;
+  $('calUsa').onclick = async () => {
+    $('nome').value = c.titolo; anteprimaNome();
+    if (c.partecipanti.length) { PART = [...c.partecipanti]; if (R.tipo !== 'riunione' && !c.aula) { await A.imposta('tipo', 'riunione'); R.tipo = 'riunione'; } }
+    await A.imposta('modo', c.aula ? 'aula' : 'online'); R.modo = c.aula ? 'aula' : 'online';
+    disegnaPronto();
+  };
+}
+function giornoCal(iso) {
+  const d = new Date(iso + 'T12:00'), oggi = new Date(); oggi.setHours(12, 0, 0, 0);
+  const g = Math.round((d - oggi) / 864e5);
+  return g === 0 ? t('cal.oggi') : g === 1 ? t('cal.domani') : `${t('cal.giorni')[(d.getDay() + 6) % 7].slice(0, 3)} ${due(d.getDate())}/${due(d.getMonth() + 1)}`;
+}
+async function disegnaCalendario() {
+  const c = await A.cal_elenco();
+  $('calFonti').innerHTML = (c.fonti.length || c.orario.length) ? c.fonti.map((f, i) => `<div class="cfonte"><span class="ico i-blue">📅</span><div class="sp"><b style="color:var(--ink)">${esc(f.nome)}</b><div class="hint">${f.errore ? '⚠ ' + esc(t('cal.err')) : '✓'}</div></div><button class="lnk" data-i="${i}">${esc(t('cal.togli'))}</button></div>`).join('')
+    + (c.orario.length ? `<div class="cfonte"><span class="ico i-teal">🗓</span><div class="sp"><b style="color:var(--ink)">${esc(t('cal.or.t'))}</b><div class="hint">${c.orario.length} · ${c.orario.map(r => esc(r.nome)).filter((x, i, a) => a.indexOf(x) === i).slice(0, 4).join(', ')}</div></div></div>` : '')
+    : `<div class="hint">${esc(t('cal.nessuno'))}</div>`;
+  $('calFonti').querySelectorAll('[data-i]').forEach(b => b.onclick = async () => { await A.cal_togli(c.fonti[+b.dataset.i].url); disegnaCalendario(); });
+  $('segCal').querySelectorAll('span').forEach(x => { x.classList.toggle('on', x.dataset.v === c.modo); x.onclick = async () => { await A.cal_scelta('*', x.dataset.v); disegnaCalendario(); }; });
+  const I = c.impegni;
+  $('calImpegni').innerHTML = I.length ? I.map((e, i) => `<div class="cev"><div class="o">${esc(e.ora.split('–')[0])}<small>${esc(giornoCal(e.giorno))}</small></div><div class="sp"><b style="color:var(--ink)">${esc(e.titolo)}</b><div class="hint">${esc([e.fonte === 'orario' ? t('cal.or.t') : e.fonte, e.aula ? t('cal.aula') : e.link ? 'Meet/Teams/Zoom' : '', e.partecipanti.length ? t('cal.part', {n: e.partecipanti.length}).replace(' · ', '') : ''].filter(Boolean).join(' · '))}</div></div>
+      <div class="seg" data-i="${i}">${['avvisa', 'solo', 'niente'].map(m => `<span data-v="${m}" class="${e.modo === m ? 'on' : ''}">${esc(t('cal.' + m))}</span>`).join('')}</div></div>`).join('')
+    : `<div class="hint">${esc(t('cal.vuoto'))}</div>`;
+  $('calImpegni').querySelectorAll('.seg').forEach(g => g.querySelectorAll('span').forEach(x => x.onclick = async () => { await A.cal_scelta(I[+g.dataset.i].uid, x.dataset.v); disegnaCalendario(); }));
+}
+async function collegaCalendario(quale) {
+  const html = `<div class="passi">${t(quale === 'g' ? 'cal.g.passi' : 'cal.o.passi')}</div><input class="in" style="margin-top:12px" placeholder="${esc(t('cal.link.ph'))}"><div class="hint" style="margin-top:8px">${esc(t('cal.privato'))}</div>`;
+  const ok = await dialogo({titolo: t(quale === 'g' ? 'cal.g.t' : 'cal.o.t'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cal.collega'), cls: 'b-main', v: true}]});
+  if (!ok || !dialogo.valore) return;
+  const r = await A.cal_aggiungi(dialogo.valore);
+  if (r.ok) toast(t('cal.ok', {n: r.n})); else await dialogo({titolo: t(quale === 'g' ? 'cal.g.t' : 'cal.o.t'), testo: r.msg || ''});
+  disegnaCalendario();
+}
+async function orarioLezioni() {
+  const c = await A.cal_elenco();
+  const G = t('cal.giorni');
+  const riga = (r = {giorno: 0, dalle: '09:00', alle: '11:00', nome: '', dove: 'aula'}) => `<div class="orrow">
+    <select class="in sel">${G.map((g, i) => `<option value="${i}"${+r.giorno === i ? ' selected' : ''}>${esc(g)}</option>`).join('')}</select>
+    <input class="in" type="time" value="${esc(r.dalle)}"><input class="in" type="time" value="${esc(r.alle)}">
+    <input class="in" placeholder="${esc(t('cal.or.nome'))}" value="${esc(r.nome)}" maxlength="90">
+    <select class="in sel"><option value="aula"${r.dove === 'aula' ? ' selected' : ''}>${esc(t('cal.aula'))}</option><option value="online"${r.dove !== 'aula' ? ' selected' : ''}>${esc(t('cal.online'))}</option></select>
+    <button class="lnk" title="${esc(t('togli'))}">✕</button></div>`;
+  const html = `<div id="orLista">${(c.orario.length ? c.orario : [undefined]).map(r => riga(r)).join('')}</div><button class="lnk" id="orAgg">${esc(t('cal.or.agg'))}</button>`;
+  const leggi = () => [...document.querySelectorAll('#orLista .orrow')].map(e => { const x = e.querySelectorAll('.in'); return {giorno: +x[0].value, dalle: x[1].value, alle: x[2].value, nome: x[3].value, dove: x[4].value}; }).filter(r => r.nome.trim());
+  const p = dialogo({titolo: t('cal.or.t'), testo: t('cal.or.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cal.salva'), cls: 'b-main', fn: async () => { await A.cal_orario(leggi()); document.querySelector('.velo').remove(); disegnaCalendario(); }}]});
+  const colega = () => document.querySelectorAll('#orLista .orrow .lnk').forEach(b => b.onclick = () => b.closest('.orrow').remove());
+  setTimeout(() => { colega(); $('orAgg').onclick = () => { $('orLista').insertAdjacentHTML('beforeend', riga()); colega(); }; const d = document.querySelector('.velo .dlg'); if (d) d.style.maxWidth = '720px'; }, 0);
+  return p;
+}
+
 /* ------------------------------------------------------------------ capitoli */
 async function apriCapitoli(l) {
   $('cpSub').textContent = `${l.nome} · ${l.quando}`;
@@ -1012,6 +1090,9 @@ function collegaNovita() {
       if (r.ok) toast(t('mio.prova.ok', {n: r.lezione, c: num(r.spesa)})); else await dialogo({titolo: t('mio.h'), testo: r.msg || ''});
     } finally { b.disabled = false; b.textContent = t('mio.prova'); }
   };
+  $('calGoogle').onclick = () => collegaCalendario('g');
+  $('calOutlook').onclick = () => collegaCalendario('o');
+  $('calOrario').onclick = orarioLezioni;
   $('igPdf').onclick = async () => { if (!IG.dati) return; const r = await A.infografica_pdf(IG.lez.cartella, true); if (r.ok) toast(t('ig.salvata')); };
   $('igRifai').onclick = async () => { if (IG.lez && await conferma(t('ig.rifai.t'), t('ig.rifai.c'))) apriInfografica(IG.lez, true); };
   $('segQuando').querySelectorAll('span').forEach(x => x.onclick = async () => { await A.imposta('quando', x.dataset.v); QUANDO = null; await rileggi(); });

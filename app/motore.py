@@ -14,6 +14,7 @@ import io
 import logging
 import os
 import queue
+import re
 import shutil
 import subprocess
 import sys
@@ -70,6 +71,7 @@ import appunti as ap
 import ripasso as rp                 # noqa: E402
 import chiedi as ch                  # noqa: E402
 import docente as dc                 # noqa: E402
+import calendario as cal             # noqa: E402
 import servi_video                   # noqa: E402
 import elaborazione as el            # noqa: E402
 import registratore as rg            # noqa: E402
@@ -283,6 +285,13 @@ class Motore:
         self._lock = threading.RLock()
         self.on_fine_registrazione = None   # la finestra chiude la mini finestra
         self.on_riavvia = None
+        # calendario: impegni, avviso prima, avvio da solo, domanda a fine impegno
+        self.cal = cal.Calendari(BASE / "calendario")
+        self.cal_lista, self.cal_avviso, self.cal_fine, self.cal_rec = [], None, None, None
+        self.cal_gestiti = set()
+        self.on_avviso = None          # la finestra si mette davanti
+        self.on_avvio_auto = None      # registrazione partita da sola: la finestra apre la mini finestra
+        threading.Thread(target=self._calendario, daemon=True).start()
         threading.Thread(target=rinomina_collegamenti, daemon=True).start()
         for f in (self._lavoratore, self._lavoratore_appunti, self._prepara_modello, self._ciclo):
             threading.Thread(target=f, daemon=True).start()
@@ -339,7 +348,8 @@ class Motore:
                  "nome": self.nome_rec, "titolo_fine": self.titolo_fine, "avviso_fine": self.avviso_fine,
                  "modello": self.modello_msg, "agg": self.agg, "messaggi": list(self.messaggi),
                  "audio_ok": self.audio_ok, "liberi": self.liberi,
-                 "finale": self.finale}
+                 "finale": self.finale, "cal_avviso": self.cal_avviso, "cal_fine": self.cal_fine,
+                 "cal_ora": self._cal_adesso()}
             if self.reg is not None:
                 r = self.reg
                 pausa = r.in_pausa
@@ -1283,6 +1293,171 @@ class Motore:
                 log.exception("prova del mio formato")
                 return {"ok": False, "msg": tr("ap_imprevisto")}
         return {"ok": False, "msg": tr("mio_nessuna")}
+
+    # ------------------------------------------------------------------ calendario
+
+    def _cal_modo(self, ev):
+        return (self.cfg.get("cal_scelte") or {}).get(ev["uid"]) or self.cfg.get("cal_modo") or "avvisa"
+
+    def _cal_json(self, ev):
+        return {"id": ev["id"], "uid": ev["uid"], "titolo": ev["titolo"], "fonte": ev["fonte"],
+                "inizio": ev["inizio"].isoformat(), "fine": ev["fine"].isoformat(),
+                "ora": f"{ev['inizio']:%H:%M}–{ev['fine']:%H:%M}", "giorno": ev["inizio"].date().isoformat(),
+                "link": ev["link"], "partecipanti": ev["partecipanti"], "aula": ev["aula"], "modo": self._cal_modo(ev),
+                "luogo": ev["luogo"]}
+
+    def _cal_adesso(self):
+        """L'impegno appena cominciato o che sta per cominciare (per riempire il nome in Registra)."""
+        ora = datetime.datetime.now().astimezone()
+        for ev in self.cal_lista:
+            if ev["inizio"] - datetime.timedelta(minutes=20) <= ora <= ev["fine"]:
+                return self._cal_json(ev)
+        return None
+
+    def _calendario(self):
+        n = 0
+        while True:
+            try:
+                fonti, orario = self.cfg.get("calendari") or [], self.cfg.get("orario") or []
+                if fonti or orario:
+                    if n % 2 == 0:
+                        self.cal.aggiorna(fonti)
+                    self.cal_lista = self.cal.impegni(fonti, orario)
+                    self._cal_controlla()
+                else:
+                    self.cal_lista = []
+            except Exception:
+                log.exception("calendario")
+            n += 1
+            time.sleep(30)
+
+    def _cal_controlla(self):
+        ora = datetime.datetime.now().astimezone()
+        # fine impegno: chiedo se fermare la registrazione partita per l'impegno
+        r = self.cal_rec
+        if r and self.reg is not None and ora >= r["fine"] and not self.cal_fine and r["id"] + ":fine" not in self.cal_gestiti:
+            self.cal_gestiti.add(r["id"] + ":fine")
+            self.cal_fine = {"id": r["id"], "titolo": r["titolo"], "fine": f"{r['fine']:%H:%M}"}
+            self._davanti()
+        if self.reg is None:
+            self.cal_rec = None if (r and ora >= r["fine"]) else self.cal_rec
+        for ev in self.cal_lista:
+            if ev["id"] in self.cal_gestiti:
+                continue
+            modo = self._cal_modo(ev)
+            if modo == "niente" or ora > ev["inizio"] + datetime.timedelta(minutes=10):
+                continue
+            if modo == "avvisa" and ora >= ev["inizio"] - datetime.timedelta(minutes=2):
+                self.cal_gestiti.add(ev["id"])
+                if self.occupato:
+                    continue
+                self.cal_avviso = dict(self._cal_json(ev), minuti=max(0, round((ev["inizio"] - ora).total_seconds() / 60)))
+                self._davanti()
+            elif modo == "solo" and ora >= ev["inizio"] - datetime.timedelta(seconds=40):
+                self.cal_gestiti.add(ev["id"])
+                if not self.occupato:
+                    self._cal_registra(ev, auto=True)
+
+    def _davanti(self):
+        if self.on_avviso:
+            try:
+                self.on_avviso()
+            except Exception:
+                log.exception("finestra davanti")
+
+    def _cal_registra(self, ev, auto=False):
+        """Registra l'impegno: apre il link della riunione (se c'e') e parte, col nome e i partecipanti."""
+        if ev.get("link"):
+            apri(ev["link"])
+        tipo = "lezione" if ev.get("lezione") else self._tipo()
+        r = self.avvia(ev["titolo"], {"modo": "aula" if ev.get("aula") else "online", "tipo": tipo,
+                                     "partecipanti": ev.get("partecipanti") or []})
+        if r.get("ok"):
+            self.cal_rec = ev
+            log.info("calendario: registro «%s»", ev["titolo"])
+            if auto and r.get("mini") and self.on_avvio_auto:
+                try:
+                    self.on_avvio_auto()
+                except Exception:
+                    log.exception("mini finestra")
+        return r
+
+    def cal_rispondi(self, id_, registra):
+        a, self.cal_avviso = self.cal_avviso, None
+        if not registra or not a or a["id"] != id_:
+            return {"ok": True}
+        ev = next((e for e in self.cal_lista if e["id"] == id_), None)
+        if not ev:
+            return {"ok": False}
+        return self._cal_registra(ev)
+
+    def cal_fine_rispondi(self, ferma):
+        self.cal_fine = None
+        if ferma and self.reg is not None:
+            self.cal_rec = None
+            return self.fine()
+        return {"ok": True}
+
+    def cal_elenco(self):
+        return {"fonti": [{"url": f["url"], "nome": f.get("nome") or cal.nome_fonte(f["url"]),
+                           "errore": self.cal.errori.get(f["url"], "")} for f in self.cfg.get("calendari") or []],
+                "orario": self.cfg.get("orario") or [], "modo": self.cfg.get("cal_modo") or "avvisa",
+                "impegni": [self._cal_json(e) for e in self.cal_lista[:30]]}
+
+    def cal_aggiungi(self, url):
+        url = (url or "").strip()
+        if not re.match(r"^(https?|webcal)://", url, re.I):
+            return {"ok": False, "msg": tr("cal_link_err")}
+        try:
+            b = cal.scarica(url)
+            if b"BEGIN:VCALENDAR" not in b[:2000].upper():
+                return {"ok": False, "msg": tr("cal_non_ics")}
+            adesso = datetime.datetime.now().astimezone()
+            n = len(cal.impegni_ics(b, cal.nome_fonte(url), adesso, adesso + datetime.timedelta(days=7)))
+        except Exception as e:
+            log.warning("calendario nuovo: %s", e)
+            return {"ok": False, "msg": tr("cal_scarica_err")}
+        fonti = [f for f in (self.cfg.get("calendari") or []) if f.get("url") != url]
+        fonti.append({"url": url, "nome": cal.nome_fonte(url)})
+        self.cfg["calendari"] = fonti
+        salva_config(self.cfg)
+        self.cal.aggiorna(fonti, forza=True)
+        self.cal_lista = self.cal.impegni(fonti, self.cfg.get("orario") or [])
+        return {"ok": True, "n": n}
+
+    def cal_togli(self, url):
+        self.cfg["calendari"] = [f for f in (self.cfg.get("calendari") or []) if f.get("url") != url]
+        salva_config(self.cfg)
+        self.cal_lista = self.cal.impegni(self.cfg["calendari"], self.cfg.get("orario") or [])
+        return {"ok": True}
+
+    def cal_orario(self, righe):
+        pulite = []
+        for r in righe or []:
+            try:
+                g = int(r.get("giorno"))
+                d, a = str(r.get("dalle") or ""), str(r.get("alle") or "")
+                if not (0 <= g <= 6 and re.match(r"^\d{1,2}:\d{2}$", d) and re.match(r"^\d{1,2}:\d{2}$", a)):
+                    continue
+                pulite.append({"giorno": g, "dalle": d, "alle": a, "nome": str(r.get("nome") or "").strip()[:90] or "Lezione",
+                               "dove": "aula" if r.get("dove") == "aula" else "online", "link": str(r.get("link") or "").strip()[:300]})
+            except (TypeError, ValueError):
+                continue
+        self.cfg["orario"] = pulite
+        salva_config(self.cfg)
+        self.cal_lista = self.cal.impegni(self.cfg.get("calendari") or [], pulite)
+        return {"ok": True, "n": len(pulite)}
+
+    def cal_scelta(self, uid, modo):
+        modo = modo if modo in ("avvisa", "solo", "niente") else "avvisa"
+        if uid == "*":
+            self.cfg["cal_modo"] = modo
+        else:
+            sc = self.cfg.get("cal_scelte") or {}
+            sc[uid] = modo
+            self.cfg["cal_scelte"] = sc
+        salva_config(self.cfg)
+        return {"ok": True}
 
     def info_pdf(self, percorso):
         try:

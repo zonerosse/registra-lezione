@@ -1,2 +1,6 @@
 Librerie in Python puro copiate qui (non serve rifare il programma completo):
 - pypdf 6.20.1 (licenza BSD, vedi pypdf-LICENSE.txt): legge il testo dei PDF delle slide del docente.
+- icalendar 7.3.0, recurring-ical-events 3.8.2, x-wr-timezone 2.0.1 (calendario: legge i calendari Google/Outlook
+  in formato ICS, anche gli impegni che si ripetono), python-dateutil 2.9.0, six 1.17.0, typing_extensions 4.16.0,
+  tzdata 2026.5 (fusi orari). Licenze nella cartella "licenze". In x_wr_timezone.py "click" e' facoltativo
+  (serve solo alla riga di comando, che qui non si usa).

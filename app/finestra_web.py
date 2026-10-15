@@ -37,6 +37,8 @@ class Api:
             self._m = motore.Motore()
             self._m.on_fine_registrazione = self._chiudi_mini
             self._m.on_riavvia = self._riavvia
+            self._m.on_avviso = self.apri_finestra       # calendario: la finestra viene davanti
+            self._m.on_avvio_auto = lambda: threading.Thread(target=self._apri_mini, daemon=True).start()
         except Exception:
             import traceback
             self._errore = traceback.format_exc()
@@ -181,6 +183,34 @@ class Api:
 
     def prova_mio(self, mio):
         return self._m.prova_mio(mio)
+
+    # ---- calendario
+    def cal_elenco(self):
+        return self._m.cal_elenco()
+
+    def cal_aggiungi(self, url):
+        return self._m.cal_aggiungi(url)
+
+    def cal_togli(self, url):
+        return self._m.cal_togli(url)
+
+    def cal_orario(self, righe):
+        return self._m.cal_orario(righe)
+
+    def cal_scelta(self, uid, modo):
+        return self._m.cal_scelta(uid, modo)
+
+    def cal_rispondi(self, id_, registra):
+        r = self._m.cal_rispondi(id_, registra)
+        if registra and r.get("ok") and r.get("mini"):
+            threading.Thread(target=self._apri_mini, daemon=True).start()
+        return r
+
+    def cal_fine_rispondi(self, ferma):
+        r = self._m.cal_fine_rispondi(ferma)
+        if ferma:
+            threading.Thread(target=self._dopo_fine, daemon=True).start()
+        return r
 
     def stima_docente(self, cartella):
         return self._m.stima_docente(cartella)
