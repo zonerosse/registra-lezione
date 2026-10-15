@@ -9,7 +9,7 @@ const GUIDA = {
         '<b>Funziona con tutto</b>: Meet, Teams, Zoom, webinar, video online… e con «Importa un video» anche le lezioni riprese col telefono o scaricate dall\'università.',
         '<b>La trascrizione si fa sul tuo PC</b>: l\'audio non va su internet. A Claude arrivano solo testo e slide, e solo se scegli gli appunti automatici.',
         '<b>Le slide le fotografa da solo</b> e le mette negli appunti accanto alle parole del docente, con il punto preciso della lezione.',
-        '<b>Appunti per studiare, non un riassunto</b>: Cornell per capire e ripassare, Formato Esame per prepararsi a rispondere. Anche tutti e due sulla stessa lezione.',
+        '<b>Appunti per studiare, non un riassunto</b>: Cornell per capire e ripassare, Formato Esame per prepararsi a rispondere. Anche tutti e due sulla stessa lezione, più le <b>flashcard per ripassare</b>.',
         '<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave (circa 0,20 $ per ora registrata), oppure porti i pacchetti all\'AI che preferisci.',
         '<b>Lezioni in altre lingue</b>: gli appunti arrivano nella tua lingua, con i termini tecnici originali tra parentesi.',
         'Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi.']},
@@ -40,6 +40,7 @@ const GUIDA = {
       {ico: 'lib', v: 'registrazioni', t: 'Le mie registrazioni', p: [
         'Qui trovi tutte le lezioni, con la ricerca per nome o data.',
         '<b>Apri appunti</b>, <b>Trascrizione</b> (slide con sotto le parole del docente) e <b>Video</b>.',
+        '<b>Ripassa</b>: flashcard con le domande dei tuoi appunti. Leggi la domanda, pensa alla risposta, tocca la carta per girarla e di\' se la sapevi. In alto c\'è <b>Ripassa la materia</b>, con le domande di tutte le lezioni della stessa materia: quelle che non sapevi tornano per prime la volta dopo. Non costa niente.',
         'Nel menu <b>⋯</b>: crea o rifai gli appunti, rinomina, apri la cartella, elimina il video (libera spazio, gli appunti restano) o tutta la registrazione (va nel Cestino).',
         'Se il PC si è spento mentre preparava i file, tocca <b>Completa</b>.']},
       {ico: 'set', v: 'impostazioni', t: 'Impostazioni', p: [
@@ -64,7 +65,7 @@ const GUIDA = {
         '<b>Works with everything</b>: Meet, Teams, Zoom, webinars, online videos… and with «Import a video» also lectures filmed with your phone or downloaded from the university.',
         '<b>Transcription happens on your PC</b>: the audio never goes online. Claude only receives text and slides, and only if you choose automatic notes.',
         '<b>Slides are captured automatically</b> and placed in the notes next to the lecturer\'s words, with the exact point of the lecture.',
-        '<b>Notes for studying, not a summary</b>: Cornell to understand and review, Exam format to get ready to answer. Even both for the same lecture.',
+        '<b>Notes for studying, not a summary</b>: Cornell to understand and review, Exam format to get ready to answer. Even both for the same lecture, plus <b>flashcards to review</b>.',
         '<b>No subscription</b>: you only pay for what you use with your own key (about 0.20 $ per recorded hour), or take the packages to the AI you prefer.',
         '<b>Lectures in other languages</b>: notes arrive in your language, with the original technical terms in brackets.',
         'Videos, notes and transcripts stay <b>on your PC</b>: they are yours.']},
@@ -95,6 +96,7 @@ const GUIDA = {
       {ico: 'lib', v: 'registrazioni', t: 'My recordings', p: [
         'All your lectures, with search by name or date.',
         '<b>Open notes</b>, <b>Transcript</b> (slides with the lecturer\'s words below) and <b>Video</b>.',
+        '<b>Review</b>: flashcards with the questions from your notes. Read the question, think of the answer, tap the card to flip it and say whether you knew it. At the top there is <b>Review the subject</b>, with the questions from all lectures of the same subject: the ones you didn\'t know come first next time. It\'s free.',
         'In the <b>⋯</b> menu: create or redo notes, rename, open the folder, delete the video (frees space, notes stay) or the whole recording (goes to the Recycle Bin).',
         'If the PC switched off while preparing the files, tap <b>Complete</b>.']},
       {ico: 'set', v: 'impostazioni', t: 'Settings', p: [

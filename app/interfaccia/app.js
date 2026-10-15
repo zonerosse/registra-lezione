@@ -100,8 +100,8 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === p));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (p === 'rip' ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
@@ -123,6 +123,7 @@ function inizializza() {
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });
   $('btnRec').onclick = inizia;
   $('btnImporta').onclick = scegliVideo;
+  collegaRipasso();
   $('ivCambia').onclick = scegliVideo;
   $('ivAnnulla').onclick = () => { IV = null; vai('reg'); };
   $('ivVai').onclick = importaVideo;
@@ -479,12 +480,14 @@ function disegnaLezioni() {
     else if (l.n_appunti) { pill = (l.formati || []).map(f => f === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('fmt.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('fmt.cornell')}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
-    const sec = l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '';
+    const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
+    const sec = (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
       <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div><div class="acts">${pill}${prim}${sec}</div></div>
       ${l.stato !== 'in_corso' ? `<button class="more" data-a="menu" title="${t('ar.altre')}">⋯</button>` : ''}</div>`;
   }).join('');
+  disegnaBanda();
   if ($('lista').dataset.h === h) return;
   $('lista').dataset.h = h; $('lista').innerHTML = h;
   $('lista').querySelectorAll('[data-a]').forEach(b => b.onclick = e => azioneLezione(LZ.lezioni[+b.closest('.lez').dataset.i], b.dataset.a, e));
@@ -492,6 +495,7 @@ function disegnaLezioni() {
 async function azioneLezione(l, a, e) {
   const c = l.cartella;
   if (a === 'appunti') return apriAppunti(c);
+  if (a === 'ripassa') return iniziaRipasso([c], l.nome, 'prima');
   if (a === 'tras') return A.apri_lezione(c);
   if (a === 'video') return A.apri(l.video);
   if (a === 'pacchetti') return A.apri_pacchetti();
@@ -623,6 +627,106 @@ function disegnaGuida(l) {
     if (d.open) { try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {} } else v.pause();
   }));
   $('segGuida').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === l));
+}
+
+/* ------------------------------------------------------------------ ripasso (flashcard) */
+// Le domande sono quelle gia' negli appunti: niente Claude, niente costi.
+let materiaRip = null;
+let RP = {carte: [], i: 0, ok: 0, no: [], titolo: '', cartelle: []};
+function materieRip() {
+  const M = [];
+  (LZ ? LZ.lezioni : []).forEach(l => {
+    if (!l.ripasso || !l.ripasso.n || l.stato === 'in_corso') return;
+    let m = M.find(x => x.m.toLowerCase() === l.materia.toLowerCase());
+    if (!m) M.push(m = {m: l.materia, cartelle: [], n: 0, no: 0, tre: 0});
+    m.cartelle.push(l.cartella); m.n += l.ripasso.n; m.no += l.ripasso.no; m.tre += l.ripasso.tre;
+  });
+  return M;
+}
+function disegnaBanda() {
+  const M = materieRip();
+  let h = '';
+  if (M.length) {
+    const m = M.find(x => x.m === materiaRip) || M[0];
+    materiaRip = m.m;
+    const det = [m.cartelle.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: m.cartelle.length}), t('rp.dom', {n: m.n})];
+    if (m.no) det.push(t('rp.dariv', {n: m.no}));
+    h = `<div class="banda"><span class="ico">${ico('cards')}</span><div class="sp"><b style="color:var(--ink);font-size:15px">${t('rp.banda.t')}</b><div class="hint">${esc(m.m)}: ${esc(det.join(' · '))}</div>
+      ${M.length > 1 ? `<div class="chips">${M.slice(0, 6).map(x => `<span class="chip${x.m === m.m ? ' on' : ''}" data-m="${esc(x.m)}">${esc(x.m)}</span>`).join('')}</div>` : ''}</div>
+      <button class="btn b-rip" id="bandaVai">${ico('cards')}${esc(t('rp.vai', {m: m.m}))}</button></div>`;
+  }
+  const b = $('ripBanda');
+  if (b.dataset.h === h) return;
+  b.dataset.h = h; b.innerHTML = h;
+  b.querySelectorAll('.chip').forEach(c => c.onclick = () => { materiaRip = c.dataset.m; disegnaBanda(); });
+  if ($('bandaVai')) $('bandaVai').onclick = () => sceltaRipasso(M.find(x => x.m === materiaRip) || M[0]);
+}
+let modoRip = 'prima';
+function sceltaRipasso(m) {
+  modoRip = 'prima';
+  $('rpH').textContent = t('rp.h', {m: m.m});
+  const modi = [['prima', t('rp.m.prima.t'), t('rp.m.prima')], ['tutte', t('rp.m.tutte.t'), t('rp.m.tutte', {n: m.n})],
+    ['stelle', t('rp.m.stelle.t'), m.tre ? t('rp.m.stelle', {n: m.tre}) : t('rp.m.stelle0'), !m.tre]];
+  $('rpModi').innerHTML = modi.map(x => `<div class="aiopt${x[0] === modoRip ? ' on' : ''}${x[3] ? ' off' : ''}" data-m="${x[0]}"><span class="rd"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></div>`).join('');
+  $('rpModi').querySelectorAll('.aiopt').forEach(o => o.onclick = () => { modoRip = o.dataset.m; $('rpModi').querySelectorAll('.aiopt').forEach(x => x.classList.toggle('on', x === o)); });
+  $('rpVia').onclick = () => iniziaRipasso(m.cartelle, m.m, modoRip);
+  $('rpAnnulla').onclick = () => vai('arch');
+  mostraRip('rpScelta'); vai('rip');
+}
+function mostraRip(id) { ['rpScelta', 'rpCarte', 'rpRis'].forEach(x => $(x).classList.toggle('hidden', x !== id)); }
+async function iniziaRipasso(cartelle, titolo, modo) {
+  const r = await A.ripasso(cartelle, modo);
+  if (!r.ok || !r.carte.length) { toast(t('rp.vuoto')); return; }
+  RP = {carte: r.carte, i: 0, ok: 0, no: [], titolo, cartelle};
+  $('rpH2').textContent = t('rp.h', {m: titolo});
+  mostraRip('rpCarte'); vai('rip'); cartaRip();
+}
+function cartaRip() {
+  const c = RP.carte[RP.i], n = RP.carte.length;
+  $('carta').classList.remove('giro'); $('voto').classList.remove('on');
+  $('cSt').textContent = c.stelle ? '★'.repeat(c.stelle) + '☆'.repeat(3 - c.stelle) : '';
+  $('cD').textContent = c.domanda;
+  const ori = [c.lezione]; if (c.slide_n) ori.push('slide ' + c.slide_n); else if (c.dove) ori.push(c.dove);
+  if (c.minuto != null) ori.push(t('rp.min', {m: c.minuto}));
+  $('cO').textContent = ori.join(' · ');
+  $('cTit').textContent = c.formato === 'esame' ? t('rp.schema') : t('rp.risp');
+  $('cSc').innerHTML = c.schema.map(x => `<li>${esc(x)}</li>`).join('');
+  $('cK').innerHTML = c.parole.map(x => `<span class="kw">${esc(x)}</span>`).join('');
+  $('cSl').innerHTML = c.img ? `<img src="${c.img}" alt=""><div class="hint">${esc(ori.join(' · '))}</div>` : '';
+  $('cE').style.display = c.errore ? '' : 'none'; $('cE').textContent = t('rp.err', {e: c.errore});
+  $('rpN').textContent = t('rp.n', {i: RP.i + 1, n}); $('rpBar').style.width = (RP.i / n * 100) + '%'; $('rpOk').textContent = '✓ ' + RP.ok;
+  $('rpSub').textContent = t('rp.sub', {n});
+}
+function giraRip() { $('carta').classList.toggle('giro'); $('voto').classList.add('on'); }
+function votoRip(v) {
+  if (RP.i >= RP.carte.length) return;
+  const c = RP.carte[RP.i];
+  A.ripasso_voto(c.cartella, c.id, !!v);
+  if (v) RP.ok++; else RP.no.push(c);
+  RP.i++;
+  if (RP.i >= RP.carte.length) fineRip(); else cartaRip();
+}
+function fineRip() {
+  const n = RP.i;
+  if (!n) { vai('arch'); return; }
+  $('rN').textContent = RP.ok + '/' + n; $('anello').style.setProperty('--p', (RP.ok / n * 100) + '%');
+  $('rT').textContent = RP.ok === n ? t('rp.r.tutte') : RP.ok >= n / 2 ? t('rp.r.bene') : t('rp.r.dai');
+  $('rL').innerHTML = RP.no.length ? `<div class="lbl">${t('rp.r.lista')}</div>` + RP.no.map(c => `<div>${esc(c.domanda)}<span class="hint" style="display:block">${esc(c.lezione)}${c.slide_n ? ' · slide ' + c.slide_n : ''}</span></div>`).join('') : '';
+  $('rAncora').classList.toggle('hidden', !RP.no.length);
+  mostraRip('rpRis');
+}
+function collegaRipasso() {
+  $('carta').onclick = giraRip;
+  $('vNo').onclick = () => votoRip(0); $('vSi').onclick = () => votoRip(1);
+  $('rpBasta').onclick = fineRip;
+  $('rFine').onclick = () => vai('arch');
+  $('rAncora').onclick = () => { RP = {...RP, carte: RP.no.slice(), i: 0, ok: 0, no: []}; mostraRip('rpCarte'); cartaRip(); };
+  document.addEventListener('keydown', e => {
+    if (pagina !== 'rip' || $('rpCarte').classList.contains('hidden') || document.querySelector('.velo')) return;
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); giraRip(); }
+    else if (e.key === 'ArrowLeft' && $('voto').classList.contains('on')) votoRip(0);
+    else if (e.key === 'ArrowRight' && $('voto').classList.contains('on')) votoRip(1);
+  });
 }
 
 /* ------------------------------------------------------------------ aggiornamenti */

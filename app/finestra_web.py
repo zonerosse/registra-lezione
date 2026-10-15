@@ -84,6 +84,12 @@ class Api:
     def lezioni(self):
         return self._m.lezioni()
 
+    def ripasso(self, cartelle, modo="prima"):
+        return self._m.ripasso(cartelle, modo)
+
+    def ripasso_voto(self, cartella, cid, sapevo):
+        return self._m.ripasso_voto(cartella, cid, sapevo)
+
     def letto(self, mid):
         self._m.letto(mid)
 

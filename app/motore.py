@@ -66,7 +66,8 @@ log = logging.getLogger("registra_lezione")
 logging.getLogger("fontTools").setLevel(logging.WARNING)
 
 import aggiorna as agg               # noqa: E402
-import appunti as ap                 # noqa: E402
+import appunti as ap
+import ripasso as rp                 # noqa: E402
 import elaborazione as el            # noqa: E402
 import registratore as rg            # noqa: E402
 import testi                         # noqa: E402
@@ -854,7 +855,8 @@ class Motore:
                 "completa_appunti": [f for f in ap.FORMATI if puo and fatti[f] and mancano[f]],
                 "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],
                 "rifai_appunti": bool(puo and fatti[self._formato()] and not mancano[self._formato()]),
-                "sigla": sigla(nome), "colore": colore_materia(nome),
+                "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
+                "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
                 "formato": info.get("formato_appunti") or "cornell",
                 "importata": bool(info.get("importata")),
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
@@ -865,6 +867,22 @@ class Motore:
             liberi = 0
         return {"lezioni": out, "video_tot": tot_video, "video_testo": gb_testo(tot_video),
                 "quota": tot_video / (tot_video + liberi) if (tot_video + liberi) else 0, "base": str(BASE)}
+
+    # ------------------------------------------------------------------ ripasso (flashcard)
+
+    def ripasso(self, cartelle, modo="prima"):
+        try:
+            return {"ok": True, "carte": rp.prepara([c for c in cartelle if Path(c).is_dir()], modo)}
+        except Exception:
+            log.exception("ripasso")
+            return {"ok": False, "carte": []}
+
+    def ripasso_voto(self, cartella, cid, sapevo):
+        try:
+            return rp.voto(cartella, cid, bool(sapevo))
+        except Exception:
+            log.exception("voto ripasso")
+            return False
 
     def rinomina(self, cartella, nuovo):
         cart = Path(cartella)
