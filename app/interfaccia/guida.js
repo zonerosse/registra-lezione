@@ -8,7 +8,8 @@ const GUIDA = {
         'Entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo <b>schermo principale</b>, con il volume acceso.',
         'In <b>Registra</b> scrivi il nome, per esempio «Analisi 1 – Limiti». Data e ora le aggiunge il programma. Le materie usate di recente compaiono sotto: un tocco e sono già scritte.',
         'Scegli <b>in che lingua parla il docente</b>. Se non è la lingua del programma, gli appunti arrivano comunque tradotti, con i termini tecnici originali tra parentesi.',
-        'Tocca il pulsante rosso <b>REGISTRA</b>. Se te lo chiede, attiva «Non disturbare» di Windows: così i suoni delle notifiche non finiscono nella registrazione.']},
+        'Tocca il pulsante rosso <b>REGISTRA</b>. Se te lo chiede, attiva «Non disturbare» di Windows: così i suoni delle notifiche non finiscono nella registrazione.',
+        'Hai già un video della lezione (dal telefono o dall\'università)? Tocca <b>Importa un video…</b> sotto il pulsante rosso: diventa una registrazione come le altre, con trascrizione, slide e appunti.']},
       {ico: 'pause', t: 'Durante la lezione', p: [
         'La finestra grande si riduce e compare la <b>mini finestra</b> in basso a destra, sempre in primo piano. Si sposta trascinandola dall\'alto. Non finisce nel video.',
         '<b>Pausa</b> durante l\'intervallo: non registra niente e il tempo si ferma. <b>Riprendi</b> quando ricomincia.',
@@ -49,7 +50,8 @@ const GUIDA = {
         'Join the lecture (Meet, Teams, Zoom…) and keep its window on the <b>main screen</b>, with the volume on.',
         'In <b>Record</b> type the name, e.g. «Calculus 1 – Limits». The program adds date and time. Recent subjects appear below: one tap and they are typed in.',
         'Choose <b>which language the lecturer speaks</b>. If it is not the program language, the notes still arrive translated, with the original technical terms in brackets.',
-        'Tap the red <b>RECORD</b> button. If asked, turn on Windows «Do not disturb», so notification sounds don\'t end up in the recording.']},
+        'Tap the red <b>RECORD</b> button. If asked, turn on Windows «Do not disturb», so notification sounds don\'t end up in the recording.',
+        'Already have a video of the lecture (from your phone or the university)? Tap <b>Import a video…</b> below the red button: it becomes a recording like the others, with transcript, slides and notes.']},
       {ico: 'pause', t: 'During the lecture', p: [
         'The main window minimises and the <b>mini window</b> appears at the bottom right, always on top. Drag it from the top to move it. It does not end up in the video.',
         '<b>Pause</b> during the break: nothing is recorded and the clock stops. <b>Resume</b> when the lecture restarts.',

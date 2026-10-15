@@ -101,8 +101,8 @@ window.chiusura = async c => {
 function vai(p) {
   pagina = p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === p));
-  ['pronto', 'reg', 'fine', 'arch', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
-  if (p === 'reg') $('v-' + (S.vista || 'pronto')).classList.remove('hidden');
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
@@ -122,6 +122,11 @@ function inizializza() {
   $('nome').addEventListener('input', anteprimaNome);
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });
   $('btnRec').onclick = inizia;
+  $('btnImporta').onclick = scegliVideo;
+  $('ivCambia').onclick = scegliVideo;
+  $('ivAnnulla').onclick = () => { IV = null; vai('reg'); };
+  $('ivVai').onclick = importaVideo;
+  $('ivSlide').querySelectorAll('span').forEach(x => x.onclick = () => { IV.slide = x.dataset.v === '1'; disegnaImporta(); });
   // registrazione
   $('btnPausa').onclick = () => A.pausa().then(aggiorna);
   $('btnFine').onclick = chiediFine;
@@ -282,6 +287,59 @@ async function inizia() {
   } finally { $('btnRec').disabled = false; }
 }
 
+/* ------------------------------------------------------------------ importa un video */
+let IV = null;   // video scelto da importare
+function durataTesto(sec) {
+  const m = Math.round(sec / 60), h = Math.floor(m / 60);
+  return h ? t('dur.h', {h, m: m % 60}) : t('dur.m', {m: Math.max(1, m)});
+}
+async function scegliVideo() {
+  if (S.registro || S.occupato) { toast(t('aspetta')); return; }
+  const r = await A.scegli_video();
+  if (!r.ok) { if (r.msg) toast(t('iv.err')); return; }
+  IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA, nome: (IV && IV.nome) || ''};
+  $('ivNome').value = r.nome_proposto || '';
+  disegnaImporta();
+  vai('reg');
+  setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
+}
+function disegnaImporta() {
+  if (!IV) return;
+  $('ivFile').textContent = IV.nome_file;
+  const d = new Date(IV.data);
+  const q = `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${due(d.getHours())}.${due(d.getMinutes())}`;
+  $('ivInfo').textContent = t('iv.info', {d: durataTesto(IV.durata), g: gb(IV.peso / 1e9), q}) + (IV.ha_video ? '' : ' · ' + t('iv.solo_audio'));
+  const L = ['it', 'en', 'fr', 'es', 'de', 'auto'], ord = [LINGUA, ...L.filter(x => x !== LINGUA)];
+  $('ivLingue').innerHTML = ord.map(l => `<span class="chip${l === IV.lingua ? ' on' : ''}" data-l="${l}">${esc(t('lingueTit')[l])}</span>`).join('');
+  $('ivLingue').querySelectorAll('.chip').forEach(c => c.onclick = () => { IV.lingua = c.dataset.l; disegnaImporta(); });
+  $('ivSlideRiga').classList.toggle('hidden', !IV.ha_video);
+  $('ivSlide').querySelectorAll('span').forEach(x => x.classList.toggle('on', (x.dataset.v === '1') === IV.slide));
+  $('ivStima').textContent = IV.stima ? t('iv.stima', {t: durataTesto(IV.stima)}) : '';
+}
+async function importaVideo() {
+  if (!IV) return;
+  $('ivVai').disabled = true;
+  try {
+    const r = await A.importa(IV.percorso, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video);
+    if (!r.ok) { toast(r.msg && r.msg !== '?' ? r.msg : t('iv.err')); return; }
+    IV = null;
+    await aggiorna(); vai('reg');
+  } finally { $('ivVai').disabled = false; }
+}
+function disegnaFasi() {
+  const g = S.importa;
+  $('fImp').classList.toggle('hidden', !g);
+  if (!g) return;
+  const testi = [t('iv.f0'), t('iv.f1'), !g.cerca_slide ? t('iv.f2x') : g.slide != null ? t('iv.f2n', {n: g.slide}) : t('iv.f2'), t('iv.f3')];
+  const h = testi.map((x, i) => {
+    const st = i < g.fase ? 'ok' : i === g.fase ? 'lav' : 'att';
+    const segno = st === 'ok' ? '✓' : st === 'lav' ? '<span class="spin" style="width:14px;height:14px"></span>' : '·';
+    const perc = st === 'lav' && i < 3 ? ` ${Math.round((g.perc || 0) * 100)}%` : '';
+    return `<div class="fase ${st}"><span class="s">${segno}</span>${esc(x)}${perc}</div>`;
+  }).join('');
+  if ($('fFasi').innerHTML !== h) $('fFasi').innerHTML = h;
+}
+
 /* ------------------------------------------------------------------ registrazione */
 (function () { const w = $('lWave'); for (let i = 0; i < 48; i++) w.appendChild(document.createElement('i')); })();
 function disegnaReg() {
@@ -346,7 +404,8 @@ function disegnaFine() {
   $('fCheck').className = 'check' + (pronto ? '' : ' lav');
   const chk = pronto ? ico('check') : '<span class="spin"></span>';
   if ($('fCheck').dataset.p !== String(pronto)) { $('fCheck').innerHTML = chk; $('fCheck').dataset.p = String(pronto); }
-  $('fTit').textContent = pronto ? t('fn.ok') : t('fn.lav');
+  $('fTit').textContent = pronto ? t('fn.ok') : S.importa ? t('fn.imp') : t('fn.lav');
+  disegnaFasi();
   const sp = S.spesa ? t('fn.spesa', {n: S.spesa.n, d: num(S.spesa.dollari.toFixed(2))}) : '';
   $('fSub').textContent = (S.titolo_fine || '') + sp;
   $('fBar').classList.toggle('hidden', pronto || perc === null);
@@ -412,7 +471,7 @@ function disegnaLezioni() {
   if (!L.length) { $('lista').dataset.h = ''; $('lista').innerHTML = `<div class="card" style="text-align:center;padding:40px 20px;color:var(--mut)">${n ? t('ar.trovata0') : t('ar.vuoto')}</div>`; return; }
   const h = L.map((l, i) => {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
-    const meta = [l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg].filter(Boolean).join(' · ') +
+    const meta = [l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
       (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;

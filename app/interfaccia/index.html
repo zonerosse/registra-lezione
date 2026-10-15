@@ -32,6 +32,7 @@
   <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
   <symbol id="i-guida" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></symbol>
+  <symbol id="i-imp" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
   <symbol id="i-film" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18M3 15h18M8 5v14M16 5v14"/></symbol>
 </svg>
 
@@ -84,7 +85,24 @@
         <div class="hint" id="recHint"></div>
         <div class="hint" id="recModello" style="color:var(--blue);font-weight:600"></div>
       </div>
+      <div class="imp mt" id="btnImporta"><span class="ico i-teal"><svg><use href="#i-imp"/></svg></span>
+        <div class="sp"><b style="color:var(--ink)" data-t="im.v.t">Hai già un video della lezione?</b><div class="hint" data-t="im.v">Registrato col telefono o dato dall'università (mp4, mov, mkv, mp3, m4a…). Lo trasformo in trascrizione, slide e appunti, come una registrazione fatta qui.</div></div>
+        <span class="btn b-ghost b-sm" data-t="im.v.b">Importa un video…</span></div>
       <div class="hint" style="text-align:center;margin-top:12px" data-t="pr.prima">Prima di iniziare entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo schermo principale, con il volume acceso.</div>
+    </section>
+
+    <!-- REGISTRA: importa un video -->
+    <section class="pg hidden" id="v-importa">
+      <div class="hd"><div><h2 data-t="iv.h">Importa un video</h2><p data-t="iv.p">Lo copio nelle tue registrazioni: il file originale resta dov'è.</p></div></div>
+      <div class="card">
+        <div class="file"><span class="ico i-teal"><svg><use href="#i-film"/></svg></span><div class="sp"><b style="color:var(--ink)" id="ivFile"></b><div class="hint" id="ivInfo"></div></div><button class="btn b-ghost b-sm" id="ivCambia" data-t="im.cambia">Cambia…</button></div>
+        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="ivNome" maxlength="90" autocomplete="off">
+        <div class="lbl" style="margin-top:14px" data-t="pr.lingua">In che lingua parla il docente?</div>
+        <div class="chips" id="ivLingue"></div>
+        <div class="set" id="ivSlideRiga" style="margin-top:12px"><div class="t"><b data-t="iv.sl.t">C'è lo schermo con le slide?</b><span data-t="iv.sl">Se il video ha solo l'audio (o solo la faccia del docente) salto le slide.</span></div><div class="seg" id="ivSlide"><span data-v="1" data-t="iv.sl.si">Sì, cerco le slide</span><span data-v="0" data-t="iv.sl.no">Solo audio</span></div></div>
+        <div class="hint" style="margin-top:10px" id="ivStima"></div>
+        <div class="row mt"><span class="sp"></span><button class="btn b-ghost b-sm" id="ivAnnulla" data-t="annulla">Annulla</button><button class="btn b-main" id="ivVai" data-t="iv.vai">Importa e prepara gli appunti</button></div>
+      </div>
     </section>
 
     <!-- REGISTRA: in registrazione -->
@@ -120,6 +138,7 @@
           <div class="bar hidden" id="fBar" style="max-width:360px"><i style="width:0"></i></div></div>
       </div>
       <div class="avviso mt hidden" id="fAvv"></div>
+      <div class="card mt hidden" id="fImp"><div class="lbl" data-t="iv.fasi">A che punto sono</div><div class="fasi" id="fFasi"></div></div>
       <div class="card mt" id="fAp"></div>
       <div class="card mt">
         <div class="lbl" data-t="lv.parti">Pacchetti e appunti</div>

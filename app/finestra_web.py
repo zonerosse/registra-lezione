@@ -130,6 +130,31 @@ class Api:
     def pausa(self):
         return self._m.pausa()
 
+    def scegli_video(self):
+        """Finestra di Windows per scegliere il video (o l'audio) da importare."""
+        tipi = ("Video e audio (*.mp4;*.mov;*.mkv;*.webm;*.avi;*.m4v;*.3gp;*.wmv;*.mp3;*.m4a;*.wav;*.aac;*.ogg;*.opus;*.flac)",
+                "Tutti i file (*.*)")
+        try:
+            scelta = self._win.create_file_dialog(webview.FileDialog.OPEN, file_types=tipi,
+                                                  directory=str(Path.home() / "Videos"))
+        except Exception:
+            log.exception("scegli video")
+            return {"ok": False}
+        if not scelta:
+            return {"ok": False}
+        f = scelta[0] if isinstance(scelta, (list, tuple)) else scelta
+        try:
+            return {"ok": True, **self._m.info_video(f)}
+        except Exception:
+            log.exception("info video")
+            return {"ok": False, "msg": "?"}
+
+    def info_video(self, percorso):
+        return self._m.info_video(percorso)
+
+    def importa(self, percorso, nome, lingua, cerca_slide):
+        return self._m.importa(percorso, nome, lingua, cerca_slide)
+
     def fine(self):
         log.info("fine: richiesta dalla pagina")
         r = self._m.fine()                     # chiude la mini finestra (fra poco, in un altro thread)

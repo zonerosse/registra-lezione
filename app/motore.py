@@ -162,6 +162,10 @@ def video_di(cart):
         p = Path(cart) / nome
         if p.exists():
             return p
+    # video o audio importati in un formato diverso
+    for p in sorted(Path(cart).glob("video.*")) + sorted(Path(cart).glob("audio_originale.*")):
+        if p.suffix.lower() not in (".txt", ".json"):
+            return p
     return None
 
 
@@ -222,7 +226,8 @@ class Motore:
         self.finale = None             # None | (0..1) | "ok"
         self.accodate = set()
         self.appunti_lezione = False
-        self.formato_vista = "cornell"     # formato degli appunti mostrati/creati nella schermata di fine
+        self.formato_vista = "cornell"
+        self.imp = None                    # importazione di un video in corso: fasi e avanzamento     # formato degli appunti mostrati/creati nella schermata di fine
         self.parte_sec = 3600
         self.vista = "pronto"          # pronto | reg | fine
         self.nome_rec = ""
@@ -322,6 +327,7 @@ class Motore:
             s["spesa"] = self._spesa()
             s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
             s["formato"] = self.formato_vista
+            s["importa"] = self.imp
             return s
 
     def _spesa(self):
@@ -516,6 +522,85 @@ class Motore:
             self.vista = "reg"
             log.info("inizio registrazione: %s", cart)
             return {"ok": True, "mini": bool(self.cfg.get("mini_finestra", True))}
+
+    # ------------------------------------------------------------------ importa un video
+
+    def info_video(self, percorso):
+        import importa as im
+        i = im.info_file(percorso)
+        i["stima"] = round(i["durata"] / max(0.1, float(self.cfg.get("velocita_trascrizione") or 0.8)))
+        return i
+
+    def importa(self, percorso, nome, lingua=None, cerca_slide=True):
+        import importa as im
+        src = Path(percorso)
+        if not src.exists():
+            return {"ok": False, "msg": "?"}
+        with self._lock:
+            if self.occupato:
+                return {"ok": False, "msg": tr("aspetta_lavoro")}
+            nome = (nome or "").strip() or src.stem
+            self.ricorda_materia(nome)
+            try:
+                quando = datetime.datetime.fromtimestamp(src.stat().st_mtime)
+            except OSError:
+                quando = datetime.datetime.now()
+            cart = BASE / f"{quando:%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
+            n = 2
+            while cart.exists():
+                cart = BASE / f"{quando:%Y-%m-%d %H%M} - {el.nome_sicuro(nome)} ({n})"
+                n += 1
+            cart.mkdir(parents=True)
+            self.parte_sec = int(os.environ.get("RL_PARTE_SECONDI") or int(self.cfg.get("parte_minuti", 30)) * 60)
+            lingua = lingua if lingua in testi.LEZIONE else (self.cfg.get("lingua_lezione") or testi.LINGUA)
+            el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": quando.isoformat(timespec="seconds"),
+                                                "durata": 0, "n_slide": 0, "stato": "importazione", "pacchetti": {},
+                                                "studente": self.cfg.get("studente") or {}, "importata": True,
+                                                "file_originale": str(src), "parte_secondi": self.parte_sec,
+                                                "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
+                                                "formato_appunti": self._formato()})
+            self.cartella_corrente = cart
+            self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
+            self.formato_vista = self._formato()
+            self.parti = {}
+            self.finale = 0.0
+            self.avviso_fine = ""
+            self.titolo_fine = nome
+            self.nome_rec = nome
+            self.vista = "fine"
+            self.occupato = True
+            self._sveglio_voluto = True
+            self.imp = {"fase": 0, "perc": 0.0, "slide": None, "cerca_slide": bool(cerca_slide)}
+        threading.Thread(target=self._importa_lavoro, args=(cart, src, bool(cerca_slide)), daemon=True).start()
+        log.info("importazione: %s -> %s", src, cart)
+        return {"ok": True}
+
+    def _imp_perc(self, fase, f):
+        if self.imp is not None:
+            self.imp.update(fase=fase, perc=round(float(f), 3))
+
+    def _importa_lavoro(self, cart, src, cerca):
+        import importa as im
+        try:
+            info = im.info_file(src)
+            durata = info["durata"]
+            dest = im.copia(src, cart, lambda f: self._imp_perc(0, f))
+            parti = im.dividi_audio(dest, cart, self.parte_sec, durata, lambda f: self._imp_perc(1, f))
+            slides = []
+            if cerca and info["ha_video"]:
+                self._imp_perc(2, 0)
+                slides = im.cerca_slide(dest, cart, durata, lambda f: self._imp_perc(2, f))
+            if self.imp is not None:
+                self.imp["slide"] = len(slides)
+            el.scrivi_json(cart / "meta.json", {"nome": self.nome_rec, "audio_t0": 0.0, "video_t0": 0.0,
+                                                "durata": durata, "slides": slides, "errori": [],
+                                                "parte_secondi": self.parte_sec})
+            el.aggiorna_info(cart, durata=round(durata), n_slide=len(slides), stato="elaborazione")
+            self._imp_perc(3, 0)
+            self.coda.put(("importato", (cart, list(parti), durata)))
+        except Exception:
+            log.exception("importazione")
+            self.coda.put(("errore", traceback.format_exc()))
 
     def pausa(self):
         if not self.reg:
@@ -771,6 +856,7 @@ class Motore:
                 "rifai_appunti": bool(puo and fatti[self._formato()] and not mancano[self._formato()]),
                 "sigla": sigla(nome), "colore": colore_materia(nome),
                 "formato": info.get("formato_appunti") or "cornell",
+                "importata": bool(info.get("importata")),
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
         try:
@@ -914,7 +1000,15 @@ class Motore:
                 if tipo == "parte":
                     k = lavoro[2]
                     self.coda.put(("parte_perc", (k, 0.0)))
+                    gia = (Path(cart) / f"trascrizione_{k:03d}.json").exists()
+                    t0, sec = time.monotonic(), el.durata_wav(Path(cart) / f"audio_{k:03d}.wav")
                     el.trascrivi_parte(cart, k, lambda f: self.coda.put(("parte_perc", (k, f))), threads)
+                    if not gia and sec > 60 and self.reg is None:
+                        # velocita' di questo PC (secondi di audio per secondo di lavoro): serve per le stime
+                        v = sec / max(1.0, time.monotonic() - t0)
+                        vecchia = float(self.cfg.get("velocita_trascrizione") or v)
+                        self.cfg["velocita_trascrizione"] = round(0.5 * vecchia + 0.5 * v, 3)
+                        salva_config(self.cfg)
                     zp = el.crea_pacchetto(cart, k, self.cfg["cartella_pacchetti"])
                     self.coda.put(("parte_ok", (k, str(zp))))
                 elif tipo == "finale":
@@ -1017,6 +1111,13 @@ class Motore:
             if "video" in errori or "schermo" in errori:
                 avvisi.append(tr("fine_video"))
             self.avviso_fine = " ".join(avvisi)
+        elif tipo == "importato":
+            cart, parti, durata = dato
+            for k in parti:
+                fine_k = min(k * self.parte_sec, durata)
+                self.parti[k] = {"stato": "attesa", "orario": self._orario(k, fine_k)}
+                self.accoda_parte(cart, k)
+            self.lavori.put(("finale", cart))
         elif tipo == "parte_perc":
             k, f = dato
             if k in self.parti:
@@ -1045,9 +1146,11 @@ class Motore:
         elif tipo == "finale_ok":
             self.finale = "ok"
             self.lavori_appunti.put((dato, None, None))
+            self.imp = None
             self.occupato = False
             self._sveglio_voluto = False
         elif tipo == "errore":
+            self.imp = None
             self.occupato = False
             self._sveglio_voluto = False
             self.finale = None

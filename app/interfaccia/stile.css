@@ -222,3 +222,15 @@ h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 .cap[open] summary .fr{transform:rotate(90deg)}
 .cap ol{margin:0;padding:0 18px 16px 58px;line-height:1.6;font-size:14px;color:var(--txt);-webkit-user-select:text;user-select:text}
 .cap ol li{margin-bottom:6px}
+
+/* ===== importa un video ===== */
+.imp{display:flex;align-items:center;gap:14px;border:2px dashed #b6cde3;border-radius:16px;padding:14px 16px;background:#f8fbff;cursor:pointer}
+.imp:hover{background:#eef6fd;border-color:#7fb3dc}
+.file{display:flex;gap:12px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px;margin-bottom:14px}
+.file b{word-break:break-all}
+.fasi{display:grid;gap:8px}
+.fase{display:flex;align-items:center;gap:10px;font-size:14px}
+.fase .s{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;flex:none}
+.fase.ok .s{background:#d1fae5;color:#047857}.fase.lav .s{background:#e0f2fe}.fase.att .s{background:#f1f5f9;color:#94a3b8}
+.fase.att{color:#94a3b8}
+.chip.on{background:linear-gradient(180deg,#0284c7,#0d4275);color:#fff;border-color:#0d4275}
