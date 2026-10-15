@@ -201,13 +201,17 @@ def main():
         esito = False
     # 5. slide viste: le foto devono essere cambiate (colori diversi della testata)
     from PIL import Image
-    colori = set()
-    for f in sorted((rec / "schermo").glob("*.jpg")):
-        with Image.open(f) as im:
-            px = im.convert("RGB").resize((32, 18)).getpixel((16, 1))
-            colori.add(tuple(c // 40 for c in px))
+    gruppi, colori = [], set()
     scelte = sorted((rec / "schermo").glob("*.jpg"))
-    for i, f in enumerate(scelte[::max(1, len(scelte) // 4)][:4]):
+    for f in scelte:
+        with Image.open(f) as im:
+            c = tuple(x // 40 for x in im.convert("RGB").resize((32, 18)).getpixel((16, 1)))
+        colori.add(c)
+        if gruppi and gruppi[-1][0] == c:
+            gruppi[-1][1] = f          # l'ultima foto della stessa slide (completa)
+        else:
+            gruppi.append([c, f])
+    for i, (_, f) in enumerate(gruppi[-4:]):
         Image.open(f).convert("RGB").resize((640, 360)).save(OUT / f"foto_{i + 1}.jpg")
     scrivi(f"slide: {len(colori)} testate diverse viste in {len(scelte)} foto")
     if len(scelte) == 0:
