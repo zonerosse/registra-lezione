@@ -1,6 +1,6 @@
 {
- "versione": "0.4",
- "codice": 4,
- "novita": "Prima versione completa di prova: registra in aula e online (vivavoce), trascrive sul telefono durante o dopo la lezione, appunti con Claude, Le mie lezioni, ripasso, Chiedi, mappa mentale, guida.",
- "novita_en": "First complete test version: records in class and online (speaker), transcribes on the phone during or after the lecture, notes with Claude, My lectures, review, Ask, mind map, guide."
+ "versione": "0.5",
+ "codice": 5,
+ "novita": "L'app ha la sua icona (la stessa del programma per il PC). Nella Guida, «Prima di iniziare» è il primo passo di «Registrare una lezione».",
+ "novita_en": "The app has its own icon (the same as the PC program). In the Guide, «Before starting» is the first step of «Recording a lecture»."
 }
