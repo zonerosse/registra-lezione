@@ -350,9 +350,30 @@ function durataTesto(sec) {
 }
 async function scegliVideo() {
   if (S.registro || S.occupato) { toast(t('aspetta')); return; }
+  const da = await dialogo({titolo: t('il.t'), testo: t('il.s'),
+    bottoni: [{t: t('annulla'), v: null}, {t: '🔗 ' + t('il.link'), cls: 'b-ghost', v: 'link'}, {t: '📁 ' + t('il.file'), cls: 'b-main', v: 'file'}]});
+  if (da === 'link') return scegliLink();
+  if (da !== 'file') return;
   const r = await A.scegli_video();
   if (!r.ok) { if (r.msg) toast(t('iv.err')); return; }
   IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA, nome: (IV && IV.nome) || ''};
+  $('ivNome').value = r.nome_proposto || '';
+  disegnaImporta();
+  vai('reg');
+  setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
+}
+async function scegliLink() {
+  const ok = await dialogo({titolo: t('il.link.t'), html: `<input class="in" placeholder="https://…"><div class="hint" style="margin-top:8px">${esc(t('il.siti'))}</div>`,
+    bottoni: [{t: t('annulla'), v: false}, {t: t('il.vai'), cls: 'b-main', v: true}]});
+  const url = (dialogo.valore || '').trim();
+  if (!ok || !url) return;
+  const v = document.createElement('div'); v.className = 'velo';
+  v.innerHTML = `<div class="dlg"><div class="row" style="gap:10px"><span class="spin"></span>${esc(t('il.cerco'))}</div></div>`;
+  document.body.appendChild(v);
+  let r;
+  try { r = await A.info_link(url); } finally { v.remove(); }
+  if (!r.ok) { await dialogo({titolo: t('il.link.t'), testo: r.msg || t('iv.err')}); return; }
+  IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA};
   $('ivNome').value = r.nome_proposto || '';
   disegnaImporta();
   vai('reg');
@@ -363,7 +384,8 @@ function disegnaImporta() {
   $('ivFile').textContent = IV.nome_file;
   const d = new Date(IV.data);
   const q = `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${due(d.getHours())}.${due(d.getMinutes())}`;
-  $('ivInfo').textContent = t('iv.info', {d: durataTesto(IV.durata), g: gb(IV.peso / 1e9), q}) + (IV.ha_video ? '' : ' · ' + t('iv.solo_audio'));
+  $('ivInfo').textContent = IV.link ? [IV.sito, IV.durata ? durataTesto(IV.durata) : '', t('il.scarico')].filter(Boolean).join(' · ')
+    : t('iv.info', {d: durataTesto(IV.durata), g: gb(IV.peso / 1e9), q}) + (IV.ha_video ? '' : ' · ' + t('iv.solo_audio'));
   const L = ['it', 'en', 'fr', 'es', 'de', 'auto'], ord = [LINGUA, ...L.filter(x => x !== LINGUA)];
   $('ivLingue').innerHTML = ord.map(l => `<span class="chip${l === IV.lingua ? ' on' : ''}" data-l="${l}">${esc(t('lingueTit')[l])}</span>`).join('');
   $('ivLingue').querySelectorAll('.chip').forEach(c => c.onclick = () => { IV.lingua = c.dataset.l; disegnaImporta(); });
@@ -375,7 +397,8 @@ async function importaVideo() {
   if (!IV) return;
   $('ivVai').disabled = true;
   try {
-    const r = await A.importa(IV.percorso, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video);
+    const r = IV.link ? await A.importa_link(IV.link, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video)
+      : await A.importa(IV.percorso, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video);
     if (!r.ok) { toast(r.msg && r.msg !== '?' ? r.msg : t('iv.err')); return; }
     IV = null;
     await aggiorna(); vai('reg');
@@ -385,11 +408,11 @@ function disegnaFasi() {
   const g = S.importa;
   $('fImp').classList.toggle('hidden', !g);
   if (!g) return;
-  const testi = [t('iv.f0'), t('iv.f1'), !g.cerca_slide ? t('iv.f2x') : g.slide != null ? t('iv.f2n', {n: g.slide}) : t('iv.f2'), t('iv.f3')];
+  const testi = [...(g.link ? [t('iv.fl')] : []), t('iv.f0'), t('iv.f1'), !g.cerca_slide ? t('iv.f2x') : g.slide != null ? t('iv.f2n', {n: g.slide}) : t('iv.f2'), t('iv.f3')];
   const h = testi.map((x, i) => {
     const st = i < g.fase ? 'ok' : i === g.fase ? 'lav' : 'att';
     const segno = st === 'ok' ? '✓' : st === 'lav' ? '<span class="spin" style="width:14px;height:14px"></span>' : '·';
-    const perc = st === 'lav' && i < 3 ? ` ${Math.round((g.perc || 0) * 100)}%` : '';
+    const perc = st === 'lav' && i < testi.length - 1 ? ` ${Math.round((g.perc || 0) * 100)}%` : '';
     return `<div class="fase ${st}"><span class="s">${segno}</span>${esc(x)}${perc}</div>`;
   }).join('');
   if ($('fFasi').innerHTML !== h) $('fFasi').innerHTML = h;

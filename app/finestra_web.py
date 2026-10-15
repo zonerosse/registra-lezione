@@ -252,6 +252,12 @@ class Api:
             log.exception("info video")
             return {"ok": False, "msg": "?"}
 
+    def info_link(self, url):
+        return self._m.info_link(url)
+
+    def importa_link(self, url, nome, lingua, cerca_slide):
+        return self._m.importa_link(url, nome, lingua, cerca_slide)
+
     def info_video(self, percorso):
         return self._m.info_video(percorso)
 

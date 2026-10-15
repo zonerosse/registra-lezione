@@ -1,6 +1,6 @@
 {
- "versione": "3.17",
+ "versione": "3.18",
  "librerie": 2,
- "novita": "Calendario: collega Google Calendar o Outlook (oppure scrivi l'orario delle lezioni). Due minuti prima di un impegno ti avviso con «Apri e registra», oppure registro da solo; a fine impegno ti chiedo se fermare.",
- "novita_en": "Calendar: connect Google Calendar or Outlook (or type your lecture timetable). Two minutes before an event I remind you with «Open and record», or I record by myself; when it ends I ask whether to stop."
+ "novita": "Importa da link: incolla il link di un video (YouTube, Google Drive, OneDrive, Dropbox, Vimeo, registrazioni di Zoom…) e diventa una registrazione con trascrizione, slide e appunti.",
+ "novita_en": "Import from a link: paste the link of a video (YouTube, Google Drive, OneDrive, Dropbox, Vimeo, Zoom recordings…) and it becomes a recording with transcript, slides and notes."
 }

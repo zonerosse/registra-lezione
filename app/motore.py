@@ -641,7 +641,37 @@ class Motore:
         i["stima"] = round(i["durata"] / max(0.1, float(v)))
         return i
 
-    def importa(self, percorso, nome, lingua=None, cerca_slide=True):
+    def info_link(self, url):
+        """Titolo e durata del video di un link (YouTube, Drive, Dropbox...), senza scaricarlo."""
+        import scarica_link as sl
+        try:
+            d = sl.info(url)
+        except sl.ErroreLink as e:
+            return {"ok": False, "msg": tr(f"link_{e}")}
+        except Exception:
+            log.exception("info link")
+            return {"ok": False, "msg": tr("link_non_video")}
+        prec = bool(self.cfg.get("trascrizione_precisa"))
+        v = self.cfg.get("velocita_trascrizione_precisa" if prec else "velocita_trascrizione") or \
+            float(self.cfg.get("velocita_trascrizione") or 0.8) / (1.5 if prec else 1)
+        return {"ok": True, "link": url.strip(), "nome_file": d["titolo"] or url.strip()[:60], "nome_proposto": d["titolo"],
+                "durata": d["durata"], "ha_video": d["ha_video"], "peso": 0, "sito": d["sito"],
+                "data": datetime.datetime.now().isoformat(timespec="seconds"),
+                "stima": round(d["durata"] / max(0.1, float(v))) if d["durata"] else 0}
+
+    def importa_link(self, url, nome, lingua=None, cerca_slide=True):
+        """Come «Importa un video», ma prima scarica il video dal link."""
+        import scarica_link as sl
+        nome = (nome or "").strip() or "Video"
+        tmp = BASE / "scaricamento"
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir(parents=True, exist_ok=True)
+        segnaposto = tmp / "in_corso.txt"
+        segnaposto.write_text(url, encoding="utf-8")
+        r = self.importa(segnaposto, nome, lingua, cerca_slide, link=url)
+        return r
+
+    def importa(self, percorso, nome, lingua=None, cerca_slide=True, link=None):
         import importa as im
         src = Path(percorso)
         if not src.exists():
@@ -652,7 +682,7 @@ class Motore:
             nome = (nome or "").strip() or src.stem
             self.ricorda_materia(nome)
             try:
-                quando = datetime.datetime.fromtimestamp(src.stat().st_mtime)
+                quando = datetime.datetime.now() if link else datetime.datetime.fromtimestamp(src.stat().st_mtime)
             except OSError:
                 quando = datetime.datetime.now()
             cart = BASE / f"{quando:%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
@@ -666,7 +696,7 @@ class Motore:
             el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": quando.isoformat(timespec="seconds"),
                                                 "durata": 0, "n_slide": 0, "stato": "importazione", "pacchetti": {},
                                                 "studente": self.cfg.get("studente") or {}, "importata": True,
-                                                "file_originale": str(src), "parte_secondi": self.parte_sec,
+                                                "file_originale": link or str(src), "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
                                                 "formato_appunti": self._formato(), "parole": self.parole_di(nome),
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
@@ -683,18 +713,27 @@ class Motore:
             self.vista = "fine"
             self.occupato = True
             self._sveglio_voluto = True
-            self.imp = {"fase": 0, "perc": 0.0, "slide": None, "cerca_slide": bool(cerca_slide)}
-        threading.Thread(target=self._importa_lavoro, args=(cart, src, bool(cerca_slide)), daemon=True).start()
+            self.imp = {"fase": 0, "perc": 0.0, "slide": None, "cerca_slide": bool(cerca_slide), "link": bool(link), "off": 1 if link else 0}
+        threading.Thread(target=self._importa_lavoro, args=(cart, src, bool(cerca_slide), link), daemon=True).start()
         log.info("importazione: %s -> %s", src, cart)
         return {"ok": True}
 
     def _imp_perc(self, fase, f):
         if self.imp is not None:
-            self.imp.update(fase=fase, perc=round(float(f), 3))
+            self.imp.update(fase=fase + int(self.imp.get("off") or 0), perc=round(float(f), 3))
 
-    def _importa_lavoro(self, cart, src, cerca):
+    def _importa_lavoro(self, cart, src, cerca, link=None):
         import importa as im
         try:
+            if link:          # prima si scarica dal link (fase 0), poi tutto come un file
+                import scarica_link as sl
+                self.imp.update(fase=0, perc=0.0)
+                try:
+                    src = sl.scarica(link, Path(src).parent, lambda f: self.imp.update(fase=0, perc=round(float(f), 3)),
+                                     solo_audio=not cerca)
+                except Exception as e:
+                    shutil.rmtree(cart, ignore_errors=True)          # niente lezione vuota in elenco
+                    raise RuntimeError(tr(f"link_{e}") if isinstance(e, sl.ErroreLink) else tr("link_rete"))
             info = im.info_file(src)
             durata = info["durata"]
             dest = im.copia(src, cart, lambda f: self._imp_perc(0, f))
@@ -709,6 +748,8 @@ class Motore:
                                                 "durata": durata, "slides": slides, "errori": [],
                                                 "parte_secondi": self.parte_sec})
             el.aggiorna_info(cart, durata=round(durata), n_slide=len(slides), stato="elaborazione")
+            if link:
+                shutil.rmtree(Path(src).parent, ignore_errors=True)
             self._imp_perc(3, 0)
             self.coda.put(("importato", (cart, list(parti), durata)))
         except Exception:
@@ -1837,7 +1878,11 @@ class Motore:
             self._sveglio_voluto = False
             self.finale = None
             self.vista = "pronto"
-            self._messaggio(tr("err_tit"), tr("err_testo") + "\n\n" + dato.strip().splitlines()[-1])
+            ultima = dato.strip().splitlines()[-1]
+            if ultima.startswith("RuntimeError: "):          # messaggio gia' scritto per chi usa il programma
+                self._messaggio(tr("err_tit"), ultima[len("RuntimeError: "):])
+            else:
+                self._messaggio(tr("err_tit"), tr("err_testo") + "\n\n" + ultima)
 
     # ------------------------------------------------------------------ chiusura
 

@@ -183,6 +183,23 @@ def main(radice):
             rl.al_cestino([cart, f])
             assert not cart.exists() and not f.exists(), "elimina nel Cestino non riuscita"
         righe.append("elimina nel Cestino: ok")
+        # calendario (librerie copiate in _vendor) e «importa da link» (yt-dlp, scaricato al primo uso)
+        import calendario
+        import datetime as _dt
+        ics = (b"BEGIN:VCALENDAR\r\nVERSION:2.0\r\nBEGIN:VEVENT\r\nUID:p1\r\nDTSTART;TZID=Europe/Rome:20300107T100000\r\n"
+               b"DTEND;TZID=Europe/Rome:20300107T120000\r\nRRULE:FREQ=WEEKLY\r\nSUMMARY:Analisi 1\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n")
+        ev = calendario.impegni_ics(ics, "prova", _dt.datetime(2030, 1, 1).astimezone(), _dt.datetime(2030, 1, 20).astimezone())
+        assert len(ev) == 2, f"calendario: {len(ev)} impegni invece di 2"
+        righe.append("calendario (anche impegni che si ripetono): ok")
+        try:
+            import subprocess
+            import scarica_link
+            cmd = scarica_link.comando_ytdlp()
+            v = subprocess.run(cmd + ["--version"], capture_output=True, timeout=120).stdout.decode().strip()
+            assert v, "yt-dlp non risponde"
+            righe.append(f"yt-dlp per «importa da link»: {v}")
+        except OSError:
+            righe.append("yt-dlp: saltato (senza internet)")
         if sys.platform == "win32":
             righe.append(prova_finestra())
         righe.append("TUTTO A POSTO")
