@@ -73,6 +73,14 @@
     <section class="pg" id="v-pronto">
       <div class="hd"><div><h2 data-t="pr.h">Pronto a registrare</h2><p id="prP" data-t="pr.p">Schermo, audio del PC e slide: penso a tutto io.</p></div><span id="pillAI"></span></div>
       <div class="card" style="margin-bottom:14px">
+        <div class="lbl" data-t="tp.h">Che cosa registri?</div>
+        <div class="dove tre" id="tipoBox">
+          <div class="aiopt" data-k="lezione"><span class="rd"></span><span class="ico i-blue">🎓</span><b data-t="tp.lez.t">Lezione</b><small data-t="tp.lez">Appunti Cornell o Formato Esame, flashcard, Chiedi.</small></div>
+          <div class="aiopt" data-k="riunione"><span class="rd"></span><span class="ico i-org">💼</span><b data-t="tp.riu.t">Riunione di lavoro</b><small data-t="tp.riu">Verbale: decisioni, cose da fare con chi e entro quando.</small></div>
+          <div class="aiopt" data-k="webinar"><span class="rd"></span><span class="ico i-vio">🎤</span><b data-t="tp.web.t">Webinar o corso</b><small data-t="tp.web">Punti chiave, capitoli, riassunto.</small></div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:14px">
         <div class="lbl" data-t="pr.dove">Dove si tiene la lezione?</div>
         <div class="dove" id="doveBox">
           <div class="aiopt" data-m="online"><span class="rd"></span><span class="ico i-blue"><svg><use href="#i-scr"/></svg></span><b data-t="pr.online.t">Online</b><small data-t="pr.online">Meet, Teams, Zoom: registro schermo e audio del PC.</small></div>
@@ -80,10 +88,16 @@
         </div>
       </div>
       <div class="card">
-        <div class="lbl" data-t="pr.cosa">Che cosa registri?</div>
+        <div class="lbl" data-t="pr.nome">Nome</div>
         <input class="in" id="nome" data-tp="pr.ph" placeholder="Es. Analisi 1 – Limiti" maxlength="90" autocomplete="off">
         <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
         <div class="chips" id="recenti"></div>
+        <div id="partBox" class="hidden" style="margin-top:14px">
+          <div class="lbl" style="margin:0 0 6px" data-t="tp.part">Chi partecipa (facoltativo)</div>
+          <div class="tags" id="partTags"></div>
+          <div class="row" style="margin-top:8px;gap:8px"><input class="in sp" id="partIn" data-tp="tp.part.ph" placeholder="Scrivi un nome e premi Invio…" maxlength="60" autocomplete="off"><button class="btn b-ghost b-sm" id="partAgg" data-t="pw.agg">Aggiungi</button></div>
+          <div class="hint" style="margin-top:6px" data-t="tp.part.s">Servono a scrivere i nomi giusti nel verbale.</div>
+        </div>
         <div class="lbl" style="margin:14px 0 0" data-t="pr.lingua">In che lingua parla il docente?</div>
         <div class="chips" id="lingue" style="margin-top:8px"></div>
         <div class="hint" id="linguaTr" style="margin-top:8px;color:var(--cor);font-weight:600"></div>
@@ -209,6 +223,22 @@
       <div class="row mt"><span class="hint sp" data-t="mp.nota">Si crea una volta sola e resta con la lezione.</span><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
     </section>
 
+    <!-- CAPITOLI -->
+    <section class="pg hidden" id="v-cap">
+      <div class="hd"><div><h2 data-t="cp.h">Capitoli</h2><p id="cpSub"></p></div></div>
+      <div class="capgrid">
+        <div class="card" style="padding:0;overflow:hidden"><div id="cpMedia"></div><div class="hint" style="padding:10px 14px" data-t="cp.tocca">Tocca un capitolo: si riparte da lì.</div></div>
+        <div class="card"><div class="lbl" data-t="cp.h">Capitoli</div><div id="cpLista"></div></div>
+      </div>
+    </section>
+
+    <!-- INFOGRAFICA -->
+    <section class="pg hidden" id="v-ig">
+      <div class="hd"><div><h2 data-t="ig.h">Infografica</h2><p id="igSub"></p></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="igPdf"><svg><use href="#i-doc"/></svg><span data-t="mp.pdf">Salva in PDF</span></button></div></div>
+      <div id="igBox"></div>
+      <div class="row mt"><span class="hint sp" data-t="ig.nota">Si crea una volta sola (circa 1 centesimo) e resta con la registrazione.</span><button class="lnk" id="igRifai" data-t="mp.rifai">Rifalla</button></div>
+    </section>
+
     <!-- RIPASSO (flashcard) -->
     <section class="pg hidden" id="v-rip">
       <div id="rpScelta">
@@ -259,7 +289,16 @@
         <div class="ai" id="fmtBox">
           <div class="aiopt" data-f="cornell"><span class="rd"></span><b data-t="im.fmt.c.t">Cornell</b><small data-t="im.fmt.c">Domande a sinistra, appunti a destra, riassunto in fondo. Per capire e ripassare la lezione.</small></div>
           <div class="aiopt" data-f="esame"><span class="rd"></span><b data-t="im.fmt.e.t">Formato Esame</b><small data-t="im.fmt.e">Le domande più probabili in ordine di importanza, per ognuna lo schema della risposta e le parole chiave; in fondo una simulazione d'esame. Per prepararsi a rispondere.</small></div>
+          <div class="aiopt" data-f="mio"><span class="rd"></span><b data-t="im.fmt.m.t">✎ Il mio formato</b><small data-t="im.fmt.m">Descrivi tu a parole come vuoi gli appunti.</small></div>
         </div>
+        <div id="mioBox" style="margin-top:12px">
+          <div class="lbl" data-t="mio.h">Il mio formato</div>
+          <input class="in sm" id="mioNome" data-tp="mio.nome.ph" placeholder="Nome del formato, es. Schema per l'orale" maxlength="60" autocomplete="off">
+          <textarea class="in" id="mioDesc" rows="4" style="margin-top:8px;resize:vertical" data-tp="mio.desc.ph" placeholder="Scrivi come vuoi gli appunti: cosa mettere, in che ordine, quanto lunghi…"></textarea>
+          <div class="chips" id="mioEsempi" style="margin-top:6px"></div>
+          <div class="row" style="margin-top:8px;gap:8px"><span class="hint sp" id="mioHint" data-t="mio.s">Si salva da solo. Prima di usarlo puoi provarlo su una registrazione già fatta (circa 5-10 centesimi).</span><button class="btn b-cor b-sm" id="mioProva" data-t="mio.prova">Prova</button></div>
+        </div>
+        <div class="hint" style="margin-top:6px" data-t="im.fmt.tipi">Per le riunioni gli appunti sono il verbale, per i webinar i punti chiave.</div>
         <div class="hint" style="margin-top:10px" data-t="im.fmt.s">Vale per le prossime registrazioni. Su una lezione già fatta: «⋯» → «Rifai appunti» nel formato scelto.</div>
       </div>
       <div class="card mt">

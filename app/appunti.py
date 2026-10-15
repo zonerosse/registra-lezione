@@ -251,6 +251,168 @@ SCHEMA_ESAME = {
 }
 
 
+# --------------------------------------------------------------------------- capitoli (in tutti i formati)
+SCHEMA_CAPITOLI = {"type": "array", "items": {"type": "object", "properties": {
+    "inizio": {"type": "string", "description": "orario hh:mm:ss dall'inizio della registrazione"},
+    "titolo": {"type": "string"}, "dettaglio": {"type": "string"}}, "required": ["inizio", "titolo"]}}
+TESTO_CAPITOLI = """
+- "capitoli": questo tratto diviso in 2-6 capitoli, in ordine di tempo, come l'indice di un video: "inizio" =
+  l'orario hh:mm:ss (preso dalla trascrizione) in cui comincia l'argomento, "titolo" brevissimo (massimo 6
+  parole), "dettaglio" in poche parole. Gli orari devono esistere nella trascrizione."""
+for _sc in (SCHEMA, SCHEMA_ESAME):
+    _sc["properties"]["capitoli"] = SCHEMA_CAPITOLI
+
+
+ISTRUZIONI_VERBALE = """Sei un segretario di riunione preciso. Ricevi il PDF di un tratto di riunione di lavoro registrata:
+le immagini dello schermo condiviso (se c'erano) e, sotto, la trascrizione automatica di cio' che si e' detto
+(con l'orario dall'inizio). La trascrizione puo' contenere errori e non sempre dice chi parla.
+
+Prepara il VERBALE di questo tratto di riunione:
+- "in_breve": 3-5 righe con l'essenziale (cosa si e' deciso, cosa resta aperto).
+- "decisioni": le decisioni prese davvero (non le proposte rimaste in sospeso). Per ognuna "testo" breve,
+  "chi" (chi l'ha proposta o decisa, solo se si capisce, altrimenti vuoto), "dove" = orario hh:mm:ss.
+- "azioni": le cose da fare emerse. Per ognuna "cosa", "chi" (solo se detto o chiaro), "entro" (la scadenza
+  COME DETTA, es. "venerdì", "entro il 30/10"; vuoto se non detta), "dove" = orario.
+- "da_decidere": le questioni rimaste aperte o rimandate, con "testo" e "dove".
+- "prossima_riunione": quando (come detto) e note; vuoto se non se ne parla.
+- "punti_discussi": gli argomenti discussi, in ordine, ciascuno con "titolo", 2-5 "punti" brevi, "dove".
+- "da_controllare": i punti dove l'audio sembra trascritto male, con l'orario.
+Non inventare nomi, date o cifre: se non sono nella registrazione lascia vuoto. Se aggiungi qualcosa che
+NON e' stato detto (es. un chiarimento), mettilo in "aggiunte" (verra' mostrato come "aggiunto da Claude").
+Quando citi qualcuno tra virgolette «...», copia le sue parole come sono nella trascrizione.""" + TESTO_CAPITOLI + """
+Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
+
+_DOVE = {"type": "string", "description": "orario hh:mm:ss"}
+SCHEMA_VERBALE = {
+    "type": "object",
+    "properties": {
+        "titolo": {"type": "string", "description": "argomento principale, breve"},
+        "in_breve": {"type": "string"},
+        "decisioni": {"type": "array", "items": {"type": "object", "properties": {
+            "testo": {"type": "string"}, "chi": {"type": "string"}, "dove": _DOVE}, "required": ["testo"]}},
+        "azioni": {"type": "array", "items": {"type": "object", "properties": {
+            "cosa": {"type": "string"}, "chi": {"type": "string"}, "entro": {"type": "string"}, "dove": _DOVE},
+            "required": ["cosa"]}},
+        "da_decidere": {"type": "array", "items": {"type": "object", "properties": {
+            "testo": {"type": "string"}, "dove": _DOVE}, "required": ["testo"]}},
+        "prossima_riunione": {"type": "object", "properties": {"quando": {"type": "string"}, "note": {"type": "string"}}},
+        "punti_discussi": {"type": "array", "items": {"type": "object", "properties": {
+            "titolo": {"type": "string"}, "punti": {"type": "array", "items": {"type": "string"}},
+            "aggiunte": {"type": "array", "items": {"type": "string"}}, "dove": _DOVE}, "required": ["titolo", "punti"]}},
+        "aggiunte": {"type": "array", "items": {"type": "string"}},
+        "da_controllare": {"type": "array", "items": {"type": "string"}},
+        "capitoli": SCHEMA_CAPITOLI,
+    },
+    "required": ["titolo", "in_breve", "decisioni", "azioni"],
+}
+
+ISTRUZIONI_WEBINAR = ISTRUZIONI.replace(
+    "Sei un tutor universitario. Ricevi il PDF di un tratto di lezione registrata",
+    "Sei un ottimo prendi-appunti. Ricevi il PDF di un tratto di webinar o corso registrato").replace(
+    "Prepara gli appunti di studio con il METODO CORNELL, in italiano, per uno studente che deve\nprepararci l'esame:",
+    "Prepara i PUNTI CHIAVE di questo tratto, in italiano, per chi vuole ricordare e applicare quello che si e' detto:").replace(
+    "* \"domanda\": la domanda di ripasso a cui il blocco risponde (andra' nella colonna di sinistra:\n    lo studente copre la destra e prova a rispondere);",
+    "* \"domanda\": il punto chiave in poche parole, come un titolo (andra' nella colonna di sinistra);").replace(
+    "- \"formulario\": TUTTI i simboli, le sigle e le formule usati",
+    "- \"formulario\": termini, sigle, strumenti, siti e numeri citati").replace(
+    "- \"esercizi_svolti\": gli esempi svolti dal docente, passo per passo, con slide se utile.",
+    "- \"esercizi_svolti\": esempi pratici, demo o casi mostrati, passo per passo, con slide se utile.").replace(
+    "docente", "relatore")
+
+ISTRUZIONI_MIO = """Ricevi il PDF di un tratto di registrazione (lezione, riunione o webinar): le immagini dello schermo o
+delle slide e, sotto, la trascrizione automatica di cio' che si e' detto (con l'orario dall'inizio). La
+trascrizione puo' contenere errori.
+
+Prepara gli appunti ESATTAMENTE nel formato descritto qui sotto da chi li usera'. Organizzali in "sezioni" (in
+ordine): ogni sezione ha "titolo", "punti" brevi, eventuali "aggiunte", "dove" (slide e orario) e "slide" (il
+numero N della slide del PDF da mostrare, solo se aiuta davvero, altrimenti 0). Se il formato chiede un
+riassunto, mettilo in "riassunto". "da_controllare": punti dove l'audio sembra trascritto male.
+
+COME LI VUOLE:
+«{descrizione}»
+
+Basati solo su quello che si vede e si dice nella registrazione. Se per seguire il formato devi aggiungere
+qualcosa che NON e' stato detto, mettilo in "aggiunte" (verra' mostrato come "aggiunto da Claude").
+Quando citi qualcuno tra virgolette «...», copia le parole come sono nella trascrizione. Non inventare orari o
+numeri di slide.""" + TESTO_CAPITOLI + """
+Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
+
+SCHEMA_MIO = {
+    "type": "object",
+    "properties": {
+        "titolo": {"type": "string", "description": "argomento principale, breve"},
+        "sezioni": {"type": "array", "items": {"type": "object", "properties": {
+            "titolo": {"type": "string"}, "punti": {"type": "array", "items": {"type": "string"}},
+            "aggiunte": {"type": "array", "items": {"type": "string"}}, "dove": {"type": "string"}, "slide": _SLIDE},
+            "required": ["titolo", "punti"]}},
+        "riassunto": {"type": "string"},
+        "da_controllare": {"type": "array", "items": {"type": "string"}},
+        "capitoli": SCHEMA_CAPITOLI,
+    },
+    "required": ["titolo", "sezioni"],
+}
+
+# esempi pronti per «Il mio formato» (Impostazioni)
+ESEMPI_MIO = {
+    "it": [{"nome": "Schema per l'orale", "descrizione": "Per ogni argomento: definizione in una riga, poi tre punti da dire all'orale, poi un esempio. Formule in un riquadro a parte. In fondo le domande che il docente ha fatto durante la lezione."},
+           {"nome": "Mappa concettuale", "descrizione": "Un concetto centrale, poi i concetti collegati: per ognuno il legame con il centro in una riga e 2-3 dettagli. Massimo 8 concetti."},
+           {"nome": "Riassunto di 1 pagina", "descrizione": "Un solo riassunto di massimo una pagina: le idee principali in ordine, con i numeri e i nomi importanti. Niente ripetizioni."},
+           {"nome": "Punti chiave webinar", "descrizione": "I 5-10 punti chiave da ricordare, ciascuno con come applicarlo nel lavoro. In fondo strumenti, siti e risorse citati."}],
+    "en": [{"nome": "Oral exam outline", "descrizione": "For each topic: one-line definition, three points to say at the oral exam, then an example. Formulas in a separate box. At the end the questions the lecturer asked during the lecture."},
+           {"nome": "Concept map", "descrizione": "One central concept, then linked concepts: for each one, its link to the centre in one line and 2-3 details. At most 8 concepts."},
+           {"nome": "1-page summary", "descrizione": "A single summary of at most one page: the main ideas in order, with the important numbers and names. No repetitions."},
+           {"nome": "Webinar key points", "descrizione": "The 5-10 key points to remember, each with how to apply it at work. At the end tools, sites and resources mentioned."}],
+}
+
+
+def capitoli_di(cartella):
+    """I capitoli della registrazione, presi dagli appunti (il primo formato che li ha), in ordine di tempo."""
+    import re as _re
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    ordine = [info.get("formato_appunti")] + [f for f in FORMATI if f != info.get("formato_appunti")]
+    for f in ordine:
+        if f not in FORMATI:
+            continue
+        out, visti = [], set()
+        ps = el.parte_secondi(cartella)
+        for k in sorted((info.get(chiave_info(f)) or {}), key=int):
+            for c in (el.leggi_json(file_json(cartella, k, f), {}) or {}).get("capitoli") or []:
+                m = _re.search(r"(\d{1,2}):(\d{2})(?::(\d{2}))?", str(c.get("inizio") or ""))
+                if not m:
+                    continue
+                sec = c.get("sec")
+                if sec is None:
+                    a, b, cc = m.groups()
+                    sec = int(a) * 3600 + int(b) * 60 + int(cc) if cc else int(a) * 60 + int(b)
+                # ogni parte ha i suoi capitoli: fuori dal suo tratto di tempo sono sbagliati (o doppi)
+                if not ((int(k) - 1) * ps - 90 <= int(sec) <= int(k) * ps + 90):
+                    continue
+                chiave_c = (int(sec) // 10, str(c.get("titolo", "")).strip().lower())
+                if chiave_c in visti:
+                    continue
+                visti.add(chiave_c)
+                out.append({"sec": int(sec), "inizio": el.hms(sec), "titolo": c.get("titolo", ""),
+                            "dettaglio": c.get("dettaglio", "")})
+        if out:
+            return sorted(out, key=lambda c: c["sec"])
+    return []
+
+
+def formato_di(dati):
+    """Il formato di un file di appunti: cornell | esame | verbale | webinar | mio."""
+    f = dati.get("formato")
+    if f in FORMATI:
+        return f
+    if "domande_probabili" in dati:
+        return "esame"
+    if "decisioni" in dati or "azioni" in dati:
+        return "verbale"
+    if "sezioni" in dati:
+        return "mio"
+    return "cornell"
+
+
 def e_esame(dati):
     """True se gli appunti sono nel Formato Esame."""
     return dati.get("formato") == "esame" or "domande_probabili" in dati
@@ -281,7 +443,7 @@ def _pdf_del_pacchetto(cartella, k):
         return Path(zp), z.read(nome)
 
 
-def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell"):
+def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell", mio=None):
     """Le istruzioni, con la lingua degli appunti e quella in cui parla il docente."""
     nome_app = {"it": "ITALIANO", "en": "INGLESE (English)"}.get(lingua_appunti, "ITALIANO")
     extra = (f"\n\nLINGUA DEGLI APPUNTI: {nome_app}. Scrivi TUTTO in questa lingua: titolo, domande, "
@@ -295,27 +457,41 @@ def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell
             extra += (f" La lezione e' in {orig}: traduci il contenuto e per i termini tecnici aggiungi tra "
                       f"parentesi il termine originale in {orig}, come compare sulle slide.")
     if formato == "esame":
-        return ISTRUZIONI_ESAME.replace("in FORMATO ESAME, in italiano,", "in FORMATO ESAME") + extra
-    return ISTRUZIONI.replace("con il METODO CORNELL, in italiano,", "con il METODO CORNELL") + extra
+        return ISTRUZIONI_ESAME.replace("in FORMATO ESAME, in italiano,", "in FORMATO ESAME") \
+            .replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
+    if formato == "verbale":
+        return ISTRUZIONI_VERBALE + extra
+    if formato == "webinar":
+        return ISTRUZIONI_WEBINAR.replace("in italiano, ", "").replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
+    if formato == "mio":
+        return ISTRUZIONI_MIO.replace("{descrizione}", (mio or {}).get("descrizione") or "") + extra
+    return ISTRUZIONI.replace("con il METODO CORNELL, in italiano,", "con il METODO CORNELL") \
+        .replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
+
+
+SCHEMI = {"cornell": SCHEMA, "esame": SCHEMA_ESAME, "verbale": SCHEMA_VERBALE, "webinar": SCHEMA, "mio": SCHEMA_MIO}
 
 
 def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
-                    formato="cornell", parole=None):
+                    formato="cornell", parole=None, mio=None, partecipanti=None):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
-        "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato),
-        "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di studio dell'ora di lezione.",
-                   "input_schema": SCHEMA_ESAME if formato == "esame" else SCHEMA}],
+        "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato, mio),
+        "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di questo tratto di registrazione.",
+                   "input_schema": SCHEMI.get(formato, SCHEMA)}],
         # Sonnet 5.5 non accetta tool_choice "tool"/"any" (errore 400): si usa "auto"
         # e le istruzioni chiedono di chiamare lo strumento; c'e' comunque il piano B sotto.
         "tool_choice": {"type": "auto"},
         "messages": [{"role": "user", "content": [
             {"type": "document", "source": {"type": "base64", "media_type": "application/pdf",
                                             "data": base64.b64encode(pdf_bytes).decode()}},
-            {"type": "text", "text": "Ecco l'ora di lezione. Prepara gli appunti." +
+            {"type": "text", "text": ("Ecco il tratto di riunione. Prepara il verbale." if formato == "verbale" else
+                                      "Ecco il tratto di registrazione. Prepara gli appunti.") +
              (f" Lo studente: {contesto}. Adatta il livello degli appunti al suo corso e anno."
-              if contesto else "") +
+              if contesto and formato in ("cornell", "esame") else "") +
+             (" Partecipanti (usa questi nomi, scritti cosi'): " + ", ".join(partecipanti) + "."
+              if partecipanti else "") +
              (" Termini e nomi che il docente usa (la trascrizione automatica puo' averli storpiati: "
               "scrivili esattamente cosi'): " + ", ".join(parole) + "." if parole else "")}]}],
     }
@@ -354,8 +530,8 @@ def _json_dal_testo(testo):
         dati = json.loads(testo[inizio:fine + 1])
     except ValueError:
         return None
-    return dati if isinstance(dati, dict) and ("blocchi" in dati or "concetti" in dati
-                                                or "domande_probabili" in dati) else None
+    return dati if isinstance(dati, dict) and ("blocchi" in dati or "concetti" in dati or "sezioni" in dati
+                                                or "decisioni" in dati or "domande_probabili" in dati) else None
 
 
 def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
@@ -473,11 +649,22 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
     immagine.slide_info = slide_info
 
     completa = len(parti) > 1
+    fmt0 = formato_di(parti[0][0])
+    capitoli_tutti = [c for d, _, _ in parti for c in (d.get("capitoli") or [])]
     for indice, (dati, etichetta, slide) in enumerate(parti):
         stato["slide"], stato["usate"] = slide or {}, set()
         pdf.add_page()
-        esame = e_esame(parti[0][0])
-        if indice == 0 and esame:
+        esame = fmt0 == "esame"
+        if indice == 0 and fmt0 in ("verbale", "mio"):
+            if fmt0 == "verbale":
+                na = sum(len(d.get("azioni") or []) for d, _, _ in parti)
+                nd = sum(len(d.get("decisioni") or []) for d, _, _ in parti)
+                etichette = [tr("vb_b_dec", L, n=nd) if nd else "", tr("vb_b_az", L, n=na) if na else ""]
+            else:
+                etichette = [parti[0][0].get("mio_nome") or tr("fmt_mio", L)]
+            if completa:
+                etichette.append(tr("pdf_parti", L, n=len(parti)))
+        elif indice == 0 and esame:
             nd = len(unite.get("domande_probabili") or []) if unite else \
                 sum(len(d.get("domande_probabili") or []) for d, _, _ in parti)
             nk = sum(len(d.get("parole_chiave") or []) for d, _, _ in parti)
@@ -486,7 +673,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
                          tr("es_b_sim", L) if any(d.get("simulazione") for d, _, _ in parti) else ""]
         elif indice == 0:
             nd = sum(len(normalizza(d).get("blocchi") or []) for d, _, _ in parti)
-            etichette = [tr("pdf_domande", L, n=nd) if nd else "", tr("pdf_parti", L, n=len(parti)) if completa else "",
+            etichette = [tr("wb_b_punti" if fmt0 == "webinar" else "pdf_domande", L, n=nd) if nd else "", tr("pdf_parti", L, n=len(parti)) if completa else "",
                          tr("pdf_formulario_b", L) if any(normalizza(d).get("formulario") for d, _, _ in parti) else "",
                          tr("pdf_esercizi_b", L) if any(normalizza(d).get("esercizi_svolti") for d, _, _ in parti) else ""]
         if indice == 0:
@@ -495,10 +682,16 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
                 etichette.append(tr("pdf_lingua", L, l=testi.nome_lingua(ll, L)))
             if esame:
                 occhiello = tr("es_occhiello_tutti", L) if completa else tr("es_occhiello", L, e=etichetta.upper())
+            elif fmt0 in ("verbale", "webinar", "mio"):
+                nome_f = (parti[0][0].get("mio_nome") or tr("fmt_mio", L)) if fmt0 == "mio" else tr(f"fmt_{fmt0}", L)
+                occhiello = tr("occhiello_tutti", L, f=nome_f.upper()) if completa else \
+                    tr("occhiello_parte", L, f=nome_f.upper(), e=etichetta.upper())
             else:
                 occhiello = tr("pdf_occhiello_tutti", L) if completa else tr("pdf_occhiello", L, e=etichetta.upper())
             _copertina(pdf, font, t, info, occhiello,
                        info.get("nome", "Lezione"), [x for x in etichette if x])
+            if not completa and capitoli_tutti:
+                _scrivi_capitoli(pdf, font, t, testo, capitoli_tutti, L, GRIGIO)
         if completa and indice == 0:
             pdf.set_font(font, "B", 9)
             pdf.set_text_color(13, 66, 117)
@@ -508,6 +701,8 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
             for d, et, _ in parti:
                 testo(f"• {et}: {d.get('titolo', '')}")
             pdf.ln(3)
+            if capitoli_tutti:
+                _scrivi_capitoli(pdf, font, t, testo, capitoli_tutti, L, GRIGIO)
             pdf.set_font(font, "", 9)
             pdf.set_text_color(*GRIGIO)
             testo(tr("pdf_controlla", L), 4.6)
@@ -519,12 +714,17 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
                               classifica=True)
                 pdf.add_page()
                 stato["slide"] = slide or {}
-        if e_esame(dati):
-            _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO,
-                          copertina=(indice == 0 and not completa))
+        f = formato_di(dati)
+        cop = indice == 0 and not completa
+        if f == "esame":
+            _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=cop)
+        elif f == "verbale":
+            _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina=cop)
+        elif f == "mio":
+            _scrivi_sezioni(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=cop)
         else:
             _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO,
-                          copertina=(indice == 0 and not completa))
+                          copertina=cop, webinar=(f == "webinar"))
     pdf.output(str(destinazione))
 
 
@@ -570,7 +770,172 @@ def _copertina(pdf, font, t, info, occhiello, titolo, etichette):
     pdf.set_xy(16, h + 7)
 
 
-def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False):
+def _scrivi_capitoli(pdf, font, t, testo, capitoli, L, GRIGIO):
+    """L'indice della registrazione: minuto e titolo di ogni capitolo."""
+    BLU = (3, 105, 161)
+    pdf.set_font(font, "B", 9)
+    pdf.set_text_color(*BLU)
+    testo(tr("pdf_capitoli", L).upper(), 6)
+    for c in capitoli:
+        pdf.set_font(font, "B", 9.5)
+        pdf.set_text_color(*BLU)
+        pdf.cell(20, 5, t(str(c.get("inizio") or "")[:8]))
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font(font, "", 9.5)
+        det = c.get("dettaglio") or ""
+        pdf.multi_cell(0, 5, t((c.get("titolo") or "") + (f" — {det}" if det else "")), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(3)
+
+
+def _intestazione_semplice(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina, L,
+                           avviso="pdf_controlla"):
+    pdf.set_font(font, "B", 17)
+    if copertina:
+        testo(dati.get("titolo", "") or tr("pdf_appunti_di", L, e=etichetta), 8)
+    elif completa:
+        testo(f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}", 8)
+    else:
+        testo(tr("pdf_titolo_parte", L, nome=info.get('nome', ''), e=etichetta), 8)
+    pdf.set_font(font, "", 9)
+    pdf.set_text_color(*GRIGIO)
+    testo(tr(avviso, L), 4.6)
+    pdf.set_text_color(0, 0, 0)
+
+
+def _sezione_colore(pdf, font, t, titolo, colore):
+    if pdf.get_y() + 20 > pdf.h - pdf.b_margin:
+        pdf.add_page()
+    pdf.ln(4)
+    pdf.set_font(font, "B", 10)
+    pdf.set_text_color(*colore)
+    pdf.cell(0, 6, t(titolo.upper()), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_draw_color(*colore)
+    pdf.set_line_width(0.4)
+    pdf.line(pdf.l_margin, pdf.get_y(), pdf.w - pdf.r_margin, pdf.get_y())
+    pdf.set_line_width(0.2)
+    pdf.ln(2.5)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font(font, "", 10.5)
+
+
+def _aggiunte_e_avvisi(pdf, font, t, testo, v, L):
+    if v.get("aggiunte"):
+        pdf.set_text_color(109, 40, 217)
+        pdf.set_font(font, "", 10)
+        for a in v["aggiunte"]:
+            if a:
+                testo(f"+ {a}  ({tr('pdf_agg', L)})", 5)
+    if v.get("avvisi"):
+        pdf.set_text_color(194, 65, 12)
+        pdf.set_font(font, "B", 8.5)
+        for a in v["avvisi"]:
+            testo(f"⚠ {tr('pdf_dav', L)}: {a}", 4.4)
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font(font, "", 10.5)
+
+
+def _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina=False):
+    """Il verbale di una riunione: in breve, decisioni, cose da fare (chi, entro quando), da decidere,
+    prossima riunione, punti discussi."""
+    L = testi.lingua_di(info)
+    ARANCIO = (194, 65, 12)
+    _intestazione_semplice(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina, L,
+                           avviso="vb_controlla")
+    if info.get("partecipanti"):
+        pdf.set_font(font, "", 9.5)
+        pdf.set_text_color(*GRIGIO)
+        testo(tr("vb_partecipanti", L) + ": " + ", ".join(info["partecipanti"]), 5)
+        pdf.set_text_color(0, 0, 0)
+
+    def dove(d):
+        return f"  ({d})" if d else ""
+    if dati.get("in_breve"):
+        _sezione_colore(pdf, font, t, tr("vb_breve", L), ARANCIO)
+        testo(dati["in_breve"])
+    if dati.get("decisioni"):
+        _sezione_colore(pdf, font, t, tr("vb_decisioni", L), ARANCIO)
+        for n, d in enumerate(dati["decisioni"], 1):
+            chi = f", {d['chi']}" if d.get("chi") else ""
+            testo(f"{n}. {d.get('testo', '')}" + (f"  ({d.get('dove', '')}{chi})" if d.get("dove") or chi else ""))
+            _aggiunte_e_avvisi(pdf, font, t, testo, d, L)
+    if dati.get("azioni"):
+        _sezione_colore(pdf, font, t, tr("vb_azioni", L), ARANCIO)
+        pdf.set_font(font, "", 9.5)
+        pdf.set_fill_color(255, 247, 237)
+        pdf.set_draw_color(253, 186, 116)
+        pdf.set_text_color(0, 0, 0)
+        with pdf.table(col_widths=(58, 22, 20), line_height=5.4, text_align="LEFT") as tab:
+            r = tab.row()
+            for h in (tr("vb_cosa", L), tr("vb_chi", L), tr("vb_entro", L)):
+                r.cell(t(h))
+            for a in dati["azioni"]:
+                r = tab.row()
+                r.cell(t(a.get("cosa", "") + dove(a.get("dove"))))
+                r.cell(t(a.get("chi") or "–"))
+                r.cell(t(a.get("entro") or "–"))
+        pdf.set_font(font, "", 10.5)
+    if dati.get("da_decidere"):
+        _sezione_colore(pdf, font, t, tr("vb_da_decidere", L), ARANCIO)
+        for d in dati["da_decidere"]:
+            testo(f"• {d.get('testo', '')}{dove(d.get('dove'))}")
+    pr = dati.get("prossima_riunione") or {}
+    if pr.get("quando") or pr.get("note"):
+        _sezione_colore(pdf, font, t, tr("vb_prossima", L), ARANCIO)
+        testo(" · ".join(x for x in (pr.get("quando"), pr.get("note")) if x))
+    if dati.get("punti_discussi"):
+        _sezione_colore(pdf, font, t, tr("vb_discussi", L), ARANCIO)
+        for p_ in dati["punti_discussi"]:
+            pdf.set_font(font, "B", 10.5)
+            testo(p_.get("titolo", "") + dove(p_.get("dove")))
+            pdf.set_font(font, "", 10.5)
+            for x in p_.get("punti") or []:
+                testo(f"• {x}")
+            _aggiunte_e_avvisi(pdf, font, t, testo, p_, L)
+            pdf.ln(1.5)
+    if dati.get("aggiunte"):
+        _aggiunte_e_avvisi(pdf, font, t, testo, {"aggiunte": dati["aggiunte"]}, L)
+    if dati.get("da_controllare"):
+        _sezione_colore(pdf, font, t, tr("pdf_controllare", L), GRIGIO)
+        pdf.set_text_color(*GRIGIO)
+        for d in dati["da_controllare"]:
+            testo(f"• {d}")
+        pdf.set_text_color(0, 0, 0)
+    _legenda_verita(pdf, font, t, (dati.get("decisioni") or []) + (dati.get("punti_discussi") or [])
+                    + [{"aggiunte": dati.get("aggiunte")}], L)
+
+
+def _scrivi_sezioni(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False):
+    """«Il mio formato»: le sezioni come le ha chieste chi usa il programma."""
+    L = testi.lingua_di(info)
+    VERDE = (5, 122, 85)
+    _intestazione_semplice(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina, L)
+    for sz in dati.get("sezioni") or []:
+        _sezione_colore(pdf, font, t, sz.get("titolo", ""), VERDE)
+        for x in sz.get("punti") or []:
+            testo(f"• {x}")
+        _aggiunte_e_avvisi(pdf, font, t, testo, sz, L)
+        if sz.get("dove"):
+            pdf.set_font(font, "", 8.5)
+            pdf.set_text_color(*GRIGIO)
+            testo(f"→ {sz['dove']}", 4.4)
+            pdf.set_text_color(0, 0, 0)
+            pdf.set_font(font, "", 10.5)
+        immagine(sz.get("slide"))
+    if dati.get("riassunto"):
+        _sezione_colore(pdf, font, t, tr("pdf_riassunto", L), VERDE)
+        testo(dati["riassunto"])
+    if dati.get("da_controllare"):
+        _sezione_colore(pdf, font, t, tr("pdf_controllare", L), GRIGIO)
+        pdf.set_text_color(*GRIGIO)
+        for d in dati["da_controllare"]:
+            testo(f"• {d}")
+        pdf.set_text_color(0, 0, 0)
+    _legenda_verita(pdf, font, t, dati.get("sezioni") or [], L)
+
+
+def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False,
+                  webinar=False):
     """Una parte di appunti nel formato Cornell: domande a sinistra, appunti a destra,
     riassunto in fondo; poi formulario, esercizi svolti, punti da controllare."""
     from fpdf.enums import MethodReturnValue
@@ -597,7 +962,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_text_color(0, 0, 0)
     pdf.set_font(font, "", 8.5)
     pdf.set_text_color(124, 58, 237)
-    testo(tr("pdf_studia", L), 4.4)
+    testo(tr("wb_uso" if webinar else "pdf_studia", L), 4.4)
     pdf.set_text_color(0, 0, 0)
 
     xl, wl = pdf.l_margin, 52.0
@@ -614,7 +979,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_text_color(*VIOLA)
         y = pdf.get_y()
         pdf.set_xy(xl, y)
-        pdf.cell(wl, 5, t(tr("pdf_col_dom", L)))
+        pdf.cell(wl, 5, t(tr("wb_col" if webinar else "pdf_col_dom", L)))
         pdf.set_xy(xr, y)
         pdf.cell(wr, 5, t(tr("pdf_col_app", L)), new_x="LMARGIN", new_y="NEXT")
         pdf.set_draw_color(*VIOLA)
@@ -736,7 +1101,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_y(y + h + 2)
 
     if dati.get("formulario"):
-        sezione(tr("pdf_formulario", L))
+        sezione(tr("wb_formulario" if webinar else "pdf_formulario", L))
         pdf.set_font(font, "", 10)
         with pdf.table(col_widths=(42, 58), line_height=5.6, text_align="LEFT") as tab:
             r = tab.row()
@@ -1006,19 +1371,24 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
 # --------------------------------------------------------------------------- due formati sulla stessa lezione
 # Cornell:  appunti_00k.json        info["appunti"]        info["appunti_completi"]
 # Esame:    appunti_esame_00k.json  info["appunti_esame"]  info["appunti_completi_esame"]
-FORMATI = ("cornell", "esame")
+FORMATI = ("cornell", "esame", "verbale", "webinar", "mio")
+# formati che hanno senso per ogni tipo di registrazione (il primo e' quello di serie)
+FORMATI_TIPO = {"lezione": ("cornell", "esame", "mio"), "riunione": ("verbale", "mio"),
+                "webinar": ("webinar", "cornell", "mio")}
 
 
 def file_json(cartella, k, formato):
-    return Path(cartella) / (f"appunti_esame_{int(k):03d}.json" if formato == "esame" else f"appunti_{int(k):03d}.json")
+    if formato == "cornell":
+        return Path(cartella) / f"appunti_{int(k):03d}.json"
+    return Path(cartella) / f"appunti_{formato}_{int(k):03d}.json"
 
 
 def chiave_info(formato):
-    return "appunti_esame" if formato == "esame" else "appunti"
+    return "appunti" if formato == "cornell" else f"appunti_{formato}"
 
 
 def chiave_completi(formato):
-    return "appunti_completi_esame" if formato == "esame" else "appunti_completi"
+    return "appunti_completi" if formato == "cornell" else f"appunti_completi_{formato}"
 
 
 def sistema_vecchi(cartella):
@@ -1046,7 +1416,7 @@ def appunti_fatti(info, formato):
 
 
 def _nome_file(L, formato):
-    return tr("file_appunti_esame" if formato == "esame" else "file_appunti", L)
+    return tr("file_appunti" if formato == "cornell" else f"file_appunti_{formato}", L)
 
 
 ISTRUZIONI_UNISCI = """Sei un tutor universitario esperto di esami. Ricevi le domande d'esame probabili preparate,
@@ -1178,7 +1548,8 @@ def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None, chiave=
         primo = Path(pac[sorted(pac, key=int)[0]]).stem
         base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
         L = testi.lingua_di(info)
-        dest = str(Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {base} – {tr('lezione_completa', L)}.pdf")
+        compl = tr("lezione_completa", L) if (info.get("tipo") or "lezione") == "lezione" else tr("reg_completa", L)
+        dest = str(Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {base} – {compl}.pdf")
         pdf_appunti_parti(parti, info, dest, unite=unite)
     el.aggiorna_info(cartella, **{chiave_completi(formato): str(dest)})
     return dest
@@ -1191,7 +1562,7 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
     sistema_vecchi(cartella)
     info0 = el.leggi_json(cartella / "info.json", {}) or {}
     if formato not in FORMATI:
-        formato = "esame" if info0.get("formato_appunti") == "esame" else "cornell"
+        formato = info0.get("formato_appunti") if info0.get("formato_appunti") in FORMATI else "cornell"
     zp, pdf_bytes = _pdf_del_pacchetto(cartella, k)
     gia = el.leggi_json(file_json(cartella, k, formato))
     spesa = 0.0
@@ -1199,7 +1570,10 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
         dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
                                       lingua_appunti=testi.lingua_di(info0),
                                       lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato,
-                                      parole=el.parole_lezione(cartella))
+                                      parole=el.parole_lezione(cartella), mio=info0.get("mio"),
+                                      partecipanti=info0.get("partecipanti") or None)
+        if formato == "mio" and info0.get("mio"):
+            dati["mio_nome"] = info0["mio"].get("nome", "")
         dati["formato"] = formato
         try:      # controllo di verita': citazioni, minuti e slide confrontati con la registrazione
             import verifica

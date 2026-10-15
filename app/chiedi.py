@@ -88,11 +88,15 @@ def _appunti_compatti(cartella):
     righe = []
     for f in sorted(Path(cartella).glob("appunti_*.json")):
         d = ap.normalizza(el.leggi_json(f, {}) or {})
-        for b in d.get("domande_probabili") or d.get("blocchi") or []:
-            corpo = b.get("schema") or b.get("appunti") or []
-            righe.append(f"- {b.get('domanda', '')} ({b.get('dove', '')}): " + " / ".join(map(str, corpo)))
-        if d.get("riassunto"):
-            righe.append("Riassunto: " + d["riassunto"])
+        for b in d.get("domande_probabili") or d.get("blocchi") or d.get("sezioni") or d.get("punti_discussi") or []:
+            corpo = b.get("schema") or b.get("appunti") or b.get("punti") or []
+            righe.append(f"- {b.get('domanda') or b.get('titolo', '')} ({b.get('dove', '')}): " + " / ".join(map(str, corpo)))
+        for x in d.get("decisioni") or []:
+            righe.append(f"- Decisione: {x.get('testo', '')}")
+        for x in d.get("azioni") or []:
+            righe.append(f"- Da fare: {x.get('cosa', '')} ({x.get('chi', '')} {x.get('entro', '')})")
+        if d.get("riassunto") or d.get("in_breve"):
+            righe.append("Riassunto: " + (d.get("riassunto") or d.get("in_breve")))
     return "\n".join(righe)
 
 
@@ -328,5 +332,165 @@ def pdf_mappa(dati, info, dest):
     pdf.set_font(font, "", 8)
     pdf.set_xy(12, 200)
     pdf.cell(0, 5, t(tr("pdf_creato", L)), align="C")
+    pdf.output(str(dest))
+    return dest
+
+
+# --------------------------------------------------------------------------- infografica: tutto in una pagina
+SCHEMA_INFO = {"type": "object", "properties": {
+    "titolo": {"type": "string", "description": "massimo 6 parole"},
+    "concetti": {"type": "array", "description": "3-4 concetti chiave", "items": {"type": "object", "properties": {
+        "grande": {"type": "string", "description": "formula, numero o parola chiave, cortissimo"},
+        "testo": {"type": "string", "description": "una riga"},
+        "importante": {"type": "boolean", "description": "true se e' il punto su cui si e' insistito di piu'"}},
+        "required": ["grande", "testo"]}},
+    "passi": {"type": "array", "items": {"type": "string"}, "description": "3-5 passi brevi: come si fa / come si procede"},
+    "attenzione": {"type": "string", "description": "l'errore tipico o l'avvertenza principale, una riga"},
+    "citazione": {"type": "string", "description": "una frase detta davvero, copiata dalla trascrizione (vuoto se nessuna)"}},
+    "required": ["titolo", "concetti", "passi"]}
+
+
+def crea_infografica(cartella, chiave, rifai=False, lingua=None):
+    """La registrazione in una pagina (concetti chiave, procedimento, attenzione). Salvata in infografica.json."""
+    cartella = Path(cartella)
+    f = cartella / "infografica.json"
+    gia = el.leggi_json(f) if not rifai else None
+    if gia:
+        return {"dati": gia, "spesa": 0.0}
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    lingua = lingua or testi.lingua_di(info)
+    materiale = _appunti_compatti(cartella)
+    if len(materiale) < 200:
+        materiale = testo_lezione(cartella)[:200_000]
+    if not materiale.strip():
+        raise ap.ErroreAppunti(tr("ch_vuoto"))
+    tipo = info.get("tipo") or "lezione"
+    corpo = {"model": MODELLO, "max_tokens": 1500,
+             "system": f"Fai l'infografica di una {'riunione di lavoro' if tipo == 'riunione' else 'lezione' if tipo == 'lezione' else 'presentazione'}: "
+                       "tutto quello che conta in UNA pagina da guardare in un minuto. 3-4 concetti chiave (ognuno con una "
+                       "parte 'grande' cortissima: formula, cifra o parola), i passi del procedimento (o le prossime mosse), "
+                       "l'avvertenza principale. Usa solo il materiale ricevuto, niente di inventato. Testi brevissimi. "
+                       f"Scrivi in {testi.nome_lingua(lingua, 'it')}. Chiama lo strumento salva_infografica.",
+             "tools": [{"name": "salva_infografica", "description": "Salva l'infografica.", "input_schema": SCHEMA_INFO}],
+             "tool_choice": {"type": "auto"},
+             "messages": [{"role": "user", "content": materiale}]}
+    r = _chiama(chiave, corpo)
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    dati = blocco["input"] if blocco else None
+    if not dati:
+        testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+        try:
+            dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
+        except ValueError:
+            dati = None
+    if not dati or not dati.get("concetti"):
+        raise ap.ErroreAppunti(tr("if_err"))
+    # la citazione deve esserci davvero, altrimenti la tolgo
+    if dati.get("citazione"):
+        try:
+            import verifica
+            if not verifica.Trascrizione(cartella).contiene(dati["citazione"]):
+                dati["citazione"] = ""
+        except Exception:
+            dati["citazione"] = ""
+    durata = info.get("durata") or 0
+    dati = {"titolo": str(dati.get("titolo", ""))[:70],
+            "concetti": [{"grande": str(c.get("grande", ""))[:40], "testo": str(c.get("testo", ""))[:160],
+                          "importante": bool(c.get("importante"))} for c in dati["concetti"][:4]],
+            "passi": [str(x)[:90] for x in (dati.get("passi") or [])[:5]],
+            "attenzione": str(dati.get("attenzione") or "")[:200], "citazione": str(dati.get("citazione") or "")[:200],
+            "nome": info.get("nome", ""), "data": el._data_it(info.get("inizio", "")),
+            "durata": el.durata_leggibile(durata) if durata else "", "n_slide": info.get("n_slide", 0),
+            "n_capitoli": len(ap.capitoli_di(cartella)), "tipo": tipo}
+    spesa = _costo(r.get("usage", {}))
+    el.scrivi_json(f, dati)
+    el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
+    log.info("infografica: %s, spesa %.4f $", r.get("usage"), spesa)
+    return {"dati": dati, "spesa": spesa}
+
+
+def pdf_infografica(cartella, cartella_pacchetti):
+    """L'infografica in PDF (A4 orizzontale), nella cartella dei pacchetti."""
+    from fpdf import FPDF
+    cartella = Path(cartella)
+    d = el.leggi_json(cartella / "infografica.json")
+    if not d:
+        raise ap.ErroreAppunti(tr("if_err"))
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    L = testi.lingua_di(info)
+    pdf = FPDF(orientation="L", unit="mm", format="A4")
+    pdf.set_auto_page_break(False)
+    pdf.add_page()
+    font, solo_latin = el._font_pdf(pdf)
+    for extra in (Path(r"C:\Windows\Fonts\seguisym.ttf"), el.CARTELLA_FONT / "DejaVuSans.ttf"):
+        if not solo_latin and extra.exists():
+            try:
+                pdf.add_font("Simboli", "", str(extra))
+                pdf.set_fallback_fonts(["Simboli"], exact_match=False)
+            except Exception:
+                pass
+            break
+
+    def t(x):
+        x = str(x or "")
+        return x.encode("latin-1", "replace").decode("latin-1") if solo_latin else x
+    from fpdf.pattern import LinearGradient
+    with pdf.use_pattern(LinearGradient(0, 0, pdf.w, pdf.h, ["#061e36", "#0d4275"])):
+        pdf.rect(0, 0, pdf.w, pdf.h, style="F")
+    W = pdf.w
+    pdf.set_text_color(147, 197, 253)
+    pdf.set_font(font, "B", 8)
+    pdf.set_xy(14, 12)
+    pdf.cell(0, 4, t(f"{d.get('nome', '')} · {d.get('data', '')}".upper()))
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font(font, "B", 24)
+    pdf.set_xy(14, 18)
+    pdf.cell(0, 11, t(d.get("titolo") or tr("if_titolo", L)))
+    # colonna sinistra: concetti
+    y = 36
+    for c in d.get("concetti") or []:
+        pdf.set_fill_color(25, 80, 130)
+        pdf.rect(14, y, 150, 30, style="F", round_corners=True, corner_radius=3)
+        pdf.set_xy(19, y + 3)
+        pdf.set_font(font, "B", 17)
+        pdf.set_text_color(125, 211, 252)
+        pdf.cell(140, 9, t(c.get("grande", "") + ("  ★" if c.get("importante") else "")))
+        pdf.set_xy(19, y + 13)
+        pdf.set_font(font, "", 10)
+        pdf.set_text_color(230, 240, 250)
+        pdf.multi_cell(140, 5, t(c.get("testo", "")))
+        y += 34
+    # colonna destra: passi, attenzione, numeri
+    x0, w0 = 172, W - 172 - 14
+    y = 36
+
+    def riquadro(titolo, righe, y, h):
+        pdf.set_fill_color(25, 80, 130)
+        pdf.rect(x0, y, w0, h, style="F", round_corners=True, corner_radius=3)
+        pdf.set_xy(x0 + 5, y + 3)
+        pdf.set_font(font, "B", 7.5)
+        pdf.set_text_color(147, 197, 253)
+        pdf.cell(w0 - 10, 4, t(titolo.upper()))
+        pdf.set_xy(x0 + 5, y + 9)
+        pdf.set_font(font, "", 10)
+        pdf.set_text_color(255, 255, 255)
+        pdf.multi_cell(w0 - 10, 5.2, t(righe))
+    passi = "\n".join(f"{i}. {p}" for i, p in enumerate(d.get("passi") or [], 1))
+    riquadro(tr("if_passi", L), passi, y, 52)
+    y += 56
+    if d.get("attenzione") or d.get("citazione"):
+        testo = d.get("attenzione", "") + (f"\n«{d['citazione']}»" if d.get("citazione") else "")
+        riquadro(tr("if_attenzione", L), testo, y, 38)
+        y += 42
+    numeri = " · ".join(x for x in (d.get("durata"), tr("if_slide", L, n=d["n_slide"]) if d.get("n_slide") else "",
+                                     tr("if_cap", L, n=d["n_capitoli"]) if d.get("n_capitoli") else "") if x)
+    if numeri:
+        riquadro(tr("if_numeri", L), numeri, y, 22)
+    pdf.set_xy(14, pdf.h - 10)
+    pdf.set_font(font, "", 7.5)
+    pdf.set_text_color(147, 197, 253)
+    pdf.cell(0, 4, t(tr("pdf_creato", L)))
+    dest = Path(cartella_pacchetti) / f"{tr('if_file', L)} – {el.nome_sicuro(info.get('nome', ''))}.pdf"
+    Path(cartella_pacchetti).mkdir(parents=True, exist_ok=True)
     pdf.output(str(dest))
     return dest

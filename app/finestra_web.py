@@ -170,6 +170,18 @@ class Api:
     def mappa_pdf(self, cartella, apri_dopo=True):
         return self._m.mappa_pdf(cartella, apri_dopo)
 
+    def capitoli(self, cartella):
+        return self._m.capitoli(cartella)
+
+    def infografica(self, cartella, rifai=False):
+        return self._m.infografica(cartella, rifai)
+
+    def infografica_pdf(self, cartella, apri_dopo=True):
+        return self._m.infografica_pdf(cartella, apri_dopo)
+
+    def prova_mio(self, mio):
+        return self._m.prova_mio(mio)
+
     def stima_docente(self, cartella):
         return self._m.stima_docente(cartella)
 

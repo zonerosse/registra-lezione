@@ -93,10 +93,25 @@ def controlla(dati, cartella, n_slide=0, L="it"):
     if not trs.parole:
         return 0
     tot = 0
+    # capitoli: tolgo quelli con un orario che non c'e' nella registrazione
+    if dati.get("capitoli"):
+        buoni = []
+        for c in dati["capitoli"]:
+            m = _ORA.search(str(c.get("inizio") or ""))
+            if m and (not durata or _secondi(m) <= durata + 120):
+                c["sec"] = _secondi(m)
+                buoni.append(c)
+        dati["capitoli"] = buoni
     voci = dati.get("domande_probabili")
     esame = voci is not None
     if not esame:
         voci = dati.get("blocchi") or []
+    altri = None
+    if "sezioni" in dati:                     # «Il mio formato»
+        voci, altri = dati.get("sezioni") or [], "punti"
+    elif "decisioni" in dati or "azioni" in dati:          # verbale
+        voci, altri = (dati.get("decisioni") or []) + (dati.get("azioni") or []) + \
+            (dati.get("da_decidere") or []) + (dati.get("punti_discussi") or []), "verbale"
     for v in voci:
         avvisi = []
         if esame:
@@ -110,6 +125,12 @@ def controlla(dati, cartella, n_slide=0, L="it"):
                     v["perche"] = re.sub(r"\s+", " ", _VIRG.sub("", perche)).strip(" ,;:-–")
                     avvisi[prima:] = [tr("vr_tolta", L)]
             for x in (v.get("schema") or []) + [v.get("errore") or ""]:
+                _controlla_testo(x, trs, avvisi, L)
+        elif altri == "punti":
+            for x in v.get("punti") or []:
+                _controlla_testo(x, trs, avvisi, L)
+        elif altri == "verbale":
+            for x in (v.get("testo"), v.get("cosa"), *(v.get("punti") or [])):
                 _controlla_testo(x, trs, avvisi, L)
         else:
             for x in v.get("appunti") or []:

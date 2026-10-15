@@ -373,7 +373,7 @@ class Motore:
         if not self.cartella_corrente:
             return None
         info = el.leggi_json(Path(self.cartella_corrente) / "info.json", {}) or {}
-        n = len(info.get("appunti") or {}) + len(info.get("appunti_esame") or {})
+        n = sum(len(info.get(ap.chiave_info(f)) or {}) for f in ap.FORMATI)
         if not n:
             return None
         return {"n": n, "dollari": round(float(info.get("spesa_appunti") or 0), 2)}
@@ -383,10 +383,22 @@ class Motore:
         if not self.cartella_corrente:
             return None
         cart = Path(self.cartella_corrente)
-        files = sorted(cart.glob("appunti_esame_*.json")) if self.formato_vista == "esame" else \
-            [f for f in sorted(cart.glob("appunti_*.json")) if not f.name.startswith("appunti_esame_")]
+        fv = self.formato_vista if self.formato_vista in ap.FORMATI else "cornell"
+        files = sorted(cart.glob("appunti_[0-9]*.json")) if fv == "cornell" else sorted(cart.glob(f"appunti_{fv}_*.json"))
         for f in files:
-            d = ap.normalizza(el.leggi_json(f, {}) or {})
+            d = el.leggi_json(f, {}) or {}
+            fd = ap.formato_di(d)
+            if fd == "verbale":
+                dec, az = d.get("decisioni") or [], d.get("azioni") or []
+                return {"formato": "verbale", "blocchi": [{"domanda": tr("vb_decisioni"), "appunto": x.get("testo", "")} for x in dec[:1]] +
+                        [{"domanda": tr("vb_azioni"), "appunto": f"{x.get('cosa', '')}" + (f" — {x['chi']}" if x.get("chi") else "")} for x in az[:1]],
+                        "riassunto": d.get("in_breve", ""), "n_dec": len(dec), "n_az": len(az)}
+            if fd == "mio":
+                sz = d.get("sezioni") or []
+                return {"formato": "mio", "nome": d.get("mio_nome") or tr("fmt_mio"),
+                        "blocchi": [{"domanda": x.get("titolo", ""), "appunto": (x.get("punti") or [""])[0]} for x in sz[:2]],
+                        "riassunto": d.get("riassunto", ""), "n_sez": len(sz)}
+            d = ap.normalizza(d)
             if ap.e_esame(d):
                 dom = d.get("domande_probabili") or []
                 if not dom:
@@ -399,7 +411,7 @@ class Motore:
             blocchi = d.get("blocchi") or []
             if not blocchi:
                 continue
-            return {"formato": "cornell", "blocchi": [{"domanda": b.get("domanda", ""),
+            return {"formato": "webinar" if fd == "webinar" else "cornell", "blocchi": [{"domanda": b.get("domanda", ""),
                                  "appunto": (b.get("appunti") or [""])[0]} for b in blocchi[:2]],
                     "riassunto": d.get("riassunto", ""), "n_domande": len(blocchi),
                     "formulario": bool(d.get("formulario")), "esercizi": bool(d.get("esercizi_svolti"))}
@@ -432,7 +444,8 @@ class Motore:
         ha_chiave = bool(self.chiave())
         return {"lingua": testi.LINGUA, "lingua_scelta": self.cfg.get("lingua") in testi.T,
                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
-                "formato": "esame" if self.cfg.get("formato_appunti") == "esame" else "cornell",
+                "formato": self._formato("lezione"), "tipo": self._tipo(), "mio": self.cfg.get("mio") or None,
+                "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
@@ -463,7 +476,16 @@ class Motore:
             if self.cfg.get("lingua_lezione") in (None, "it", "en") and not self.cfg.get("lingua_lezione_scelta"):
                 self.cfg["lingua_lezione"] = valore
         elif campo == "formato_appunti":
-            self.cfg["formato_appunti"] = "esame" if valore == "esame" else "cornell"
+            self.cfg["formato_appunti"] = valore if valore in ("cornell", "esame", "mio") else "cornell"
+            if valore == "mio" and not (self.cfg.get("mio") or {}).get("descrizione"):
+                self.cfg["formato_appunti"] = "cornell"
+                return {"ok": False, "msg": tr("mio_vuoto")}
+        elif campo == "tipo":
+            self.cfg["tipo"] = valore if valore in ap.FORMATI_TIPO else "lezione"
+        elif campo == "mio":
+            v = valore or {}
+            self.cfg["mio"] = {"nome": str(v.get("nome") or "").strip()[:60] or tr("fmt_mio"),
+                               "descrizione": str(v.get("descrizione") or "").strip()[:2000]}
         elif campo == "lingua_lezione":
             if valore not in testi.LEZIONE:
                 return {"ok": False, "msg": "?"}
@@ -545,6 +567,11 @@ class Motore:
         microfono = opzioni.get("microfono") or self.cfg.get("microfono") or None
         pdf = opzioni.get("pdf") if modo == "aula" else None
         dopo = (opzioni.get("quando") or self.cfg.get("quando")) == "dopo"
+        tipo = opzioni.get("tipo") if opzioni.get("tipo") in ap.FORMATI_TIPO else self._tipo()
+        partecipanti = [str(x).strip() for x in (opzioni.get("partecipanti") or []) if str(x).strip()][:30]
+        if tipo != self._tipo():
+            self.cfg["tipo"] = tipo
+            salva_config(self.cfg)
         with self._lock:
             if self.occupato:
                 return {"ok": False}
@@ -558,15 +585,17 @@ class Motore:
                                                 "studente": self.cfg.get("studente") or {},
                                                 "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA,
-                                                "formato_appunti": self._formato(),
+                                                "formato_appunti": self._formato(tipo),
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                                                 "modo": modo, "parole": self.parole_di(nome),
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
-                                                "quando": "dopo" if dopo else "durante"})
+                                                "quando": "dopo" if dopo else "durante",
+                                                "tipo": tipo, "partecipanti": partecipanti,
+                                                "mio": self.cfg.get("mio") or None})
             self.trascrivi_dopo = dopo
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
-            self.formato_vista = self._formato()
+            self.formato_vista = self._formato(tipo)
             self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
             self.finale = None
             self.avviso_fine = ""
@@ -630,7 +659,8 @@ class Motore:
                                                 "file_originale": str(src), "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
                                                 "formato_appunti": self._formato(), "parole": self.parole_di(nome),
-                                                "precisa": bool(self.cfg.get("trascrizione_precisa"))})
+                                                "precisa": bool(self.cfg.get("trascrizione_precisa")),
+                                                "tipo": self._tipo(), "mio": self.cfg.get("mio") or None})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -743,6 +773,8 @@ class Motore:
         info = el.leggi_json(cart / "info.json", {}) or {}
         if formato not in ap.FORMATI:
             formato = info.get("formato_appunti") or self._formato()
+        if formato == "mio" and not info.get("mio"):
+            el.aggiorna_info(cart, mio=self.cfg.get("mio"))
         pac, fatti = info.get("pacchetti") or {}, info.get(ap.chiave_info(formato)) or {}
         if not info.get("formato_appunti"):
             el.aggiorna_info(cart, formato_appunti=formato)
@@ -765,8 +797,21 @@ class Motore:
             self.vista = "fine"
         return {"ok": True}
 
-    def _formato(self):
-        return "esame" if self.cfg.get("formato_appunti") == "esame" else "cornell"
+    def _tipo(self):
+        return self.cfg.get("tipo") if self.cfg.get("tipo") in ap.FORMATI_TIPO else "lezione"
+
+    def _formato(self, tipo=None):
+        """Il formato degli appunti di serie: per le lezioni quello scelto in Impostazioni,
+        per le riunioni il verbale, per i webinar i punti chiave."""
+        tipo = tipo or self._tipo()
+        if tipo == "riunione":
+            return "verbale"
+        if tipo == "webinar":
+            return "webinar"
+        f = self.cfg.get("formato_appunti")
+        if f == "mio" and (self.cfg.get("mio") or {}).get("descrizione"):
+            return "mio"
+        return "esame" if f == "esame" else "cornell"
 
     def stima_appunti(self, cartella):
         info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
@@ -782,7 +827,10 @@ class Motore:
         pac = info.get("pacchetti") or {}
         if not pac or self.occupato:
             return {"ok": False}
-        formati = [f for f in (formati or [self._formato()]) if f in ap.FORMATI] or [self._formato()]
+        f_serie = self._formato(info.get("tipo") if info.get("tipo") in ap.FORMATI_TIPO else "lezione")
+        formati = [f for f in (formati or [f_serie]) if f in ap.FORMATI] or [f_serie]
+        if "mio" in formati:            # «Il mio formato» com'e' adesso in Impostazioni
+            el.aggiorna_info(cart, mio=self.cfg.get("mio") or info.get("mio"))
         # le parole difficili di adesso (magari aggiunte dopo la registrazione)
         el.aggiorna_info(cart, parole=self.parole_di(info.get("nome", "")))
         for formato in formati:
@@ -881,7 +929,7 @@ class Motore:
         info = el.leggi_json(Path(cart) / "info.json", {}) or {}
         out = []
         for formato in ap.FORMATI:
-            nome = tr("fmt_esame" if formato == "esame" else "fmt_cornell")
+            nome = ((info.get("mio") or {}).get("nome") or tr("fmt_mio")) if formato == "mio" else tr(f"fmt_{formato}")
             tutti = info.get(ap.chiave_completi(formato))
             if tutti and Path(tutti).exists():
                 out.append({"titolo": nome, "formato": formato, "file": tutti})
@@ -925,9 +973,13 @@ class Motore:
             info = el.leggi_json(cart / "info.json", {}) or {}
             pac = info.get("pacchetti") or {}
             fatti = {f: ap.appunti_fatti(info, f) for f in ap.FORMATI}
-            appunti = {**fatti["cornell"], **fatti["esame"]}
+            appunti = {k: v for f in ap.FORMATI for k, v in fatti[f].items()}
             mancano = {f: [k for k, z in pac.items() if Path(z).exists() and k not in fatti[f]] for f in ap.FORMATI}
             puo = stato == "pronta" and ha_chiave and not self.occupato and bool(pac)
+            tipo = info.get("tipo") if info.get("tipo") in ap.FORMATI_TIPO else "lezione"
+            # i formati che hanno senso per questo tipo («Il mio formato» solo se e' stato descritto)
+            possibili = [f for f in ap.FORMATI_TIPO[tipo] if f != "mio" or (info.get("mio") or self.cfg.get("mio"))]
+            f_serie = self._formato(tipo)
             nome = info.get("nome", cart.name)
             out.append({
                 "cartella": str(cart), "nome": nome, "quando": quando,
@@ -938,10 +990,14 @@ class Motore:
                 "formati": [f for f in ap.FORMATI if fatti[f]],
                 # nessun appunto: si creano nel formato scelto; altrimenti si puo' creare anche l'altro formato
                 "crea_appunti": bool(puo and not appunti),
-                "crea_anche": [f for f in ap.FORMATI if puo and appunti and mancano[f]],
+                "crea_anche": [f for f in possibili if puo and appunti and not fatti[f]],
                 "completa_appunti": [f for f in ap.FORMATI if puo and fatti[f] and mancano[f]],
                 "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],
-                "rifai_appunti": bool(puo and fatti[self._formato()] and not mancano[self._formato()]),
+                "rifai_appunti": bool(puo and fatti.get(f_serie) and not mancano[f_serie]),
+                "formato_serie": f_serie, "tipo": tipo,
+                "nome_mio": (info.get("mio") or self.cfg.get("mio") or {}).get("nome") or "",
+                "capitoli": any(ap.capitoli_di(cart)),
+                "infografica": (cart / "infografica.json").exists(),
                 "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
                 "docente": (cart / "docente.json").exists(), "mappa": (cart / "mappa.json").exists(),
                 "aula": info.get("modo") == "aula", "trascritta": any(cart.glob("trascrizione_*.json")),
@@ -1159,6 +1215,74 @@ class Motore:
         return {"ok": True, "file": str(dest)}
 
     # ------------------------------------------------------------------ slide del docente (PDF)
+
+    def capitoli(self, cartella):
+        """Indice della registrazione: [{"sec", "inizio", "titolo", "dettaglio"}] + indirizzo del video."""
+        cart = Path(cartella)
+        out = sorted(ap.capitoli_di(cart), key=lambda c: c.get("sec", 0))
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        return {"capitoli": out, "video": self.video_url(cartella), "nome": info.get("nome", ""),
+                "audio": bool(video_di(cart)) and str(video_di(cart)).endswith(".m4a")}
+
+    def infografica(self, cartella, rifai=False):
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            return {"ok": True, **ch.crea_infografica(cartella, self.chiave(), rifai)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("infografica")
+            return {"ok": False, "msg": tr("ch_err")}
+
+    def infografica_pdf(self, cartella, apri_dopo=True):
+        try:
+            f = ch.pdf_infografica(cartella, self.cfg["cartella_pacchetti"])
+            if apri_dopo:
+                apri(f)
+            return {"ok": True, "file": str(f)}
+        except Exception:
+            log.exception("infografica pdf")
+            return {"ok": False}
+
+    def prova_mio(self, mio):
+        """Prova «Il mio formato» sulla prima parte dell'ultima registrazione con appunti possibili: apre il PDF."""
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        if self.occupato:
+            return {"ok": False, "msg": tr("aspetta_lavoro")}
+        mio = {"nome": str((mio or {}).get("nome") or tr("fmt_mio"))[:60], "descrizione": str((mio or {}).get("descrizione") or "")[:2000]}
+        if not mio["descrizione"].strip():
+            return {"ok": False, "msg": tr("mio_vuoto")}
+        for l in self.lezioni()["lezioni"]:
+            cart = Path(l["cartella"])
+            info = el.leggi_json(cart / "info.json", {}) or {}
+            pac = info.get("pacchetti") or {}
+            if l["stato"] != "pronta" or not pac:
+                continue
+            k = sorted(pac, key=int)[0]
+            prova = cart / "prova_mio"
+            try:
+                import shutil as _sh
+                _sh.rmtree(prova, ignore_errors=True)
+                prova.mkdir()
+                for f in ("info.json", f"pacchetto_{int(k):03d}.json"):
+                    if (cart / f).exists():
+                        _sh.copy(cart / f, prova / f)
+                for f in cart.glob("trascrizione_*.json"):
+                    _sh.copy(f, prova / f.name)
+                if (cart / "slide").exists():
+                    _sh.copytree(cart / "slide", prova / "slide")
+                el.aggiorna_info(prova, mio=mio, pacchetti={k: pac[k]}, appunti_mio={})
+                dest, spesa = ap.crea_appunti(prova, int(k), self.chiave(), str(prova), "mio")
+                apri(dest)
+                return {"ok": True, "lezione": l["nome"], "file": str(dest), "spesa": round(spesa, 3)}
+            except ap.ErroreAppunti as e:
+                return {"ok": False, "msg": str(e)}
+            except Exception:
+                log.exception("prova del mio formato")
+                return {"ok": False, "msg": tr("ap_imprevisto")}
+        return {"ok": False, "msg": tr("mio_nessuna")}
 
     def info_pdf(self, percorso):
         try:

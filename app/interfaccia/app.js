@@ -58,7 +58,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (['rip', 'chiedi', 'mappa'].includes(pagina)) { vai('arch'); return true; }
+  if (['rip', 'chiedi', 'mappa', 'cap', 'ig'].includes(pagina)) { vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -111,8 +111,8 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa'].includes(p) ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig'].includes(p) ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
@@ -259,6 +259,25 @@ function disegnaPronto() {
   disegnaSorgenti();
   disegnaModo();
   disegnaQuando();
+  disegnaTipo();
+}
+/* tipo di registrazione: lezione, riunione di lavoro, webinar; e chi partecipa (riunioni) */
+let PART = [];
+const formatoTipo = () => R.tipo === 'riunione' ? 'verbale' : R.tipo === 'webinar' ? 'webinar' : R.formato;
+function nomeFormato(f, nomeMio) { return f === 'mio' ? (nomeMio || (R.mio && R.mio.nome) || t('fmt.mio')) : t('fmt.' + f); }
+function disegnaTipo() {
+  const k = R.tipo || 'lezione';
+  $('tipoBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.k === k));
+  $('partBox').classList.toggle('hidden', k !== 'riunione');
+  $('nome').placeholder = k === 'riunione' ? t('tp.ph.riu') : k === 'webinar' ? t('tp.ph.web') : t('pr.ph');
+  $('partTags').innerHTML = PART.map((n, i) => `<span class="tag2">${esc(n)}<b data-i="${i}" title="${esc(t('togli'))}">×</b></span>`).join('');
+  $('partTags').querySelectorAll('b[data-i]').forEach(b => b.onclick = () => { PART.splice(+b.dataset.i, 1); disegnaTipo(); });
+  if (R.appunti_on && k !== 'lezione') $('pillAI').innerHTML = `<span class="pill p-cor">${ico('spark', 13)}${esc(nomeFormato(formatoTipo()))}</span>`;
+}
+function aggiungiPartecipante() {
+  const v = $('partIn').value.trim();
+  if (v && !PART.includes(v)) PART.push(v);
+  $('partIn').value = ''; disegnaTipo(); $('partIn').focus();
 }
 /* telefono: «Quando trascrivo?» (Durante / Dopo), scelto prima di ogni registrazione */
 let QUANDO = null;
@@ -315,8 +334,9 @@ async function inizia() {
       if (r.ck) { await A.imposta('promemoria_dnd', false); R.dnd = false; }
       if (r.v !== 'si') return;
     }
-    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : ''});
-    if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; disegnaModo(); await aggiorna(); }
+    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
+                                tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : []});
+    if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; disegnaModo(); await aggiorna(); }
   } finally { $('btnRec').disabled = false; }
 }
 
@@ -459,11 +479,15 @@ function disegnaFine() {
   if (S.ha_appunti) {
     const c = S.cornell;
     const esame = c && c.formato === 'esame';
+    const fc = c ? c.formato : S.formato;
     const det = !c ? t('fn.det0') : esame ? t('fn.det.esame', {n: c.n_domande, k: c.n_kw, s: c.simulazione ? t('fn.det.sim') : ''})
+      : fc === 'verbale' ? t('fn.det.vb', {d: c.n_dec, a: c.n_az}) : fc === 'mio' ? t('fn.det.mio', {n: c.n_sez})
+      : fc === 'webinar' ? t('fn.det.wb', {n: c.n_domande, f: c.formulario ? t('fn.det.f') : ''})
       : t('fn.det', {n: c.n_domande, f: c.formulario ? t('fn.det.f') : '', e: c.esercizi ? t('fn.det.e') : ''});
     const stelle = n => '★'.repeat(Math.max(1, Math.min(3, n || 1))) + '☆'.repeat(3 - Math.max(1, Math.min(3, n || 1)));
     const prev = c ? `<div class="cornell${esame ? ' esame' : ''}">${c.blocchi.map(b => `<div class="q">${esame ? `<span style="color:#ea580c">${stelle(b.stelle)}</span><br>` : ''}${esc(b.domanda)}</div><div class="a">${esc(b.appunto)}</div>`).join('')}${c.riassunto ? `<div class="s"><b>${t('fn.riass')}</b> — ${esc(c.riassunto)}</div>` : ''}</div>` : '';
-    h = `<div class="ap-card"><div><span class="pill ${esame ? 'p-warn' : 'p-cor'}">${ico('spark', 13)}${t(esame ? 'fn.esame' : 'fn.cornell')}</span>
+    const pillFmt = fc === 'mio' ? esc((c && c.nome) || t('fn.mio')) : t(esame ? 'fn.esame' : ['verbale', 'webinar'].includes(fc) ? 'fn.' + fc : 'fn.cornell');
+    h = `<div class="ap-card"><div><span class="pill ${esame ? 'p-warn' : fc === 'verbale' ? 'p-blue' : fc === 'mio' ? 'p-mio' : 'p-cor'}">${ico('spark', 13)}${pillFmt}</span>
       <div style="font-size:19px;font-weight:700;color:var(--ink);margin:8px 0 4px">${inCorso ? t('fn.primi') : t('fn.tuoi')}</div>
       <div class="hint" style="margin-bottom:14px">${esc(det)}${inCorso ? t('fn.altri') : ''}</div>
       <button class="btn b-main" style="width:100%" id="fApri">${ico('doc', 18)}${t('fn.apri')}</button></div>${prev}</div>`;
@@ -486,7 +510,7 @@ async function apriAppunti(cartella) {
   const l = await A.appunti_di(cartella);
   if (!l.length) { toast(t('ap.non')); return; }
   if (l.length === 1) { A.apri(l[0].file); return; }
-  const r = await dialogo({titolo: t('ap.quali'), bottoni: [{t: t('annulla'), v: null}, ...l.map((x, i) => ({t: esc(x.titolo), cls: x.formato === 'esame' ? 'b-pz' : 'b-cor', v: i}))]});
+  const r = await dialogo({titolo: t('ap.quali'), bottoni: [{t: t('annulla'), v: null}, ...l.map((x, i) => ({t: esc(x.titolo), cls: x.formato === 'esame' ? 'b-pz' : x.formato === 'cornell' ? 'b-cor' : 'b-main', v: i}))]});
   if (r !== null && r !== false) A.apri(l[r].file);
 }
 
@@ -509,18 +533,19 @@ function disegnaLezioni() {
   if (!L.length) { $('lista').dataset.h = ''; $('lista').innerHTML = `<div class="card" style="text-align:center;padding:40px 20px;color:var(--mut)">${n ? t('ar.trovata0') : t('ar.vuoto')}</div>`; return; }
   const h = L.map((l, i) => {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
-    const meta = [l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
+    const meta = [l.tipo === 'riunione' ? t('tp.b.riu') : l.tipo === 'webinar' ? t('tp.b.web') : '', l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
       (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
-    else if (l.n_appunti) { pill = (l.formati || []).map(f => f === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('fmt.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('fmt.cornell')}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
+    else if (l.n_appunti) { pill = (l.formati || []).map(f => `<span class="pill ${f === 'esame' ? 'p-warn' : f === 'verbale' ? 'p-blue' : f === 'mio' ? 'p-mio' : 'p-cor'}">${ico('spark', 12)}${esc(nomeFormato(f, l.nome_mio))}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = ANDROID ? '' : `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
     const chiedi = l.trascritta && l.stato === 'pronta' ? `<button class="btn b-cor b-sm" data-a="chiedi">${ico('chat')}${t('ar.chiedi')}</button>` : '';
-    const sec = chiedi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
+    const capi = l.capitoli && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="capitoli">${ico('text')}${t('ar.cap')}</button>` : '';
+    const sec = chiedi + capi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
       <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div><div class="acts">${pill}${prim}${sec}</div></div>
@@ -537,6 +562,8 @@ async function azioneLezione(l, a, e) {
   if (a === 'ripassa') return iniziaRipasso([c], l.nome, 'prima');
   if (a === 'chiedi') return apriChiedi(l);
   if (a === 'mappa') return apriMappa(l);
+  if (a === 'capitoli') return apriCapitoli(l);
+  if (a === 'infografica') return apriInfografica(l);
   if (a === 'pdf') return aggiungiPdf(l);
   if (a === 'tras') return A.apri_lezione(c);
   if (a === 'video') return A.apri(l.video);
@@ -548,13 +575,13 @@ async function azioneLezione(l, a, e) {
     const f = a.split(':')[1];
     if (a.startsWith('anche:')) {
       const st = await A.stima_appunti(c);
-      if (!await conferma(t('ar.anche.t', {f: t('fmt.' + f)}), t('ar.anche', {n: l.nome, c: num(st.toFixed(2))}), t('ar.anche.si'), t('annulla'), f === 'esame' ? 'b-pz' : 'b-cor')) return;
+      if (!await conferma(t('ar.anche.t', {f: nomeFormato(f, l.nome_mio)}), t('ar.anche', {n: l.nome, c: num(st.toFixed(2))}), t('ar.anche.si'), t('annulla'), f === 'esame' ? 'b-pz' : 'b-cor')) return;
     }
     const r = await A.appunti_mancanti(c, f); if (r.ok) { await aggiorna(); vai('reg'); } return;
   }
   if (a === 'rifai') {
     const st = await A.stima_appunti(c);
-    if (await conferma(t('ar.rifai.t'), t('ar.rifai.f', {n: l.nome, f: t('fmt.' + R.formato), c: num(st.toFixed(2))}), t('ar.rifai.si'), t('annulla'), 'b-cor')) {
+    if (await conferma(t('ar.rifai.t'), t('ar.rifai.f', {n: l.nome, f: nomeFormato(l.formato_serie || R.formato, l.nome_mio), c: num(st.toFixed(2))}), t('ar.rifai.si'), t('annulla'), 'b-cor')) {
       const r = await A.rifai_appunti(c); if (r.ok) { await aggiorna(); vai('reg'); }
     }
     return;
@@ -587,10 +614,10 @@ function menuLezione(l, btn) {
   const m = document.createElement('div'); m.className = 'menu';
   const voci = [];
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
-  (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: t('fmt.' + f)})]));
-  (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: t('fmt.' + f)})]));
-  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: t('fmt.' + R.formato)})]);
-  if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')]);
+  (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
+  (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
+  if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
+  if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -649,9 +676,26 @@ function disegnaImpostazioni() {
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
-  $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('formato_appunti', o.dataset.f); await rileggi(); });
+  $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => {
+    MIO_SCELTO = o.dataset.f === 'mio';
+    const r = await A.imposta('formato_appunti', o.dataset.f);
+    if (!r.ok) { $('mioBox').classList.remove('hidden'); $('fmtBox').querySelectorAll('.aiopt').forEach(x => x.classList.toggle('on', x === o)); $('mioDesc').focus(); toast(r.msg); return; }
+    await rileggi();
+  });
+  $('mioBox').classList.toggle('hidden', R.formato !== 'mio' && !MIO_SCELTO);
+  if (document.activeElement !== $('mioNome')) $('mioNome').value = (R.mio && R.mio.nome) || '';
+  if (document.activeElement !== $('mioDesc')) $('mioDesc').value = (R.mio && R.mio.descrizione) || '';
+  $('mioEsempi').innerHTML = `<span class="hint">${esc(t('mio.esempi'))}</span>` + (R.esempi_mio || []).map((e, i) => `<span class="chip" data-i="${i}">${esc(e.nome)}</span>`).join('');
+  $('mioEsempi').querySelectorAll('.chip').forEach(c => c.onclick = async () => {
+    const e = R.esempi_mio[+c.dataset.i];
+    $('mioNome').value = e.nome; $('mioDesc').value = e.descrizione;
+    await A.imposta('mio', {nome: e.nome, descrizione: e.descrizione});
+    if (MIO_SCELTO || R.formato === 'mio') await A.imposta('formato_appunti', 'mio');
+    await rileggi();
+  });
   document.querySelectorAll('.dati input').forEach(i => { if (document.activeElement !== i) i.value = (R.studente || {})[i.dataset.k] || ''; });
 }
+let MIO_SCELTO = false;
 async function sceltaAI(claude) {
   if (claude && !R.chiave) { $('aiA').classList.add('on'); $('aiB').classList.remove('on'); const k = $('kIn'); if (k) k.focus(); return; }
   const r = await A.imposta('appunti_attivi', claude);
@@ -851,6 +895,45 @@ async function apriMappa(l, rifai = false) {
   disegnaMappa();
   if (r.nuova) caricaLezioni();
 }
+/* ------------------------------------------------------------------ capitoli */
+async function apriCapitoli(l) {
+  $('cpSub').textContent = `${l.nome} · ${l.quando}`;
+  $('cpLista').innerHTML = `<span class="spin"></span>`; $('cpMedia').innerHTML = '';
+  vai('cap');
+  const r = await A.capitoli(l.cartella);
+  const C = r.capitoli || [];
+  $('cpMedia').innerHTML = r.video ? (r.audio ? `<audio id="cpV" controls preload="metadata" src="${esc(r.video)}"></audio>` : `<video id="cpV" controls preload="metadata" src="${esc(r.video)}"></video>`)
+    : `<div class="hint" style="padding:14px">${esc(t('mom.novid'))}</div>`;
+  $('cpLista').innerHTML = C.length ? C.map((c, i) => `<div class="capi" data-i="${i}"><span class="t">${esc(c.inizio)}</span><div><b>${esc(c.titolo)}</b>${c.dettaglio ? `<div class="hint">${esc(c.dettaglio)}</div>` : ''}</div></div>`).join('')
+    : `<div class="hint">${esc(t('cp.vuoto'))}</div>`;
+  $('cpLista').querySelectorAll('.capi').forEach(e => e.onclick = () => {
+    $('cpLista').querySelectorAll('.capi').forEach(x => x.classList.toggle('on', x === e));
+    const v = $('cpV'), c = C[+e.dataset.i];
+    if (!v) { mostraMomento(l.cartella, c.sec, null, l.nome); return; }
+    try { v.currentTime = c.sec; v.play().catch(() => {}); } catch (err) {}
+  });
+}
+
+/* ------------------------------------------------------------------ infografica */
+let IG = {lez: null, dati: null};
+async function apriInfografica(l, rifai = false) {
+  IG = {lez: l, dati: null};
+  $('igSub').textContent = `${l.nome} · ${l.quando}`;
+  $('igBox').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('ig.lav'))}</div>`;
+  vai('ig');
+  const r = await A.infografica(l.cartella, rifai);
+  if (IG.lez !== l) return;
+  if (!r.ok) { $('igBox').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  const d = IG.dati = r.dati;
+  const num_ = [d.durata, d.n_slide ? t('ig.slide', {n: d.n_slide}) : '', d.n_capitoli ? t('ig.cap', {n: d.n_capitoli}) : ''].filter(Boolean).join(' · ');
+  $('igBox').innerHTML = `<div class="ig"><div><div class="occ">${esc((d.nome + ' · ' + d.data).toUpperCase())}</div><h3>${esc(d.titolo)}</h3>
+    ${d.concetti.map(c => `<div class="k${c.importante ? ' top' : ''}"><b>${esc(c.grande)}</b>${esc(c.testo)}</div>`).join('')}</div>
+    <div><div class="k"><small>${esc(t('ig.passi').toUpperCase())}</small><ol>${d.passi.map(p => `<li>${esc(p)}</li>`).join('')}</ol></div>
+    ${d.attenzione || d.citazione ? `<div class="k"><small>${esc(t('ig.att').toUpperCase())}</small>${esc(d.attenzione)}${d.citazione ? `<div style="margin-top:6px;opacity:.85">«${esc(d.citazione)}»</div>` : ''}</div>` : ''}
+    ${num_ ? `<div class="k"><small>${esc(t('ig.num').toUpperCase())}</small>${esc(num_)}</div>` : ''}</div></div>`;
+  if (!rifai) caricaLezioni();
+}
+
 function disposizione(d, W = 900) {
   const rami = d.rami || [], meta = Math.ceil(rami.length / 2);
   const dx = rami.slice(0, meta), sx = rami.slice(meta);
@@ -911,6 +994,26 @@ function collegaNovita() {
   $('btnPdfX').onclick = () => { PDFA = null; disegnaModo(); };
   $('swDir').onclick = async () => { await A.imposta('diretta', !R.diretta); await rileggi(); };
   $('quandoBox').querySelectorAll('.aiopt').forEach(o => o.onclick = () => { QUANDO = o.dataset.q; disegnaQuando(); });
+  $('tipoBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('tipo', o.dataset.k); R.tipo = o.dataset.k; disegnaPronto(); });
+  $('partIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiPartecipante(); });
+  $('partAgg').onclick = aggiungiPartecipante;
+  const salvaMio = async () => {
+    const r = await A.imposta('mio', {nome: $('mioNome').value, descrizione: $('mioDesc').value});
+    if (r.ok) { R = await A.riepilogo(); toast(t('mio.salvato')); }
+  };
+  $('mioNome').addEventListener('change', salvaMio);
+  $('mioDesc').addEventListener('change', async () => { await salvaMio(); if (MIO_SCELTO && $('mioDesc').value.trim()) { await A.imposta('formato_appunti', 'mio'); await rileggi(); } });
+  $('mioProva').onclick = async () => {
+    if (!$('mioDesc').value.trim()) { toast(t('mio.desc.ph')); $('mioDesc').focus(); return; }
+    if (!await conferma(t('mio.prova.t'), t('mio.prova.x'), t('mio.prova'), t('annulla'), 'b-cor')) return;
+    const b = $('mioProva'); b.disabled = true; b.innerHTML = '<span class="spin" style="width:14px;height:14px"></span>';
+    try {
+      const r = await A.prova_mio({nome: $('mioNome').value, descrizione: $('mioDesc').value});
+      if (r.ok) toast(t('mio.prova.ok', {n: r.lezione, c: num(r.spesa)})); else await dialogo({titolo: t('mio.h'), testo: r.msg || ''});
+    } finally { b.disabled = false; b.textContent = t('mio.prova'); }
+  };
+  $('igPdf').onclick = async () => { if (!IG.dati) return; const r = await A.infografica_pdf(IG.lez.cartella, true); if (r.ok) toast(t('ig.salvata')); };
+  $('igRifai').onclick = async () => { if (IG.lez && await conferma(t('ig.rifai.t'), t('ig.rifai.c'))) apriInfografica(IG.lez, true); };
   $('segQuando').querySelectorAll('span').forEach(x => x.onclick = async () => { await A.imposta('quando', x.dataset.v); QUANDO = null; await rileggi(); });
   $('swCarica').onclick = async () => { await A.imposta('solo_carica', !R.solo_carica); await rileggi(); };
   $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };

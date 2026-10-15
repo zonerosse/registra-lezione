@@ -362,3 +362,24 @@ html.android .menu{min-width:230px}
 html.android .menu button{padding:12px 10px;font-size:14.5px}
 html.android .chat{max-height:none}
 html.android .mappa{overflow:auto}
+
+/* tipo di registrazione, capitoli, infografica */
+.dove.tre{grid-template-columns:repeat(3,1fr)}
+html.android .dove.tre{grid-template-columns:1fr}
+.capgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:14px;align-items:start}
+@media (max-width:900px){.capgrid{grid-template-columns:1fr}}
+#cpMedia video{width:100%;display:block;background:#0f172a;aspect-ratio:16/9}
+#cpMedia audio{width:calc(100% - 28px);margin:16px 14px 0}
+.capi{display:flex;gap:12px;padding:9px 10px;border-radius:10px;align-items:baseline;cursor:pointer}
+.capi:hover,.capi.on{background:#e0f2fe}
+.capi .t{font-weight:700;color:var(--blue);width:64px;flex:none;font-size:13px;font-variant-numeric:tabular-nums}
+.capi b{color:var(--ink);font-size:14px}
+.ig{display:grid;grid-template-columns:1.2fr 1fr;gap:12px;background:linear-gradient(135deg,#061e36,#0d4275);color:#fff;border-radius:16px;padding:22px}
+.ig .occ{font-size:11px;letter-spacing:1px;opacity:.7;font-weight:700}
+.ig h3{font-size:26px;margin:4px 0 12px;font-weight:800}
+.ig .k{background:rgba(255,255,255,.1);border-radius:12px;padding:12px 14px;margin-bottom:10px}
+.ig .k b{font-size:22px;display:block;color:#7dd3fc}.ig .k.top b::after{content:" ★";color:#fbbf24}
+.ig .k small{display:block;font-size:11px;opacity:.75;font-weight:700;letter-spacing:.5px;margin-bottom:4px}
+.ig ol{margin:6px 0 0;padding-left:18px;line-height:1.6;font-size:13.5px}
+@media (max-width:900px){.ig{grid-template-columns:1fr}}
+.p-mio{background:#ecfdf5;color:#047857}

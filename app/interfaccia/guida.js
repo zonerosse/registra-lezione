@@ -35,11 +35,17 @@ const GUIDA = {
         'Tocca <b>Fine</b> nella mini finestra o nella finestra grande e conferma.',
         'Il programma trascrive l\'ultima parte, prepara il video e la trascrizione completa. Puoi lasciarlo lavorare e fare altro, ma <b>non spegnere il PC</b>.',
         'Quando compare «Registrazione salvata!», tocca <b>Apri gli appunti</b>.']},
-      {ico: 'doc', v: 'formati', t: 'I due formati degli appunti', p: [
+      {ico: 'chat', t: 'Riunioni di lavoro e webinar', p: [
+        'In <b>Registra</b>, sotto «Che cosa registri?», scegli <b>Riunione di lavoro</b> o <b>Webinar o corso</b> (oppure <b>Lezione</b>).',
+        'Per una riunione scrivi <b>chi partecipa</b>: i nomi finiscono giusti nel verbale.',
+        'Alla fine, al posto degli appunti Cornell, arriva il <b>verbale</b>: in breve, <b>decisioni</b>, <b>cose da fare</b> con chi e entro quando, cosa resta da decidere e la prossima riunione. Per i webinar arrivano i <b>punti chiave</b>.',
+        'Nomi, date e cifre li scrive Claude dalla registrazione: <b>controllali sempre</b> prima di mandare il verbale.']},
+      {ico: 'doc', v: 'formati', t: 'I formati degli appunti', p: [
         '<b>Cornell</b>: domande a sinistra, appunti a destra, riassunto in fondo. Per capire e ripassare: copri la colonna degli appunti e prova a rispondere.',
         '<b>Formato Esame</b>: le domande più probabili, con le stelle (★★★ = il docente ci ha insistito). Per ognuna c\'è lo schema della risposta e le parole chiave; in fondo una simulazione d\'esame. Per prepararsi a rispondere.',
         'Il formato si sceglie in <b>Impostazioni</b>. Una lezione può avere anche tutti e due: in «Le mie registrazioni» ⋯ → «Crea anche in…».',
         'Gli appunti li scrive Claude dalla registrazione: <b>controllali sempre</b> sulle slide e sul libro. Ti aiuta il programma: quello che Claude aggiunge di suo (non detto a lezione) è <b>in viola</b> con «aggiunto da Claude»; citazioni del docente, minuti e slide vengono confrontati con la registrazione e se non tornano compare <b>⚠ da verificare</b> (le frasi del docente non trovate vengono tolte).',
+        '<b>Il mio formato</b>: in Impostazioni scrivi a parole come vuoi gli appunti (o tocca un esempio pronto) e prova il risultato con <b>Prova</b> su una registrazione già fatta.',
         'Nel Formato Esame, se la lezione ha più parti, il PDF della lezione completa comincia con la <b>classifica unica</b> delle domande di tutta la lezione, senza doppioni (circa 2-5 centesimi in più).']},
       {ico: 'lib', v: 'registrazioni', t: 'Le mie registrazioni', p: [
         'Qui trovi tutte le lezioni, con la ricerca per nome o data.',
@@ -54,6 +60,7 @@ const GUIDA = {
       {ico: 'chat', v: 'chiedi', t: 'Chiedi, mappa mentale e slide del docente', p: [
         '<b>Chiedi</b> (bottone viola sulla lezione): scrivi cosa non hai capito. La risposta usa solo quello che ha detto il docente e indica slide e minuto: tocca il minuto e rivedi quel punto del video. Puoi chiedere anche su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.',
         '<b>Mappa mentale</b> (menu <b>⋯</b>): lo schema ad albero della lezione, da salvare in PDF o stampare. Circa 1 centesimo, una volta sola.',
+        '<b>Capitoli</b> (bottone sulla registrazione): l\'indice con il minuto di ogni argomento; toccandone uno il video riparte da lì. <b>Infografica</b> (menu <b>⋯</b>): tutta la registrazione in una pagina, da salvare in PDF. Circa 1 centesimo.',
         '<b>Slide del docente</b> (menu <b>⋯</b> → «Aggiungi le slide del docente (PDF)…»): gli appunti vengono rifatti con le slide originali, nitide, al posto delle foto dallo schermo. Gli appunti di prima restano come copia.']},
       {ico: 'set', v: 'impostazioni', t: 'Impostazioni', p: [
         '<b>Lingua</b>: italiano o inglese, per il programma e per gli appunti.',
@@ -106,11 +113,17 @@ const GUIDA = {
         'Tap <b>Stop</b> in the mini window or in the main window and confirm.',
         'The program transcribes the last part and prepares the video and the full transcript. You can do something else meanwhile, but <b>don\'t turn the PC off</b>.',
         'When «Recording saved!» appears, tap <b>Open the notes</b>.']},
-      {ico: 'doc', v: 'formati', t: 'The two note formats', p: [
+      {ico: 'chat', t: 'Work meetings and webinars', p: [
+        'In <b>Record</b>, under «What are you recording?», choose <b>Work meeting</b> or <b>Webinar or course</b> (or <b>Lecture</b>).',
+        'For a meeting type <b>who is taking part</b>: the names come out right in the minutes.',
+        'At the end, instead of Cornell notes, you get the <b>minutes</b>: in short, <b>decisions</b>, <b>action items</b> with who and by when, what is still to decide and the next meeting. Webinars get <b>key points</b>.',
+        'Names, dates and figures are written by Claude from the recording: <b>always check them</b> before sending the minutes.']},
+      {ico: 'doc', v: 'formati', t: 'Note formats', p: [
         '<b>Cornell</b>: questions on the left, notes on the right, summary at the bottom. To understand and review: cover the notes column and try to answer.',
         '<b>Exam format</b>: the most likely questions, with stars (★★★ = the lecturer stressed it). Each has an answer outline and keywords; a mock exam at the end. To get ready to answer.',
         'Choose the format in <b>Settings</b>. A lecture can also have both: in «My recordings» ⋯ → «Also create in…».',
         'Claude writes the notes from the recording: <b>always check them</b> against the slides and the textbook. The program helps: what Claude adds on its own (not said in the lecture) is <b>in purple</b> with «added by Claude»; the lecturer\'s quotes, minutes and slides are compared with the recording and if they don\'t match you see <b>⚠ to check</b> (lecturer quotes not found are removed).',
+        '<b>My format</b>: in Settings describe in your own words how you want the notes (or tap a ready example) and test the result with <b>Try it</b> on a finished recording.',
         'In Exam format, if the lecture has several parts, the full-lecture PDF starts with a <b>single ranking</b> of the questions of the whole lecture, without duplicates (about 2-5 cents more).']},
       {ico: 'lib', v: 'registrazioni', t: 'My recordings', p: [
         'All your lectures, with search by name or date.',
@@ -125,6 +138,7 @@ const GUIDA = {
       {ico: 'chat', v: 'chiedi', t: 'Ask, mind map and lecturer\'s slides', p: [
         '<b>Ask</b> (purple button on the lecture): type what you didn\'t understand. The answer uses only what the lecturer said and shows slide and minute: tap the minute to see that point of the video again. You can also ask about <b>the whole subject</b>. Less than 1 cent per question.',
         '<b>Mind map</b> (<b>⋯</b> menu): the tree outline of the lecture, to save as PDF or print. About 1 cent, once.',
+        '<b>Chapters</b> (button on the recording): the index with the minute of each topic; tap one and the video starts from there. <b>Infographic</b> (<b>⋯</b> menu): the whole recording on one page, to save as PDF. About 1 cent.',
         '<b>Lecturer\'s slides</b> (<b>⋯</b> menu → «Add the lecturer\'s slides (PDF)…»): the notes are redone with the original, sharp slides instead of the screen photos. The previous notes stay as a copy.']},
       {ico: 'set', v: 'impostazioni', t: 'Settings', p: [
         '<b>Language</b>: Italian or English, for the program and the notes.',
