@@ -11,6 +11,7 @@ import ctypes
 import datetime
 import hashlib
 import io
+import json
 import logging
 import os
 import queue
@@ -21,6 +22,7 @@ import sys
 import threading
 import time
 import traceback
+import urllib.parse
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
@@ -1801,9 +1803,250 @@ class Motore:
 
     def _unisci_appunti(self, cart):
         try:
-            ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"], chiave=self.chiave() or None)
+            fatti = ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"], chiave=self.chiave() or None)
         except Exception:
             log.exception("appunti della lezione completa")
+            return
+        try:
+            if any(fatti or []):
+                self._invia_da_solo(cart)
+        except Exception:
+            log.exception("invio automatico")
+
+    # ------------------------------------------------------------------ «Condividi e collega»
+
+    def _collegato(self, servizio):
+        """I dati di un collegamento (Slack, Teams, Notion, CRM), decifrati. {} se non collegato."""
+        c = (self.cfg.get("collega") or {}).get(servizio) or {}
+        if not c.get("dati"):
+            return {}
+        try:
+            return json.loads(ap.leggi_chiave(c["dati"]) or "{}")
+        except ValueError:
+            return {}
+
+    def _manda(self, servizio, doc):
+        import condividi as cd
+        d = self._collegato(servizio)
+        if not d:
+            raise cd.ErroreCondividi(tr("cd_non_collegato"))
+        if servizio == "slack":
+            cd.invia_slack(d["url"], doc)
+        elif servizio == "teams":
+            cd.invia_teams(d["url"], doc)
+        elif servizio == "notion":
+            return cd.invia_notion(d["chiave"], d["pagina"], doc)
+        elif servizio == "crm":
+            if d.get("tipo") == "hubspot":
+                rub = self.cfg.get("rubrica") or {}
+                emails = [rub[p] for p in doc["partecipanti"] if rub.get(p)]
+                cd.invia_hubspot(d["chiave"], doc, emails)
+            else:
+                cd.invia_webhook(d["url"], doc, self.cfg.get("rubrica") or {})
+        return ""
+
+    def _invia_da_solo(self, cart):
+        """Verbale pronto di una riunione (o appunti di un webinar): parte da solo dove si e' chiesto."""
+        import condividi as cd
+        info = el.leggi_json(Path(cart) / "info.json", {}) or {}
+        if (info.get("tipo") or "lezione") == "lezione":
+            return
+        auto = [s for s in cd.SERVIZI if ((self.cfg.get("collega") or {}).get(s) or {}).get("auto") and self._collegato(s)]
+        gia = info.get("inviato") or {}
+        auto = [s for s in auto if s not in gia]
+        if not auto:
+            return
+        doc = cd.documento(cart)
+        for s in auto:
+            try:
+                self._manda(s, doc)
+                gia[s] = datetime.datetime.now().isoformat(timespec="seconds")
+                log.info("verbale mandato da solo a %s", s)
+            except Exception as e:
+                log.warning("invio automatico a %s: %s", s, e)
+        el.aggiorna_info(cart, inviato=gia)
+
+    def cond_info(self, cartella):
+        import condividi as cd
+        try:
+            doc = cd.documento(cartella)
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        rub = self.cfg.get("rubrica") or {}
+        coll = self.cfg.get("collega") or {}
+        return {"ok": True, "titolo": doc["titolo"], "formato": doc["formato"], "tipo": doc["tipo"],
+                "oggetto": cd.oggetto_email(doc), "testo": cd.testo_email(doc),
+                "partecipanti": [{"nome": p, "email": rub.get(p, "")} for p in doc["partecipanti"]],
+                "azioni": doc["azioni"], "prossima": doc["prossima"], "pdf": bool(doc["pdf"]),
+                "gdrive": cd.cartella_google_drive() is not None,
+                "servizi": {s: {"collegato": bool(self._collegato(s)), "nome": (coll.get(s) or {}).get("nome", ""),
+                                "auto": bool((coll.get(s) or {}).get("auto"))} for s in cd.SERVIZI}}
+
+    def cond_email(self, cartella, d):
+        import condividi as cd
+        import webbrowser
+        try:
+            doc = cd.documento(cartella)
+            rub = self.cfg.get("rubrica") or {}
+            dest = []
+            for nome, em in (d.get("dest") or {}).items():
+                em = str(em or "").strip()
+                if em:
+                    rub[str(nome)] = em
+                    dest.append(em)
+            dest += [x for x in re.split(r"[\s,;]+", str(d.get("altri") or "")) if "@" in x]
+            self.cfg["rubrica"] = rub
+            salva_config(self.cfg)
+            oggetto, testo = str(d.get("oggetto") or cd.oggetto_email(doc)), str(d.get("testo") or cd.testo_email(doc))
+            if d.get("modo") == "gmail":
+                webbrowser.open(cd.link_gmail(dest, oggetto, testo))
+                if doc["pdf"]:
+                    mostra_file(doc["pdf"])
+                return {"ok": True}
+            cart = Path(cartella) / "condividi"
+            cart.mkdir(exist_ok=True)
+            allegati = [doc["pdf"]] if doc["pdf"] else []
+            ev = cd.eventi(doc)
+            if ev:
+                allegati.append(cd.crea_ics(ev, cart / ("Calendario – " + el.nome_sicuro(doc["titolo"]) + ".ics")))
+            f = cd.crea_eml(doc, dest, oggetto, testo, cart / (el.nome_sicuro(oggetto)[:80] + ".eml"), allegati)
+            if not apri(f):
+                return {"ok": False, "msg": tr("cd_err_eml")}
+            return {"ok": True}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("email")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def _docx(self, cartella):
+        import condividi as cd
+        doc = cd.documento(cartella)
+        return cd.crea_docx(doc, Path(self.cfg["cartella_pacchetti"]) / cd.nome_file(doc, "docx"))
+
+    def cond_word(self, cartella):
+        import condividi as cd
+        try:
+            f = self._docx(cartella)
+            apri(f)
+            return {"ok": True, "file": str(f)}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("word")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def cond_gdocs(self, cartella):
+        import condividi as cd
+        import webbrowser
+        try:
+            f = self._docx(cartella)
+            drive = cd.cartella_google_drive()
+            if drive:
+                dest = drive / "Verba Manent IA"
+                dest.mkdir(exist_ok=True)
+                shutil.copy2(f, dest / f.name)
+                mostra_file(dest / f.name)
+                return {"ok": True, "drive": True, "nome": f.name}
+            webbrowser.open("https://drive.google.com/drive/my-drive")
+            mostra_file(f)
+            return {"ok": True, "drive": False, "nome": f.name}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("google docs")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def cond_calendario(self, cartella, scelte, modo):
+        import condividi as cd
+        import webbrowser
+        try:
+            doc = cd.documento(cartella)
+            ev = cd.eventi(doc, scelte)
+            if not ev:
+                return {"ok": False, "msg": tr("cd_cal_niente")}
+            if modo == "google":
+                for e in ev:
+                    webbrowser.open(cd.link_google_calendar(e))
+                return {"ok": True, "n": len(ev)}
+            cart = Path(cartella) / "condividi"
+            cart.mkdir(exist_ok=True)
+            f = cd.crea_ics(ev, cart / ("Calendario – " + el.nome_sicuro(doc["titolo"]) + ".ics"))
+            apri(f)
+            return {"ok": True, "n": len(ev)}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("calendario")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def cond_invia(self, cartella, servizio):
+        import condividi as cd
+        try:
+            url = self._manda(servizio, cd.documento(cartella))
+            gia = (el.leggi_json(Path(cartella) / "info.json", {}) or {}).get("inviato") or {}
+            gia[servizio] = datetime.datetime.now().isoformat(timespec="seconds")
+            el.aggiorna_info(cartella, inviato=gia)
+            return {"ok": True, "url": url or ""}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("invio a %s", servizio)
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def collega(self, servizio, d):
+        """Prova il collegamento e lo salva (cifrato). d: slack/teams {url}; notion {chiave, pagina};
+        crm {tipo: hubspot|webhook, chiave|url}; auto: manda da solo dopo ogni riunione."""
+        import condividi as cd
+        d = {k: str(v).strip() if isinstance(v, str) else v for k, v in (d or {}).items()}
+        try:
+            if servizio == "slack":
+                cd.invia_slack(d.get("url"), prova=True)
+                dati, nome = {"url": d["url"]}, "Slack"
+            elif servizio == "teams":
+                cd.invia_teams(d.get("url"), prova=True)
+                dati, nome = {"url": d["url"]}, "Teams"
+            elif servizio == "notion":
+                nome = cd.prova_notion(d.get("chiave"), d.get("pagina"))
+                dati = {"chiave": d["chiave"], "pagina": d["pagina"]}
+            elif servizio == "crm" and d.get("tipo") == "hubspot":
+                cd.prova_hubspot(d.get("chiave"))
+                dati, nome = {"tipo": "hubspot", "chiave": d["chiave"]}, "HubSpot"
+            elif servizio == "crm":
+                cd.invia_webhook(d.get("url"), prova=True)
+                dati, nome = {"tipo": "webhook", "url": d["url"]}, urllib.parse.urlparse(d["url"]).netloc
+            else:
+                return {"ok": False, "msg": "?"}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("collega %s", servizio)
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        coll = self.cfg.get("collega") or {}
+        coll[servizio] = {"dati": ap.nascondi_chiave(json.dumps(dati)), "nome": nome, "auto": bool(d.get("auto"))}
+        self.cfg["collega"] = coll
+        salva_config(self.cfg)
+        return {"ok": True, "nome": nome}
+
+    def scollega(self, servizio):
+        coll = self.cfg.get("collega") or {}
+        coll.pop(servizio, None)
+        self.cfg["collega"] = coll
+        salva_config(self.cfg)
+        return {"ok": True}
+
+    def collega_auto(self, servizio, si):
+        coll = self.cfg.get("collega") or {}
+        if servizio in coll:
+            coll[servizio]["auto"] = bool(si)
+            salva_config(self.cfg)
+        return {"ok": True}
+
+    def collegamenti(self):
+        import condividi as cd
+        coll = self.cfg.get("collega") or {}
+        return {s: {"collegato": bool(self._collegato(s)), "nome": (coll.get(s) or {}).get("nome", ""),
+                    "auto": bool((coll.get(s) or {}).get("auto"))} for s in cd.SERVIZI}
 
     def _prepara_modello(self):
         try:

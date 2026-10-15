@@ -200,6 +200,20 @@ def main(radice):
             righe.append(f"yt-dlp per «importa da link»: {v}")
         except OSError:
             righe.append("yt-dlp: saltato (senza internet)")
+        # «Condividi»: Word, calendario ed email si creano senza librerie in piu'
+        import condividi
+        import zipfile as _zf
+        doc = {"titolo": "Prova", "sottotitolo": "oggi", "formato": "verbale", "lingua": "it", "pdf": "", "breve": "x",
+               "sezioni": [{"titolo": "In breve", "testo": "ok", "punti": ["a"], "numerati": True, "aggiunte": ["b"],
+                            "tabella": {"teste": ["Cosa", "Chi", "Entro"], "righe": [["c", "d", "e"]]}}],
+               "azioni": [{"cosa": "c", "chi": "d", "entro": "venerdì", "data": "2030-01-04"}], "prossima": None,
+               "partecipanti": [], "data": _dt.datetime(2030, 1, 1), "tipo": "riunione"}
+        f = condividi.crea_docx(doc, Path(radice) / "prova.docx")
+        assert "word/document.xml" in _zf.ZipFile(f).namelist(), "condividi: Word"
+        ics = condividi.crea_ics(condividi.eventi(doc), Path(radice) / "prova.ics").read_text(encoding="utf-8")
+        assert "BEGIN:VEVENT" in ics, "condividi: calendario"
+        condividi.crea_eml(doc, ["a@b.it"], "Prova", "testo", Path(radice) / "prova.eml", [Path(radice) / "prova.ics"])
+        righe.append("condividi (Word, calendario, email): ok")
         # «Chi parla»: modello delle voci (scaricato al primo uso) e onnxruntime dentro il programma
         try:
             import numpy as _np

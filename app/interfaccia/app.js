@@ -117,7 +117,7 @@ function vai(p) {
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
-  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); }
+  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); if (!ANDROID) disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
@@ -570,7 +570,8 @@ function disegnaLezioni() {
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
     const chiedi = l.trascritta && l.stato === 'pronta' ? `<button class="btn b-cor b-sm" data-a="chiedi">${ico('chat')}${t('ar.chiedi')}</button>` : '';
     const capi = (l.capitoli && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="capitoli">${ico('text')}${t('ar.cap')}</button>` : '') +
-      (l.voci >= 2 && l.stato === 'pronta' && !ANDROID ? `<button class="btn b-ghost b-sm" data-a="voci">${ico('chat')}${t('ar.voci')}</button>` : '');
+      (l.voci >= 2 && l.stato === 'pronta' && !ANDROID ? `<button class="btn b-ghost b-sm" data-a="voci">${ico('chat')}${t('ar.voci')}</button>` : '') +
+      (l.n_appunti && l.stato === 'pronta' && !ANDROID ? `<button class="btn b-ghost b-sm" data-a="condividi">${ico('share')}${t('ar.cond')}</button>` : '');
     const sec = chiedi + capi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
@@ -591,6 +592,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'capitoli') return apriCapitoli(l);
   if (a === 'infografica') return apriInfografica(l);
   if (a === 'voci') return apriVoci(l);
+  if (a === 'condividi') return apriCondividi(l);
   if (a === 'voci_rifai') return apriVoci(l, true);
   if (a === 'pdf') return aggiungiPdf(l);
   if (a === 'tras') return A.apri_lezione(c);
@@ -647,6 +649,7 @@ function menuLezione(l, btn) {
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && !ANDROID && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
+  if (l.n_appunti && l.stato === 'pronta' && !ANDROID) voci.push(['condividi', 'share', t('ar.cond')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -1082,6 +1085,130 @@ async function nomiVoci() {
     if (r.ok) { disegnaVoci(r); toast(t('vc.salvato')); } else toast(r.msg || '');
   };
   return dialogo({titolo: t('vc.dlg.t'), testo: t('vc.dlg.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', fn: salva}]});
+}
+
+/* ------------------------------------------------------------------ condividi e collega */
+const SERV = {slack: ['💬', '#f3e8ff'], teams: ['👥', '#e0e7ff'], notion: ['🧱', '#f1f5f9'], crm: ['🤝', '#ffedd5']};
+const chiudiVelo = () => { const v = document.querySelector('.velo'); if (v) v.remove(); };
+async function apriCondividi(l) {
+  const info = await A.cond_info(l.cartella);
+  if (!info.ok) { await dialogo({titolo: t('ar.cond'), testo: info.msg || ''}); return; }
+  const nDate = info.azioni.filter(a => a.data).length + (info.prossima && info.prossima.data ? 1 : 0);
+  const voci = info.azioni.length + (info.prossima ? 1 : 0);
+  const tile = (k, i, b, sm, cls = '') => `<button class="tile ${cls}" data-k="${k}"><i>${i}</i><b>${esc(b)}</b><small>${sm}</small></button>`;
+  const serv = s => { const x = info.servizi[s]; return tile(s, SERV[s][0], t('cd.' + s), x.collegato ? `<span class="ok2">✓</span> ${esc(x.nome)}` : t('cd.nonc'), x.collegato ? '' : 'da'); };
+  const html = `<div class="tiles">${tile('email', '✉️', t('cd.email'), esc(t('cd.email.s')))}${tile('word', '📝', t('cd.word'), esc(t('cd.word.s')))}${tile('gdocs', '📄', t('cd.gdocs'), esc(t('cd.gdocs.s')))}
+    ${voci ? tile('cal', '📅', t('cd.cal'), esc(t('cd.cal.s', {n: nDate || voci}))) : ''}${['slack', 'notion', 'teams', 'crm'].map(serv).join('')}</div>`;
+  setTimeout(() => {
+    const box = document.querySelector('.velo .dlg'); if (!box) return;
+    box.style.maxWidth = '640px';
+    box.querySelectorAll('.tile').forEach(b => b.onclick = () => azioneCondividi(l, info, b.dataset.k, b));
+  }, 0);
+  return dialogo({titolo: t(info.formato === 'verbale' ? 'cd.t.vb' : 'cd.t'), testo: l.nome, html, bottoni: [{t: t('chiudi'), v: false}]});
+}
+async function azioneCondividi(l, info, k, b) {
+  const lav = () => { if (b) { b.disabled = true; b.querySelector('small').textContent = t('cd.lav'); } };
+  if (k === 'email') { chiudiVelo(); return emailCondividi(l, info); }
+  if (k === 'cal') { chiudiVelo(); return calendarioCondividi(l, info); }
+  if (k === 'word') { lav(); const r = await A.cond_word(l.cartella); chiudiVelo(); toast(r.ok ? t('cd.word.ok') : r.msg); return; }
+  if (k === 'gdocs') {
+    lav(); const r = await A.cond_gdocs(l.cartella); chiudiVelo();
+    if (!r.ok) return toast(r.msg);
+    return dialogo(r.drive ? {titolo: t('cd.gdocs'), testo: t('cd.gdocs.ok', {f: r.nome})} : {titolo: t('cd.gdocs.no.t'), testo: t('cd.gdocs.no', {f: r.nome})});
+  }
+  if (!info.servizi[k].collegato) {
+    chiudiVelo();
+    const ok = await collegaServizio(k);
+    if (!ok) return;
+  } else lav();
+  const r = await A.cond_invia(l.cartella, k);
+  chiudiVelo();
+  if (!r.ok) return dialogo({titolo: t('cd.' + k), testo: r.msg});
+  if (r.url) { const x = await dialogo({titolo: t('cd.inviato', {s: t('cd.' + k)}), bottoni: [{t: t('chiudi'), v: false}, {t: t('cd.notion.apri'), cls: 'b-main', v: true}]}); if (x) A.apri(r.url); return; }
+  toast(t('cd.inviato', {s: t('cd.' + k)}));
+}
+async function emailCondividi(l, info) {
+  const html = `<div style="margin-top:6px">${info.partecipanti.map((p, i) => `<div class="dest"><b title="${esc(p.nome)}">${esc(p.nome)}</b><input class="in" data-n="${i}" type="email" placeholder="${esc(t('cd.em.ph'))}" value="${esc(p.email)}"></div>`).join('')}</div>
+    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.altri'))}</div><input class="in" id="emAltri" placeholder="nome@esempio.it">
+    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.ogg'))}</div><input class="in" id="emOgg" value="${esc(info.oggetto)}">
+    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.testo'))}</div><textarea class="in" id="emTesto" rows="8" style="resize:vertical">${esc(info.testo)}</textarea>
+    <div class="hint" style="margin-top:8px">${esc(t('cd.em.nota'))}</div><div class="dlgerr hidden" id="emErr"></div>`;
+  const manda = modo => async () => {
+    const dest = {}; document.querySelectorAll('.velo .dest .in').forEach(i => { dest[info.partecipanti[+i.dataset.n].nome] = i.value.trim(); });
+    const altri = $('emAltri').value;
+    if (!Object.values(dest).some(Boolean) && !altri.includes('@')) { $('emErr').textContent = t('cd.em.nessuno'); $('emErr').classList.remove('hidden'); return; }
+    const r = await A.cond_email(l.cartella, {dest, altri, oggetto: $('emOgg').value, testo: $('emTesto').value, modo});
+    if (!r.ok) { $('emErr').textContent = r.msg; $('emErr').classList.remove('hidden'); return; }
+    chiudiVelo();
+  };
+  setTimeout(() => { const d = document.querySelector('.velo .dlg'); if (d) d.style.maxWidth = '640px'; }, 0);
+  return dialogo({titolo: '✉️ ' + t('cd.em.t'), testo: t('cd.em.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cd.em.gmail'), fn: manda('gmail')}, {t: t('cd.em.outlook'), cls: 'b-main', fn: manda('outlook')}]});
+}
+async function calendarioCondividi(l, info) {
+  const righe = info.azioni.map((a, i) => ({i, cosa: a.cosa, chi: a.chi, data: a.data, ora: ''}));
+  if (info.prossima) righe.push({i: 'prossima', cosa: t('cd.cal.pross'), chi: t('cd.cal.tutti'), data: info.prossima.data, ora: info.prossima.ora || '', pross: true});
+  const html = `<table class="calt" style="width:100%;border-collapse:collapse;margin-top:8px"><tr><th></th><th>${esc(t('cd.cal.cosa'))}</th><th>${esc(t('cd.cal.chi'))}</th><th>${esc(t('cd.cal.quando'))}</th></tr>
+    ${righe.map(r => `<tr data-i="${r.i}"><td><input type="checkbox"${r.data ? ' checked' : ''}></td><td>${r.pross ? `<b>${esc(r.cosa)}</b>` : esc(r.cosa)}</td><td>${esc(r.chi)}</td>
+      <td style="white-space:nowrap"><input class="in" type="date" value="${esc(r.data)}">${r.pross ? ` <input class="in" type="time" value="${esc(r.ora)}">` : ''}</td></tr>`).join('')}</table>
+    <div class="hint" style="margin-top:10px">${t('cd.cal.nota')}</div><div class="dlgerr hidden" id="calErr"></div>`;
+  const manda = modo => async () => {
+    const scelte = [...document.querySelectorAll('.velo .calt tr[data-i]')].filter(tr => tr.querySelector('input[type=checkbox]').checked)
+      .map(tr => ({i: tr.dataset.i, data: tr.querySelector('input[type=date]').value, ora: (tr.querySelector('input[type=time]') || {}).value || ''})).filter(x => x.data);
+    const r = await A.cond_calendario(l.cartella, scelte, modo);
+    if (!r.ok) { $('calErr').textContent = r.msg; $('calErr').classList.remove('hidden'); return; }
+    chiudiVelo(); toast(t('cd.cal.ok', {n: r.n}));
+  };
+  setTimeout(() => {
+    const d = document.querySelector('.velo .dlg'); if (!d) return; d.style.maxWidth = '680px';
+    d.querySelectorAll('.calt input[type=date]').forEach(i => i.oninput = () => { if (i.value) i.closest('tr').querySelector('input[type=checkbox]').checked = true; });
+  }, 0);
+  return dialogo({titolo: '📅 ' + t('cd.cal.t'), html, bottoni: [{t: t('annulla'), v: false}, {t: 'Google Calendar', fn: manda('google')}, {t: 'Outlook', cls: 'b-main', fn: manda('outlook')}]});
+}
+function collegaServizio(s) {
+  return new Promise(fatto => {
+    const campo = (id, ph, tipo = 'text') => `<input class="in" id="${id}" type="${tipo}" placeholder="${esc(ph)}" style="margin-top:8px" autocomplete="off">`;
+    let html;
+    if (s === 'notion') html = `<div class="passi2">${t('cg.notion.p')}</div>${campo('cgK', t('cg.notion.k'), 'password')}${campo('cgU', t('cg.notion.l'))}`;
+    else if (s === 'crm') html = `<div class="seg" id="cgTipo" style="margin-top:6px"><span data-v="hubspot" class="on">${esc(t('cg.crm.hs'))}</span><span data-v="webhook">${esc(t('cg.crm.wh'))}</span></div>
+      <div class="passi2" id="cgP">${t('cg.hs.p')}</div>${campo('cgK', t('cg.hs.k'), 'password')}${campo('cgU', t('cg.url'))}`;
+    else html = `<div class="passi2">${t('cg.' + s + '.p')}</div>${campo('cgU', s === 'slack' ? 'https://hooks.slack.com/services/…' : t('cg.url'))}`;
+    html += `<label class="ck" style="margin-top:10px"><input type="checkbox" id="cgAuto"> ${esc(t('cg.auto.ck'))}</label><div class="dlgerr hidden" id="cgErr"></div>`;
+    let tipo = 'hubspot';
+    const prova = async () => {
+      const d = {auto: $('cgAuto').checked};
+      if ($('cgU')) d.url = $('cgU').value.trim();
+      if (s === 'notion') { d.chiave = $('cgK').value.trim(); d.pagina = d.url; }
+      if (s === 'crm') { d.tipo = tipo; d.chiave = $('cgK').value.trim(); }
+      const btn = document.querySelector('.velo .bt .b-main'); btn.disabled = true;
+      const r = await A.collega(s, d);
+      btn.disabled = false;
+      if (!r.ok) { $('cgErr').textContent = r.msg; $('cgErr').classList.remove('hidden'); return; }
+      chiudiVelo(); toast(t('cg.fatto', {n: r.nome})); if (!ANDROID && !$('v-imp').classList.contains('hidden')) disegnaCollegamenti(); fatto(true);
+    };
+    setTimeout(() => {
+      const d = document.querySelector('.velo .dlg'); if (!d) return; d.style.maxWidth = '640px';
+      if (s === 'crm') {
+        const mostra = () => { $('cgK').classList.toggle('hidden', tipo !== 'hubspot'); $('cgU').classList.toggle('hidden', tipo === 'hubspot'); $('cgP').innerHTML = t(tipo === 'hubspot' ? 'cg.hs.p' : 'cg.wh.p'); };
+        d.querySelectorAll('#cgTipo span').forEach(b => b.onclick = () => { tipo = b.dataset.v; d.querySelectorAll('#cgTipo span').forEach(x => x.classList.toggle('on', x === b)); mostra(); });
+        mostra();
+      }
+      d.querySelector('.bt button').onclick = () => { chiudiVelo(); fatto(false); };
+    }, 0);
+    dialogo({titolo: SERV[s][0] + ' ' + t('cg.' + s + '.t'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cg.prova'), cls: 'b-main', fn: prova}]});
+  });
+}
+async function disegnaCollegamenti() {
+  const c = await A.collegamenti();
+  $('cgLista').innerHTML = ['slack', 'teams', 'notion', 'crm'].map(s => { const x = c[s];
+    return `<div class="cgrow" data-s="${s}"><span class="ic" style="background:${SERV[s][1]}">${SERV[s][0]}</span><div class="sp"><b>${esc(s === 'crm' ? t('cg.crm.n') : t('cd.' + s))}</b><div class="hint">${esc(x.collegato ? x.nome : t('cg.' + s + '.s'))}</div></div>
+      ${x.collegato ? `<span class="pill p-ok">${esc(t('cg.ok'))}</span><span class="hint">${esc(t('cg.auto'))}</span><div class="sw${x.auto ? ' on' : ''}" data-a="auto"></div><button class="lnk" data-a="togli">${esc(t('cg.togli'))}</button>`
+        : `<button class="btn b-ghost b-sm" data-a="collega">${esc(t('cg.collega'))}</button>`}</div>`; }).join('');
+  $('cgLista').querySelectorAll('[data-a]').forEach(b => b.onclick = async () => {
+    const s = b.closest('.cgrow').dataset.s;
+    if (b.dataset.a === 'collega') await collegaServizio(s);
+    if (b.dataset.a === 'togli') { await A.scollega(s); disegnaCollegamenti(); }
+    if (b.dataset.a === 'auto') { await A.collega_auto(s, !b.classList.contains('on')); disegnaCollegamenti(); }
+  });
 }
 
 /* ------------------------------------------------------------------ infografica */

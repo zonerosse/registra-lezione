@@ -178,6 +178,36 @@ class Api:
     def infografica(self, cartella, rifai=False):
         return self._m.infografica(cartella, rifai)
 
+    def cond_info(self, cartella):
+        return self._m.cond_info(cartella)
+
+    def cond_email(self, cartella, d):
+        return self._m.cond_email(cartella, d)
+
+    def cond_word(self, cartella):
+        return self._m.cond_word(cartella)
+
+    def cond_gdocs(self, cartella):
+        return self._m.cond_gdocs(cartella)
+
+    def cond_calendario(self, cartella, scelte, modo):
+        return self._m.cond_calendario(cartella, scelte, modo)
+
+    def cond_invia(self, cartella, servizio):
+        return self._m.cond_invia(cartella, servizio)
+
+    def collega(self, servizio, d):
+        return self._m.collega(servizio, d)
+
+    def scollega(self, servizio):
+        return self._m.scollega(servizio)
+
+    def collega_auto(self, servizio, si):
+        return self._m.collega_auto(servizio, si)
+
+    def collegamenti(self):
+        return self._m.collegamenti()
+
     def voci(self, cartella):
         return self._m.voci(cartella)
 

@@ -410,3 +410,20 @@ html.android .dove.tre{grid-template-columns:1fr}
 .vrow .in{width:200px;flex:none}
 .vchips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .vchips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer}
+
+/* condividi e collega */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.tile{border:1px solid var(--line);border-radius:14px;padding:12px;background:#fff;text-align:left;cursor:pointer;font-family:inherit;color:var(--txt)}
+.tile:hover{border-color:#7dd3fc;background:#f0f9ff}
+.tile i{font-style:normal;font-size:22px}.tile b{display:block;color:var(--ink);margin:4px 0 1px;font-size:13.5px}.tile small{color:var(--mut);font-size:11.5px;line-height:1.4;display:block}
+.tile.da{background:#f8fafc;border-style:dashed}.tile.da small em{font-style:normal;color:var(--blue);font-weight:600}
+.tile .ok2{color:var(--ok);font-weight:700}
+.dest{display:flex;gap:8px;align-items:center;padding:4px 0}.dest b{width:140px;flex:none;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dest .in{flex:1}
+.passi2{background:#f1f6fb;border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.7;margin:10px 0}
+.cgrow{display:flex;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}.cgrow:last-child{border:0}
+.cgrow .ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:17px;flex:none}
+.cgrow .sp b{color:var(--ink)}
+.calt td{padding:5px 6px;border-bottom:1px solid var(--line);font-size:13px}.calt th{font-size:11px;color:var(--mut);text-align:left;padding:4px 6px}
+.calt input[type=date]{width:150px}.calt input[type=time]{width:112px}
+.dlgerr{color:#be123c;font-size:13px;margin-top:8px}
+@media (max-width:720px){.tiles{grid-template-columns:1fr 1fr}}
