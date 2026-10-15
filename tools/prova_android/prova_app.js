@@ -2,7 +2,12 @@
 const { _android } = require('playwright');
 const O = process.argv[2] + '/';
 const esito = {passi: [], errori: []};
-const passo = (n, ok, d = '') => { esito.passi.push({n, ok, d}); console.log((ok ? 'ok  - ' : 'NO  - ') + n + (d ? ' (' + d + ')' : '')); };
+const fs = require('fs');
+const passo = (n, ok, d = '') => {
+  esito.passi.push({n, ok, d, ora: new Date().toISOString().slice(11, 19)});
+  console.log((ok ? 'ok  - ' : 'NO  - ') + n + (d ? ' (' + d + ')' : ''));
+  fs.writeFileSync(O + 'esito_app.json', JSON.stringify(esito, null, 1));     // salvato subito: se il telefono si blocca resta quello fatto
+};
 (async () => {
   let b;
   try {
@@ -27,7 +32,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok, d}); console.log((ok
     await p.waitForTimeout(30000);
     await p.click('#btnFine'); await p.click('.dlg .b-end');
     await p.waitForTimeout(3000); await foto('03-fine-lavoro');
-    for (let i = 0; i < 300; i++) { const s = await p.evaluate(() => A.stato()); if (s.finale === 'ok') break; await p.waitForTimeout(3000); }
+    for (let i = 0; i < 300; i++) { const s = await p.evaluate(() => A.stato()); if (i % 10 === 0) console.log('  … ' + JSON.stringify({finale: s.finale, modello: s.modello, parti: s.parti})); if (s.finale === 'ok') break; await p.waitForTimeout(3000); }
     await foto('04-fine');
     const s2 = await p.evaluate(() => A.stato());
     passo('lezione dal microfono pronta', s2.finale === 'ok', JSON.stringify(s2.parti));
@@ -38,7 +43,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok, d}); console.log((ok
     if (btn) {
       await btn.click(); await p.waitForTimeout(4000); await foto('06-trascrivo');
       const t0 = Date.now();
-      for (let i = 0; i < 400; i++) { const s = await p.evaluate(() => A.stato()); if (s.finale === 'ok' && !s.occupato) break; await p.waitForTimeout(3000); }
+      for (let i = 0; i < 400; i++) { const s = await p.evaluate(() => A.stato()); if (i % 10 === 0) console.log('  … ' + JSON.stringify({finale: s.finale, modello: s.modello, parti: s.parti})); if (s.finale === 'ok' && !s.occupato) break; await p.waitForTimeout(3000); }
       passo('Trascrivi ora finito', true, `${Math.round((Date.now() - t0) / 1000)} s`);
       await foto('07-pronta');
     }

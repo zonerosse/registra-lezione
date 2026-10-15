@@ -8,6 +8,9 @@ DIRR=/data/media/0/Android/data/$PKG/files
 OUT=$PWD/prova_android_out
 mkdir -p $OUT
 adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
+# tutto quello che il telefono scrive, anche se il telefono simulato si blocca a meta' prova
+adb logcat -c; (adb logcat -v time > $OUT/logcat_tutto.txt 2>&1 &)
+(while true; do sleep 60; echo "--- $(date +%T)"; timeout 10 adb shell "free -m; top -b -n1 | head -15"; done > $OUT/memoria.txt 2>&1 &)
 adb shell getprop ro.product.cpu.abi > $OUT/abi.txt
 adb shell dumpsys battery set ac 1
 adb root; sleep 5
@@ -29,11 +32,13 @@ PID=$(adb shell pidof $PKG | tr -d '\r')
 adb forward tcp:9222 localabstract:webview_devtools_remote_$PID
 curl -s http://127.0.0.1:9222/json > $OUT/cdp.json; cat $OUT/cdp.json
 (cd tools/prova_android && PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --no-save --silent playwright@1.47.2 >/dev/null 2>&1)
-NODE_PATH=$PWD/tools/prova_android/node_modules node tools/prova_android/prova_app.js $OUT
-adb exec-out screencap -p > $OUT/schermo_fine.png
-adb pull "$L/trascrizione_001.json" $OUT/trascrizione_dopo.json
-adb shell ls -la "\"$L\"" > $OUT/cartella_dopo.txt
-adb pull "$DIRR/Documents/Lezioni registrate/registra_lezione.log" $OUT/registra_lezione.log
-adb logcat -d | grep -iE "registralezione|whisper|python|AndroidRuntime|chaquopy" | tail -400 > $OUT/logcat.txt
+NODE_PATH=$PWD/tools/prova_android/node_modules timeout 3000 node tools/prova_android/prova_app.js $OUT
+timeout 30 adb exec-out screencap -p > $OUT/schermo_fine.png
+timeout 30 adb pull "$L/trascrizione_001.json" $OUT/trascrizione_dopo.json
+timeout 30 adb shell ls -la "\"$L\"" > $OUT/cartella_dopo.txt
+timeout 30 adb pull "$DIRR/Documents/Lezioni registrate/registra_lezione.log" $OUT/registra_lezione.log
+grep -iE "registralezione|whisper|python|AndroidRuntime|chaquopy|lowmemory|killing|crash|FATAL" $OUT/logcat_tutto.txt | tail -600 > $OUT/logcat.txt
+tail -300 $OUT/logcat_tutto.txt > $OUT/logcat_ultime.txt
+pkill -f "adb logcat" || true
 cat $OUT/esito_app.json
 true
