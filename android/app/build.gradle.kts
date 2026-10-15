@@ -12,8 +12,8 @@ android {
         applicationId = "it.puntowebferrara.registralezione"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "0.1-prova"
+        versionCode = 2
+        versionName = "0.2-prova"
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         externalNativeBuild { cmake { arguments += listOf("-DCMAKE_BUILD_TYPE=Release") } }
     }

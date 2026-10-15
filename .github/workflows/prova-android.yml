@@ -23,14 +23,9 @@ jobs:
       - name: Strumenti Android (NDK e CMake)
         run: |
           yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.2.12479018" "cmake;3.22.1" > /dev/null
-      - name: Riconoscitore vocale (whisper.cpp) e modelli
+      - name: Riconoscitore vocale (whisper.cpp)
         run: |
           git clone --depth 1 --branch v1.7.6 https://github.com/ggml-org/whisper.cpp android/app/src/main/cpp/whisper.cpp
-          mkdir -p modelli
-          for m in base-q5_1 small-q5_1; do
-            curl -sSL -o modelli/ggml-$m.bin "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-$m.bin"
-          done
-          ls -la modelli
       - name: Costruisci l'app
         working-directory: android
         run: |
