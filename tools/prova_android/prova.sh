@@ -7,6 +7,7 @@ DIR=/sdcard/Android/data/$PKG/files
 OUT=$PWD/prova_android_out
 mkdir -p $OUT
 exec > >(tee $OUT/console.txt) 2>&1        # tutto quello che succede, da leggere dopo
+adb wait-for-device; sleep 40   # il telefono simulato appena acceso e' ancora occupato
 adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
 # tutto quello che il telefono scrive, anche se il telefono simulato si blocca a meta' prova
 adb logcat -c; (adb logcat -v time > $OUT/logcat_tutto.txt 2>&1 &)

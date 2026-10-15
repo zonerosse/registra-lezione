@@ -58,13 +58,14 @@ jobs:
       - name: Prova sul telefono simulato
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 33
           arch: x86_64
-          target: google_apis
+          target: default
+          emulator-boot-timeout: 900
           cores: 4
           ram-size: 4096M
           disable-animations: true
-          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio
+          emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           script: bash tools/prova_android/prova.sh
       - name: Salva i risultati nel ramo "prova-android" e l'app nel ramo "android-app"
         if: always()
