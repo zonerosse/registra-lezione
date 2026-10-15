@@ -1,6 +1,6 @@
 {
- "versione": "3.13",
+ "versione": "3.14",
  "librerie": 2,
- "novita": "Appunti più veritieri: citazioni, minuti e slide controllati sulla registrazione («⚠ da verificare»), quello che aggiunge Claude in viola, classifica unica delle domande di tutta la lezione (Formato Esame), nessuna parola persa fra le parti, e in Impostazioni «Trascrizione più precisa».",
- "novita_en": "More truthful notes: quotes, minutes and slides checked against the recording («⚠ to check»), what Claude adds in purple, a single ranking of the questions of the whole lecture (Exam format), no words lost between parts, and «More accurate transcript» in Settings."
+ "novita": "Guida: in «Registrare una lezione» il primo passo ora è «Prima di iniziare»: entra nella lezione e tieni la sua finestra sullo schermo principale, con il volume acceso.",
+ "novita_en": "Guide: in «Recording a lecture» the first step is now «Before starting»: join the lecture and keep its window on the main screen, with the volume on."
 }
