@@ -20,6 +20,7 @@ sleep 30
 adb exec-out screencap -p > $OUT/schermo_avvio.png
 for i in $(seq 1 30); do PORTA=$(adb shell cat $DIR/porta.txt 2>/dev/null | tr -d '\r'); [ -n "$PORTA" ] && break; sleep 3; done
 echo "porta del motore: $PORTA"
+if [ -z "$PORTA" ]; then echo "TELEFONO SIMULATO NON RISPONDE"; exit 3; fi      # il workflow riprova con un telefono nuovo
 adb forward tcp:$PORTA tcp:$PORTA
 timeout 4800 python3 tools/prova_android/prova_api.py $OUT $PORTA tools/prova_android/lezione_it.wav
 timeout 30 adb exec-out screencap -p > $OUT/schermo_fine.png
@@ -29,4 +30,6 @@ grep -iE "registralezione|whisper|python|AndroidRuntime|chaquopy|lowmemory|killi
 tail -300 $OUT/logcat_tutto.txt > $OUT/logcat_ultime.txt
 pkill -f "adb logcat" || true
 cat $OUT/esito_app.json
+[ -f $OUT/esito_app.json ] || exit 3
+grep -q "il motore risponde" $OUT/esito_app.json || exit 3
 true
