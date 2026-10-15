@@ -11,7 +11,7 @@
 //   ERRORE <messaggio>
 // Si ferma quando riceve una riga "STOP" su stdin (o dopo <secondi>, se indicati).
 //
-// uso: rl-cattura <cartella> [secondi] [--solo-audio] [--escludi-pid <pid>] [--fps 4]
+// uso: rl-cattura <cartella> [secondi] [--solo-audio] [--escludi-pid <pid>] [--ogni 2]
 
 import AppKit
 import CoreImage
@@ -38,6 +38,8 @@ var escludiPid: pid_t = -1
 var fps: Int32 = 4
 if let i = argomenti.firstIndex(of: "--escludi-pid"), i + 1 < argomenti.count { escludiPid = pid_t(argomenti[i + 1]) ?? -1 }
 if let i = argomenti.firstIndex(of: "--fps"), i + 1 < argomenti.count { fps = Int32(argomenti[i + 1]) ?? 4 }
+var ogni = 2.0      // ogni quanti secondi una foto dello schermo (per le slide)
+if let i = argomenti.firstIndex(of: "--ogni"), i + 1 < argomenti.count { ogni = Double(argomenti[i + 1]) ?? 2.0 }
 
 let fm = FileManager.default
 try? fm.createDirectory(at: cartella.appendingPathComponent("schermo"), withIntermediateDirectories: true)
@@ -113,6 +115,10 @@ final class Cattura: NSObject, SCStreamOutput, SCStreamDelegate {
         ultimaFoto = t
         let img = CIImage(cvPixelBuffer: pb)
         guard let cg = ci.createCGImage(img, from: img.extent) else { return }
+        salvaFoto(cg, t)
+    }
+
+    func salvaFoto(_ cg: CGImage, _ t: Double) {
         foto += 1
         let nome = String(format: "%06d.jpg", foto)
         let url = cartella.appendingPathComponent("schermo").appendingPathComponent(nome)
@@ -148,11 +154,29 @@ func avvia() async {
         cfg.excludesCurrentProcessAudio = true
         let s = SCStream(filter: filtro, configuration: cfg, delegate: cattura)
         let coda = DispatchQueue(label: "cattura")
-        if !soloAudio { try s.addStreamOutput(cattura, type: .screen, sampleHandlerQueue: coda) }
+        // il flusso serve per l'audio; lo schermo lo fotografo io a intervalli regolari (piu' affidabile:
+        // il flusso manda immagini solo quando "pensa" che lo schermo sia cambiato)
         try s.addStreamOutput(cattura, type: .audio, sampleHandlerQueue: coda)
         try await s.startCapture()
         flusso = s
         dici("PRONTO \(Int(cattura.frequenza))")
+        if !soloAudio {
+            let t0 = Date()
+            let cfgFoto = SCStreamConfiguration()
+            cfgFoto.width = cfg.width
+            cfgFoto.height = cfg.height
+            cfgFoto.showsCursor = false
+            Task.detached {
+                while true {
+                    let inizioGiro = Date()
+                    if let cg = try? await SCScreenshotManager.captureImage(contentFilter: filtro, configuration: cfgFoto) {
+                        cattura.salvaFoto(cg, Date().timeIntervalSince(t0))
+                    }
+                    let resto = ogni - Date().timeIntervalSince(inizioGiro)
+                    if resto > 0 { try? await Task.sleep(nanoseconds: UInt64(resto * 1_000_000_000)) }
+                }
+            }
+        }
     } catch {
         dici("ERRORE \(error.localizedDescription)")
         exit(5)

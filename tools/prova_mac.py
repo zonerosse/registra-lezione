@@ -141,7 +141,7 @@ def main():
     rec = OUT / "rec"
     fine_ev = threading.Event()
     # 1. parte la registrazione
-    p = subprocess.Popen([str(CATTURA), str(rec), str(durata + 8)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+    p = subprocess.Popen([str(CATTURA), str(rec), str(durata + 8), "--ogni", "2"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     eventi = []
     pronto = threading.Event()
 
