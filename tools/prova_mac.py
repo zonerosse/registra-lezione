@@ -184,7 +184,10 @@ def main():
             # 4. trascrizione
             from faster_whisper import WhisperModel
             m = WhisperModel("small", device="cpu", compute_type="int8")
-            segs, _ = m.transcribe(str(OUT / "audio_registrato.wav"), language=lingua, vad_filter=True, beam_size=1)
+            import numpy as np
+            a = np.fromfile(rec / "audio.f32", dtype=np.float32)
+            a = a[:len(a) // 3 * 3].reshape(-1, 3).mean(axis=1).astype(np.float32)     # 48 -> 16 kHz
+            segs, _ = m.transcribe(a, language=lingua, vad_filter=True, beam_size=1)
             tras = " ".join(s.text.strip() for s in segs)
             (OUT / "trascrizione.txt").write_text(tras, encoding="utf-8")
             attese = parole(" ".join(testo))
