@@ -10,10 +10,17 @@ shutil.copytree(os.path.join(RADICE, "app"), RL, ignore=shutil.ignore_patterns("
 shutil.copytree(os.path.join(RADICE, "android/risorse/font"), RL + "/font")
 import avvio_android as aa
 porta = aa.avvia(RL, "it")
+import android_motore
 exec(open(os.path.join(QUI, "finto_claude.py")).read())          # Claude finto: niente chiave, niente costi
 # un aggiornamento finto, per provare il bottone «Scarica»
-aa_cerca = lambda: {"versione": "99.0", "novita": "prova", "novita_en": "test", "completo": True,
-                    "pagina": "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"}
+def aa_cerca():
+    tipo = (open(os.path.join(os.environ["SIM_DATI"], "agg_tipo.txt")).read().strip()
+            if os.path.exists(os.path.join(os.environ["SIM_DATI"], "agg_tipo.txt")) else "apk")
+    if tipo == "zip":      # aggiornamento leggero: solo i file del programma
+        return {"versione": "0.7.1", "novita": "prova", "novita_en": "test", "completo": False, "contenuto": 99,
+                "url_zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"}
+    return {"versione": "99.0", "novita": "prova", "novita_en": "test", "completo": True,
+            "pagina": "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"}
 import aggiorna as agg
 agg.cerca = aa_cerca
 print("PORTA", porta, flush=True)

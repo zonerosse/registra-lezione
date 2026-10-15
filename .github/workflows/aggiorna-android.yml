@@ -1,0 +1,52 @@
+name: Aggiornamento leggero Android
+
+# Per le modifiche a pagine, testi, guida e motore Python: niente app nuova da costruire.
+# Prova l'app senza emulatore e pubblica solo i file (contenuto.zip): Lorenzo li prende con «Aggiorna l'app».
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  leggero:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Il programma per il telefono
+        run: bash tools/prova_android/prepara_rl.sh /tmp/rl contenuto.zip
+      - name: Prova dell'app senza emulatore
+        run: |
+          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg
+          (cd tools/prova_android/simula && npm install --no-save --silent playwright@1.47.2 && npx playwright install --with-deps chromium > /dev/null)
+          NODE_PATH=$PWD/tools/prova_android/simula/node_modules bash tools/prova_android/simula/prova.sh prova_simulata
+      - name: Pubblica i file nuovi
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git fetch -q origin android-app
+          git worktree add -q /tmp/pub origin/android-app
+          python3 - <<'PY'
+          import json, sys
+          nuova = json.load(open("android/versione.json"))
+          pub = json.load(open("/tmp/pub/versione-android.json"))
+          if int(nuova["codice"]) != int(pub["codice"]):
+              sys.exit("Questa versione cambia l'app (codice %s, pubblicata %s): serve «Prova Android» (app completa)" % (nuova["codice"], pub["codice"]))
+          if int(nuova["contenuto"]) <= int(pub.get("contenuto") or 0):
+              sys.exit("Alza «contenuto» in android/versione.json")
+          pub.update(versione=nuova["versione"], contenuto=nuova["contenuto"], novita=nuova["novita"], novita_en=nuova["novita_en"],
+                     zip="https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip")
+          json.dump(pub, open("/tmp/pub/versione-android.json", "w"), ensure_ascii=False, indent=1)
+          PY
+          cp contenuto.zip /tmp/pub/contenuto.zip
+          cd /tmp/pub
+          git add -f contenuto.zip versione-android.json
+          git commit -q -m "Aggiornamento leggero Android $(python3 -c "import json;print(json.load(open('versione-android.json'))['versione'])")"
+          git push origin HEAD:android-app

@@ -1,6 +1,7 @@
 {
- "versione": "0.6",
- "codice": 6,
- "novita": "«Scarica» in «Aggiorna l'app» ora funziona. L'app ha la sua icona e nella Guida «Prima di iniziare» è il primo passo.",
- "novita_en": "«Download» in «Update the app» now works. The app has its own icon and in the Guide «Before starting» is the first step."
+ "versione": "0.7",
+ "codice": 7,
+ "novita": "«Aggiorna l'app» ora scarica anche gli aggiornamenti piccoli (testi, guida, pagine) in pochi secondi, senza reinstallare. Icona dell'app e «Scarica» funzionante.",
+ "novita_en": "«Update the app» now also downloads small updates (texts, guide, pages) in seconds, without reinstalling. App icon and working «Download».",
+ "contenuto": 7
 }

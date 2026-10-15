@@ -32,6 +32,15 @@ object Ponte {
     @JvmStatic fun cartellaDati(): String = app.getExternalFilesDir(null)!!.absolutePath
     @JvmStatic fun cartellaCache(): String = app.cacheDir.absolutePath
     @JvmStatic fun versione(): String = app.packageManager.getPackageInfo(app.packageName, 0).versionName ?: "?"
+    @JvmStatic fun codice(): Long = app.packageManager.getPackageInfo(app.packageName, 0).longVersionCode
+
+    /** Riapre l'app da capo (dopo l'aggiornamento leggero: Python deve ricaricare i file nuovi). */
+    @JvmStatic fun riavvia() {
+        // una piccola attivita' in un processo a parte chiude questo e riapre l'app
+        val i = Intent(app, Riavvio::class.java).putExtra("pid", android.os.Process.myPid())
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        app.startActivity(i)
+    }
 
     // ------------------------------------------------------------------ batteria
     private fun statoBatteria() = app.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))

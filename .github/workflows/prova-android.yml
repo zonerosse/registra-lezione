@@ -38,17 +38,7 @@ jobs:
         run: |
           git clone --depth 1 --branch v1.7.6 https://github.com/ggml-org/whisper.cpp android/app/src/main/cpp/whisper.cpp
       - name: Il programma (stesso del PC) dentro l'app
-        run: |
-          R=android/app/src/main/assets/rl
-          rm -rf $R; mkdir -p $R
-          cp -R app/interfaccia app/_vendor $R/
-          for f in app/*.py app/versione.json; do
-            case "$(basename $f)" in classica.py|prova_exe.py|registra_lezione.py|manca_edge.py) ;; *) cp $f $R/ ;; esac
-          done
-          rm -f $R/interfaccia/mini.html
-          cp -R android/risorse/font $R/font
-          find $R -name __pycache__ -prune -exec rm -rf {} \;
-          du -sh $R
+        run: bash tools/prova_android/prepara_rl.sh android/app/src/main/assets/rl contenuto.zip
       - name: Costruisci l'app
         working-directory: android
         run: |
@@ -67,16 +57,18 @@ jobs:
           git config user.email "github-actions@users.noreply.github.com"
           mkdir -p /tmp/agg
           cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/agg/RegistraLezione.apk
+          cp contenuto.zip /tmp/agg/contenuto.zip
           python3 - <<'PY'
           import json
           v = json.load(open("android/versione.json"))
           v["apk"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"
+          v["zip"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
           json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
           PY
           git checkout -q --orphan android-app
           git rm -rf --cached . > /dev/null
           cp /tmp/agg/* .
-          git add -f RegistraLezione.apk versione-android.json
+          git add -f RegistraLezione.apk contenuto.zip versione-android.json
           git commit -q -m "App Android $(python3 -c "import json;print(json.load(open('versione-android.json'))['versione'])")"
           git push -f origin android-app
           git checkout -q -f ${{ github.sha }}

@@ -11,7 +11,13 @@ class _Ponte:
     def contesto(self): return None
     def cartellaDati(self): return str(DATI)
     def cartellaCache(self): return str(CACHE)
-    def versione(self): return "0.4-prova"
+    def versione(self): return "0.7"
+    def codice(self): return 7
+    def getScaricati(self): return self.scaricati
+    def getTotale(self): return self.totale
+    def riavvia(self):
+        print("RIAVVIA", flush=True)
+        (DATI / "riavviato.txt").write_text("si")
     def inCarica(self): return os.environ.get("SIM_CARICA") == "1"
     def batteria(self): return 74
     def apri(self, p): print("APRI", p, flush=True); return True
@@ -22,6 +28,9 @@ class _Ponte:
     def scegliFile(self, tipo): return os.environ.get("TEST_PDF" if tipo == "pdf" else "TEST_VIDEO", "")
     def scarica(self, url, dest):
         print("SCARICA", url, flush=True); time.sleep(1)
+        if url.endswith(".zip"):
+            shutil.copy(os.environ["SIM_ZIP"], dest); self.totale = self.scaricati = os.path.getsize(dest)
+            return ""
         with open(dest, "wb") as f: f.truncate(200_000_000)
         return ""
     def pdfInPng(self, pdf, cart, w):

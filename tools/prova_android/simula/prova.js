@@ -51,6 +51,14 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.click('#aggOk'); await p.waitForTimeout(1500);
     const link = fs.existsSync(`${dati}/link_aperti.txt`) ? fs.readFileSync(`${dati}/link_aperti.txt`, 'utf8') : '';
     passo('«Scarica» apre l\'app nuova nel browser', link.includes('RegistraLezione.apk'), link.trim());
+    // aggiornamento leggero: scarica i file nuovi e riapre l'app
+    fs.writeFileSync(`${dati}/agg_tipo.txt`, 'zip');
+    await p.evaluate(() => A.chiudi_agg()); await p.evaluate(() => A.cerca_aggiornamenti());
+    await p.waitForFunction(() => { const b = document.querySelector('#aggOk'); return b && b.textContent.length > 0; }, null, {timeout: 20000});
+    await p.waitForTimeout(1500); await foto('08b-aggiorna-leggero');
+    await p.click('#aggOk');
+    for (let i = 0; i < 30 && !fs.existsSync(`${dati}/riavviato.txt`); i++) await p.waitForTimeout(1000);
+    passo('aggiornamento leggero: scaricato e app riaperta', fs.existsSync(`${dati}/../rl_agg/interfaccia/index.html`) && fs.existsSync(`${dati}/riavviato.txt`));
     await p.click('#nav [data-p="guida"]'); await p.waitForTimeout(600); await foto('09-guida');
     passo('guida del telefono', (await p.textContent('#gCap')).includes('Prima di iniziare'));
     // tasto Indietro del telefono
