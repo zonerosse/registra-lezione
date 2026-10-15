@@ -1,6 +1,6 @@
 {
- "versione": "3.12",
+ "versione": "3.13",
  "librerie": 2,
- "novita": "Guida aggiornata: video nuovi per tutte le funzioni (in aula, testo in diretta, parole difficili, Ripasso, Chiedi, mappa mentale, slide del docente) e consigli se il microfono o «Chiedi» non funzionano.",
- "novita_en": "Updated Guide: new videos for all features (classroom, live text, difficult words, Review, Ask, mind map, lecturer's slides) and tips if the microphone or «Ask» don't work."
+ "novita": "Appunti più veritieri: citazioni, minuti e slide controllati sulla registrazione («⚠ da verificare»), quello che aggiunge Claude in viola, classifica unica delle domande di tutta la lezione (Formato Esame), nessuna parola persa fra le parti, e in Impostazioni «Trascrizione più precisa».",
+ "novita_en": "More truthful notes: quotes, minutes and slides checked against the recording («⚠ to check»), what Claude adds in purple, a single ranking of the questions of the whole lecture (Exam format), no words lost between parts, and «More accurate transcript» in Settings."
 }

@@ -142,6 +142,7 @@ prepararci l'esame:
   * "appunti": 2-6 punti BREVI e densi (massimo ~20 parole l'uno): definizioni, formule,
     passaggi, condizioni, avvertenze del docente. NON copiare la trascrizione e non ripetere le
     frasi del docente: riformula in modo sintetico, come farebbe il miglior studente del corso;
+  * "aggiunte": 0-2 punti brevi che NON vengono dalla lezione ma che servono a completarla (vuoto se non serve);
   * "dove": slide e orario (es. "slide 3, 00:25");
   * "slide": il numero N della slide del PDF ("Slide N") da mostrare accanto, SOLO se l'immagine
     aiuta davvero (grafico, schema, figura, tabella, formula o passaggi scritti); altrimenti 0.
@@ -153,8 +154,12 @@ prepararci l'esame:
 - "esercizi_svolti": gli esempi svolti dal docente, passo per passo, con slide se utile.
 - "da_controllare": i punti dove l'audio sembra trascritto male, o slide e parole non tornano,
   con l'orario.
-Basati solo su slide e parole del docente. Non inventare contenuti; se completi un passaggio con
-conoscenze generali, dillo. Meglio pochi blocchi chiari che tanti blocchi ripetitivi.
+Basati solo su slide e parole del docente. Non inventare contenuti. Se per completare serve qualcosa
+che il docente NON ha detto e che non e' sulle slide (un passaggio saltato, un'avvertenza, una definizione
+precisa), NON metterlo tra i punti normali: mettilo in "aggiunte" (verra' mostrato come "aggiunto da Claude").
+Quando citi il docente tra virgolette «...», copia le sue parole come sono nella trascrizione: il programma
+controlla le citazioni e toglie quelle che non trova. Non inventare orari o numeri di slide.
+Meglio pochi blocchi chiari che tanti blocchi ripetitivi.
 Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
 
 _SLIDE = {"type": "integer", "description": "N della slide da mostrare, 0 se non serve"}
@@ -166,6 +171,8 @@ SCHEMA = {
             "domanda": {"type": "string"},
             "parole_chiave": {"type": "array", "items": {"type": "string"}},
             "appunti": {"type": "array", "items": {"type": "string"}},
+            "aggiunte": {"type": "array", "items": {"type": "string"},
+                         "description": "punti NON detti a lezione, aggiunti per completare"},
             "dove": {"type": "string", "description": "slide e orario"},
             "slide": _SLIDE},
             "required": ["domanda", "appunti"]}},
@@ -198,6 +205,7 @@ alle domande d'esame su questo tratto di lezione:
     in cui esporla (definizione, formula, passaggi, esempio, conclusione). Non frasi da imparare a memoria;
   * "parole_chiave": 2-5 termini, simboli o formule da memorizzare per quella risposta;
   * "errore": l'errore tipico da evitare in quella risposta (stringa vuota se non c'e');
+  * "aggiunte": 0-2 passi brevi della risposta che il docente NON ha detto ma che servono (vuoto se non serve);
   * "dove": slide e orario (es. "slide 3, 00:25");
   * "slide": il numero N della slide del PDF ("Slide N") da mostrare accanto, SOLO se l'immagine aiuta
     davvero (grafico, schema, figura, formula o passaggi scritti); altrimenti 0. Mai la stessa due volte.
@@ -207,8 +215,12 @@ alle domande d'esame su questo tratto di lezione:
 - "simulazione": 3-6 domande d'esame come le farebbe il docente (anche esercizi brevi), ciascuna con
   "deve_contenere": gli elementi che una buona risposta deve toccare, o il risultato per gli esercizi.
 - "da_controllare": i punti dove l'audio sembra trascritto male, o slide e parole non tornano, con l'orario.
-Basati solo su slide e parole del docente. Non inventare contenuti; se completi un passaggio con
-conoscenze generali, dillo. Meglio poche domande ben scelte che tante domande simili.
+Basati solo su slide e parole del docente. Non inventare contenuti. Se per completare serve qualcosa
+che il docente NON ha detto e che non e' sulle slide (un passaggio saltato, un'avvertenza, una definizione
+precisa), NON metterlo tra i punti normali: mettilo in "aggiunte" (verra' mostrato come "aggiunto da Claude").
+Quando citi il docente tra virgolette «...», copia le sue parole come sono nella trascrizione: il programma
+controlla le citazioni e toglie quelle che non trova. Non inventare orari o numeri di slide.
+Meglio poche domande ben scelte che tante domande simili.
 Rispondi SOLO chiamando lo strumento salva_appunti con il risultato, senza altro testo."""
 
 SCHEMA_ESAME = {
@@ -222,6 +234,8 @@ SCHEMA_ESAME = {
             "schema": {"type": "array", "items": {"type": "string"}},
             "parole_chiave": {"type": "array", "items": {"type": "string"}},
             "errore": {"type": "string"},
+            "aggiunte": {"type": "array", "items": {"type": "string"},
+                         "description": "passi NON detti a lezione, aggiunti per completare"},
             "dove": {"type": "string"},
             "slide": _SLIDE},
             "required": ["domanda", "stelle", "schema"]}},
@@ -349,7 +363,7 @@ def pdf_appunti(dati, info, etichetta, destinazione, slide=None):
     pdf_appunti_parti([(dati, etichetta, slide or {})], info, destinazione)
 
 
-def pdf_appunti_parti(parti, info, destinazione):
+def pdf_appunti_parti(parti, info, destinazione, unite=None):
     """Uno o piu' blocchi di appunti nello stesso PDF: parti = [(dati, etichetta, slide), ...].
     Con piu' parti diventa "Appunti della lezione completa"."""
     from fpdf import FPDF
@@ -464,7 +478,8 @@ def pdf_appunti_parti(parti, info, destinazione):
         pdf.add_page()
         esame = e_esame(parti[0][0])
         if indice == 0 and esame:
-            nd = sum(len(d.get("domande_probabili") or []) for d, _, _ in parti)
+            nd = len(unite.get("domande_probabili") or []) if unite else \
+                sum(len(d.get("domande_probabili") or []) for d, _, _ in parti)
             nk = sum(len(d.get("parole_chiave") or []) for d, _, _ in parti)
             etichette = [tr("es_b_dom", L, n=nd) if nd else "", tr("es_b_kw", L, n=nk) if nk else "",
                          tr("pdf_parti", L, n=len(parti)) if completa else "",
@@ -498,6 +513,12 @@ def pdf_appunti_parti(parti, info, destinazione):
             testo(tr("pdf_controlla", L), 4.6)
             pdf.set_text_color(0, 0, 0)
             pdf.add_page()
+            if unite and unite.get("domande_probabili"):
+                stato["slide"] = {}
+                _scrivi_esame(pdf, font, t, testo, immagine, unite, info, tr("es_tutta", L), True, GRIGIO,
+                              classifica=True)
+                pdf.add_page()
+                stato["slide"] = slide or {}
         if e_esame(dati):
             _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO,
                           copertina=(indice == 0 and not completa))
@@ -607,6 +628,8 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         domanda = b.get("domanda", "")
         chiavi = " · ".join(b.get("parole_chiave") or [])
         punti = "\n".join(f"• {p}" for p in (b.get("appunti") or []) if p)
+        aggiunte = "\n".join(f"+ {p}  ({tr('pdf_agg', L)})" for p in (b.get("aggiunte") or []) if p)
+        avvisi = "\n".join(f"⚠ {tr('pdf_dav', L)}: {a}" for a in (b.get("avvisi") or []) if a)
         dove = b.get("dove", "")
         # immagine (se Claude l'ha scelta)
         img, img_h, img_w = None, 0.0, 0.0
@@ -630,6 +653,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         h_sx += altezza(wl, 4.2, chiavi) + 1 if chiavi else 0
         pdf.set_font(font, "", 10)
         h_dx = altezza(wr, 5.0, punti) + (altezza(wr, 4.2, f"→ {dove}") if dove else 0)
+        h_dx += (altezza(wr, 5.0, aggiunte) if aggiunte else 0) + (altezza(wr, 4.2, avvisi) if avvisi else 0)
         h_dx += (img_h + 7) if img else 0
         alto = max(h_sx, h_dx) + 2
         if pdf.get_y() + min(alto, fondo - pdf.t_margin - 10) > fondo:
@@ -652,11 +676,22 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         pdf.set_font(font, "", 10)
         pdf.set_xy(xr, y0)
         pdf.multi_cell(wr, 5.0, t(punti), align="L", new_x="LEFT", new_y="NEXT")
+        if aggiunte:          # quello che il docente non ha detto: in viola, con l'etichetta
+            pdf.set_text_color(109, 40, 217)
+            pdf.set_x(xr)
+            pdf.multi_cell(wr, 5.0, t(aggiunte), align="L", new_x="LEFT", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
         if dove:
             pdf.set_font(font, "", 8.5)
             pdf.set_text_color(*GRIGIO)
             pdf.set_x(xr)
             pdf.multi_cell(wr, 4.2, t(f"→ {dove}"), new_x="LEFT", new_y="NEXT")
+            pdf.set_text_color(0, 0, 0)
+        if avvisi:
+            pdf.set_font(font, "B", 8.5)
+            pdf.set_text_color(194, 65, 12)
+            pdf.set_x(xr)
+            pdf.multi_cell(wr, 4.2, t(avvisi), new_x="LEFT", new_y="NEXT")
             pdf.set_text_color(0, 0, 0)
         if img:
             if pdf.get_y() + img_h + 6 > fondo:
@@ -734,9 +769,28 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         for d in dati["da_controllare"]:
             testo(f"• {d}")
         pdf.set_text_color(0, 0, 0)
+    _legenda_verita(pdf, font, t, dati.get("blocchi") or [], L)
 
 
-def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False):
+def _legenda_verita(pdf, font, t, voci, L):
+    """In fondo: cosa vogliono dire il viola ("aggiunto da Claude") e "da verificare"."""
+    agg = any(v.get("aggiunte") for v in voci)
+    avv = any(v.get("avvisi") for v in voci)
+    if not (agg or avv):
+        return
+    pdf.ln(3)
+    pdf.set_font(font, "", 8.5)
+    if agg:
+        pdf.set_text_color(109, 40, 217)
+        pdf.multi_cell(0, 4.4, t(tr("pdf_leg_agg", L)), new_x="LMARGIN", new_y="NEXT")
+    if avv:
+        pdf.set_text_color(194, 65, 12)
+        pdf.multi_cell(0, 4.4, t(tr("pdf_leg_dav", L)), new_x="LMARGIN", new_y="NEXT")
+    pdf.set_text_color(0, 0, 0)
+
+
+def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa, GRIGIO, copertina=False,
+                  classifica=False):
     """Una parte di appunti nel Formato Esame: domande probabili (con stelle, schema della risposta,
     parole chiave, errore da evitare), legenda delle parole chiave, simulazione d'esame."""
     from fpdf.enums import MethodReturnValue
@@ -747,7 +801,9 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
     fondo = pdf.h - pdf.b_margin
 
     pdf.set_font(font, "B", 17)
-    if copertina:
+    if classifica:
+        testo(etichetta, 8)
+    elif copertina:
         testo(dati.get("titolo", "") or tr("pdf_appunti_di", L, e=etichetta), 8)
     elif completa:
         testo(f"{etichetta[:1].upper()}{etichetta[1:]} · {dati.get('titolo', '')}", 8)
@@ -797,7 +853,7 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
         pdf.set_text_color(0, 0, 0)
         pdf.set_xy(x0, y + 6)
 
-    titolo_sezione(tr("es_h_dom", L))
+    titolo_sezione(tr("es_h_tutta" if classifica else "es_h_dom", L))
     for n, d in enumerate(dati.get("domande_probabili") or [], 1):
         try:
             stelle = max(1, min(3, int(d.get("stelle") or 1)))
@@ -805,8 +861,15 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
             stelle = 1
         domanda = f"{n}. {d.get('domanda', '')}"
         passi = [p_ for p_ in (d.get("schema") or []) if p_]
+        aggiunte = [f"{p_}  ({tr('pdf_agg', L)})" for p_ in (d.get("aggiunte") or []) if p_]
         chiavi = [k for k in (d.get("parole_chiave") or []) if k]
         errore, dove, perche = d.get("errore") or "", d.get("dove") or "", d.get("perche") or ""
+        if perche and d.get("perche_ok"):
+            perche += " ✓"
+        if classifica and d.get("parti"):
+            pp = [str(x) for x in d["parti"]]
+            dove = tr("es_parte1" if len(pp) == 1 else "es_parti", L, p=", ".join(pp)) + (f" · {dove}" if dove else "")
+        avvisi = "  ".join(f"⚠ {tr('pdf_dav', L)}: {a}" for a in (d.get("avvisi") or []) if a)
         try:
             ns = int(d.get("slide") or 0)
         except (TypeError, ValueError):
@@ -817,8 +880,9 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
         pdf.set_font(font, "B", 10.5)
         h_tit = righe(larg - 26, 5.2, domanda) + 3
         pdf.set_font(font, "", 9.8)
-        h_corpo = sum(righe(wtxt - 6, 4.8, p_) for p_ in passi) + (6 if chiavi else 0) + \
-            (righe(wtxt, 4.4, errore) if errore else 0) + (4.4 if (dove or perche) else 0) + 4
+        h_corpo = sum(righe(wtxt - 6, 4.8, p_) for p_ in passi + aggiunte) + (6 if chiavi else 0) + \
+            (righe(wtxt, 4.4, errore) if errore else 0) + (4.4 if (dove or perche) else 0) + \
+            (righe(wtxt, 4.4, avvisi) if avvisi else 0) + 4
         if img:
             h_corpo = max(h_corpo, 34)
         if pdf.get_y() + h_tit + h_corpo > fondo and h_tit + h_corpo < fondo - pdf.t_margin:
@@ -841,10 +905,13 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
         pdf.set_text_color(0, 0, 0)
         pdf.set_font(font, "", 9.8)
         pdf.set_xy(x0 + 4, yc)
-        for i, p_ in enumerate(passi, 1):
+        for i, p_ in enumerate(passi + aggiunte, 1):
             pdf.set_x(x0 + 4)
+            if i > len(passi):      # passi che il docente non ha detto: in viola, con l'etichetta
+                pdf.set_text_color(109, 40, 217)
             pdf.cell(6, 4.8, f"{i}.")
             pdf.multi_cell(wtxt - 6, 4.8, t(p_), new_x="LEFT", new_y="NEXT")
+        pdf.set_text_color(0, 0, 0)
         if chiavi:
             pdf.set_y(pdf.get_y() + 1)
             etichette_gialle(chiavi, x0 + 4, wtxt)
@@ -858,6 +925,11 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
             pdf.set_font(font, "", 8)
             pdf.set_text_color(*GRIGIO)
             pdf.multi_cell(wtxt, 4.4, t("→ " + " · ".join(x for x in (perche, dove) if x)), new_x="LEFT", new_y="NEXT")
+        if avvisi:
+            pdf.set_x(x0 + 4)
+            pdf.set_font(font, "B", 8)
+            pdf.set_text_color(194, 65, 12)
+            pdf.multi_cell(wtxt, 4.4, t(avvisi), new_x="LEFT", new_y="NEXT")
         pdf.set_text_color(0, 0, 0)
         y_fine = pdf.get_y() + 2
         if img:
@@ -890,6 +962,7 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
     pdf.set_text_color(*GRIGIO)
     testo(tr("es_leg", L), 4.2)
     pdf.set_text_color(0, 0, 0)
+    _legenda_verita(pdf, font, t, dati.get("domande_probabili") or [], L)
 
     if dati.get("parole_chiave"):
         titolo_sezione(tr("es_h_kw", L))
@@ -976,11 +1049,104 @@ def _nome_file(L, formato):
     return tr("file_appunti_esame" if formato == "esame" else "file_appunti", L)
 
 
-def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None):
+ISTRUZIONI_UNISCI = """Sei un tutor universitario esperto di esami. Ricevi le domande d'esame probabili preparate,
+parte per parte, per la STESSA lezione (ogni parte e' un tratto di circa mezz'ora). Ora le vedi tutte insieme.
+Fai la classifica unica delle domande piu' probabili di TUTTA la lezione:
+- unisci le domande uguali o molto simili in una sola (tieni la formulazione migliore, unisci gli schemi
+  senza ripetizioni, al massimo 6 passi);
+- ordina dalla piu' probabile considerando tutta la lezione: sale un argomento che torna in piu' parti, su
+  cui il docente insiste o che dice essere da esame;
+- rimetti le stelle sull'intera lezione: ★★★ solo alle domande davvero piu' probabili (circa un quarto),
+  ★★ agli argomenti centrali, ★ alle altre;
+- al massimo 12 domande;
+- per ognuna: "parti" = i numeri delle parti da cui viene; "parte" e "indice" = la domanda di partenza
+  principale (numero della parte e posizione nella sua lista, da 1).
+NON aggiungere contenuti nuovi: usa solo quello che c'e' nelle domande ricevute. "perche", "errore" e le
+citazioni del docente copiale come sono. Mantieni separati i punti in "aggiunte" (non detti a lezione).
+Scrivi in {lingua}. Rispondi SOLO chiamando lo strumento salva_classifica."""
+
+SCHEMA_UNISCI = {"type": "object", "properties": {"domande": {"type": "array", "items": {"type": "object", "properties": {
+    "domanda": {"type": "string"}, "stelle": {"type": "integer"}, "perche": {"type": "string"},
+    "schema": {"type": "array", "items": {"type": "string"}},
+    "parole_chiave": {"type": "array", "items": {"type": "string"}},
+    "errore": {"type": "string"}, "aggiunte": {"type": "array", "items": {"type": "string"}},
+    "dove": {"type": "string"}, "parti": {"type": "array", "items": {"type": "integer"}},
+    "parte": {"type": "integer"}, "indice": {"type": "integer"}},
+    "required": ["domanda", "stelle", "schema", "parti"]}}}, "required": ["domande"]}
+
+
+def file_classifica(cartella):
+    return Path(cartella) / "appunti_esame_lezione.json"
+
+
+def unisci_esame(chiave, cartella, info, pac):
+    """Visione d'insieme (Formato Esame, lezione con piu' parti): una sola classifica delle domande,
+    senza doppioni e con le stelle date su tutta la lezione. Salvata in appunti_esame_lezione.json."""
+    cartella = Path(cartella)
+    pezzi = []
+    for k in sorted(pac, key=int):
+        d = el.leggi_json(file_json(cartella, k, "esame")) or {}
+        pezzi.append({"parte": int(k), "titolo": d.get("titolo", ""),
+                      "domande": [{x: q.get(x) for x in ("domanda", "stelle", "perche", "schema", "parole_chiave",
+                                                          "errore", "aggiunte", "dove")}
+                                  for q in d.get("domande_probabili") or []]})
+    L = testi.lingua_di(info)
+    corpo = {"model": MODELLO, "max_tokens": 8000,
+             "system": ISTRUZIONI_UNISCI.replace("{lingua}", testi.nome_lingua(L, "it")),
+             "tools": [{"name": "salva_classifica", "description": "Salva la classifica delle domande della lezione.",
+                        "input_schema": SCHEMA_UNISCI}],
+             "tool_choice": {"type": "auto"},
+             "messages": [{"role": "user", "content": json.dumps(pezzi, ensure_ascii=False)}]}
+    attesa, r = 10, None
+    for n in range(4):
+        try:
+            r = _richiesta(chiave, "messages", corpo, timeout=300)
+            break
+        except _Riprova:
+            if n == 3:
+                raise ErroreAppunti(tr("ap_occupato"))
+            time.sleep(attesa)
+            attesa *= 2
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    dati = blocco["input"] if blocco else None
+    if not dati:
+        testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+        try:
+            dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
+        except ValueError:
+            dati = None
+    domande = (dati or {}).get("domande") or []
+    if not domande:
+        raise ErroreAppunti(tr("ap_vuoto"))
+    # la slide della domanda di partenza (cosi' le flashcard hanno l'immagine)
+    for q in domande:
+        try:
+            orig = el.leggi_json(file_json(cartella, q.get("parte"), "esame")) or {}
+            src = (orig.get("domande_probabili") or [])[int(q.get("indice") or 0) - 1]
+            q["slide"] = src.get("slide") or 0
+        except Exception:
+            q["slide"] = 0
+    out = {"formato": "esame", "titolo": tr("es_tutta", L), "domande_probabili": domande[:12]}
+    try:
+        import verifica
+        verifica.controlla(out, cartella, 0, L)
+    except Exception:
+        log.exception("controllo classifica")
+    uso = r.get("usage", {})
+    spesa = uso.get("input_tokens", 0) * PREZZO_INGRESSO + uso.get("output_tokens", 0) * PREZZO_USCITA
+    el.scrivi_json(file_classifica(cartella), out)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
+    log.info("classifica della lezione: %s domande, spesa %.3f $", len(domande), spesa)
+    return out
+
+
+def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None, chiave=None):
     """Se la lezione e' finita e tutte le parti hanno gli appunti (di quel formato), li mette in un
-    PDF unico. Con una parte sola il PDF unico e' quello della parte. Senza formato: tutti e due."""
+    PDF unico. Con una parte sola il PDF unico e' quello della parte. Senza formato: tutti e due.
+    Formato Esame con piu' parti: prima la classifica unica di tutta la lezione (se c'e' la chiave)."""
     if formato is None:
-        return [appunti_lezione_completa(cartella, cartella_pacchetti, f) for f in FORMATI]
+        return [appunti_lezione_completa(cartella, cartella_pacchetti, f, chiave) for f in FORMATI]
     cartella = Path(cartella)
     info = el.leggi_json(cartella / "info.json", {}) or {}
     pac = info.get("pacchetti") or {}
@@ -1001,11 +1167,19 @@ def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None):
             slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None,
                               m.get("inizio", 0)) for m in mappa}
             parti.append((dati, etichetta, slide))
+        unite = None
+        if formato == "esame":
+            unite = el.leggi_json(file_classifica(cartella))
+            if unite is None and chiave:
+                try:
+                    unite = unisci_esame(chiave, cartella, info, pac)
+                except Exception:
+                    log.exception("classifica della lezione")
         primo = Path(pac[sorted(pac, key=int)[0]]).stem
         base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
         L = testi.lingua_di(info)
         dest = str(Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {base} – {tr('lezione_completa', L)}.pdf")
-        pdf_appunti_parti(parti, info, dest)
+        pdf_appunti_parti(parti, info, dest, unite=unite)
     el.aggiorna_info(cartella, **{chiave_completi(formato): str(dest)})
     return dest
 
@@ -1027,6 +1201,13 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                                       lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato,
                                       parole=el.parole_lezione(cartella))
         dati["formato"] = formato
+        try:      # controllo di verita': citazioni, minuti e slide confrontati con la registrazione
+            import verifica
+            n_slide = len(el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or [])
+            n = verifica.controlla(dati, cartella, n_slide, testi.lingua_di(info0))
+            log.info("controllo appunti parte %s (%s): %s avvisi", k, formato, n)
+        except Exception:
+            log.exception("controllo appunti")
         el.scrivi_json(file_json(cartella, k, formato), dati)
     else:
         dati = gia

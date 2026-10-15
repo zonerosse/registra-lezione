@@ -409,7 +409,8 @@ class Motore:
                 "schermo": schermo_risoluzione(), "versione": agg.versione_locale().get("versione", "?"),
                 "audio_ok": self.audio_ok, "liberi": self.liberi, "base": str(BASE),
                 "modo": "aula" if self.cfg.get("modo") == "aula" else "online", "microfono": self.cfg.get("microfono") or "",
-                "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n()}
+                "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
+                "precisa": bool(self.cfg.get("trascrizione_precisa"))}
 
     # ------------------------------------------------------------------ impostazioni
 
@@ -435,7 +436,7 @@ class Motore:
             self.cfg["lingua_lezione_scelta"] = True
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("mini_finestra", "promemoria_dnd", "diretta"):
+        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa"):
             self.cfg[campo] = bool(valore)
         elif campo == "modo":
             self.cfg["modo"] = "aula" if valore == "aula" else "online"
@@ -521,7 +522,8 @@ class Motore:
                                                 "lingua_appunti": testi.LINGUA,
                                                 "formato_appunti": self._formato(),
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
-                                                "modo": modo, "parole": self.parole_di(nome)})
+                                                "modo": modo, "parole": self.parole_di(nome),
+                                                "precisa": bool(self.cfg.get("trascrizione_precisa"))})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -553,7 +555,11 @@ class Motore:
     def info_video(self, percorso):
         import importa as im
         i = im.info_file(percorso)
-        i["stima"] = round(i["durata"] / max(0.1, float(self.cfg.get("velocita_trascrizione") or 0.8)))
+        prec = bool(self.cfg.get("trascrizione_precisa"))
+        v = self.cfg.get("velocita_trascrizione_precisa" if prec else "velocita_trascrizione")
+        if not v:      # non ancora misurata in questa modalita': la precisa ci mette circa una volta e mezza
+            v = float(self.cfg.get("velocita_trascrizione") or 0.8) / (1.5 if prec else 1)
+        i["stima"] = round(i["durata"] / max(0.1, float(v)))
         return i
 
     def importa(self, percorso, nome, lingua=None, cerca_slide=True):
@@ -583,7 +589,8 @@ class Motore:
                                                 "studente": self.cfg.get("studente") or {}, "importata": True,
                                                 "file_originale": str(src), "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
-                                                "formato_appunti": self._formato(), "parole": self.parole_di(nome)})
+                                                "formato_appunti": self._formato(), "parole": self.parole_di(nome),
+                                                "precisa": bool(self.cfg.get("trascrizione_precisa"))})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -765,6 +772,11 @@ class Motore:
         return {"ok": True}
 
     def _togli_appunti(self, cart, info, pac, formato):
+        if formato == "esame":
+            try:
+                ap.file_classifica(cart).unlink()
+            except OSError:
+                pass
         for k in pac:
             vecchio = (info.get(ap.chiave_info(formato)) or {}).get(k)
             for f in (ap.file_json(cart, k, formato), Path(vecchio) if vecchio else None):
@@ -1317,8 +1329,10 @@ class Motore:
                     if not gia and sec > 60 and self.reg is None:
                         # velocita' di questo PC (secondi di audio per secondo di lavoro): serve per le stime
                         v = sec / max(1.0, time.monotonic() - t0)
-                        vecchia = float(self.cfg.get("velocita_trascrizione") or v)
-                        self.cfg["velocita_trascrizione"] = round(0.5 * vecchia + 0.5 * v, 3)
+                        chiave_v = "velocita_trascrizione_precisa" if (el.leggi_json(Path(cart) / "info.json", {}) or {}).get("precisa") \
+                            else "velocita_trascrizione"
+                        vecchia = float(self.cfg.get(chiave_v) or v)
+                        self.cfg[chiave_v] = round(0.5 * vecchia + 0.5 * v, 3)
                         salva_config(self.cfg)
                     zp = el.crea_pacchetto(cart, k, self.cfg["cartella_pacchetti"])
                     self.coda.put(("parte_ok", (k, str(zp))))
@@ -1353,7 +1367,7 @@ class Motore:
 
     def _unisci_appunti(self, cart):
         try:
-            ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"])
+            ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"], chiave=self.chiave() or None)
         except Exception:
             log.exception("appunti della lezione completa")
 

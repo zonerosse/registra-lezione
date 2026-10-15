@@ -174,6 +174,9 @@ def audio_16k(wav):
     return np.frombuffer(r.stdout, dtype=np.float32).copy()
 
 
+SOVRAPPOSIZIONE = 6    # secondi della parte precedente riascoltati all'inizio di ogni parte
+
+
 def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     """Trascrive audio_00k.wav. Orari gia' riferiti all'inizio della lezione.
     Salva trascrizione_00k.json (se esiste gia' la riusa)."""
@@ -193,10 +196,27 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
         threads = max(1, (os.cpu_count() or 2) - 1)
     model = _modello(threads)
     t0 = time.monotonic()
-    lingua = (leggi_json(cartella / "info.json", {}) or {}).get("lingua_lezione") or LINGUA
+    info_lez = leggi_json(cartella / "info.json", {}) or {}
+    lingua = info_lez.get("lingua_lezione") or LINGUA
     parole = parole_lezione(cartella)
+    audio = audio_16k(wav)
+    # parole perse: le parti sono tagliate al campione, quindi una parola puo' finire a cavallo di due
+    # parti. Davanti a questa parte metto gli ultimi secondi della precedente e tengo le frasi che
+    # arrivano dentro questa parte (anche quelle cominciate un attimo prima del taglio).
+    prima = 0.0
+    prec = cartella / f"audio_{k - 1:03d}.wav"
+    if k > 1 and prec.exists():
+        try:
+            import numpy as np
+            coda = audio_16k(prec)[-SOVRAPPOSIZIONE * 16000:]
+            prima = len(coda) / 16000
+            audio = np.concatenate([coda, audio])
+        except Exception:
+            log.exception("sovrapposizione parte %s", k)
+            prima = 0.0
     segmenti, info = model.transcribe(
-        audio_16k(wav), language=None if lingua == "auto" else lingua, vad_filter=True, beam_size=1,
+        audio, language=None if lingua == "auto" else lingua, vad_filter=True,
+        beam_size=5 if info_lez.get("precisa") else 1,       # "trascrizione piu' precisa" (Impostazioni)
         condition_on_previous_text=False, hotwords=", ".join(parole) if parole else None)
     if lingua == "auto" and getattr(info, "language", None):
         aggiorna_info(cartella, lingua_rilevata=info.language)
@@ -205,9 +225,9 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     out = []
     for s in segmenti:
         testo = (s.text or "").strip()
-        if testo:
-            out.append({"inizio": round(offset + s.start, 2), "fine": round(offset + s.end, 2),
-                        "testo": testo})
+        if testo and s.end > prima + 0.3:        # finita del tutto prima del taglio: e' gia' nella parte prima
+            out.append({"inizio": round(offset + max(0.0, s.start - prima), 2),
+                        "fine": round(offset + s.end - prima, 2), "testo": testo})
         progresso(min(1.0, s.end / durata))
     progresso(1.0)
     scrivi_json(pj, out)

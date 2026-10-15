@@ -607,6 +607,7 @@ function disegnaImpostazioni() {
   $('swMini').classList.toggle('on', !!R.mini);
   $('swDnd').classList.toggle('on', !!R.dnd);
   $('swDir').classList.toggle('on', !!R.diretta);
+  $('swPrec').classList.toggle('on', !!R.precisa);
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
@@ -871,6 +872,7 @@ function collegaNovita() {
   $('btnPdfA').onclick = async () => { const f = await A.scegli_pdf(); if (f.ok) { PDFA = f; disegnaModo(); } else if (f.msg) toast(f.msg); };
   $('btnPdfX').onclick = () => { PDFA = null; disegnaModo(); };
   $('swDir').onclick = async () => { await A.imposta('diretta', !R.diretta); await rileggi(); };
+  $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
   $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
   $('pwAgg').onclick = aggiungiParola;
   $('chVai').onclick = inviaDomanda;
@@ -942,7 +944,9 @@ function cartaRip() {
   if (c.minuto) ori.push(t('rp.min', {m: c.minuto}));
   $('cO').textContent = ori.join(' · ');
   $('cTit').textContent = c.formato === 'esame' ? t('rp.schema') : t('rp.risp');
-  $('cSc').innerHTML = c.schema.map(x => `<li>${esc(x)}</li>`).join('');
+  $('cSc').innerHTML = c.schema.map(x => `<li>${esc(x)}</li>`).join('') +
+    (c.aggiunte || []).map(x => `<li class="agg">${esc(x)} <span class="aggb">${esc(t('rp.agg'))}</span></li>`).join('');
+  $('cAv').innerHTML = (c.avvisi || []).map(x => `<div class="avv">⚠ ${esc(t('rp.dav'))}: ${esc(x)}</div>`).join('');
   $('cK').innerHTML = c.parole.map(x => `<span class="kw">${esc(x)}</span>`).join('');
   $('cSl').innerHTML = c.img ? `<img src="${c.img}" alt=""><div class="hint">${esc(ori.join(' · '))}</div>` : '';
   $('cE').style.display = c.errore ? '' : 'none'; $('cE').textContent = t('rp.err', {e: c.errore});

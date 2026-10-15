@@ -37,15 +37,21 @@ def carte_lezione(cartella):
     nome = info.get("nome", cart.name)
     for formato in ("esame", "cornell"):
         carte = []
-        for f in sorted(cart.glob("appunti_esame_*.json" if formato == "esame" else "appunti_[0-9]*.json")):
-            try:
-                k = int(f.stem.rsplit("_", 1)[1])
-            except ValueError:
-                continue
-            d = el.leggi_json(f)
-            if not d:
-                continue
-            d = ap.normalizza(d)
+        # Formato Esame con la classifica di tutta la lezione: quella (niente doppioni fra le parti)
+        classifica = el.leggi_json(ap.file_classifica(cart)) if formato == "esame" else None
+        if classifica and classifica.get("domande_probabili"):
+            fonti = [(int(v.get("parte") or 1), {"domande_probabili": [v]}) for v in classifica["domande_probabili"]]
+        else:
+            fonti = []
+            for f in sorted(cart.glob("appunti_esame_*.json" if formato == "esame" else "appunti_[0-9]*.json")):
+                try:
+                    k = int(f.stem.rsplit("_", 1)[1])
+                except ValueError:
+                    continue
+                d = el.leggi_json(f)
+                if d:
+                    fonti.append((k, ap.normalizza(d)))
+        for k, d in fonti:
             if (formato == "esame") != bool(ap.e_esame(d)):
                 continue
             mappa = {m.get("n"): m for m in (el.leggi_json(cart / f"pacchetto_{k:03d}.json", []) or [])}
@@ -69,6 +75,7 @@ def carte_lezione(cartella):
                     "schema": _lista(v.get("schema") if formato == "esame" else v.get("appunti")),
                     "parole": _lista(v.get("parole_chiave")),
                     "errore": (v.get("errore") or "") if formato == "esame" else "",
+                    "aggiunte": _lista(v.get("aggiunte")), "avvisi": _lista(v.get("avvisi")),
                     "dove": v.get("dove") or "",
                     "slide_n": n if m.get("file") else 0, "slide_file": m.get("file") or "",
                     "minuto": int((m.get("inizio") or 0) // 60) if m.get("file") else None,

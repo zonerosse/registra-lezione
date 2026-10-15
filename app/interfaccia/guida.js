@@ -38,7 +38,8 @@ const GUIDA = {
         '<b>Cornell</b>: domande a sinistra, appunti a destra, riassunto in fondo. Per capire e ripassare: copri la colonna degli appunti e prova a rispondere.',
         '<b>Formato Esame</b>: le domande più probabili, con le stelle (★★★ = il docente ci ha insistito). Per ognuna c\'è lo schema della risposta e le parole chiave; in fondo una simulazione d\'esame. Per prepararsi a rispondere.',
         'Il formato si sceglie in <b>Impostazioni</b>. Una lezione può avere anche tutti e due: in «Le mie registrazioni» ⋯ → «Crea anche in…».',
-        'Gli appunti li scrive Claude dalla registrazione: <b>controllali sempre</b> sulle slide e sul libro.']},
+        'Gli appunti li scrive Claude dalla registrazione: <b>controllali sempre</b> sulle slide e sul libro. Ti aiuta il programma: quello che Claude aggiunge di suo (non detto a lezione) è <b>in viola</b> con «aggiunto da Claude»; citazioni del docente, minuti e slide vengono confrontati con la registrazione e se non tornano compare <b>⚠ da verificare</b> (le frasi del docente non trovate vengono tolte).',
+        'Nel Formato Esame, se la lezione ha più parti, il PDF della lezione completa comincia con la <b>classifica unica</b> delle domande di tutta la lezione, senza doppioni (circa 2-5 centesimi in più).']},
       {ico: 'lib', v: 'registrazioni', t: 'Le mie registrazioni', p: [
         'Qui trovi tutte le lezioni, con la ricerca per nome o data.',
         '<b>Apri appunti</b>, <b>Trascrizione</b> (slide con sotto le parole del docente) e <b>Video</b>.',
@@ -56,7 +57,7 @@ const GUIDA = {
       {ico: 'set', v: 'impostazioni', t: 'Impostazioni', p: [
         '<b>Lingua</b>: italiano o inglese, per il programma e per gli appunti.',
         '<b>Intelligenza artificiale</b>: «Appunti automatici con Claude» con la tua chiave (circa 0,20 $ per ora registrata), oppure «Cartella per l\'AI che vuoi»: prepara solo i pacchetti zip da portare a Claude, ChatGPT, Gemini…',
-        '<b>Formato degli appunti</b>, <b>ogni quanto preparo un pacchetto</b> (30 minuti o 1 ora), <b>mini finestra</b>, <b>Testo in diretta</b>, promemoria <b>Non disturbare</b>.',
+        '<b>Formato degli appunti</b>, <b>ogni quanto preparo un pacchetto</b> (30 minuti o 1 ora), <b>mini finestra</b>, <b>Trascrizione più precisa</b> (sbaglia meno, ma ci mette circa una volta e mezza il tempo), <b>Testo in diretta</b>, promemoria <b>Non disturbare</b>.',
         '<b>Parole difficili</b>: per ogni materia scrivi nomi e termini tecnici (o tocca quelli proposti dai tuoi appunti). La trascrizione li sbaglia molto meno e Claude li scrive giusti.',
         '<b>Dove salvo i pacchetti</b> e <b>I tuoi dati</b> (nome, università, corso, anno): compaiono sugli appunti e aiutano Claude.']},
       {ico: 'info', v: 'aggiornamenti', t: 'Aggiornamenti e assistenza', p: [
@@ -107,7 +108,8 @@ const GUIDA = {
         '<b>Cornell</b>: questions on the left, notes on the right, summary at the bottom. To understand and review: cover the notes column and try to answer.',
         '<b>Exam format</b>: the most likely questions, with stars (★★★ = the lecturer stressed it). Each has an answer outline and keywords; a mock exam at the end. To get ready to answer.',
         'Choose the format in <b>Settings</b>. A lecture can also have both: in «My recordings» ⋯ → «Also create in…».',
-        'Claude writes the notes from the recording: <b>always check them</b> against the slides and the textbook.']},
+        'Claude writes the notes from the recording: <b>always check them</b> against the slides and the textbook. The program helps: what Claude adds on its own (not said in the lecture) is <b>in purple</b> with «added by Claude»; the lecturer\'s quotes, minutes and slides are compared with the recording and if they don\'t match you see <b>⚠ to check</b> (lecturer quotes not found are removed).',
+        'In Exam format, if the lecture has several parts, the full-lecture PDF starts with a <b>single ranking</b> of the questions of the whole lecture, without duplicates (about 2-5 cents more).']},
       {ico: 'lib', v: 'registrazioni', t: 'My recordings', p: [
         'All your lectures, with search by name or date.',
         '<b>Open notes</b>, <b>Transcript</b> (slides with the lecturer\'s words below) and <b>Video</b>.',
@@ -125,7 +127,7 @@ const GUIDA = {
       {ico: 'set', v: 'impostazioni', t: 'Settings', p: [
         '<b>Language</b>: Italian or English, for the program and the notes.',
         '<b>Artificial intelligence</b>: «Automatic notes with Claude» with your key (about 0.20 $ per recorded hour), or «Folder for the AI of your choice»: only the zip packages, to take to Claude, ChatGPT, Gemini…',
-        '<b>Notes format</b>, <b>how often a package is prepared</b> (30 minutes or 1 hour), <b>mini window</b>, <b>Live text</b>, <b>Do not disturb</b> reminder.',
+        '<b>Notes format</b>, <b>how often a package is prepared</b> (30 minutes or 1 hour), <b>mini window</b>, <b>More accurate transcript</b> (fewer mistakes, about one and a half times as long), <b>Live text</b>, <b>Do not disturb</b> reminder.',
         '<b>Difficult words</b>: for each subject type names and technical terms (or tap the ones suggested from your notes). The transcript gets them wrong far less and Claude spells them right.',
         '<b>Where packages are saved</b> and <b>Your details</b> (name, university, course, year): they appear on the notes and help Claude.']},
       {ico: 'info', v: 'aggiornamenti', t: 'Updates and support', p: [
