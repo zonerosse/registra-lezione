@@ -15,7 +15,8 @@ const GUIDA = {
         '<b>Lezioni in altre lingue</b>: gli appunti arrivano nella tua lingua, con i termini tecnici originali tra parentesi.',
         'Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi.']},
       {ico: 'rec', v: 'registrare', t: 'Registrare una lezione', p: [
-        'Scegli <b>dove si tiene la lezione</b>. <b>Online</b>: entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo <b>schermo principale</b>, con il volume acceso. <b>In aula</b>: il programma registra dal microfono del portatile (scegli quale e guarda le tacche verdi che si muovono); se il docente pubblica le slide in PDF, aggiungile subito con <b>Scegli il PDF…</b>.',
+        '<b>Prima di iniziare</b> entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo <b>schermo principale</b>, con il volume acceso.',
+        'Scegli <b>dove si tiene la lezione</b>: <b>Online</b> (registra schermo e audio del PC) o <b>In aula</b>: il programma registra dal microfono del portatile (scegli quale e guarda le tacche verdi che si muovono); se il docente pubblica le slide in PDF, aggiungile subito con <b>Scegli il PDF…</b>.',
         'In <b>Registra</b> scrivi il nome, per esempio «Analisi 1 – Limiti». Data e ora le aggiunge il programma. Le materie usate di recente compaiono sotto: un tocco e sono già scritte.',
         'Scegli <b>in che lingua parla il docente</b>. Se non è la lingua del programma, gli appunti arrivano comunque tradotti, con i termini tecnici originali tra parentesi.',
         'Tocca il pulsante rosso <b>REGISTRA</b>. Se te lo chiede, attiva «Non disturbare» di Windows: così i suoni delle notifiche non finiscono nella registrazione.',
@@ -85,7 +86,8 @@ const GUIDA = {
         '<b>Lectures in other languages</b>: notes arrive in your language, with the original technical terms in brackets.',
         'Videos, notes and transcripts stay <b>on your PC</b>: they are yours.']},
       {ico: 'rec', v: 'registrare', t: 'Recording a lecture', p: [
-        'Choose <b>where the lecture is</b>. <b>Online</b>: join the lecture (Meet, Teams, Zoom…) and keep its window on the <b>main screen</b>, with the volume on. <b>In the classroom</b>: the program records from the laptop microphone (choose which one and watch the green bars move); if the lecturer publishes the slides as a PDF, add them right away with <b>Choose the PDF…</b>.',
+        '<b>Before starting</b> join the lecture (Meet, Teams, Zoom…) and keep its window on the <b>main screen</b>, with the volume on.',
+        'Choose <b>where the lecture is</b>: <b>Online</b> (records the screen and PC audio) or <b>In the classroom</b>: the program records from the laptop microphone (choose which one and watch the green bars move); if the lecturer publishes the slides as a PDF, add them right away with <b>Choose the PDF…</b>.',
         'In <b>Record</b> type the name, e.g. «Calculus 1 – Limits». The program adds date and time. Recent subjects appear below: one tap and they are typed in.',
         'Choose <b>which language the lecturer speaks</b>. If it is not the program language, the notes still arrive translated, with the original technical terms in brackets.',
         'Tap the red <b>RECORD</b> button. If asked, turn on Windows «Do not disturb», so notification sounds don\'t end up in the recording.',

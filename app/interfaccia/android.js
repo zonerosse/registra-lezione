@@ -85,7 +85,8 @@ if (ANDROID) {
         '<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave (circa 0,20 $ per ora registrata).',
         'Audio, appunti e trascrizioni restano <b>sul tuo telefono</b>: sono tuoi.']},
       {ico: 'rec', t: 'Registrare una lezione', p: [
-        'Scegli <b>dove si tiene la lezione</b>. <b>In aula</b>: metti il telefono vicino alla cattedra (guarda le tacche verdi che si muovono); se il docente pubblica le slide in PDF, aggiungile con <b>Scegli il PDF…</b>. <b>Online</b>: entra nella lezione e metti il <b>vivavoce</b>, con il volume alto.',
+        '<b>Prima di iniziare</b>: online, entra nella lezione e metti il <b>vivavoce</b>, con il volume alto; in aula, metti il telefono vicino alla cattedra, con il microfono verso il docente.',
+        'Scegli <b>dove si tiene la lezione</b>: <b>In aula</b> (guarda le tacche verdi che si muovono; se il docente pubblica le slide in PDF, aggiungile con <b>Scegli il PDF…</b>) o <b>Online</b>.',
         'Scrivi il nome, per esempio «Analisi 1 – Limiti». Le materie usate di recente compaiono sotto: un tocco e sono già scritte.',
         'Scegli <b>in che lingua parla il docente</b>.',
         'Scegli <b>Quando trascrivo</b>: <b>Durante</b> (la lezione è pronta poco dopo la fine, ma tieni il caricatore attaccato) o <b>Dopo</b> (il telefono registra e basta e trascrive a fine lezione, quando tocchi «Trascrivi ora»). Sotto c\'è quanto ci mette il tuo telefono.',
@@ -145,7 +146,8 @@ if (ANDROID) {
         '<b>No subscription</b>: you only pay what you use with your key (about $0.20 per recorded hour).',
         'Audio, notes and transcripts stay <b>on your phone</b>: they are yours.']},
       {ico: 'rec', t: 'Recording a lecture', p: [
-        'Choose <b>where the lecture is</b>. <b>In the classroom</b>: put the phone close to the desk (watch the green bars move); if the lecturer publishes the slides as a PDF, add them with <b>Choose the PDF…</b>. <b>Online</b>: join the lecture and turn on the <b>speaker</b>, with the volume up.',
+        '<b>Before starting</b>: online, join the lecture and turn on the <b>speaker</b>, with the volume up; in class, put the phone close to the desk, with the microphone towards the lecturer.',
+        'Choose <b>where the lecture is</b>: <b>In the classroom</b> (watch the green bars move; if the lecturer publishes the slides as a PDF, add them with <b>Choose the PDF…</b>) or <b>Online</b>.',
         'Type the name, for example «Calculus 1 – Limits». Recent subjects appear below: one tap and they are typed.',
         'Choose <b>which language the lecturer speaks</b>.',
         'Choose <b>When do I transcribe</b>: <b>During</b> (ready soon after the end, but keep the charger plugged in) or <b>After</b> (the phone only records and transcribes after the lecture, when you tap «Transcribe now»). Below you see how long your phone takes.',
