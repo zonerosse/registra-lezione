@@ -286,7 +286,7 @@ def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell
 
 
 def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
-                    formato="cornell"):
+                    formato="cornell", parole=None):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
@@ -301,7 +301,9 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti=
                                             "data": base64.b64encode(pdf_bytes).decode()}},
             {"type": "text", "text": "Ecco l'ora di lezione. Prepara gli appunti." +
              (f" Lo studente: {contesto}. Adatta il livello degli appunti al suo corso e anno."
-              if contesto else "")}]}],
+              if contesto else "") +
+             (" Termini e nomi che il docente usa (la trascrizione automatica puo' averli storpiati: "
+              "scrivili esattamente cosi'): " + ", ".join(parole) + "." if parole else "")}]}],
     }
     attesa = 10
     for n in range(tentativi):
@@ -1022,7 +1024,8 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
     if gia is None:
         dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
                                       lingua_appunti=testi.lingua_di(info0),
-                                      lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato)
+                                      lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato,
+                                      parole=el.parole_lezione(cartella))
         dati["formato"] = formato
         el.scrivi_json(file_json(cartella, k, formato), dati)
     else:

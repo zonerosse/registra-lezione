@@ -127,14 +127,69 @@ class Api:
     def apri_non_disturbare(self):
         self._mt.apri_non_disturbare()
 
-    def avvia(self, nome):
-        r = self._m.avvia(nome)
+    def avvia(self, nome, opzioni=None):
+        r = self._m.avvia(nome, opzioni)
         if r.get("ok") and r.get("mini"):
             threading.Thread(target=self._apri_mini, daemon=True).start()
         return r
 
     def pausa(self):
         return self._m.pausa()
+
+    # ---- in aula, parole difficili, chiedi, mappa, slide del docente
+    def microfoni(self):
+        return self._m.microfoni()
+
+    def livello_microfono(self, mid=None):
+        return self._m.livello_microfono(mid)
+
+    def parole(self, materia=None):
+        return self._m.parole(materia)
+
+    def salva_parole(self, materia, lista):
+        return self._m.salva_parole(materia, lista)
+
+    def chiedi(self, cartelle, storia, testo):
+        return self._m.chiedi(cartelle, storia, testo)
+
+    def chiedi_storia(self, cartella):
+        return self._m.chiedi_storia(cartella)
+
+    def chiedi_cancella(self, cartella):
+        return self._m.chiedi_cancella(cartella)
+
+    def momento(self, cartella, sec=0, slide=None):
+        return self._m.momento(cartella, sec, slide)
+
+    def video_url(self, cartella):
+        return self._m.video_url(cartella)
+
+    def mappa(self, cartella, rifai=False):
+        return self._m.mappa(cartella, rifai)
+
+    def mappa_pdf(self, cartella, apri_dopo=True):
+        return self._m.mappa_pdf(cartella, apri_dopo)
+
+    def stima_docente(self, cartella):
+        return self._m.stima_docente(cartella)
+
+    def aggiungi_docente(self, cartella, pdf):
+        return self._m.aggiungi_docente(cartella, pdf)
+
+    def scegli_pdf(self):
+        """Finestra di Windows per scegliere il PDF delle slide del docente."""
+        try:
+            scelta = self._win.create_file_dialog(webview.FileDialog.OPEN, file_types=("PDF (*.pdf)",),
+                                                  directory=str(Path.home() / "Downloads"))
+        except Exception:
+            log.exception("scegli pdf")
+            return {"ok": False}
+        if not scelta:
+            return {"ok": False}
+        f = scelta[0] if isinstance(scelta, (list, tuple)) else scelta
+        r = self._m.info_pdf(f)
+        from testi import tr
+        return {**r, "percorso": f} if r.get("ok") else {"ok": False, "msg": tr("dc_err")}
 
     def scegli_video(self):
         """Finestra di Windows per scegliere il video (o l'audio) da importare."""
@@ -253,8 +308,8 @@ class Api:
     def stima_appunti(self, cartella):
         return self._m.stima_appunti(cartella)
 
-    def rifai_appunti(self, cartella):
-        return self._m.rifai_appunti(cartella)
+    def rifai_appunti(self, cartella, formati=None):
+        return self._m.rifai_appunti(cartella, formati)
 
     def completa(self, cartella):
         return self._m.completa(cartella)

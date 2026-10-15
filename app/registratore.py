@@ -4,6 +4,7 @@ Registra Lezione - parte che REGISTRA.
 
 Tre lavori in parallelo, tutti sullo stesso orologio:
   - audio del PC (quello che si sente dalle casse/cuffie) -> audio_001.wav, audio_002.wav (un file per ora)
+    (lezione "in aula": l'audio viene dal microfono e lo schermo non si registra)
   - schermo principale, 4 immagini al secondo            -> video_tmp.mkv
   - ogni 2 secondi controlla se la slide e' cambiata      -> slide/slide_001.jpg ...
 Gli orari di tutto finiscono in meta.json, cosi' dopo testo e slide si possono abbinare.
@@ -97,8 +98,12 @@ class RilevatoreSlide:
 
 
 class Registratore:
-    def __init__(self, cartella, nome, parte_secondi=3600):
+    def __init__(self, cartella, nome, parte_secondi=3600, modo="online", microfono=None, diretta=False):
         self.cartella = Path(cartella)
+        self.modo = "aula" if modo == "aula" else "online"
+        self.microfono = microfono or None     # id del microfono (lezione in aula); None = quello di Windows
+        self.diretta = bool(diretta)           # testo in diretta: tengo da parte l'audio appena registrato
+        self._diretta_buf = []                 # [(secondo della lezione, campioni mono 48 kHz)]
         self.nome = nome
         self.stop_ev = threading.Event()
         self.livello = 0.0          # volume attuale (0..1) per l'indicatore
@@ -123,7 +128,8 @@ class Registratore:
         self.t0 = time.monotonic()
         self.inizio = time.strftime("%Y-%m-%dT%H:%M:%S")
         self._salva_meta()
-        for f in (self._silenzio, self._audio, self._schermo):
+        lavori = (self._silenzio, self._audio, self._schermo) if self.modo == "online" else (self._audio,)
+        for f in lavori:
             th = threading.Thread(target=f, daemon=True)
             th.start()
             self._threads.append(th)
@@ -200,8 +206,17 @@ class Registratore:
             import warnings
             sc = carica_soundcard()
             warnings.filterwarnings("ignore", category=sc.SoundcardRuntimeWarning)
-            spk = sc.default_speaker()
-            mic = sc.get_microphone(spk.id, include_loopback=True)
+            if self.modo == "aula":
+                mic = None
+                if self.microfono:
+                    try:
+                        mic = sc.get_microphone(self.microfono)
+                    except Exception:
+                        log.warning("microfono %s non trovato: uso quello di Windows", self.microfono)
+                spk = mic = mic or sc.default_microphone()
+            else:
+                spk = sc.default_speaker()
+                mic = sc.get_microphone(spk.id, include_loopback=True)
             rate = 48000
             blocco = rate // 10
             per_parte = rate * self.parte_secondi
@@ -216,6 +231,10 @@ class Registratore:
                         continue
                     mono = d.mean(axis=1) if d.ndim == 2 else d
                     self.livello = min(1.0, float(np.sqrt(np.mean(mono ** 2))) * 6)
+                    if self.diretta:
+                        with self._lock:
+                            self._diretta_buf.append(((k - 1) * self.parte_secondi + scritti / rate,
+                                                      mono.astype(np.float32)))
                     w.writeframes((np.clip(mono, -1, 1) * 32767).astype("<i2").tobytes())
                     scritti += len(mono)
                     if scritti >= per_parte:
@@ -243,6 +262,14 @@ class Registratore:
                     w.close()
                 except Exception:
                     pass
+
+    def prendi_diretta(self):
+        """L'audio registrato dall'ultima volta: (secondo di inizio, campioni mono 48 kHz) o None."""
+        with self._lock:
+            buf, self._diretta_buf = self._diretta_buf, []
+        if not buf:
+            return None
+        return buf[0][0], np.concatenate([b for _, b in buf])
 
     def _avvisa_parte(self, k):
         try:
@@ -372,6 +399,45 @@ def controlla_audio():
     th.start()
     th.join(timeout=15)
     return bool(esito and esito[0])
+
+
+def microfoni():
+    """[{"id", "nome", "predefinito"}] dei microfoni (in un thread a parte, come l'audio)."""
+    esito = []
+
+    def leggi():
+        try:
+            sc = carica_soundcard()
+            pred = sc.default_microphone()
+            esito.extend({"id": m.id, "nome": m.name, "predefinito": m.id == pred.id}
+                         for m in sc.all_microphones())
+        except Exception:
+            log.exception("elenco microfoni")
+    th = threading.Thread(target=leggi, daemon=True)
+    th.start()
+    th.join(timeout=15)
+    return esito
+
+
+def livello_microfono(mid=None):
+    """Volume (0..1) del microfono in questo momento: ascolta un decimo di secondo."""
+    esito = []
+
+    def ascolta():
+        try:
+            import warnings
+            sc = carica_soundcard()
+            warnings.filterwarnings("ignore", category=sc.SoundcardRuntimeWarning)
+            mic = sc.get_microphone(mid) if mid else sc.default_microphone()
+            d = mic.record(numframes=4800, samplerate=48000)
+            mono = d.mean(axis=1) if d.ndim == 2 else d
+            esito.append(min(1.0, float(np.sqrt(np.mean(mono ** 2))) * 6))
+        except Exception:
+            esito.append(-1.0)
+    th = threading.Thread(target=ascolta, daemon=True)
+    th.start()
+    th.join(timeout=5)
+    return esito[0] if esito else -1.0
 
 
 def _controlla_audio():

@@ -68,6 +68,9 @@ logging.getLogger("fontTools").setLevel(logging.WARNING)
 import aggiorna as agg               # noqa: E402
 import appunti as ap
 import ripasso as rp                 # noqa: E402
+import chiedi as ch                  # noqa: E402
+import docente as dc                 # noqa: E402
+import servi_video                   # noqa: E402
 import elaborazione as el            # noqa: E402
 import registratore as rg            # noqa: E402
 import testi                         # noqa: E402
@@ -230,6 +233,9 @@ class Motore:
         self.formato_vista = "cornell"
         self.imp = None                    # importazione di un video in corso: fasi e avanzamento     # formato degli appunti mostrati/creati nella schermata di fine
         self.parte_sec = 3600
+        self.formati_extra = []        # rifacendo gli appunti: altri formati da rifare per ogni parte
+        self.diretta = []              # testo in diretta: [{"t", "testo"}]
+        self.diretta_lav = False
         self.vista = "pronto"          # pronto | reg | fine
         self.nome_rec = ""
         self.avviso_fine = ""
@@ -313,7 +319,8 @@ class Motore:
                     avviso = tr("avviso_silenzio")
                 s.update(secondi=int(r.secondi()), slide=r.n_slide, gb=round(self.gb_registrati(), 2),
                          livello=float(r.livello), livelli=list(self._livelli), pausa=pausa,
-                         pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso)
+                         pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso,
+                         modo=r.modo, diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav)
             parti = []
             for k in sorted(self.parti):
                 p = dict(self.parti[k])
@@ -400,7 +407,9 @@ class Motore:
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
                 "studente": self.cfg.get("studente") or {}, "recenti": self.cfg.get("materie_recenti") or [],
                 "schermo": schermo_risoluzione(), "versione": agg.versione_locale().get("versione", "?"),
-                "audio_ok": self.audio_ok, "liberi": self.liberi, "base": str(BASE)}
+                "audio_ok": self.audio_ok, "liberi": self.liberi, "base": str(BASE),
+                "modo": "aula" if self.cfg.get("modo") == "aula" else "online", "microfono": self.cfg.get("microfono") or "",
+                "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n()}
 
     # ------------------------------------------------------------------ impostazioni
 
@@ -426,8 +435,12 @@ class Motore:
             self.cfg["lingua_lezione_scelta"] = True
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("mini_finestra", "promemoria_dnd"):
+        elif campo in ("mini_finestra", "promemoria_dnd", "diretta"):
             self.cfg[campo] = bool(valore)
+        elif campo == "modo":
+            self.cfg["modo"] = "aula" if valore == "aula" else "online"
+        elif campo == "microfono":
+            self.cfg["microfono"] = str(valore or "")
         elif campo == "appunti_attivi":
             if self.reg is not None:
                 return {"ok": False, "msg": tr("imp_prima")}
@@ -488,7 +501,11 @@ class Motore:
         return {"occupato": False, "audio_ok": c["audio_ok"], "liberi": c["liberi"], "cartella_ok": cart_ok,
                 "dnd": bool(self.cfg.get("promemoria_dnd", True))}
 
-    def avvia(self, nome):
+    def avvia(self, nome, opzioni=None):
+        opzioni = opzioni or {}
+        modo = "aula" if (opzioni.get("modo") or self.cfg.get("modo")) == "aula" else "online"
+        microfono = opzioni.get("microfono") or self.cfg.get("microfono") or None
+        pdf = opzioni.get("pdf") if modo == "aula" else None
         with self._lock:
             if self.occupato:
                 return {"ok": False}
@@ -503,7 +520,8 @@ class Motore:
                                                 "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA,
                                                 "formato_appunti": self._formato(),
-                                                "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA})
+                                                "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
+                                                "modo": modo, "parole": self.parole_di(nome)})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -513,9 +531,15 @@ class Motore:
             self.nome_rec = nome
             self.titolo_fine = nome
             self._livelli = [0.0] * 48
-            self.reg = rg.Registratore(cart, nome, self.parte_sec)
+            self.reg = rg.Registratore(cart, nome, self.parte_sec, modo=modo, microfono=microfono,
+                                       diretta=bool(self.cfg.get("diretta")))
             self.reg.on_parte = lambda k: self.coda.put(("parte_finita", k))
             self.reg.avvia()
+            self.diretta, self.formati_extra = [], []
+            if self.reg.diretta:
+                threading.Thread(target=self._lavoro_diretta, args=(self.reg, cart), daemon=True).start()
+            if pdf:
+                threading.Thread(target=self._aggiungi_pdf_subito, args=(cart, pdf), daemon=True).start()
             self.occupato = True
             self._sveglio_voluto = True
             self.silenzio_da = time.monotonic()
@@ -559,10 +583,11 @@ class Motore:
                                                 "studente": self.cfg.get("studente") or {}, "importata": True,
                                                 "file_originale": str(src), "parte_secondi": self.parte_sec,
                                                 "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
-                                                "formato_appunti": self._formato()})
+                                                "formato_appunti": self._formato(), "parole": self.parole_di(nome)})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
+            self.formati_extra = []
             self.parti = {}
             self.finale = 0.0
             self.avviso_fine = ""
@@ -676,6 +701,7 @@ class Motore:
             el.aggiorna_info(cart, formato_appunti=formato)
         with self._lock:
             self.formato_vista = formato
+            self.formati_extra = []
             self.cartella_corrente = cart
             self.parti = {}
             for k in sorted(pac, key=int):
@@ -700,32 +726,24 @@ class Motore:
         minuti = max(1, round((info.get("durata") or 0) / 60))
         return round(max(0.01, 0.2 * minuti / 60), 2)
 
-    def rifai_appunti(self, cartella):
-        """Rifà pacchetti e appunti di una lezione già pronta (formato Cornell). Costa qualche centesimo."""
+    def rifai_appunti(self, cartella, formati=None):
+        """Rifà pacchetti e appunti di una lezione già pronta (di serie nel formato scelto in Impostazioni;
+        con formati=[...] in quei formati). Costa qualche centesimo."""
         cart = Path(cartella)
         ap.sistema_vecchi(cart)
         info = el.leggi_json(cart / "info.json", {}) or {}
         pac = info.get("pacchetti") or {}
         if not pac or self.occupato:
             return {"ok": False}
-        formato = self._formato()
-        for k in pac:
-            vecchio = (info.get(ap.chiave_info(formato)) or {}).get(k)
-            for f in (ap.file_json(cart, k, formato), Path(vecchio) if vecchio else None):
-                if f and f.exists():
-                    try:
-                        f.unlink()
-                    except OSError:
-                        pass
-        tutti = info.get(ap.chiave_completi(formato))
-        if tutti and Path(tutti).exists() and len(pac) > 1:
-            try:
-                Path(tutti).unlink()
-            except OSError:
-                pass
-        el.aggiorna_info(cart, **{ap.chiave_info(formato): {}, ap.chiave_completi(formato): None},
-                         formato_appunti=formato)
+        formati = [f for f in (formati or [self._formato()]) if f in ap.FORMATI] or [self._formato()]
+        # le parole difficili di adesso (magari aggiunte dopo la registrazione)
+        el.aggiorna_info(cart, parole=self.parole_di(info.get("nome", "")))
+        for formato in formati:
+            self._togli_appunti(cart, info, pac, formato)
+        formato = formati[0]
+        el.aggiorna_info(cart, formato_appunti=formato)
         with self._lock:
+            self.formati_extra = formati[1:]
             self.formato_vista = formato
             self.cartella_corrente = cart
             self.parti = {int(k): {"stato": "lav", "perc": 0.0, "orario": ""} for k in pac}
@@ -745,6 +763,23 @@ class Motore:
                     self.coda.put(("parte_err", int(k)))
         threading.Thread(target=lavoro, daemon=True).start()
         return {"ok": True}
+
+    def _togli_appunti(self, cart, info, pac, formato):
+        for k in pac:
+            vecchio = (info.get(ap.chiave_info(formato)) or {}).get(k)
+            for f in (ap.file_json(cart, k, formato), Path(vecchio) if vecchio else None):
+                if f and f.exists():
+                    try:
+                        f.unlink()
+                    except OSError:
+                        pass
+        tutti = info.get(ap.chiave_completi(formato))
+        if tutti and Path(tutti).exists() and len(pac) > 1:
+            try:
+                Path(tutti).unlink()
+            except OSError:
+                pass
+        el.aggiorna_info(cart, **{ap.chiave_info(formato): {}, ap.chiave_completi(formato): None})
 
     def completa(self, cartella):
         """Finisce una lezione rimasta a meta' (es. PC spento mentre preparava i file)."""
@@ -856,6 +891,8 @@ class Motore:
                 "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],
                 "rifai_appunti": bool(puo and fatti[self._formato()] and not mancano[self._formato()]),
                 "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
+                "docente": (cart / "docente.json").exists(), "mappa": (cart / "mappa.json").exists(),
+                "aula": info.get("modo") == "aula", "trascritta": any(cart.glob("trascrizione_*.json")),
                 "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
                 "formato": info.get("formato_appunti") or "cornell",
                 "importata": bool(info.get("importata")),
@@ -867,6 +904,262 @@ class Motore:
             liberi = 0
         return {"lezioni": out, "video_tot": tot_video, "video_testo": gb_testo(tot_video),
                 "quota": tot_video / (tot_video + liberi) if (tot_video + liberi) else 0, "base": str(BASE)}
+
+    # ------------------------------------------------------------------ in aula: microfoni
+
+    def microfoni(self):
+        return rg.microfoni()
+
+    def livello_microfono(self, mid=None):
+        if self.reg is not None:
+            return -1.0
+        return rg.livello_microfono(mid or None)
+
+    # ------------------------------------------------------------------ testo in diretta
+
+    def _lavoro_diretta(self, reg, cart):
+        """Mentre si registra: trascrive l'audio a pezzi da circa 45 secondi, per farlo leggere subito.
+        E' solo un'anteprima: la trascrizione vera (piu' precisa) si fa come sempre per ogni parte."""
+        import numpy as np
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        lingua = info.get("lingua_lezione") or testi.LINGUA
+        parole = info.get("parole") or []
+        t0, pezzi = None, []
+        threads = max(1, (os.cpu_count() or 2) // 2)
+        while True:
+            fermo = reg.stop_ev.wait(4)
+            nuovo = reg.prendi_diretta()
+            if nuovo:
+                if t0 is None:
+                    t0 = nuovo[0]
+                pezzi.append(nuovo[1])
+            durata = sum(len(p) for p in pezzi) / 48000
+            if pezzi and (durata >= 45 or (fermo and durata >= 2)):
+                audio = np.concatenate(pezzi)
+                audio = audio[:len(audio) // 3 * 3].reshape(-1, 3).mean(axis=1).astype(np.float32)   # 48 -> 16 kHz
+                inizio, t0, pezzi = t0, None, []
+                try:
+                    self.diretta_lav = True
+                    modello = el.modello_in_uso(threads)
+                    segs, _ = modello.transcribe(audio, language=None if lingua == "auto" else lingua,
+                                                 vad_filter=True, beam_size=1, condition_on_previous_text=False,
+                                                 hotwords=", ".join(parole) if parole else None)
+                    for sg in segs:
+                        testo = (sg.text or "").strip()
+                        if testo:
+                            with self._lock:
+                                self.diretta.append({"t": int(inizio + sg.start), "testo": testo})
+                except Exception:
+                    log.exception("testo in diretta")
+                finally:
+                    self.diretta_lav = False
+            if fermo:
+                break
+        try:
+            el.scrivi_json(cart / "diretta.json", self.diretta)
+        except Exception:
+            pass
+
+    # ------------------------------------------------------------------ parole difficili
+
+    @staticmethod
+    def _chiave_materia(m):
+        return (m or "").strip().lower()
+
+    def parole_di(self, nome):
+        d = (self.cfg.get("parole") or {}).get(self._chiave_materia(materia_di(nome or "")))
+        return list((d or {}).get("p") or [])
+
+    def _parole_n(self):
+        return sum(len((d or {}).get("p") or []) for d in (self.cfg.get("parole") or {}).values())
+
+    def parole(self, materia=None):
+        """Le materie (recenti, con parole salvate, delle lezioni registrate), le parole di quella scelta e
+        alcune proposte prese dai suoi appunti (le parole chiave che tornano di piu')."""
+        from collections import Counter
+        nomi = []
+        for m in (self.cfg.get("materie_recenti") or []) + [d.get("m", "") for d in (self.cfg.get("parole") or {}).values()]:
+            if m and self._chiave_materia(m) not in [self._chiave_materia(x) for x in nomi]:
+                nomi.append(m)
+        lezioni = []
+        try:
+            for c in sorted((p for p in BASE.iterdir() if (p / "info.json").exists()), key=lambda p: p.name, reverse=True):
+                nome = (el.leggi_json(c / "info.json", {}) or {}).get("nome", "")
+                lezioni.append((c, materia_di(nome)))
+                if materia_di(nome) and self._chiave_materia(materia_di(nome)) not in [self._chiave_materia(x) for x in nomi]:
+                    nomi.append(materia_di(nome))
+        except OSError:
+            pass
+        materia = materia or (nomi[0] if nomi else "")
+        km = self._chiave_materia(materia)
+        attuali = list(((self.cfg.get("parole") or {}).get(km) or {}).get("p") or [])
+        conta = Counter()
+        for c, m in lezioni:
+            if self._chiave_materia(m) != km:
+                continue
+            for carta in rp.carte_lezione(c):
+                for w in carta["parole"]:
+                    w = str(w).strip()
+                    if 2 < len(w) <= 40 and sum(ch.isalpha() for ch in w) >= 3:
+                        conta[w] += 1
+        gia = {w.lower() for w in attuali}
+        proposte = [w for w, _ in conta.most_common(40) if w.lower() not in gia][:10]
+        return {"materie": nomi[:12], "materia": materia, "parole": attuali, "proposte": proposte}
+
+    def salva_parole(self, materia, lista):
+        km = self._chiave_materia(materia)
+        if not km:
+            return {"ok": False}
+        pulite = []
+        for w in lista or []:
+            w = str(w).strip()[:60]
+            if w and w.lower() not in [x.lower() for x in pulite]:
+                pulite.append(w)
+        tutte = self.cfg.get("parole") or {}
+        if pulite:
+            tutte[km] = {"m": materia.strip(), "p": pulite[:40]}
+        else:
+            tutte.pop(km, None)
+        self.cfg["parole"] = tutte
+        salva_config(self.cfg)
+        return {"ok": True, "parole": pulite[:40]}
+
+    # ------------------------------------------------------------------ chiedi alla lezione
+
+    def chiedi(self, cartelle, storia, testo):
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        cartelle = [c for c in cartelle if Path(c).is_dir()]
+        if not cartelle or not (testo or "").strip():
+            return {"ok": False, "msg": tr("ch_vuoto")}
+        try:
+            r = ch.domanda(self.chiave(), cartelle, storia, testo.strip())
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("chiedi alla lezione")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        if len(cartelle) == 1:      # la conversazione resta con la lezione
+            p = Path(cartelle[0]) / "chiedi.json"
+            st = (el.leggi_json(p, []) or []) + [{"chi": "io", "testo": testo.strip()}, {"chi": "cl", "testo": r["testo"]}]
+            el.scrivi_json(p, st[-60:])
+            info = el.leggi_json(Path(cartelle[0]) / "info.json", {}) or {}
+            el.aggiorna_info(cartelle[0], spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+        return {"ok": True, **r}
+
+    def chiedi_storia(self, cartella):
+        return el.leggi_json(Path(cartella) / "chiedi.json", []) or []
+
+    def chiedi_cancella(self, cartella):
+        try:
+            (Path(cartella) / "chiedi.json").unlink()
+        except OSError:
+            pass
+        return True
+
+    def momento(self, cartella, sec=0, slide=None):
+        try:
+            return ch.momento(Path(cartella), float(sec or 0), slide)
+        except Exception:
+            log.exception("momento")
+            return {"sec": int(sec or 0), "ora": ch.hms(sec), "slide": None, "img": "", "frasi": []}
+
+    def video_url(self, cartella):
+        v = video_di(Path(cartella))
+        return servi_video.registra(v) if v else None
+
+    # ------------------------------------------------------------------ mappa mentale
+
+    def mappa(self, cartella, rifai=False):
+        cart = Path(cartella)
+        if not rifai:
+            d = el.leggi_json(cart / "mappa.json")
+            if d:
+                return {"ok": True, "mappa": d, "nuova": False}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            d, spesa = ch.crea_mappa(self.chiave(), cart)
+            return {"ok": True, "mappa": d, "nuova": True, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("mappa mentale")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def mappa_pdf(self, cartella, apri_dopo=True):
+        cart = Path(cartella)
+        d = el.leggi_json(cart / "mappa.json")
+        if not d:
+            return {"ok": False}
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        L = testi.lingua_di(info)
+        dest_dir = Path(self.cfg["cartella_pacchetti"])
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / f"{tr('mp_titolo', L)} – {el.nome_sicuro(info.get('nome', cart.name))}.pdf"
+        try:
+            ch.pdf_mappa(d, info, dest)
+        except Exception:
+            log.exception("PDF mappa")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        (apri if apri_dopo else mostra_file)(dest)
+        return {"ok": True, "file": str(dest)}
+
+    # ------------------------------------------------------------------ slide del docente (PDF)
+
+    def info_pdf(self, percorso):
+        try:
+            return {"ok": True, **dc.info_pdf(percorso)}
+        except Exception:
+            log.exception("info pdf")
+            return {"ok": False}
+
+    def _aggiungi_pdf_subito(self, cart, pdf):
+        """In aula, PDF scelto prima di registrare: preparo le pagine mentre si registra."""
+        try:
+            dc.aggiungi(cart, pdf)
+        except Exception:
+            log.exception("slide del docente")
+
+    def stima_docente(self, cartella):
+        info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
+        n = max(1, len([f for f in ap.FORMATI if ap.appunti_fatti(info, f)]))
+        return round(self.stima_appunti(cartella) * n, 2)
+
+    def aggiungi_docente(self, cartella, pdf):
+        """Lezione gia' pronta: aggiungo le slide del docente e rifaccio pacchetti e appunti."""
+        if self.occupato:
+            return {"ok": False, "msg": tr("aspetta_lavoro")}
+        cart = Path(cartella)
+        try:
+            dc.aggiungi(cart, pdf)
+            dc.allinea(cart)
+        except dc.ErroreDocente:
+            return {"ok": False, "msg": tr("dc_err")}
+        except Exception:
+            log.exception("slide del docente")
+            return {"ok": False, "msg": tr("dc_err")}
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        # tengo una copia degli appunti di prima
+        for f in ap.FORMATI:
+            tutti = info.get(ap.chiave_completi(f))
+            for k, v in list((info.get(ap.chiave_info(f)) or {}).items()) + ([("tutti", tutti)] if tutti else []):
+                try:
+                    if Path(v).exists():
+                        shutil.copy2(v, Path(v).with_name(Path(v).stem + " " + tr("dc_copia") + ".pdf"))
+                except OSError:
+                    pass
+        formati = [f for f in ap.FORMATI if ap.appunti_fatti(info, f)]
+        if formati and self.chiave():
+            return self.rifai_appunti(cart, formati)
+        # niente appunti (o niente chiave): rifaccio solo i pacchetti
+        pac = info.get("pacchetti") or {}
+        for k in pac:
+            try:
+                el.crea_pacchetto(cart, int(k), self.cfg["cartella_pacchetti"])
+            except Exception:
+                log.exception("pacchetto %s con slide del docente", k)
+        return {"ok": True, "solo_pacchetti": True}
 
     # ------------------------------------------------------------------ ripasso (flashcard)
 
@@ -1145,6 +1438,8 @@ class Motore:
             self.parti.setdefault(k, {"orario": self._orario(k)}).update(stato="ok", file=f)
             if self.appunti_lezione and not self.parti[k].get("ap"):
                 self.accoda_appunti(self.cartella_corrente, k)
+                for f in self.formati_extra:
+                    self.lavori_appunti.put((self.cartella_corrente, k, f))
         elif tipo == "ap_inizio":
             if dato in self.parti:
                 self.parti[dato].update(ap="lav", ap_t0=time.monotonic())

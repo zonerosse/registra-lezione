@@ -1,0 +1,2 @@
+Librerie in Python puro copiate qui (non serve rifare il programma completo):
+- pypdf 6.20.1 (licenza BSD, vedi pypdf-LICENSE.txt): legge il testo dei PDF delle slide del docente.

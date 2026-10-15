@@ -100,13 +100,13 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (p === 'rip' ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa'].includes(p) ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
-  if (p === 'imp') disegnaImpostazioni();
+  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); }
   if (p === 'info') disegnaAgg();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
@@ -124,6 +124,7 @@ function inizializza() {
   $('btnRec').onclick = inizia;
   $('btnImporta').onclick = scegliVideo;
   collegaRipasso();
+  collegaNovita();
   $('ivCambia').onclick = scegliVideo;
   $('ivAnnulla').onclick = () => { IV = null; vai('reg'); };
   $('ivVai').onclick = importaVideo;
@@ -245,6 +246,7 @@ function disegnaPronto() {
   disegnaLingue();
   anteprimaNome();
   disegnaSorgenti();
+  disegnaModo();
 }
 function disegnaLingue() {
   const L = ['it', 'en', 'fr', 'es', 'de', 'auto'];
@@ -272,7 +274,8 @@ async function inizia() {
   try {
     const v = await A.verifica_inizio();
     if (v.occupato) { toast(t('aspetta')); return; }
-    if (!v.audio_ok && !await conferma(t('in.audio.t'), t('in.audio'), t('in.audio.si'), t('annulla'))) return;
+    const aula = R.modo === 'aula';
+    if (!aula && !v.audio_ok && !await conferma(t('in.audio.t'), t('in.audio'), t('in.audio.si'), t('annulla'))) return;
     if (v.liberi != null && v.liberi < 3 && !await conferma(t('in.spazio.t'), t('in.spazio', {g: num(v.liberi.toFixed(1))}), t('continua'))) return;
     if (!v.cartella_ok) { await dialogo({titolo: t('in.cart.t'), testo: t('in.cart')}); vai('imp'); return; }
     if (v.dnd) {
@@ -283,8 +286,8 @@ async function inizia() {
       if (r.ck) { await A.imposta('promemoria_dnd', false); R.dnd = false; }
       if (r.v !== 'si') return;
     }
-    const r = await A.avvia($('nome').value);
-    if (r.ok) { $('nome').value = ''; await aggiorna(); }
+    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : ''});
+    if (r.ok) { $('nome').value = ''; PDFA = null; disegnaModo(); await aggiorna(); }
   } finally { $('btnRec').disabled = false; }
 }
 
@@ -361,6 +364,8 @@ function disegnaReg() {
   $('lAvv').classList.toggle('hidden', !S.avviso);
   $('lAvv').textContent = S.avviso ? '⚠ ' + S.avviso : '';
   disegnaParti($('lParti'));
+  disegnaDiretta();
+  $('slideCard').classList.toggle('hidden', S.modo === 'aula' && !S.slide);
   if (S.slide !== slideViste) { slideViste = S.slide; A.miniature().then(m => {
     $('thumbs').innerHTML = m.length ? m.map(x => `<div class="th" style="background-image:url('${x.src}')"><em>${x.ora}</em></div>`).join('')
       : `<div class="vuoto">${t('lv.vuoto')}</div>`;
@@ -481,7 +486,8 @@ function disegnaLezioni() {
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
-    const sec = (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
+    const chiedi = l.trascritta && l.stato === 'pronta' ? `<button class="btn b-cor b-sm" data-a="chiedi">${ico('chat')}${t('ar.chiedi')}</button>` : '';
+    const sec = chiedi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
       <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div><div class="acts">${pill}${prim}${sec}</div></div>
@@ -496,6 +502,9 @@ async function azioneLezione(l, a, e) {
   const c = l.cartella;
   if (a === 'appunti') return apriAppunti(c);
   if (a === 'ripassa') return iniziaRipasso([c], l.nome, 'prima');
+  if (a === 'chiedi') return apriChiedi(l);
+  if (a === 'mappa') return apriMappa(l);
+  if (a === 'pdf') return aggiungiPdf(l);
   if (a === 'tras') return A.apri_lezione(c);
   if (a === 'video') return A.apri(l.video);
   if (a === 'pacchetti') return A.apri_pacchetti();
@@ -548,6 +557,8 @@ function menuLezione(l, btn) {
   (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: t('fmt.' + f)})]));
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: t('fmt.' + f)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: t('fmt.' + R.formato)})]);
+  if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')]);
+  if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')], ['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
   voci.push(['elimina', 'trash', t('ar.m.el'), 'r']);
@@ -594,6 +605,7 @@ function disegnaImpostazioni() {
   $('fmtBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.f === R.formato));
   $('swMini').classList.toggle('on', !!R.mini);
   $('swDnd').classList.toggle('on', !!R.dnd);
+  $('swDir').classList.toggle('on', !!R.diretta);
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
@@ -627,6 +639,245 @@ function disegnaGuida(l) {
     if (d.open) { try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {} } else v.pause();
   }));
   $('segGuida').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === l));
+}
+
+/* ------------------------------------------------------------------ in aula (microfono) */
+let PDFA = null, MICS = null, micOcc = false;
+async function disegnaModo() {
+  const aula = R.modo === 'aula';
+  $('doveBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.m === (aula ? 'aula' : 'online')));
+  $('srcAula').classList.toggle('hidden', !aula);
+  $('srcOnline').classList.toggle('hidden', aula);
+  $('prP').textContent = t(aula ? 'pr.p.aula' : 'pr.p');
+  $('prPrima').textContent = t(aula ? 'pr.prima.aula' : 'pr.prima');
+  $('pdfTxt').textContent = PDFA ? `${PDFA.nome} · ${t('dc.pag', {p: PDFA.pagine, mb: num(PDFA.mb)})}` : t('src.pdf.s');
+  $('pdfTxt').className = PDFA ? 'okt' : 'mutt';
+  $('btnPdfA').textContent = PDFA ? t('dc.cambia') : t('src.pdf.b');
+  $('btnPdfX').classList.toggle('hidden', !PDFA);
+  if (aula && MICS === null) {
+    MICS = await A.microfoni();
+    const sel = $('selMic');
+    sel.innerHTML = MICS.length ? MICS.map(m => `<option value="${esc(m.id)}">${esc(m.predefinito ? t('src.mic.pred', {n: m.nome}) : m.nome)}</option>`).join('')
+      : `<option value="">${esc(t('src.mic.no'))}</option>`;
+    const scelto = MICS.find(m => m.id === R.microfono) || MICS.find(m => m.predefinito);
+    if (scelto) sel.value = scelto.id;
+  }
+}
+function livelloMic() {
+  if (micOcc || pagina !== 'reg' || R.modo !== 'aula' || S.registro || S.occupato || (S.vista || 'pronto') !== 'pronto' || IV) return;
+  micOcc = true;
+  A.livello_microfono($('selMic').value || null).then(x => {
+    const n = x < 0 ? 0 : Math.round(Math.min(1, Math.sqrt(x) * 1.6) * 10);
+    $('micLiv').innerHTML = Array.from({length: 10}, (_, i) => `<i class="${i < n ? 'on' : ''}" style="height:${6 + i * 1.4}px"></i>`).join('');
+  }).finally(() => { micOcc = false; });
+}
+setInterval(() => { if (A) livelloMic(); }, 600);
+
+/* ------------------------------------------------------------------ testo in diretta */
+function disegnaDiretta() {
+  $('dirCard').classList.toggle('hidden', !S.diretta_on);
+  if (!S.diretta_on) return;
+  const D = S.diretta || [];
+  const h = (D.length ? D.map(d => `<p><span class="o">${hms(d.t)}</span>${esc(d.testo)}</p>`).join('') : `<p class="ult">${t('lv.dir.att')}</p>`)
+    + (S.diretta_lav ? `<p class="ult">${t('lv.dir.lav')}</p>` : '');
+  const b = $('dirTxt');
+  if (b.dataset.h === h) return;
+  const giu = b.scrollTop + b.clientHeight >= b.scrollHeight - 30;
+  b.dataset.h = h; b.innerHTML = h;
+  if (giu) b.scrollTop = b.scrollHeight;
+}
+
+/* ------------------------------------------------------------------ parole difficili */
+let PW = {materia: null};
+async function disegnaParole(materia) {
+  const r = await A.parole(materia || PW.materia || null);
+  PW = r;
+  const mats = r.materie.length ? r.materie : [];
+  $('pwMat').innerHTML = mats.map(m => `<span class="chip${m === r.materia ? ' on' : ''}" data-m="${esc(m)}">${esc(m)}</span>`).join('') + `<span class="chip" id="pwNuova">${esc(t('pw.nuova'))}</span>`;
+  $('pwMat').querySelectorAll('.chip[data-m]').forEach(c => c.onclick = () => disegnaParole(c.dataset.m));
+  $('pwNuova').onclick = async () => {
+    const ok = await dialogo({titolo: t('pw.nuova.t'), html: `<input class="in" maxlength="60"><div class="hint" style="margin-top:8px">${esc(t('pw.nuova.s'))}</div>`,
+      bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', v: true}]});
+    const m = (dialogo.valore || '').trim();
+    if (ok && m) { PW = {materia: m, parole: [], proposte: [], materie: [...mats, m]}; disegnaParole(m); }
+  };
+  const vuoto = !r.materia;
+  $('pwIn').disabled = $('pwAgg').disabled = vuoto;
+  $('pwTags').innerHTML = vuoto ? `<span class="hint">${esc(t('pw.nomat'))}</span>`
+    : r.parole.length ? r.parole.map((w, i) => `<span class="tag2">${esc(w)}<b data-i="${i}" title="${esc(t('togli'))}">×</b></span>`).join('')
+    : `<span class="hint">${esc(t('pw.vuoto', {m: r.materia}))}</span>`;
+  $('pwTags').querySelectorAll('b[data-i]').forEach(b => b.onclick = () => salvaParole(PW.parole.filter((_, i) => i !== +b.dataset.i)));
+  $('pwProp').innerHTML = r.proposte && r.proposte.length ? `<div class="lbl" style="margin-top:14px">${esc(t('pw.prop', {m: r.materia}))}</div><div class="tags">` +
+    r.proposte.map(w => `<span class="tag2 prop" data-w="${esc(w)}">+ ${esc(w)}</span>`).join('') + '</div>' : '';
+  $('pwProp').querySelectorAll('.prop').forEach(e => e.onclick = () => salvaParole([...PW.parole, e.dataset.w]));
+}
+async function salvaParole(lista) {
+  if (!PW.materia) return;
+  await A.salva_parole(PW.materia, lista);
+  await disegnaParole(PW.materia);
+  R.parole_n = (R.parole_n || 0);
+}
+function aggiungiParola() {
+  const w = $('pwIn').value.trim();
+  if (!w) return;
+  $('pwIn').value = '';
+  salvaParole([...PW.parole, ...w.split(/[,;]/).map(x => x.trim()).filter(Boolean)]);
+}
+
+/* ------------------------------------------------------------------ chiedi alla lezione */
+let CH = {lez: null, cartelle: [], storia: [], tutta: false, materia: null, nomi: []};
+function lezioniMateria(l) {
+  return (LZ ? LZ.lezioni : []).filter(x => x.trascritta && x.stato === 'pronta' && x.materia.toLowerCase() === l.materia.toLowerCase());
+}
+async function apriChiedi(l) {
+  CH = {lez: l, cartelle: [l.cartella], storia: await A.chiedi_storia(l.cartella), tutta: false, materia: l.materia, nomi: [l.nome]};
+  const altre = lezioniMateria(l);
+  $('chSeg').classList.toggle('hidden', altre.length < 2);
+  $('chSeg').innerHTML = `<span data-x="0" class="on">${esc(t('ch.questa'))}</span><span data-x="1">${esc(t('ch.tutta', {m: l.materia}))}</span>`;
+  $('chSeg').querySelectorAll('span').forEach(sp => sp.onclick = async () => {
+    const tutta = sp.dataset.x === '1';
+    $('chSeg').querySelectorAll('span').forEach(x => x.classList.toggle('on', x === sp));
+    CH.tutta = tutta;
+    const L = tutta ? lezioniMateria(l) : [l];
+    CH.cartelle = L.map(x => x.cartella); CH.nomi = L.map(x => x.nome);
+    CH.storia = tutta ? [] : await A.chiedi_storia(l.cartella);
+    disegnaChiedi();
+  });
+  vai('chiedi'); disegnaChiedi();
+  setTimeout(() => $('chIn').focus(), 50);
+}
+function testoRisposta(x) {
+  let h = esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  return h.replace(/\[\[\s*(?:L(\d+)\s+)?(?:slide\s*(\d+)|(\d{1,2}:\d{2}(?::\d{2})?))\s*\]\]/gi, (m, li, sl, tm) => {
+    const i = li ? +li - 1 : 0;
+    let sec = 0;
+    if (tm) { const p = tm.split(':').map(Number); sec = p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1]; }
+    const nome = li && CH.nomi[i] ? '«' + (CH.nomi[i].split(' – ').slice(-1)[0]) + '» · ' : '';
+    const et = sl ? 'slide ' + sl : t('ch.min', {m: Math.floor(sec / 60)});
+    return `<button class="cita" data-i="${i}" data-s="${sl || ''}" data-t="${sec}">▶ ${esc(nome)}${et}</button>`;
+  });
+}
+function disegnaChiedi() {
+  const L = CH.lez;
+  $('chSub').textContent = CH.tutta ? `${CH.materia} · ${t('ch.lezioni', {n: CH.cartelle.length})}` : `${L.nome} · ${L.quando}`;
+  const h = CH.storia.length ? CH.storia.map(m => m.chi === 'io' ? `<div class="msg io">${esc(m.testo)}</div>`
+    : m.chi === 'att' ? `<div class="msg cl"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> ${esc(t('ch.pensa'))}</div>`
+    : m.chi === 'err' ? `<div class="msg cl" style="color:#be123c">⚠ ${esc(m.testo)}</div>`
+    : `<div class="msg cl">${testoRisposta(m.testo)}</div>`).join('')
+    : `<div class="msg vuoto">${esc(t('ch.vuoto'))}</div>`;
+  $('chat').innerHTML = h;
+  $('chat').querySelectorAll('.cita').forEach(b => b.onclick = () => mostraMomento(CH.cartelle[+b.dataset.i] || CH.cartelle[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, CH.nomi[+b.dataset.i] || ''));
+  $('chat').scrollTop = $('chat').scrollHeight;
+}
+async function inviaDomanda() {
+  const q = $('chIn').value.trim();
+  if (!q || CH.storia.some(m => m.chi === 'att')) return;
+  $('chIn').value = '';
+  const prima = CH.storia.filter(m => m.chi === 'io' || m.chi === 'cl');
+  CH.storia = [...prima, {chi: 'io', testo: q}, {chi: 'att'}];
+  disegnaChiedi();
+  const r = await A.chiedi(CH.cartelle, prima, q);
+  CH.storia = CH.storia.filter(m => m.chi !== 'att');
+  CH.storia.push(r.ok ? {chi: 'cl', testo: r.testo} : {chi: 'err', testo: r.msg});
+  disegnaChiedi();
+}
+async function mostraMomento(cartella, sec, slide, nome) {
+  const [m, url] = await Promise.all([A.momento(cartella, sec, slide), A.video_url(cartella)]);
+  const frasi = m.frasi.map(f => `<p><span class="o">${f.ora}</span>${esc(f.testo)}</p>`).join('');
+  const html = `<div class="mom">${url ? `<video id="momV" controls preload="auto" src="${esc(url)}#t=${m.sec}"></video><div class="hint hidden" id="momErr" style="margin:6px 0">${esc(t('mom.novid'))}</div>` : `<div class="hint" style="margin-bottom:8px">${esc(t('mom.novid'))}</div>`}
+    ${m.img && !url ? `<img src="${m.img}" alt="">` : ''}<div class="frasi">${frasi}</div></div>`;
+  const tit = `${nome ? nome + ' · ' : ''}${m.slide ? 'slide ' + m.slide + ' · ' : ''}${m.ora}`;
+  setTimeout(() => {
+    const v = $('momV');
+    if (!v) return;
+    v.addEventListener('loadedmetadata', () => { try { v.currentTime = m.sec; v.play().catch(() => {}); } catch (e) {} }, {once: true});
+    v.addEventListener('error', () => { v.remove(); $('momErr').classList.remove('hidden'); if (m.img) $('momErr').insertAdjacentHTML('afterend', `<img src="${m.img}" alt="">`); }, {once: true});
+  }, 0);
+  await dialogo({titolo: tit, html, bottoni: url ? [{t: t('mom.apri'), cls: 'b-ghost', fn: () => A.apri(LZ.lezioni.find(x => x.cartella === cartella)?.video || '')}, {t: t('chiudi'), cls: 'b-main', v: true}] : null});
+}
+
+/* ------------------------------------------------------------------ mappa mentale */
+let MP = {lez: null, dati: null};
+const COLORI_MAPPA = ['#0369a1', '#7c3aed', '#c2410c', '#059669', '#be123c', '#0891b2'];
+async function apriMappa(l, rifai = false) {
+  MP = {lez: l, dati: null};
+  $('mpSub').textContent = `${l.nome} · ${l.quando}`;
+  $('mpBox').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('mp.lav'))}</div>`;
+  vai('mappa');
+  const r = await A.mappa(l.cartella, rifai);
+  if (MP.lez !== l) return;
+  if (!r.ok) { $('mpBox').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  MP.dati = r.mappa;
+  disegnaMappa();
+  if (r.nuova) caricaLezioni();
+}
+function disposizione(d, W = 900) {
+  const rami = d.rami || [], meta = Math.ceil(rami.length / 2);
+  const dx = rami.slice(0, meta), sx = rami.slice(meta);
+  const alt = r => 44 + 30 * r.foglie.length;
+  const somma = g => g.reduce((a, r) => a + alt(r) + 26, 0);
+  const H = Math.max(somma(dx), somma(sx), 260) + 20;
+  const out = [];
+  [[1, dx], [-1, sx]].forEach(([lato, g]) => {
+    let y = (H - (somma(g) - 26)) / 2;
+    g.forEach(r => { out.push({x: W / 2 + lato * W * 0.31, y: y + 20, lato, ramo: r}); y += alt(r) + 26; });
+  });
+  return {W, H, cx: W / 2, cy: H / 2, rami: out};
+}
+function disegnaMappa() {
+  const d = MP.dati, D = disposizione(d);
+  const g = [`<svg viewBox="0 0 ${D.W} ${D.H}" font-family="Segoe UI,system-ui,sans-serif"><defs><linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0369a1"/><stop offset="1" stop-color="#0d4275"/></linearGradient></defs>`];
+  D.rami.forEach((r, i) => {
+    const c = COLORI_MAPPA[i % 6], x1 = r.x - r.lato * 110;
+    g.push(`<path d="M${D.cx} ${D.cy} C ${(D.cx + x1) / 2} ${D.cy}, ${(D.cx + x1) / 2} ${r.y}, ${x1} ${r.y}" stroke="${c}" stroke-width="3" fill="none" opacity=".55"/>`);
+  });
+  const cw = Math.max(160, Math.min(260, d.centro.length * 11 + 40));
+  g.push(`<rect x="${D.cx - cw / 2}" y="${D.cy - 28}" width="${cw}" height="56" rx="28" fill="url(#gc)"/><text x="${D.cx}" y="${D.cy + 6}" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">${esc(d.centro)}</text>`);
+  D.rami.forEach((r, i) => {
+    const c = COLORI_MAPPA[i % 6];
+    g.push(`<rect x="${r.x - 110}" y="${r.y - 20}" width="220" height="40" rx="12" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${r.x}" y="${r.y + 5}" text-anchor="middle" fill="${c}" font-size="14" font-weight="700">${esc(corto(r.ramo.titolo, 28))}</text>`);
+    r.ramo.foglie.forEach((f, j) => {
+      const yy = r.y + 42 + j * 30;
+      g.push(`<rect x="${r.x - 115}" y="${yy - 12}" width="230" height="24" rx="12" fill="${c}" fill-opacity=".08"/><text x="${r.x}" y="${yy + 4}" text-anchor="middle" fill="#26354a" font-size="12.5"><title>${esc(f)}</title>${esc(corto(f, 36))}</text>`);
+    });
+  });
+  g.push('</svg>');
+  $('mpBox').innerHTML = g.join('');
+}
+const corto = (x, n) => (x = String(x || '')).length > n ? x.slice(0, n - 1) + '…' : x;
+
+/* ------------------------------------------------------------------ slide del docente (PDF) */
+async function aggiungiPdf(l) {
+  if (S.registro || S.occupato) { toast(t('aspetta')); return; }
+  const f = await A.scegli_pdf();
+  if (!f.ok) { if (f.msg) await dialogo({titolo: t('dc.t'), testo: f.msg}); return; }
+  const conAppunti = (l.formati || []).length > 0 && R.chiave;
+  const c = conAppunti ? await A.stima_docente(l.cartella) : 0;
+  const html = `<div class="file" style="margin-bottom:12px"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(f.nome)}</b><div class="hint">${esc(t('dc.pag', {p: f.pagine, mb: num(f.mb)}))}</div></div></div>`;
+  const ok = await dialogo({titolo: t('dc.t'), html: html + `<div class="tx">${esc(conAppunti ? t('dc.testo', {n: l.nome, c: num(c.toFixed(2))}) : t('dc.testo0', {n: l.nome}))}</div>`,
+    bottoni: [{t: t('annulla'), v: false}, {t: t(conAppunti ? 'dc.si' : 'dc.si0'), cls: 'b-cor', v: true}]});
+  if (!ok) return;
+  toast(t('dc.lav'));
+  const r = await A.aggiungi_docente(l.cartella, f.percorso);
+  if (!r.ok) { await dialogo({titolo: t('dc.t'), testo: r.msg || ''}); return; }
+  if (r.solo_pacchetti) { toast(t('dc.ok0')); caricaLezioni(); return; }
+  await aggiorna(); vai('reg');
+}
+
+function collegaNovita() {
+  $('doveBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => { await A.imposta('modo', o.dataset.m); R.modo = o.dataset.m; disegnaModo(); });
+  $('selMic').onchange = () => { A.imposta('microfono', $('selMic').value); R.microfono = $('selMic').value; };
+  $('btnPdfA').onclick = async () => { const f = await A.scegli_pdf(); if (f.ok) { PDFA = f; disegnaModo(); } else if (f.msg) toast(f.msg); };
+  $('btnPdfX').onclick = () => { PDFA = null; disegnaModo(); };
+  $('swDir').onclick = async () => { await A.imposta('diretta', !R.diretta); await rileggi(); };
+  $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
+  $('pwAgg').onclick = aggiungiParola;
+  $('chVai').onclick = inviaDomanda;
+  $('chIn').addEventListener('keydown', e => { if (e.key === 'Enter') inviaDomanda(); });
+  $('chNuova').onclick = async () => { if (!CH.tutta) await A.chiedi_cancella(CH.lez.cartella); CH.storia = []; disegnaChiedi(); };
+  $('mpPdf').onclick = async () => { if (!MP.dati) return; const r = await A.mappa_pdf(MP.lez.cartella, false); if (r.ok) toast(t('mp.salvata')); };
+  $('mpStampa').onclick = async () => { if (MP.dati) await A.mappa_pdf(MP.lez.cartella, true); };
+  $('mpRifai').onclick = async () => { if (MP.lez && await conferma(t('mp.rifai.t'), t('mp.rifai.c'))) apriMappa(MP.lez, true); };
 }
 
 /* ------------------------------------------------------------------ ripasso (flashcard) */

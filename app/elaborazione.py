@@ -194,9 +194,10 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     model = _modello(threads)
     t0 = time.monotonic()
     lingua = (leggi_json(cartella / "info.json", {}) or {}).get("lingua_lezione") or LINGUA
+    parole = parole_lezione(cartella)
     segmenti, info = model.transcribe(
         audio_16k(wav), language=None if lingua == "auto" else lingua, vad_filter=True, beam_size=1,
-        condition_on_previous_text=False)
+        condition_on_previous_text=False, hotwords=", ".join(parole) if parole else None)
     if lingua == "auto" and getattr(info, "language", None):
         aggiorna_info(cartella, lingua_rilevata=info.language)
     offset = (k - 1) * parte_secondi(cartella)
@@ -216,6 +217,19 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
 
 
 _MODELLO = {}
+
+
+def parole_lezione(cartella):
+    """Le "parole difficili" della materia (nomi, termini tecnici) salvate con la lezione."""
+    p = (leggi_json(Path(cartella) / "info.json", {}) or {}).get("parole") or []
+    return [str(x).strip() for x in p if str(x).strip()][:40]
+
+
+def modello_in_uso(threads):
+    """Per il testo in diretta: lo stesso modello gia' caricato (se c'e'), cosi' non se ne carica un altro."""
+    if _MODELLO:
+        return next(iter(_MODELLO.values()))
+    return _modello(threads)
 
 
 def _modello(threads):
@@ -250,6 +264,11 @@ def slide_in_tempo_audio(meta, cartella=None):
     """Orari delle slide riportati sull'orologio dell'audio (0 = inizio audio).
     Con la cartella, le foto che sono solo la continuazione della precedente
     (lavagna scritta a mano poco alla volta) diventano una sola: l'ultima, completa."""
+    if cartella is not None and not meta.get("slides") and (Path(cartella) / "docente.json").exists():
+        # lezione senza foto dello schermo (in aula) ma con le slide del docente: le pagine sono gia'
+        # sulla linea del tempo dell'audio
+        ev = (leggi_json(Path(cartella) / "docente.json", {}) or {}).get("eventi") or []
+        return sorted(({"file": e["file"], "t": float(e["t"])} for e in ev), key=lambda s: s["t"])
     a0 = float(meta.get("audio_t0") or 0)
     slides = sorted(({"file": s["file"], "t": max(0.0, float(s["t"]) - a0)}
                      for s in meta.get("slides", [])), key=lambda s: s["t"])
@@ -298,11 +317,19 @@ def zona_contenuto(img):
     return (x0 * k, y0 * k, min(W, x1 * k), min(H, y1 * k))
 
 
-def immagine_slide(cartella, nome):
+def immagine_slide(cartella, nome, originale=False):
     """Percorso della slide da mettere nei PDF: ritagliata sulla presentazione se si puo'.
-    L'originale (schermo intero) resta in slide/, il ritaglio va in slide/ritagli/."""
+    L'originale (schermo intero) resta in slide/, il ritaglio va in slide/ritagli/.
+    Se sono state aggiunte le slide del docente in PDF, al posto della foto va la pagina giusta
+    (originale=True: sempre la foto dello schermo, ritagliata)."""
     from PIL import Image
     orig = Path(cartella) / "slide" / nome
+    if nome.startswith("docente_"):
+        return orig
+    if not originale and (Path(cartella) / "docente.json").exists():
+        sost = (leggi_json(Path(cartella) / "docente.json", {}) or {}).get("sostituzioni") or {}
+        if sost.get(nome) and (Path(cartella) / "slide" / sost[nome]).exists():
+            return Path(cartella) / "slide" / sost[nome]
     rit = Path(cartella) / "slide" / "ritagli" / nome
     if rit.exists():
         return rit
@@ -579,6 +606,9 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     cartella = Path(cartella)
     info = leggi_json(cartella / "info.json", {}) or {}
     meta = leggi_json(cartella / "meta.json", {}) or {}
+    if (cartella / "docente.json").exists():      # slide del docente: abbinamento con la trascrizione nuova
+        import docente
+        docente.allinea(cartella)
     segmenti = leggi_json(cartella / f"trascrizione_{k:03d}.json", []) or []
     inizio = (k - 1) * parte_secondi(cartella)
     fine = inizio + durata_wav(cartella / f"audio_{k:03d}.wav")

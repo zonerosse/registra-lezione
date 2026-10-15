@@ -88,6 +88,11 @@ T = {
         "pdf_esercizi": "Esercizi svolti",
         "pdf_altre": "Altre domande d'esame",
         "pdf_controllare": "Da controllare",
+        "ch_vuoto": "Questa lezione non ha ancora la trascrizione.",
+        "ch_mappa_err": "Claude non ha preparato la mappa: riprova.",
+        "mp_titolo": "Mappa mentale",
+        "dc_err": "Non riesco a leggere questo PDF. Prova a salvarlo di nuovo (Stampa → Microsoft Print to PDF) e riprova.",
+        "dc_copia": "(prima delle slide del docente)",
         "pdf_creato": "Creato con Registra Lezione · Punto Web Ferrara",
         "pdf_lingua": "Lezione in {l} · appunti in italiano",
         # pacchetto per l'AI e trascrizione
@@ -188,6 +193,11 @@ T = {
         "pdf_esercizi": "Worked examples",
         "pdf_altre": "More exam questions",
         "pdf_controllare": "To check",
+        "ch_vuoto": "This lecture has no transcript yet.",
+        "ch_mappa_err": "Claude did not prepare the map: try again.",
+        "mp_titolo": "Mind map",
+        "dc_err": "I can't read this PDF. Try saving it again (Print → Microsoft Print to PDF) and retry.",
+        "dc_copia": "(before the lecturer's slides)",
         "pdf_creato": "Created with Registra Lezione · Punto Web Ferrara",
         "pdf_lingua": "Lecture in {l} · notes in English",
         "tr_intro": ("Recording of a lecture followed online. Each section contains the image of the slide shown "
