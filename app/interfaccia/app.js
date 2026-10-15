@@ -53,6 +53,17 @@ async function avvio() {
   ciclo();
 }
 const pausa = ms => new Promise(r => setTimeout(r, ms));
+// telefono, tasto «Indietro»: chiude dialogo o menu, altrimenti torna a Registra. false = l'app va dietro
+window.indietro = () => {
+  const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
+  const v = [...document.querySelectorAll('.velo')].pop();
+  if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
+  if (['rip', 'chiedi', 'mappa'].includes(pagina)) { vai('arch'); return true; }
+  if (pagina === 'info') { vai('imp'); return true; }
+  if (pagina !== 'reg') { vai('reg'); return true; }
+  if (IV) { IV = null; vai('reg'); return true; }
+  return false;
+};
 
 /* ------------------------------------------------------------------ dialoghi */
 function dialogo({titolo, testo = '', html = '', bottoni = null, ck = null}) {
@@ -247,6 +258,22 @@ function disegnaPronto() {
   anteprimaNome();
   disegnaSorgenti();
   disegnaModo();
+  disegnaQuando();
+}
+/* telefono: «Quando trascrivo?» (Durante / Dopo), scelto prima di ogni registrazione */
+let QUANDO = null;
+function disegnaQuando() {
+  if (!ANDROID) return;
+  if (QUANDO === null) QUANDO = R.quando || 'durante';
+  $('quandoBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.q === QUANDO));
+  const v = R.velocita;
+  let h = t('and.stima.no');
+  if (v) {
+    const lav = 7200 / v;
+    h = QUANDO === 'dopo' ? t('and.stima.dopo', {t: durataTesto(lav)})
+      : t('and.stima.dur', {m: Math.max(5, Math.round(Math.min(lav, (R.minuti || 30) * 60 / v) / 60 + 3))});
+  }
+  $('quandoStima').textContent = h;
 }
 function disegnaLingue() {
   const L = ['it', 'en', 'fr', 'es', 'de', 'auto'];
@@ -279,7 +306,8 @@ async function inizia() {
     if (!aula && !v.audio_ok && !await conferma(t('in.audio.t'), t('in.audio'), t('in.audio.si'), t('annulla'))) return;
     if (v.liberi != null && v.liberi < 3 && !await conferma(t('in.spazio.t'), t('in.spazio', {g: num(v.liberi.toFixed(1))}), t('continua'))) return;
     if (!v.cartella_ok) { await dialogo({titolo: t('in.cart.t'), testo: t('in.cart')}); vai('imp'); return; }
-    if (v.dnd) {
+    if (ANDROID && !aula && !await conferma(t('and.viva.t'), t('and.viva'), t('and.viva.si'), t('annulla'), 'b-rec')) return;
+    if (v.dnd && !ANDROID) {
       const r = await dialogo({
         titolo: t('dnd.t'), testo: t('dnd'), html: `<div class="passi">${t('dnd.passi')}</div>`, ck: t('dnd.ck'),
         bottoni: [{t: t('annulla'), v: 'no'}, {t: t('dnd.apri'), cls: 'b-ghost', fn: () => A.apri_non_disturbare()},
@@ -287,8 +315,8 @@ async function inizia() {
       if (r.ck) { await A.imposta('promemoria_dnd', false); R.dnd = false; }
       if (r.v !== 'si') return;
     }
-    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : ''});
-    if (r.ok) { $('nome').value = ''; PDFA = null; disegnaModo(); await aggiorna(); }
+    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : ''});
+    if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; disegnaModo(); await aggiorna(); }
   } finally { $('btnRec').disabled = false; }
 }
 
@@ -351,7 +379,7 @@ function disegnaReg() {
   if (!S.registro) return;
   $('lT').textContent = hms(S.secondi || 0);
   $('lNm').textContent = S.nome;
-  $('lSl').textContent = S.slide;
+  $('lSl').textContent = ANDROID ? (S.batteria >= 0 ? S.batteria + '%' : '–') : S.slide;
   $('lGb').textContent = gb(S.gb || 0);
   $('lPk').textContent = S.pronti;
   $('live').classList.toggle('pz', !!S.pausa);
@@ -385,6 +413,7 @@ function disegnaParti(el) {
   const h = P.map(p => {
     let st = '';
     if (p.stato === 'reg') st = `<span class="pill p-grey">${t('pt.reg')}</span>`;
+    else if (p.stato === 'dopo') st = `<span class="pill p-vio">${t('pt.dopo')}</span>`;
     else if (p.stato === 'attesa') st = `<span class="pill p-grey">${t('pt.coda')}</span>`;
     else if (p.stato === 'lav') st = `<span class="pill p-blue">${t('pt.lav', {p: Math.round((p.perc || 0) * 100)})}</span><div class="bar" style="width:100%;margin:0"><i style="width:${(p.perc || 0) * 100}%"></i></div>`;
     else if (p.stato === 'ok') st = `<span class="pill p-ok">${t('pt.ok')}</span><button class="lnk" data-f="${esc(p.file || '')}">${t('pt.mostra')}</button>`;
@@ -417,8 +446,9 @@ function disegnaFine() {
   $('fSub').textContent = (S.titolo_fine || '') + sp;
   $('fBar').classList.toggle('hidden', pronto || perc === null);
   if (perc !== null) $('fBar').firstElementChild.style.width = (perc * 100) + '%';
-  $('fAvv').classList.toggle('hidden', !S.avviso_fine);
-  $('fAvv').textContent = S.avviso_fine ? '⚠ ' + S.avviso_fine : '';
+  const avvF = S.aspetta_carica ? t('and.aspetto') : S.avviso_fine;
+  $('fAvv').classList.toggle('hidden', !avvF);
+  $('fAvv').textContent = avvF ? (S.aspetta_carica ? '🔌 ' : '⚠ ') + avvF : '';
   disegnaParti($('fParti'));
   $('fTras').disabled = !pronto;
   $('fNuova').disabled = !!S.occupato;
@@ -443,8 +473,9 @@ function disegnaFine() {
   } else {
     h = `<div class="row"><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t('fn.pac.t')}</b>
       <div class="hint">${t('fn.pac')}</div></div>
-      <button class="btn b-main b-sm" id="fApriPac">${ico('folder')}${t('fn.apricart')}</button></div>`;
+      ${ANDROID ? '' : `<button class="btn b-main b-sm" id="fApriPac">${ico('folder')}${t('fn.apricart')}</button>`}</div>`;
   }
+  $('fAp').classList.toggle('hidden', P.length > 0 && P.every(p => p.stato === 'dopo'));
   if ($('fAp').dataset.h !== h) {
     $('fAp').dataset.h = h; $('fAp').innerHTML = h;
     if ($('fApri')) $('fApri').onclick = () => apriAppunti(null);
@@ -482,10 +513,11 @@ function disegnaLezioni() {
       (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
+    else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
     else if (l.n_appunti) { pill = (l.formati || []).map(f => f === 'esame' ? `<span class="pill p-warn">${ico('spark', 12)}${t('fmt.esame')}</span>` : `<span class="pill p-cor">${ico('spark', 12)}${t('fmt.cornell')}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
-    else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
+    else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = ANDROID ? '' : `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
     const chiedi = l.trascritta && l.stato === 'pronta' ? `<button class="btn b-cor b-sm" data-a="chiedi">${ico('chat')}${t('ar.chiedi')}</button>` : '';
     const sec = chiedi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
@@ -560,7 +592,8 @@ function menuLezione(l, btn) {
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: t('fmt.' + R.formato)})]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
-  voci.push(['rinomina', 'edit', t('ar.m.rin')], ['cartella', 'folder', t('ar.m.cart')]);
+  voci.push(['rinomina', 'edit', t('ar.m.rin')]);
+  if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
   voci.push(['elimina', 'trash', t('ar.m.el'), 'r']);
   m.innerHTML = voci.map(v => (v[3] && !m.dataset.sep ? (m.dataset.sep = 1, '<hr>') : '') + `<button data-a="${v[0]}" class="${v[3] || ''}">${ico(v[1], 16)}${esc(v[2])}</button>`).join('');
@@ -608,6 +641,11 @@ function disegnaImpostazioni() {
   $('swDnd').classList.toggle('on', !!R.dnd);
   $('swDir').classList.toggle('on', !!R.diretta);
   $('swPrec').classList.toggle('on', !!R.precisa);
+  if (ANDROID) {
+    $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
+    $('swCarica').classList.toggle('on', !!R.solo_carica);
+    $('andVer').textContent = t('and.agg.s', {v: R.versione});
+  }
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
   $('segLingua').querySelectorAll('span').forEach(s => s.onclick = () => cambiaLingua(s.dataset.l));
@@ -872,6 +910,10 @@ function collegaNovita() {
   $('btnPdfA').onclick = async () => { const f = await A.scegli_pdf(); if (f.ok) { PDFA = f; disegnaModo(); } else if (f.msg) toast(f.msg); };
   $('btnPdfX').onclick = () => { PDFA = null; disegnaModo(); };
   $('swDir').onclick = async () => { await A.imposta('diretta', !R.diretta); await rileggi(); };
+  $('quandoBox').querySelectorAll('.aiopt').forEach(o => o.onclick = () => { QUANDO = o.dataset.q; disegnaQuando(); });
+  $('segQuando').querySelectorAll('span').forEach(x => x.onclick = async () => { await A.imposta('quando', x.dataset.v); QUANDO = null; await rileggi(); });
+  $('swCarica').onclick = async () => { await A.imposta('solo_carica', !R.solo_carica); await rileggi(); };
+  $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
   $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
   $('pwAgg').onclick = aggiungiParola;

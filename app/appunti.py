@@ -395,7 +395,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
     font, solo_latin = el._font_pdf(pdf)
     # simboli matematici che Arial non ha (es. ᵢ, ∮): li prende da Segoe UI Symbol / DejaVu
     for extra in (Path(r"C:\Windows\Fonts\seguisym.ttf"),
-                  Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")):
+                  el.CARTELLA_FONT / "DejaVuSans.ttf"):
         if not solo_latin and extra.exists():
             try:
                 pdf.add_font("Simboli", "", str(extra))

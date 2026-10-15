@@ -234,6 +234,7 @@ class Motore:
         self.imp = None                    # importazione di un video in corso: fasi e avanzamento     # formato degli appunti mostrati/creati nella schermata di fine
         self.parte_sec = 3600
         self.formati_extra = []        # rifacendo gli appunti: altri formati da rifare per ogni parte
+        self.trascrivi_dopo = False    # telefono: registra e basta, trascrive a fine lezione ("Trascrivi ora")
         self.diretta = []              # testo in diretta: [{"t", "testo"}]
         self.diretta_lav = False
         self.vista = "pronto"          # pronto | reg | fine
@@ -410,7 +411,11 @@ class Motore:
                 "audio_ok": self.audio_ok, "liberi": self.liberi, "base": str(BASE),
                 "modo": "aula" if self.cfg.get("modo") == "aula" else "online", "microfono": self.cfg.get("microfono") or "",
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
-                "precisa": bool(self.cfg.get("trascrizione_precisa"))}
+                "precisa": bool(self.cfg.get("trascrizione_precisa")),
+                "quando": "dopo" if self.cfg.get("quando") == "dopo" else "durante",
+                "solo_carica": bool(self.cfg.get("solo_carica", True)),
+                "velocita": self.cfg.get("velocita_trascrizione_precisa" if self.cfg.get("trascrizione_precisa")
+                                         else "velocita_trascrizione")}
 
     # ------------------------------------------------------------------ impostazioni
 
@@ -436,8 +441,10 @@ class Motore:
             self.cfg["lingua_lezione_scelta"] = True
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa"):
+        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica"):
             self.cfg[campo] = bool(valore)
+        elif campo == "quando":
+            self.cfg["quando"] = "dopo" if valore == "dopo" else "durante"
         elif campo == "modo":
             self.cfg["modo"] = "aula" if valore == "aula" else "online"
         elif campo == "microfono":
@@ -507,6 +514,7 @@ class Motore:
         modo = "aula" if (opzioni.get("modo") or self.cfg.get("modo")) == "aula" else "online"
         microfono = opzioni.get("microfono") or self.cfg.get("microfono") or None
         pdf = opzioni.get("pdf") if modo == "aula" else None
+        dopo = (opzioni.get("quando") or self.cfg.get("quando")) == "dopo"
         with self._lock:
             if self.occupato:
                 return {"ok": False}
@@ -523,7 +531,9 @@ class Motore:
                                                 "formato_appunti": self._formato(),
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                                                 "modo": modo, "parole": self.parole_di(nome),
-                                                "precisa": bool(self.cfg.get("trascrizione_precisa"))})
+                                                "precisa": bool(self.cfg.get("trascrizione_precisa")),
+                                                "quando": "dopo" if dopo else "durante"})
+            self.trascrivi_dopo = dopo
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -908,6 +918,7 @@ class Motore:
                 "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
                 "formato": info.get("formato_appunti") or "cornell",
                 "importata": bool(info.get("importata")),
+                "dopo": stato == "da_completare" and info.get("quando") == "dopo" and not in_corso,
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
         try:
@@ -1414,9 +1425,24 @@ class Motore:
     def _evento(self, tipo, dato):
         if tipo == "parte_finita":
             k = dato
-            self.parti[k] = {"stato": "attesa", "orario": self._orario(k)}
+            self.parti[k] = {"stato": "dopo" if self.trascrivi_dopo else "attesa", "orario": self._orario(k)}
             self.parti[k + 1] = {"stato": "reg", "orario": self._orario(k + 1)}
-            self.accoda_parte(self.cartella_corrente, k)
+            if not self.trascrivi_dopo:
+                self.accoda_parte(self.cartella_corrente, k)
+        elif tipo == "registrazione_ferma" and self.trascrivi_dopo:
+            # "trascrivi dopo": la lezione resta da completare ("Trascrivi ora" in Le mie registrazioni)
+            cart, ultima, durata, errori = dato
+            for k in list(self.parti):
+                if k > ultima:
+                    self.parti.pop(k)
+                else:
+                    self.parti[k]["stato"] = "dopo"
+            el.aggiorna_info(cart, stato="da_completare")
+            self.trascrivi_dopo = False
+            self.finale = "ok"
+            self.avviso_fine = tr("fine_dopo")
+            self.occupato = False
+            self._sveglio_voluto = False
         elif tipo == "registrazione_ferma":
             cart, ultima, durata, errori = dato
             for k in list(self.parti):

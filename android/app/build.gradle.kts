@@ -1,7 +1,11 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.chaquo.python")
 }
+
+// numero di versione: android/versione.json (lo legge anche "Aggiorna" nell'app)
+val versioneApp = groovy.json.JsonSlurper().parse(file("../versione.json")) as Map<*, *>
 
 android {
     namespace = "it.puntowebferrara.registralezione"
@@ -12,13 +16,22 @@ android {
         applicationId = "it.puntowebferrara.registralezione"
         minSdk = 29
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.2-prova"
+        versionCode = (versioneApp["codice"] as Number).toInt()
+        versionName = versioneApp["versione"] as String
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         externalNativeBuild { cmake { arguments += listOf("-DCMAKE_BUILD_TYPE=Release") } }
     }
+    // chiave per le versioni di prova (sempre la stessa, cosi' si aggiornano sopra le precedenti)
+    signingConfigs {
+        create("prova") {
+            storeFile = file("../prova.keystore")
+            storePassword = "registralezione"
+            keyAlias = "prova"
+            keyPassword = "registralezione"
+        }
+    }
     buildTypes {
-        getByName("debug") { isJniDebuggable = false }
+        getByName("debug") { isJniDebuggable = false; signingConfig = signingConfigs.getByName("prova") }
     }
     externalNativeBuild {
         cmake { path = file("src/main/cpp/CMakeLists.txt"); version = "3.22.1" }
@@ -28,4 +41,20 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+}
+
+dependencies {
+    implementation("androidx.core:core-ktx:1.13.1")
+}
+
+// la parte di appunti, PDF, flashcard ecc. e' quella del programma per Windows (in Python)
+chaquopy {
+    defaultConfig {
+        version = "3.12"
+        pip {
+            install("numpy")
+            install("pillow")
+            install("fpdf2==2.8.9")
+        }
+    }
 }

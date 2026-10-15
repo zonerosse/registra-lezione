@@ -266,7 +266,7 @@ def pdf_mappa(dati, info, dest):
     pdf.set_auto_page_break(False)
     pdf.add_page()
     font, solo_latin = el._font_pdf(pdf)
-    for extra in (Path(r"C:\Windows\Fonts\seguisym.ttf"), Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")):
+    for extra in (Path(r"C:\Windows\Fonts\seguisym.ttf"), el.CARTELLA_FONT / "DejaVuSans.ttf"):
         if not solo_latin and extra.exists():
             try:
                 pdf.add_font("Simboli", "", str(extra))

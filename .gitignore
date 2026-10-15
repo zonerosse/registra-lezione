@@ -11,3 +11,6 @@ errore_avvio.txt
 prova_novita/
 prova_mac/
 mac/rl-cattura
+android/app/src/main/assets/rl/
+tools/prova_android/node_modules/
+prova_android_out/

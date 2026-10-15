@@ -511,13 +511,16 @@ big.onclick=function(){{big.style.display='none';}};
     (cartella / "Lezione.html").write_text(pagina, encoding="utf-8")
 
 
+# font DejaVu: su Linux sono di sistema, nell'app Android sono dentro l'app (RL_FONT_DIR)
+CARTELLA_FONT = Path(os.environ.get("RL_FONT_DIR") or "/usr/share/fonts/truetype/dejavu")
+
+
 def _font_pdf(pdf):
     """Usa Arial di Windows (accenti e simboli ok); altrimenti un font di base."""
     windir = Path(os.environ.get("WINDIR", r"C:\Windows"))
     candidati = [
         (windir / "Fonts" / "arial.ttf", windir / "Fonts" / "arialbd.ttf"),
-        (Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
-         Path("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")),
+        (CARTELLA_FONT / "DejaVuSans.ttf", CARTELLA_FONT / "DejaVuSans-Bold.ttf"),
     ]
     for reg, bold in candidati:
         if reg.exists() and bold.exists():
