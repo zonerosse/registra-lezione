@@ -29,7 +29,11 @@ jobs:
           gradle-version: '8.9'
       - name: Strumenti Android (NDK e CMake)
         run: |
-          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.2.12479018" "cmake;3.22.1" > /dev/null
+          for i in 1 2 3; do   # a volte il sito di Google non risponde: riprovo
+            yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.2.12479018" "cmake;3.22.1" > /dev/null && break
+            sleep 30
+          done
+          [ -d "$ANDROID_HOME/ndk/27.2.12479018" ]
       - name: Riconoscitore vocale (whisper.cpp)
         run: |
           git clone --depth 1 --branch v1.7.6 https://github.com/ggml-org/whisper.cpp android/app/src/main/cpp/whisper.cpp
