@@ -75,9 +75,9 @@ if (ANDROID) {
 
   // la guida del telefono (i video arrivano con una prossima versione)
   GUIDA.it = {
-    titolo: 'Guida', sotto: 'Come si usa Registra Lezione sul telefono, in pochi minuti.',
+    titolo: 'Guida', sotto: 'Come si usa Verba Manent IA sul telefono, in pochi minuti.',
     capitoli: [
-      {ico: 'spark', t: 'Perché Registra Lezione', perche: true, p: [
+      {ico: 'spark', t: 'Perché Verba Manent IA', perche: true, p: [
         '<b>Nessun bot nella riunione</b>: registra dal telefono quello che senti. Nessun «assistente» entra nella chiamata.',
         '<b>In aula e online</b>: in aula col microfono del telefono; online con la lezione in vivavoce.',
         '<b>La trascrizione si fa sul telefono</b>: l\'audio non va su internet. A Claude arriva solo il testo, e solo se scegli gli appunti automatici.',
@@ -129,16 +129,16 @@ if (ANDROID) {
         'In Impostazioni tocca <b>Aggiorna l\'app</b> → <b>Cerca aggiornamenti</b>. Se c\'è una versione nuova tocca <b>Scarica</b>, poi apri il file scaricato e tocca <b>Installa</b>: lezioni e appunti restano.',
         'Nella stessa pagina c\'è <b>Assistenza</b> (Punto Web Ferrara).']},
       {ico: 'aud', t: 'Se qualcosa non va', p: [
-        '<b>Le tacche verdi non si muovono</b>: in Impostazioni di Android → App → Registra Lezione → Autorizzazioni, consenti il <b>Microfono</b>.',
-        '<b>La registrazione si ferma a schermo spento</b>: in Impostazioni di Android → App → Registra Lezione → Batteria, scegli <b>Senza restrizioni</b>.',
+        '<b>Le tacche verdi non si muovono</b>: in Impostazioni di Android → App → Verba Manent IA → Autorizzazioni, consenti il <b>Microfono</b>.',
+        '<b>La registrazione si ferma a schermo spento</b>: in Impostazioni di Android → App → Verba Manent IA → Batteria, scegli <b>Senza restrizioni</b>.',
         '<b>Gli appunti non arrivano</b>: serve internet; tocca <b>Riprova</b> accanto alla parte.',
         '<b>La prima volta</b> l\'app scarica il riconoscitore vocale (circa 190 MB): meglio col Wi-Fi.',
         '<b>Poco spazio</b>: in «Le mie lezioni» elimina l\'audio delle lezioni vecchie (gli appunti restano).']},
     ]};
   GUIDA.en = {
-    titolo: 'Guide', sotto: 'How to use Registra Lezione on your phone, in a few minutes.',
+    titolo: 'Guide', sotto: 'How to use Verba Manent IA on your phone, in a few minutes.',
     capitoli: [
-      {ico: 'spark', t: 'Why Registra Lezione', perche: true, p: [
+      {ico: 'spark', t: 'Why Verba Manent IA', perche: true, p: [
         '<b>No bot in the meeting</b>: it records on the phone what you hear. No «assistant» joins the call.',
         '<b>In class and online</b>: in class with the phone microphone; online with the lecture on speaker.',
         '<b>Transcription happens on the phone</b>: the audio does not go on the internet. Claude only gets the text, and only if you choose automatic notes.',
@@ -190,8 +190,8 @@ if (ANDROID) {
         'In Settings tap <b>Update the app</b> → <b>Check for updates</b>. If there is a new version tap <b>Download</b>, then open the downloaded file and tap <b>Install</b>: lectures and notes stay.',
         'On the same page there is <b>Support</b> (Punto Web Ferrara).']},
       {ico: 'aud', t: 'If something goes wrong', p: [
-        '<b>The green bars do not move</b>: in Android Settings → Apps → Registra Lezione → Permissions, allow the <b>Microphone</b>.',
-        '<b>Recording stops with the screen off</b>: in Android Settings → Apps → Registra Lezione → Battery, choose <b>Unrestricted</b>.',
+        '<b>The green bars do not move</b>: in Android Settings → Apps → Verba Manent IA → Permissions, allow the <b>Microphone</b>.',
+        '<b>Recording stops with the screen off</b>: in Android Settings → Apps → Verba Manent IA → Battery, choose <b>Unrestricted</b>.',
         '<b>Notes do not arrive</b>: you need internet; tap <b>Retry</b> next to the part.',
         '<b>The first time</b> the app downloads the speech recogniser (about 190 MB): better on Wi-Fi.',
         '<b>Low space</b>: in «My lectures» delete the audio of old lectures (notes stay).']},

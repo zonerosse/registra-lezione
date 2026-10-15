@@ -13,15 +13,15 @@ CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / "RegistraL
 
 TESTI = {
     "it": {"tit": "Manca un componente di Windows",
-           "testo": "Per la sua grafica Registra Lezione usa Microsoft Edge WebView2, gratuito. "
+           "testo": "Per la sua grafica Verba Manent IA usa Microsoft Edge WebView2, gratuito. "
                     "Su questo PC non c'è (di solito è già presente in Windows 10 e 11).",
-           "passi": "1. Tocca «Scarica da Microsoft»\n2. Apri il file scaricato e conferma (ci vuole un minuto)\n3. Riapri Registra Lezione",
+           "passi": "1. Tocca «Scarica da Microsoft»\n2. Apri il file scaricato e conferma (ci vuole un minuto)\n3. Riapri Verba Manent IA",
            "scarica": "⬇  Scarica da Microsoft", "dopo": "Si scarica MicrosoftEdgeWebview2Setup.exe dal sito di Microsoft: aprilo, poi riapri il programma.",
            "continua": "Per ora continua con la finestra semplice", "mai": "Non chiederlo più"},
     "en": {"tit": "A Windows component is missing",
-           "testo": "For its graphics Registra Lezione uses Microsoft Edge WebView2, which is free. "
+           "testo": "For its graphics Verba Manent IA uses Microsoft Edge WebView2, which is free. "
                     "It is not on this PC (it is usually already part of Windows 10 and 11).",
-           "passi": "1. Tap «Download from Microsoft»\n2. Open the downloaded file and confirm (it takes a minute)\n3. Open Registra Lezione again",
+           "passi": "1. Tap «Download from Microsoft»\n2. Open the downloaded file and confirm (it takes a minute)\n3. Open Verba Manent IA again",
            "scarica": "⬇  Download from Microsoft", "dopo": "MicrosoftEdgeWebview2Setup.exe is downloaded from the Microsoft website: open it, then open the program again.",
            "continua": "Continue with the simple window for now", "mai": "Don't ask again"},
 }
@@ -45,7 +45,7 @@ def mostra():
     import tkinter as tk
     NAVY, BLU, INK, MUT, SOFT = "#0d4275", "#0369a1", "#1f2937", "#64748b", "#f1f6fb"
     r = tk.Tk()
-    r.title("Registra Lezione")
+    r.title("Verba Manent IA")
     r.configure(bg="white")
     r.resizable(False, False)
     try:
@@ -64,7 +64,7 @@ def mostra():
         pass
     t = tk.Frame(ban, bg=NAVY)
     t.pack(side="left")
-    tk.Label(t, text="Registra Lezione", bg=NAVY, fg="white", font=("Segoe UI", 14, "bold")).pack(anchor="w")
+    tk.Label(t, text="Verba Manent IA", bg=NAVY, fg="white", font=("Segoe UI", 14, "bold")).pack(anchor="w")
     tk.Label(t, text="by Punto Web Ferrara", bg=NAVY, fg="#a9cbe8", font=("Segoe UI", 9)).pack(anchor="w")
     ct = tk.Frame(r, bg="white", padx=22, pady=16)
     ct.pack(fill="both")

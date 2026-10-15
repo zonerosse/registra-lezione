@@ -1,7 +1,7 @@
 {
- "versione": "0.7.1",
- "codice": 7,
- "novita": "Prova dell'aggiornamento leggero: si scarica in pochi secondi e l'app si riapre da sola. Nessun'altra novità.",
- "novita_en": "Test of the light update: it downloads in seconds and the app reopens by itself. No other changes.",
- "contenuto": 8
+ "versione": "0.8",
+ "codice": 8,
+ "novita": "L'app si chiama ora «Verba Manent IA», con il logo nuovo. Lezioni e impostazioni restano.",
+ "novita_en": "The app is now called «Verba Manent IA», with a new logo. Lectures and settings stay.",
+ "contenuto": 9
 }

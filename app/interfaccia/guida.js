@@ -2,9 +2,9 @@
 'use strict';
 const GUIDA = {
   it: {
-    titolo: 'Guida', sotto: 'Come si usa Registra Lezione, in pochi minuti. Ogni capitolo ha un video breve.',
+    titolo: 'Guida', sotto: 'Come si usa Verba Manent IA, in pochi minuti. Ogni capitolo ha un video breve.',
     capitoli: [
-      {ico: 'spark', t: 'Perché Registra Lezione', perche: true, p: [
+      {ico: 'spark', t: 'Perché Verba Manent IA', perche: true, p: [
         '<b>Nessun bot nella riunione</b>: registra dal tuo PC quello che vedi e senti. Nessun «assistente» entra nella chiamata e nessuno deve accettarlo.',
         '<b>Funziona con tutto</b>: Meet, Teams, Zoom, webinar, video online… <b>anche in aula</b> col microfono del portatile, e con «Importa un video» le lezioni riprese col telefono o scaricate dall\'università.',
         '<b>Chiedi alla lezione</b>: scrivi cosa non hai capito e la risposta arriva da quello che ha detto il docente, con la slide e il minuto.',
@@ -73,9 +73,9 @@ const GUIDA = {
         'Il file <b>registra_lezione.log</b> nella cartella «Lezioni registrate» racconta cosa è successo: mandalo all\'assistenza.']},
     ]},
   en: {
-    titolo: 'Guide', sotto: 'How to use Registra Lezione, in a few minutes. Each chapter has a short video.',
+    titolo: 'Guide', sotto: 'How to use Verba Manent IA, in a few minutes. Each chapter has a short video.',
     capitoli: [
-      {ico: 'spark', t: 'Why Registra Lezione', perche: true, p: [
+      {ico: 'spark', t: 'Why Verba Manent IA', perche: true, p: [
         '<b>No bot in the meeting</b>: it records from your PC what you see and hear. No «assistant» joins the call and nobody has to admit it.',
         '<b>Works with everything</b>: Meet, Teams, Zoom, webinars, online videos… <b>also in the classroom</b> with the laptop microphone, and with «Import a video» lectures filmed with your phone or downloaded from the university.',
         '<b>Ask the lecture</b>: type what you didn\'t understand and the answer comes from what the lecturer said, with the slide and the minute.',

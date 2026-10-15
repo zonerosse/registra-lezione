@@ -130,5 +130,5 @@ jobs:
         run: |
           $v = "${{ steps.v.outputs.versione }}"
           gh release create "${{ steps.v.outputs.tag }}" RegistraLezione-Setup.exe "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
-            --title "Registra Lezione $v" --notes-file note.md --target $env:GITHUB_SHA
+            --title "Verba Manent IA $v" --notes-file note.md --target $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) { exit 1 }

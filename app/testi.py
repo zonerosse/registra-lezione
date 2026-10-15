@@ -110,7 +110,7 @@ T = {
         "mp_titolo": "Mappa mentale",
         "dc_err": "Non riesco a leggere questo PDF. Prova a salvarlo di nuovo (Stampa → Microsoft Print to PDF) e riprova.",
         "dc_copia": "(prima delle slide del docente)",
-        "pdf_creato": "Creato con Registra Lezione · Punto Web Ferrara",
+        "pdf_creato": "Creato con Verba Manent IA · Punto Web Ferrara",
         "pdf_lingua": "Lezione in {l} · appunti in italiano",
         # pacchetto per l'AI e trascrizione
         "tr_intro": ("Registrazione di una lezione seguita online. Ogni sezione contiene l'immagine della slide "
@@ -232,7 +232,7 @@ T = {
         "mp_titolo": "Mind map",
         "dc_err": "I can't read this PDF. Try saving it again (Print → Microsoft Print to PDF) and retry.",
         "dc_copia": "(before the lecturer's slides)",
-        "pdf_creato": "Created with Registra Lezione · Punto Web Ferrara",
+        "pdf_creato": "Created with Verba Manent IA · Punto Web Ferrara",
         "pdf_lingua": "Lecture in {l} · notes in English",
         "tr_intro": ("Recording of a lecture followed online. Each section contains the image of the slide shown "
                      "by the lecturer and, below it, the automatic transcript of what the lecturer said while that "

@@ -23,7 +23,7 @@ import traceback
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
-APP = "Registra Lezione"
+APP = "Verba Manent IA"
 SITO_ASSISTENZA = "https://puntowebferrara.com/contatti/"
 
 
@@ -201,6 +201,35 @@ def schermo_risoluzione():
     return ""
 
 
+def rinomina_collegamenti():
+    """Il programma si chiama ora «Verba Manent IA»: i collegamenti «Registra Lezione» (Desktop e menu Start)
+    diventano «Verba Manent IA», con il logo nuovo. Solo su Windows e solo se ci sono quelli vecchi."""
+    if sys.platform != "win32" or not getattr(sys, "frozen", False):
+        return
+    try:
+        cartelle = []
+        for csidl in (0x10, 0x02):          # Desktop, menu Start → Programmi
+            buf = ctypes.create_unicode_buffer(260)
+            if ctypes.windll.shell32.SHGetFolderPathW(None, csidl, None, 0, buf) == 0:
+                cartelle.append(Path(buf.value))
+        icona = QUI / "icona.ico"
+        for c in cartelle:
+            vecchio, nuovo = c / "Registra Lezione.lnk", c / "Verba Manent IA.lnk"
+            if not vecchio.exists():
+                continue
+            ps = ("$s=(New-Object -ComObject WScript.Shell).CreateShortcut($env:RL_LNK);"
+                  "$s.TargetPath=$env:RL_EXE;$s.WorkingDirectory=$env:RL_DIR;$s.IconLocation=$env:RL_ICO;$s.Save()")
+            env = dict(os.environ, RL_LNK=str(nuovo), RL_EXE=sys.executable, RL_DIR=str(Path(sys.executable).parent),
+                       RL_ICO=str(icona))
+            r = subprocess.run(["powershell", "-NoProfile", "-Command", ps], env=env, creationflags=0x08000000,
+                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=60)
+            if r.returncode == 0 and nuovo.exists():
+                vecchio.unlink()
+                log.info("collegamento rinominato: %s", nuovo)
+    except Exception:
+        log.exception("collegamenti col nome nuovo")
+
+
 def apri_non_disturbare():
     try:
         if sys.platform == "win32":
@@ -254,6 +283,7 @@ class Motore:
         self._lock = threading.RLock()
         self.on_fine_registrazione = None   # la finestra chiude la mini finestra
         self.on_riavvia = None
+        threading.Thread(target=rinomina_collegamenti, daemon=True).start()
         for f in (self._lavoratore, self._lavoratore_appunti, self._prepara_modello, self._ciclo):
             threading.Thread(target=f, daemon=True).start()
         threading.Thread(target=self.controlli, daemon=True).start()

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- sfondo dell'icona: lo stesso blu dell'icona del programma per il PC -->
+<!-- sfondo dell'icona di Verba Manent IA: blu scuro come il logo -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <gradient android:angle="315" android:startColor="#5CD3F0" android:centerColor="#1E9BD6" android:endColor="#0A57A6" android:type="linear" />
+    <gradient android:angle="315" android:startColor="#0D4275" android:endColor="#061E36" android:type="linear" />
 </shape>

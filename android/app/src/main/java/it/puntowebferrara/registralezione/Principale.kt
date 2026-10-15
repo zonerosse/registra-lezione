@@ -20,7 +20,7 @@ import java.util.Locale
 import kotlin.concurrent.thread
 
 /**
- * Registra Lezione per Android.
+ * Verba Manent IA (prima «Registra Lezione») per Android.
  * Le pagine sono le stesse del programma per Windows (cartella "interfaccia"), mostrate in una WebView;
  * il "motore" (trascrizione, appunti, PDF, ripasso...) e' lo stesso codice Python, che gira dentro l'app.
  * Python apre un piccolo server solo sul telefono (127.0.0.1): la pagina gli parla come nelle prove sul PC.
@@ -36,7 +36,7 @@ class Principale : Activity() {
         window.statusBarColor = blu
         window.navigationBarColor = Color.WHITE
         val attesa = TextView(this).apply {
-            text = "Registra Lezione\n\n" + (if (Locale.getDefault().language == "it") "Avvio…" else "Starting…")
+            text = "Verba Manent IA\n\n" + (if (Locale.getDefault().language == "it") "Avvio…" else "Starting…")
             setTextColor(Color.WHITE); textSize = 20f; gravity = Gravity.CENTER; setBackgroundColor(blu)
         }
         setContentView(attesa)
@@ -50,7 +50,7 @@ class Principale : Activity() {
                     .callAttr("avvia", File(filesDir, "rl").absolutePath, Locale.getDefault().language).toInt()
             } catch (e: Throwable) {
                 android.util.Log.e("RegistraLezione", "avvio", e)
-                runOnUiThread { attesa.text = "Registra Lezione\n\n⚠ " + e.toString().take(600) }
+                runOnUiThread { attesa.text = "Verba Manent IA\n\n⚠ " + e.toString().take(600) }
                 return@thread
             }
             runOnUiThread { mostra(porta) }
