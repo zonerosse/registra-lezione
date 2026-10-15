@@ -135,6 +135,15 @@ class Api:
             threading.Thread(target=self._apri_mini, daemon=True).start()
         return r
 
+    def nota(self, testo, tipo=""):
+        return self._m.nota(testo, tipo)
+
+    def note(self, cartella=None):
+        return self._m.note(cartella)
+
+    def nota_togli(self, i):
+        return self._m.nota_togli(i)
+
     def pausa(self):
         return self._m.pausa()
 
@@ -177,6 +186,18 @@ class Api:
 
     def infografica(self, cartella, rifai=False):
         return self._m.infografica(cartella, rifai)
+
+    def statistiche(self, cartella):
+        return self._m.statistiche(cartella)
+
+    def cose_da_fare(self):
+        return self._m.cose_da_fare()
+
+    def cosa_fatta(self, id_, si=True):
+        return self._m.cosa_fatta(id_, si)
+
+    def cerca_parole(self, testo, tipo=""):
+        return self._m.cerca_parole(testo, tipo)
 
     def cond_info(self, cartella):
         return self._m.cond_info(cartella)

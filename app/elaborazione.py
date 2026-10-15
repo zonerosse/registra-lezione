@@ -20,6 +20,7 @@ import os
 import shutil
 import subprocess
 import sys
+import threading
 import wave
 import zipfile
 from pathlib import Path
@@ -100,7 +101,7 @@ def scrivi_json(p, dati):
     p = Path(p)
     testo = json.dumps(dati, ensure_ascii=False, indent=1)
     for n in range(20):
-        tmp = p.with_name(f"{p.name}.{os.getpid()}.{n}.tmp")
+        tmp = p.with_name(f"{p.name}.{os.getpid()}.{threading.get_ident()}.{n}.tmp")
         try:
             tmp.write_text(testo, encoding="utf-8")
             os.replace(tmp, p)
@@ -115,11 +116,15 @@ def scrivi_json(p, dati):
             time.sleep(0.25)
 
 
+_BLOCCO_INFO = threading.RLock()     # piu' lavori insieme (trascrizione, voci, appunti) aggiornano info.json
+
+
 def aggiorna_info(cartella, **campi):
     p = Path(cartella) / "info.json"
-    info = leggi_json(p, {}) or {}
-    info.update(campi)
-    scrivi_json(p, info)
+    with _BLOCCO_INFO:
+        info = leggi_json(p, {}) or {}
+        info.update(campi)
+        scrivi_json(p, info)
     return info
 
 

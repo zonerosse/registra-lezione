@@ -50,6 +50,7 @@ async function avvio() {
   $('splash').classList.add('via');
   setTimeout(() => $('splash').remove(), 500);
   if (!R.lingua_scelta) benvenuto();
+  contaFare();
   ciclo();
 }
 const pausa = ms => new Promise(r => setTimeout(r, ms));
@@ -58,7 +59,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci'].includes(pagina)) { vai('arch'); return true; }
+  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat'].includes(pagina)) { vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -111,12 +112,13 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci'].includes(p) ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat'].includes(p) ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'fare', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
+  if (p === 'fare') apriCose();
   if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); if (!ANDROID) disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
@@ -148,7 +150,7 @@ function inizializza() {
   $('fPac').onclick = () => A.apri_pacchetti();
   $('fNuova').onclick = async () => { const r = await A.nuova(); if (!r.ok) toast(r.msg); else { R = await A.riepilogo(); disegnaPronto(); await aggiorna(); } };
   // archivio
-  $('cerca').addEventListener('input', disegnaLezioni);
+  $('cerca').addEventListener('input', () => { disegnaLezioni(); cercaParole(); });
   $('aCart').onclick = () => A.apri_base();
   $('aVidDel').onclick = eliminaTuttiVideo;
   // impostazioni
@@ -439,6 +441,10 @@ function disegnaReg() {
   $('lAvv').textContent = S.avviso ? '⚠ ' + S.avviso : '';
   disegnaParti($('lParti'));
   disegnaDiretta();
+  if (!ANDROID && S.n_note !== NOTE.n) { NOTE.n = S.n_note; A.note().then(disegnaNote); }
+  const ap = S.aperte || [];
+  $('aperteCard').classList.toggle('hidden', !ap.length);
+  if (ap.length) $('aperteCard').innerHTML = `<b>${esc(t('cf.ultima', {n: ap.length}))}</b><div>${esc(t('cf.ultima.s', {l: ap.map(a => a.cosa + (a.chi ? ' (' + a.chi + ')' : '')).join('; ')}))}</div>`;
   $('slideCard').classList.toggle('hidden', S.modo === 'aula' && !S.slide);
   if (S.slide !== slideViste) { slideViste = S.slide; A.miniature().then(m => {
     $('thumbs').innerHTML = m.length ? m.map(x => `<div class="th" style="background-image:url('${x.src}')"><em>${x.ora}</em></div>`).join('')
@@ -446,6 +452,21 @@ function disegnaReg() {
     $('thumbs').scrollLeft = 99999;
   }); }
 }
+const NOTE = {n: -1};
+const ICO_NOTA = {importante: '⭐', chiarire: '❓', fare: '✅'};
+function disegnaNote(note) {
+  NOTE.n = note.length;
+  $('noteLista').innerHTML = note.length ? note.map((n, i) => `<div class="nota2"><span class="t">${esc(n.ora)}</span><span class="sp">${n.tipo ? ICO_NOTA[n.tipo] + ' <b>' + esc(t(n.tipo === 'importante' ? 'nt.imp' : n.tipo === 'chiarire' ? 'nt.chi' : 'nt.fare')) + '</b>' + (n.testo ? ' – ' : '') : ''}${esc(n.testo)}</span><button class="lnk" data-i="${i}" title="${esc(t('togli'))}">✕</button></div>`).join('')
+    : `<div class="hint">${esc(t('nt.vuoto'))}</div>`;
+  $('noteLista').querySelectorAll('[data-i]').forEach(b => b.onclick = async () => disegnaNote((await A.nota_togli(+b.dataset.i)).note));
+}
+async function aggiungiNota(tipo) {
+  const testo = $('notaIn').value.trim();
+  if (!testo && !tipo) return;
+  const r = await A.nota(testo, tipo || '');
+  if (r.ok) { $('notaIn').value = ''; disegnaNote(r.note); }
+}
+
 async function chiediFine() {
   if (await conferma(t('fine.t'), t('fine'), t('fine.si'), t('continua'), 'b-end')) {
     await A.fine(); await aggiorna();
@@ -544,6 +565,7 @@ async function caricaLezioni() {
   LZ = await A.lezioni();
   const n = LZ.lezioni.length;
   $('navCnt').textContent = n; $('navCnt').classList.toggle('hidden', !n);
+  contaFare();
   disegnaLezioni();
 }
 function disegnaLezioni() {
@@ -592,6 +614,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'capitoli') return apriCapitoli(l);
   if (a === 'infografica') return apriInfografica(l);
   if (a === 'voci') return apriVoci(l);
+  if (a === 'stat') return apriStatistiche(l);
   if (a === 'condividi') return apriCondividi(l);
   if (a === 'voci_rifai') return apriVoci(l, true);
   if (a === 'pdf') return aggiungiPdf(l);
@@ -650,6 +673,7 @@ function menuLezione(l, btn) {
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && !ANDROID && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
   if (l.n_appunti && l.stato === 'pronta' && !ANDROID) voci.push(['condividi', 'share', t('ar.cond')]);
+  if (l.trascritta && l.stato === 'pronta' && !ANDROID) voci.push(['stat', 'chat', t('ar.m.stat')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -1087,6 +1111,87 @@ async function nomiVoci() {
   return dialogo({titolo: t('vc.dlg.t'), testo: t('vc.dlg.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', fn: salva}]});
 }
 
+/* ------------------------------------------------------------------ cose da fare */
+let CF = {filtro: 'aperte', chi: '', d: null};
+function contaFare() { if (!ANDROID) A.cose_da_fare().then(c => { $('navFare').textContent = c.aperte; $('navFare').classList.toggle('hidden', !c.aperte); }); }
+async function apriCose() { disegnaCose(await A.cose_da_fare()); }
+function disegnaCose(d) {
+  CF.d = d;
+  $('navFare').textContent = d.aperte; $('navFare').classList.toggle('hidden', !d.aperte);
+  $('cfSub').textContent = d.scadute ? t('cf.sub2', {a: d.aperte, s: d.scadute}) : t('cf.sub', {a: d.aperte});
+  const chip = (k, v, n) => `<span class="chip${CF[k] === v ? ' on' : ''}" data-k="${k}" data-v="${esc(v)}">${esc(n)}</span>`;
+  $('cfFiltri').innerHTML = chip('filtro', 'aperte', t('cf.aperte')) + chip('filtro', 'fatte', t('cf.fatte')) + chip('filtro', 'tutte', t('cf.tutte')) + '<span class="sp"></span>' +
+    (d.persone.length > 1 ? chip('chi', '', t('cf.tutti')) + d.persone.map(p => chip('chi', p, p)).join('') : '');
+  $('cfFiltri').querySelectorAll('.chip').forEach(c => c.onclick = () => { CF[c.dataset.k] = c.dataset.v; disegnaCose(CF.d); });
+  const L = d.cose.filter(a => (CF.filtro === 'tutte' || (CF.filtro === 'fatte') === a.fatto) && (!CF.chi || a.chi === CF.chi));
+  const fmt = a => a.data ? new Date(a.data + 'T12:00').toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {weekday: 'short', day: '2-digit', month: '2-digit'}) : (a.entro || '—');
+  $('cfLista').innerHTML = !d.cose.length ? `<div class="hint">${esc(t('cf.vuoto'))}</div>` : !L.length ? `<div class="hint">${esc(t('cf.vuoto2'))}</div>` :
+    `<div class="fare testa"><span></span><span>${t('cf.cosa')}</span><span>${t('cf.chi')}</span><span>${t('cf.entro')}</span><span>${t('cf.da')}</span></div>` +
+    L.map(a => `<div class="fare${a.fatto ? ' ok' : ''}${a.scaduta ? ' tardi' : ''}" data-id="${a.id}"><input type="checkbox"${a.fatto ? ' checked' : ''}>
+      <div><b>${esc(a.cosa)}</b>${a.fatto && a.come && a.come !== 'mano' ? `<div class="hint">${esc(t('cf.auto', {d: a.quando_fatto.slice(8, 10) + '/' + a.quando_fatto.slice(5, 7)}))}</div>` : ''}</div>
+      <span>${esc(a.chi || '—')}</span><span class="en">${esc(fmt(a))}${a.scaduta ? ' ⚠' : ''}</span>
+      <button class="lnk" data-sec="${a.sec ?? ''}">${esc(a.nome)} ${esc(a.giorno)}${a.sec != null ? ' ▶' : ''}</button></div>`).join('');
+  $('cfLista').querySelectorAll('.fare[data-id]').forEach(r => {
+    const a = d.cose.find(x => x.id === r.dataset.id);
+    r.querySelector('input').onchange = async e => disegnaCose(await A.cosa_fatta(a.id, e.target.checked));
+    r.querySelector('.lnk').onclick = () => { if (a.sec != null) mostraMomento(a.cartella, a.sec, null, a.nome); else { const l = LZ && LZ.lezioni.find(x => x.cartella === a.cartella); if (l) apriAppunti(a.cartella); } };
+  });
+}
+
+/* ------------------------------------------------------------------ statistiche */
+async function apriStatistiche(l) {
+  $('stTit').textContent = l.nome; $('stSub').textContent = '';
+  $('stBox').innerHTML = '<span class="spin"></span>';
+  vai('stat');
+  const d = await A.statistiche(l.cartella);
+  const min = s => s < 90 ? Math.round(s) + ' s' : t('st.min', {n: Math.round(s / 60)});
+  $('stSub').textContent = [l.quando, d.durata_t, d.voci_fatte ? t('vc.n', {n: d.persone.length}) : ''].filter(Boolean).join(' · ');
+  const max = Math.max(1, ...d.persone.map(p => p.sec)), maxA = Math.max(1, ...d.argomenti.map(a => a.sec));
+  const riga = (nome, larg, col, dx) => `<div class="strow"><b title="${esc(nome)}">${esc(nome)}</b><div><span class="sbar" style="width:${Math.max(2, larg)}%;background:${col}"></span></div><span>${dx}</span></div>`;
+  const dom = d.persone.filter(p => p.domande).map(p => `${p.nome} ${p.domande}`).join(', ');
+  $('stBox').innerHTML = `<div class="card"><div class="lbl">${esc(t('st.num'))}</div><div class="stnum">
+      <div><b>${esc(d.durata_t || '–')}</b><span class="hint">${esc(t('st.durata'))}</span></div><div><b>${d.n_persone || '–'}</b><span class="hint">${esc(t('st.persone'))}</span></div>
+      <div><b>${d.domande}</b><span class="hint">${esc(t('st.domande'))}</span></div><div><b>${d.azioni}</b><span class="hint">${esc(t('st.azioni'))}</span></div></div></div>
+    <div class="card mt"><div class="lbl">${esc(t('st.parlato'))}</div>${d.voci_fatte ? d.persone.map(p => riga(p.nome, 100 * p.sec / max, colVoce(p.voce), `${Math.round(p.quota * 100)}% · ${esc(min(p.sec))}`)).join('') +
+      `<div class="hint" style="margin-top:8px">${d.lungo ? esc(t('st.lungo', {n: d.lungo.nome, d: min(d.lungo.sec), o: d.lungo.ora})) + ' ' : ''}${dom ? esc(t('st.dom', {l: dom})) : ''}</div>`
+      : `<div class="hint">${esc(t('st.novoci'))}</div><button class="btn b-main b-sm mt" id="stVoci">${ico('chat')}${esc(t('vc.avvia'))}</button>`}</div>
+    <div class="card mt"><div class="lbl">${esc(t('st.arg'))}</div>${d.argomenti.length ? d.argomenti.map(a => riga(a.titolo, 100 * a.sec / maxA, '#0284c7', esc(min(a.sec)))).join('') : `<div class="hint">${esc(t('st.noarg'))}</div>`}</div>`;
+  if ($('stVoci')) $('stVoci').onclick = () => apriVoci(l, true);
+}
+
+/* ------------------------------------------------------------------ cerca in tutto (parole dette) */
+let CP = {timer: 0, tipo: '', q: ''};
+const ACC = {a: '[aàáâä]', e: '[eèéêë]', i: '[iìíîï]', o: '[oòóôö]', u: '[uùúûü]', c: '[cç]', n: '[nñ]'};
+function evidenzia(testo, parole) {
+  let h = esc(testo);
+  if (!parole || !parole.length) return h;
+  const re = new RegExp('(' + parole.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').split('').map(c => ACC[c] || c).join('')).join('|') + ')', 'gi');
+  return h.replace(re, '<mark>$1</mark>');
+}
+function cercaParole() {
+  clearTimeout(CP.timer);
+  if (ANDROID) return;
+  const q = $('cerca').value.trim();
+  if (q.length < 3) { $('paroleRis').classList.add('hidden'); $('paroleRis').innerHTML = ''; return; }
+  CP.timer = setTimeout(async () => {
+    CP.q = q;
+    const r = await A.cerca_parole(q, CP.tipo);
+    if (CP.q !== $('cerca').value.trim()) return;
+    disegnaParole2(r, q);
+  }, 350);
+}
+function disegnaParole2(r, q) {
+  const R2 = r.risultati || [], box = $('paroleRis');
+  const chips = [['', 'cp.tutte'], ['riunione', 'cp.riu'], ['lezione', 'cp.lez'], ['webinar', 'cp.web']].map(([k, n]) => `<span class="chip${CP.tipo === k ? ' on' : ''}" data-tipo="${k}">${esc(t(n))}</span>`).join('');
+  const testa = `<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--ink)">${esc(R2.length === 1 ? t('cp.detto1') : R2.length ? t('cp.detto', {n: R2.length}) : t('cp.nessuna', {q}))}</b>${R2.length ? `<span class="hint">· ${esc(t('cp.volte', {n: r.volte}))}</span>` : ''}<span class="sp"></span>${chips}</div>`;
+  box.innerHTML = `<div class="card">${testa}${R2.map((x, i) => `<div class="lbl" style="margin-top:10px">${esc(x.nome)} · ${esc(x.quando)}</div>
+    ${x.frasi.map((f, j) => `<div class="ris" data-i="${i}" data-j="${j}"><span class="t">${esc(f.ora)}</span><div>${f.chi ? `<b>${esc(f.chi)}:</b> ` : ''}${evidenzia(f.testo, r.parole)}</div></div>`).join('')}
+    ${x.n > x.frasi.length ? `<div class="hint" style="padding-left:84px">${esc(t('cp.altre', {n: x.n - x.frasi.length}))}</div>` : ''}`).join('')}</div>`;
+  box.classList.remove('hidden');
+  box.querySelectorAll('.ris').forEach(e => e.onclick = () => { const x = R2[+e.dataset.i]; mostraMomento(x.cartella, x.frasi[+e.dataset.j].sec, null, x.nome); });
+  box.querySelectorAll('[data-tipo]').forEach(c => c.onclick = () => { CP.tipo = c.dataset.tipo; cercaParole(); });
+}
+
 /* ------------------------------------------------------------------ condividi e collega */
 const SERV = {slack: ['💬', '#f3e8ff'], teams: ['👥', '#e0e7ff'], notion: ['🧱', '#f1f5f9'], crm: ['🤝', '#ffedd5']};
 const chiudiVelo = () => { const v = document.querySelector('.velo'); if (v) v.remove(); };
@@ -1322,6 +1427,9 @@ function collegaNovita() {
   $('swVoci').onclick = async () => { await A.imposta('chi_parla', !R.chi_parla); await rileggi(); };
   $('vcNomi').onclick = () => nomiVoci();
   $('vcRifai').onclick = () => VC.lez && apriVoci(VC.lez, true);
+  $('vcStat').onclick = () => VC.lez && apriStatistiche(VC.lez);
+  $('notaIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiNota(''); });
+  document.querySelectorAll('[data-nota]').forEach(c => c.onclick = () => aggiungiNota(c.dataset.nota));
   $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
   $('pwAgg').onclick = aggiungiParola;
   $('chVai').onclick = inviaDomanda;

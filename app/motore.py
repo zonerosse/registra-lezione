@@ -110,6 +110,12 @@ def apri(percorso):
         return False
 
 
+def _senza_accenti(s):
+    """«perché Città» -> «perche citta»: la ricerca trova anche se si scrive senza accenti."""
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", str(s).lower()) if unicodedata.category(c) != "Mn")
+
+
 def mostra_file(percorso):
     """Apre la cartella con il file gia' selezionato."""
     p = Path(percorso)
@@ -290,6 +296,7 @@ class Motore:
         # calendario: impegni, avviso prima, avvio da solo, domanda a fine impegno
         self.cal = cal.Calendari(BASE / "calendario")
         el.DOPO_VOCI = self._nomi_voci
+        self._blocco_note = threading.Lock()
         self.cal_lista, self.cal_avviso, self.cal_fine, self.cal_rec = [], None, None, None
         self.cal_gestiti = set()
         self.on_avviso = None          # la finestra si mette davanti
@@ -364,7 +371,8 @@ class Motore:
                 s.update(secondi=int(r.secondi()), slide=r.n_slide, gb=round(self.gb_registrati(), 2),
                          livello=float(r.livello), livelli=list(self._livelli), pausa=pausa,
                          pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso,
-                         modo=r.modo, diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav)
+                         modo=r.modo, diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav,
+                         n_note=len(self.note()), aperte=getattr(self, "aperte", []))
             parti = []
             for k in sorted(self.parti):
                 p = dict(self.parti[k])
@@ -607,6 +615,15 @@ class Motore:
                                                 "tipo": tipo, "partecipanti": partecipanti,
                                                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
                                                 "mio": self.cfg.get("mio") or None})
+            self.aperte = []
+            if tipo == "riunione":
+                try:
+                    import cose
+                    self.aperte = cose.aperte_per_nome(BASE, nome, escludi=cart)
+                    if self.aperte:
+                        el.aggiorna_info(cart, aperte_prima=self.aperte)
+                except Exception:
+                    log.exception("cose aperte")
             self.trascrivi_dopo = dopo
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
@@ -761,6 +778,41 @@ class Motore:
         except Exception:
             log.exception("importazione")
             self.coda.put(("errore", traceback.format_exc()))
+
+    # ------------------------------------------------------------------ «Le tue note» durante la registrazione
+
+    TIPI_NOTA = ("importante", "chiarire", "fare", "")
+
+    def nota(self, testo, tipo=""):
+        """Una nota con il minuto della registrazione (⭐ importante, ❓ da chiarire, ✅ cosa da fare, o testo libero)."""
+        if self.reg is None or self.cartella_corrente is None:
+            return {"ok": False, "note": []}
+        testo = str(testo or "").strip()[:300]
+        tipo = tipo if tipo in self.TIPI_NOTA else ""
+        if not testo and not tipo:
+            return {"ok": False, "note": self.note()}
+        sec = round(float(self.reg.secondi()), 1)
+        with self._blocco_note:
+            f = Path(self.cartella_corrente) / "note.json"
+            note = el.leggi_json(f, []) or []
+            note.append({"sec": sec, "ora": el.hms(sec), "tipo": tipo, "testo": testo})
+            el.scrivi_json(f, note)
+        return {"ok": True, "note": note}
+
+    def note(self, cartella=None):
+        c = cartella or self.cartella_corrente
+        return el.leggi_json(Path(c) / "note.json", []) or [] if c else []
+
+    def nota_togli(self, i):
+        if self.cartella_corrente is None:
+            return {"ok": False, "note": []}
+        with self._blocco_note:
+            f = Path(self.cartella_corrente) / "note.json"
+            note = el.leggi_json(f, []) or []
+            if 0 <= int(i) < len(note):
+                note.pop(int(i))
+                el.scrivi_json(f, note)
+        return {"ok": True, "note": note}
 
     def pausa(self):
         if not self.reg:
@@ -1223,6 +1275,117 @@ class Motore:
         except OSError:
             pass
         return True
+
+    _CACHE_TRASCR = {}
+
+    def _frasi(self, cart):
+        """Le frasi della registrazione (in memoria finche' i file non cambiano)."""
+        files = sorted(cart.glob("trascrizione_*.json"))
+        firma = tuple((f.name, f.stat().st_mtime_ns) for f in files)
+        c = self._CACHE_TRASCR.get(str(cart))
+        if c and c[0] == firma:
+            return c[1]
+        frasi = []
+        for f in files:
+            for x in el.leggi_json(f, []) or []:
+                frasi.append((x["inizio"], x.get("chi") or "", x.get("testo") or "", _senza_accenti(x.get("testo") or "")))
+        frasi.sort()
+        self._CACHE_TRASCR[str(cart)] = (firma, frasi)
+        return frasi
+
+    def statistiche(self, cartella):
+        """Quanto ha parlato ciascuno, domande, intervento piu' lungo, durata degli argomenti (capitoli)."""
+        import voci as vc
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        segs = []
+        for f in sorted(cart.glob("trascrizione_*.json")):
+            segs += el.leggi_json(f, []) or []
+        segs.sort(key=lambda x: x["inizio"])
+        durata = float(info.get("durata") or (segs[-1]["fine"] if segs else 0))
+        nomi = vc.nomi(cart) if (cart / "voci.json").exists() else {}
+        persone, turni = {}, []
+        for x in segs:
+            v = x.get("voce")
+            p = persone.setdefault(v, {"voce": v, "nome": nomi.get(v, ""), "sec": 0.0, "domande": 0, "interventi": 0})
+            p["sec"] += max(0.0, x["fine"] - x["inizio"])
+            if x.get("testo", "").rstrip().endswith("?"):
+                p["domande"] += 1
+            if turni and turni[-1]["voce"] == v and x["inizio"] - turni[-1]["fine"] < 8:
+                turni[-1]["fine"] = x["fine"]
+            else:
+                turni.append({"voce": v, "inizio": x["inizio"], "fine": x["fine"]})
+                p["interventi"] += 1
+        parlato = sum(p["sec"] for p in persone.values()) or 1
+        lista = sorted((p for p in persone.values() if p["voce"] is not None and nomi), key=lambda p: -p["sec"])
+        for p in lista:
+            p["quota"] = round(p["sec"] / parlato, 3)
+            p["sec"] = round(p["sec"])
+        lungo = max((t for t in turni if t["voce"] is not None), key=lambda t: t["fine"] - t["inizio"], default=None)
+        caps = sorted(ap.capitoli_di(cart), key=lambda c: c.get("sec", 0))
+        argomenti = []
+        for i, c in enumerate(caps):
+            fine = caps[i + 1]["sec"] if i + 1 < len(caps) else durata
+            if fine > c["sec"]:
+                argomenti.append({"titolo": c.get("titolo", ""), "sec": round(fine - c["sec"]), "inizio": c["sec"]})
+        azioni = 0
+        try:
+            import condividi as cd
+            if ap.appunti_fatti(info, "verbale"):
+                azioni = len(cd.documento(cart, "verbale")["azioni"])
+        except Exception:
+            pass
+        return {"nome": info.get("nome", ""), "tipo": info.get("tipo") or "lezione", "durata": round(durata),
+                "durata_t": el.durata_leggibile(durata) if durata else "", "persone": lista,
+                "n_persone": len(lista) or len(info.get("partecipanti") or []),
+                "domande": sum(p["domande"] for p in persone.values()), "azioni": azioni,
+                "lungo": {"nome": nomi.get(lungo["voce"], ""), "sec": round(lungo["fine"] - lungo["inizio"]),
+                          "inizio": lungo["inizio"], "ora": el.hms(lungo["inizio"])} if lungo and nomi else None,
+                "argomenti": argomenti, "voci_fatte": bool(nomi)}
+
+    def cose_da_fare(self):
+        import cose
+        lista = cose.tutte(BASE)
+        persone = sorted({a["chi"] for a in lista if a["chi"]})
+        return {"cose": lista, "persone": persone, "aperte": sum(1 for a in lista if not a["fatto"]),
+                "scadute": sum(1 for a in lista if a["scaduta"])}
+
+    def cosa_fatta(self, id_, si=True):
+        import cose
+        cose.segna(BASE, id_, bool(si))
+        return self.cose_da_fare()
+
+    def cerca_parole(self, testo, tipo=""):
+        """«Cerca in tutto»: le frasi dette, in tutte le registrazioni, che contengono tutte le parole cercate."""
+        parole = [w for w in _senza_accenti(testo or "").split() if len(w) >= 2]
+        if not parole or len(" ".join(parole)) < 3:
+            return {"risultati": [], "volte": 0}
+        try:
+            cartelle = sorted((p for p in BASE.iterdir() if p.is_dir() and (p / "info.json").exists()),
+                              key=lambda p: p.name, reverse=True)
+        except OSError:
+            cartelle = []
+        out, volte = [], 0
+        for cart in cartelle:
+            info = el.leggi_json(cart / "info.json", {}) or {}
+            t = info.get("tipo") or "lezione"
+            if tipo and t != tipo:
+                continue
+            trovate = [f for f in self._frasi(cart) if all(w in f[3] for w in parole)]
+            if not trovate:
+                continue
+            volte += len(trovate)
+            try:
+                d = datetime.datetime.fromisoformat(info.get("inizio", ""))
+                quando = f"{d:%d/%m/%Y}"
+            except ValueError:
+                quando = ""
+            out.append({"cartella": str(cart), "nome": info.get("nome", cart.name), "quando": quando, "tipo": t,
+                        "n": len(trovate), "frasi": [{"sec": f[0], "ora": el.hms(f[0]), "chi": f[1], "testo": f[2][:300]}
+                                                     for f in trovate[:6]]})
+            if len(out) >= 40:
+                break
+        return {"risultati": out, "volte": volte, "parole": parole}
 
     def momento(self, cartella, sec=0, slide=None):
         try:

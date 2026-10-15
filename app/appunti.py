@@ -302,6 +302,8 @@ SCHEMA_VERBALE = {
         "aggiunte": {"type": "array", "items": {"type": "string"}},
         "da_controllare": {"type": "array", "items": {"type": "string"}},
         "capitoli": SCHEMA_CAPITOLI,
+        "fatte": {"type": "array", "description": "cose aperte dalle riunioni precedenti che qui risultano fatte",
+                  "items": {"type": "object", "properties": {"id": {"type": "string"}, "dove": _DOVE}, "required": ["id"]}},
     },
     "required": ["titolo", "in_breve", "decisioni", "azioni"],
 }
@@ -472,8 +474,27 @@ def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell
 SCHEMI = {"cornell": SCHEMA, "esame": SCHEMA_ESAME, "verbale": SCHEMA_VERBALE, "webinar": SCHEMA, "mio": SCHEMA_MIO}
 
 
+def note_della_parte(cartella, k):
+    """Le note scritte durante la registrazione («Le tue note») che cadono in questa parte."""
+    note = el.leggi_json(Path(cartella) / "note.json", []) or []
+    ps = el.parte_secondi(cartella)
+    return [n for n in note if (int(k) - 1) * ps <= float(n.get("sec", 0)) < int(k) * ps]
+
+
+def _testo_note(note, lingua):
+    nomi = {"importante": "IMPORTANTE", "chiarire": "DA CHIARIRE", "fare": "COSA DA FARE"}
+    righe = "; ".join(f"[{n.get('ora')}] " + " – ".join(x for x in (nomi.get(n.get("tipo"), ""), n.get("testo", "")) if x)
+                      for n in note)
+    return (" Durante la registrazione chi registrava ha preso queste NOTE (orario e testo): " + righe + ". "
+            "Sono i momenti che contano di piu' per lui: copri bene quei punti (guarda cosa si dice in quel minuto e "
+            "subito prima), e alla fine del punto collegato scrivi «(" + tr("nota_tua", lingua) + ")». "
+            "IMPORTANTE = dai piu' spazio a quell'argomento; DA CHIARIRE = mettilo anche fra le cose da controllare "
+            "(o, in un verbale, fra le cose da decidere); COSA DA FARE = nel verbale mettila fra le cose da fare. "
+            "Le note sono di chi registra: non inventare contenuti che non sono nella registrazione.")
+
+
 def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
-                    formato="cornell", parole=None, mio=None, partecipanti=None):
+                    formato="cornell", parole=None, mio=None, partecipanti=None, note=None, aperte=None):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
@@ -495,6 +516,11 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti=
              (" Se un paragrafo comincia con un nome e i due punti (es. «Giulia: ...», «Voce 2: ...», «Domanda: ...»)"
               " e' chi sta parlando, riconosciuto in automatico dalla voce: usalo per dire chi ha detto o deciso cosa"
               " (puo' sbagliare: se il testo dice chiaramente altro, segui il testo; «Voce N» e' una persona senza nome).") +
+             (_testo_note(note, lingua_appunti) if note else "") +
+             (" Cose da fare RIMASTE APERTE dalle riunioni precedenti (id: cosa – chi): " +
+              "; ".join(f"{a['id']}: {a['cosa']}" + (f" – {a['chi']}" if a.get("chi") else "") for a in aperte) +
+              ". Se in questo tratto si dice chiaramente che una di queste e' stata fatta (o non serve piu'), mettila in "
+              "\"fatte\" con il suo id e l'orario; non rimetterla fra le azioni nuove." if aperte and formato == "verbale" else "") +
              (" Termini e nomi che il docente usa (la trascrizione automatica puo' averli storpiati: "
               "scrivili esattamente cosi'): " + ", ".join(parole) + "." if parole else "")}]}],
     }
@@ -882,6 +908,12 @@ def _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO
         _sezione_colore(pdf, font, t, tr("vb_da_decidere", L), ARANCIO)
         for d in dati["da_decidere"]:
             testo(f"• {d.get('testo', '')}{dove(d.get('dove'))}")
+    if dati.get("dall_ultima") and info.get("aperte_prima"):
+        _sezione_colore(pdf, font, t, tr("vb_dall_ultima", L), ARANCIO)
+        fatte = {f["id"] for f in dati.get("fatte") or []}
+        for a in info["aperte_prima"]:
+            ok = a["id"] in fatte
+            testo(f"• {a['cosa']}" + (f" ({a['chi']})" if a.get("chi") else "") + " – " + tr("vb_fatta" if ok else "vb_aperta", L))
     pr = dati.get("prossima_riunione") or {}
     if pr.get("quando") or pr.get("note"):
         _sezione_colore(pdf, font, t, tr("vb_prossima", L), ARANCIO)
@@ -1574,10 +1606,19 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                                       lingua_appunti=testi.lingua_di(info0),
                                       lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato,
                                       parole=el.parole_lezione(cartella), mio=info0.get("mio"),
-                                      partecipanti=info0.get("partecipanti") or None)
+                                      partecipanti=info0.get("partecipanti") or None,
+                                      note=note_della_parte(cartella, k),
+                                      aperte=info0.get("aperte_prima") or None)
         if formato == "mio" and info0.get("mio"):
             dati["mio_nome"] = info0["mio"].get("nome", "")
         dati["formato"] = formato
+        if formato == "verbale":
+            try:
+                import cose
+                cose.applica_fatte(cartella.parent, cartella, dati)
+                dati["dall_ultima"] = int(k) == 1 and bool(info0.get("aperte_prima"))
+            except Exception:
+                log.exception("cose fatte")
         try:      # controllo di verita': citazioni, minuti e slide confrontati con la registrazione
             import verifica
             n_slide = len(el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or [])

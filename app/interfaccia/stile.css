@@ -427,3 +427,34 @@ html.android .dove.tre{grid-template-columns:1fr}
 .calt input[type=date]{width:150px}.calt input[type=time]{width:112px}
 .dlgerr{color:#be123c;font-size:13px;margin-top:8px}
 @media (max-width:720px){.tiles{grid-template-columns:1fr 1fr}}
+
+/* cerca in tutto */
+#paroleRis{margin-bottom:12px}
+#paroleRis mark{background:#fde68a;border-radius:3px;padding:0 2px;color:inherit}
+.ris{padding:8px 10px;border-radius:10px;display:flex;gap:12px;align-items:baseline;cursor:pointer;font-size:13.5px;line-height:1.5}
+.ris:hover{background:#f1f6fb}
+.ris .t{font-weight:700;color:var(--blue);width:64px;flex:none;font-size:13px;font-variant-numeric:tabular-nums}
+
+/* statistiche */
+.stnum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stnum div{background:#f8fafc;border-radius:12px;padding:12px;text-align:center}
+.stnum b{display:block;font-size:22px;color:var(--ink)}
+.strow{display:grid;grid-template-columns:170px 1fr 110px;gap:10px;align-items:center;padding:5px 0;font-size:13px}
+.strow b{color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.strow span:last-child{color:var(--mut);text-align:right}
+.sbar{height:16px;border-radius:6px;display:inline-block;vertical-align:middle}
+
+/* le tue note */
+.nota2{display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.nota2 .t{color:var(--blue);font-weight:700;width:62px;flex:none;font-variant-numeric:tabular-nums}
+#noteLista{max-height:220px;overflow:auto}
+
+/* cose da fare */
+.fare{display:grid;grid-template-columns:26px 1fr 140px 110px 200px;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.fare:last-child{border:0}
+.fare.testa{font-size:11px;font-weight:700;color:var(--mut);letter-spacing:.5px;padding:4px 0}
+.fare b{color:var(--ink);font-weight:600}
+.fare.ok b,.fare.ok span{color:var(--mut);text-decoration:line-through}
+.fare.tardi b,.fare.tardi .en{color:#be123c}
+.fare .lnk{text-align:left;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fare input{width:17px;height:17px;cursor:pointer}
+.avviso2{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.5}
+.avviso2 b{display:block;margin-bottom:2px}

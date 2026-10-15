@@ -58,6 +58,7 @@
     <nav class="nav" id="nav">
       <a data-p="reg" class="on"><svg><use href="#i-rec"/></svg><span data-t="nav.reg">Registra</span><span class="recdot hidden" id="navRec"></span></a>
       <a data-p="arch"><svg><use href="#i-lib"/></svg><span data-t="nav.arch">Le mie registrazioni</span><span class="cnt hidden" id="navCnt"></span></a>
+      <a data-p="fare" class="solo-pc"><svg><use href="#i-check"/></svg><span data-t="nav.fare">Cose da fare</span><span class="cnt hidden" id="navFare"></span></a>
       <a data-p="imp"><svg><use href="#i-set"/></svg><span data-t="nav.imp">Impostazioni</span></a>
       <a data-p="guida"><svg><use href="#i-guida"/></svg><span data-t="nav.guida">Guida</span></a>
       <a data-p="info" class="solo-pc"><svg><use href="#i-info"/></svg><span data-t="nav.info">Informazioni</span></a>
@@ -157,6 +158,13 @@
         <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">pacchetti pronti</small></div></div>
       </div>
       <div class="avviso mt hidden" id="lAvv"></div>
+      <div class="avviso2 mt hidden solo-pc" id="aperteCard"></div>
+      <div class="card mt solo-pc" id="noteCard">
+        <div class="lbl" data-t="nt.h">Le tue note</div>
+        <div id="noteLista"></div>
+        <input class="in" id="notaIn" data-tp="nt.ph" placeholder="Scrivi una nota e premi Invio…" maxlength="300" autocomplete="off" style="margin-top:6px">
+        <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><span class="chip" data-nota="importante">⭐ <span data-t="nt.imp">Importante</span></span><span class="chip" data-nota="chiarire">❓ <span data-t="nt.chi">Da chiarire</span></span><span class="chip" data-nota="fare">✅ <span data-t="nt.fare">Cosa da fare</span></span><span class="sp"></span><span class="hint" data-t="nt.s">Claude le userà per gli appunti</span></div>
+      </div>
       <div class="card mt hidden" id="dirCard">
         <div class="row" style="margin-bottom:10px"><div class="lbl" style="margin:0" data-t="lv.dir">Testo in diretta</div><span class="sp"></span><span class="pill p-blue" data-t="lv.dir.rit">circa 2 minuti di ritardo</span></div>
         <div class="diretta" id="dirTxt"></div>
@@ -201,9 +209,10 @@
     <section class="pg hidden" id="v-arch">
       <div class="hd"><div><h2 data-t="ar.h">Le mie registrazioni</h2><p id="aSub"></p></div><button class="btn b-ghost b-sm solo-pc" id="aCart"><svg><use href="#i-folder"/></svg><span data-t="ar.cart">Apri cartella</span></button></div>
       <div class="toolbar">
-        <div class="search"><svg><use href="#i-srch"/></svg><input class="in" id="cerca" data-tp="ar.cerca" placeholder="Cerca per nome o data…" autocomplete="off"></div>
+        <div class="search"><svg><use href="#i-srch"/></svg><input class="in" id="cerca" data-tp="ar.cerca" placeholder="Cerca per nome, data o parole dette…" autocomplete="off"></div>
         <div class="disk card solo-pc"><svg width="16" height="16" style="color:var(--mut)"><use href="#i-film"/></svg><span data-t="ar.video">Video sul PC</span> <b id="aVid">–</b><div class="bar"><i id="aVidBar" style="width:0"></i></div><button class="lnk hidden" id="aVidDel" style="color:#be123c" data-t="ar.eltutti">Elimina tutti</button></div>
       </div>
+      <div id="paroleRis" class="hidden"></div>
       <div id="ripBanda"></div>
       <div id="lista"></div>
     </section>
@@ -234,9 +243,21 @@
       </div>
     </section>
 
+    <!-- COSE DA FARE -->
+    <section class="pg hidden" id="v-fare">
+      <div class="hd"><div><h2 data-t="cf.h">Cose da fare</h2><p id="cfSub"></p></div></div>
+      <div class="card"><div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:6px" id="cfFiltri"></div><div id="cfLista"></div></div>
+    </section>
+
+    <!-- STATISTICHE -->
+    <section class="pg hidden" id="v-stat">
+      <div class="hd"><div><h2 id="stTit">Statistiche</h2><p id="stSub"></p></div></div>
+      <div id="stBox"></div>
+    </section>
+
     <!-- CHI PARLA -->
     <section class="pg hidden" id="v-voci">
-      <div class="hd"><div><h2 id="vcTit" data-t="vc.h">Chi parla</h2><p id="vcSub"></p></div></div>
+      <div class="hd"><div><h2 id="vcTit" data-t="vc.h">Chi parla</h2><p id="vcSub"></p></div><button class="btn b-ghost b-sm" id="vcStat">📊 <span data-t="st.h">Statistiche</span></button></div>
       <div id="vcMedia"></div>
       <div class="card"><div class="row" style="margin-bottom:8px"><div class="lbl sp" style="margin:0" data-t="vc.tras">Trascrizione · chi parla</div><button class="btn b-ghost b-sm" id="vcNomi" data-t="vc.nomi">Dai i nomi alle voci…</button></div>
         <div id="vcRighe"></div></div>

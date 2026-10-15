@@ -1,6 +1,6 @@
 {
- "versione": "3.20",
+ "versione": "3.21",
  "librerie": 2,
- "novita": "Condividi e collega: con il pulsante «Condividi» il verbale o gli appunti vanno per email (Outlook o Gmail), in Word, in Google Docs, a Slack, Teams, Notion o al CRM; le cose da fare e la prossima riunione nel calendario (Outlook o Google).",
- "novita_en": "Share and connect: with the «Share» button the minutes or notes go by email (Outlook or Gmail), to Word, Google Docs, Slack, Teams, Notion or the CRM; to-dos and the next meeting into the calendar (Outlook or Google)."
+ "novita": "Cerca in tutto (anche le parole dette), Statistiche (chi ha parlato e quanto), Le tue note durante la registrazione (⭐ anche dalla mini finestra), la pagina Cose da fare con il promemoria «Dall'ultima volta».",
+ "novita_en": "Search everything (including words spoken), Statistics (who spoke and how much), Your notes while recording (⭐ also from the mini window), the To-dos page with the «Since last time» reminder."
 }
