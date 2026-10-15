@@ -754,7 +754,7 @@ function testoRisposta(x) {
     let sec = 0;
     if (tm) { const p = tm.split(':').map(Number); sec = p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1]; }
     const nome = li && CH.nomi[i] ? '«' + (CH.nomi[i].split(' – ').slice(-1)[0]) + '» · ' : '';
-    const et = sl ? 'slide ' + sl : t('ch.min', {m: Math.floor(sec / 60)});
+    const et = sl ? 'slide ' + sl : sec >= 60 ? t('ch.min', {m: Math.floor(sec / 60)}) : ms(sec);
     return `<button class="cita" data-i="${i}" data-s="${sl || ''}" data-t="${sec}">▶ ${esc(nome)}${et}</button>`;
   });
 }
@@ -939,7 +939,7 @@ function cartaRip() {
   $('cSt').textContent = c.stelle ? '★'.repeat(c.stelle) + '☆'.repeat(3 - c.stelle) : '';
   $('cD').textContent = c.domanda;
   const ori = [c.lezione]; if (c.slide_n) ori.push('slide ' + c.slide_n); else if (c.dove) ori.push(c.dove);
-  if (c.minuto != null) ori.push(t('rp.min', {m: c.minuto}));
+  if (c.minuto) ori.push(t('rp.min', {m: c.minuto}));
   $('cO').textContent = ori.join(' · ');
   $('cTit').textContent = c.formato === 'esame' ? t('rp.schema') : t('rp.risp');
   $('cSc').innerHTML = c.schema.map(x => `<li>${esc(x)}</li>`).join('');

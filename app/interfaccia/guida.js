@@ -42,10 +42,14 @@ const GUIDA = {
       {ico: 'lib', v: 'registrazioni', t: 'Le mie registrazioni', p: [
         'Qui trovi tutte le lezioni, con la ricerca per nome o data.',
         '<b>Apri appunti</b>, <b>Trascrizione</b> (slide con sotto le parole del docente) e <b>Video</b>.',
-        '<b>Ripassa</b>: flashcard con le domande dei tuoi appunti. Leggi la domanda, pensa alla risposta, tocca la carta per girarla e di\' se la sapevi. In alto c\'è <b>Ripassa la materia</b>, con le domande di tutte le lezioni della stessa materia: quelle che non sapevi tornano per prime la volta dopo. Non costa niente.',
         'Nel menu <b>⋯</b>: crea o rifai gli appunti, rinomina, apri la cartella, elimina il video (libera spazio, gli appunti restano) o tutta la registrazione (va nel Cestino).',
         'Se il PC si è spento mentre preparava i file, tocca <b>Completa</b>.']},
-      {ico: 'chat', t: 'Chiedi, mappa mentale e slide del docente', p: [
+      {ico: 'cards', v: 'ripasso', t: 'Ripassare con le flashcard', p: [
+        'In «Le mie registrazioni» tocca <b>Ripassa</b> su una lezione, oppure in alto <b>Ripassa la materia</b>: le domande di tutte le lezioni della stessa materia insieme.',
+        'Scegli quali domande: <b>prima quelle da rivedere</b> (consigliato), tutte in ordine sparso, o solo le ★★★ del Formato Esame.',
+        'Leggi la domanda e pensa alla risposta. Tocca la carta per girarla: dietro c\'è la risposta, con slide e parole chiave. Poi tocca <b>La sapevo</b> o <b>Da rivedere</b> (con la tastiera: spazio, ← e →).',
+        'Alla fine vedi quante ne sapevi. Quelle da rivedere tornano per prime la volta dopo. Non costa niente: usa le domande già negli appunti.']},
+      {ico: 'chat', v: 'chiedi', t: 'Chiedi, mappa mentale e slide del docente', p: [
         '<b>Chiedi</b> (bottone viola sulla lezione): scrivi cosa non hai capito. La risposta usa solo quello che ha detto il docente e indica slide e minuto: tocca il minuto e rivedi quel punto del video. Puoi chiedere anche su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.',
         '<b>Mappa mentale</b> (menu <b>⋯</b>): lo schema ad albero della lezione, da salvare in PDF o stampare. Circa 1 centesimo, una volta sola.',
         '<b>Slide del docente</b> (menu <b>⋯</b> → «Aggiungi le slide del docente (PDF)…»): gli appunti vengono rifatti con le slide originali, nitide, al posto delle foto dallo schermo. Gli appunti di prima restano come copia.']},
@@ -61,6 +65,8 @@ const GUIDA = {
       {ico: 'aud', t: 'Se qualcosa non va', p: [
         '<b>«Non sento nessun suono»</b>: controlla che il volume del PC non sia a zero e che l\'audio esca dalle casse o dalle cuffie.',
         '<b>Gli appunti non arrivano</b>: serve internet; tocca <b>Riprova</b> accanto alla parte. Se manca la chiave, inseriscila in Impostazioni.',
+        '<b>In aula le tacche verdi del microfono non si muovono</b>: scegli un altro microfono nell\'elenco, controlla che non sia spento (tasto sulla tastiera o sulle cuffie) e in Windows → Impostazioni → Privacy e sicurezza → Microfono lascia usare il microfono alle app.',
+        '<b>«Chiedi» o la mappa non rispondono</b>: servono internet e la chiave di Claude (Impostazioni). Il video non parte dal minuto? Se l\'hai eliminato vedi comunque la slide e le parole del docente.',
         '<b>Poco spazio</b>: in «Le mie registrazioni» elimina i video delle lezioni vecchie (gli appunti restano).',
         'Il file <b>registra_lezione.log</b> nella cartella «Lezioni registrate» racconta cosa è successo: mandalo all\'assistenza.']},
     ]},
@@ -105,10 +111,14 @@ const GUIDA = {
       {ico: 'lib', v: 'registrazioni', t: 'My recordings', p: [
         'All your lectures, with search by name or date.',
         '<b>Open notes</b>, <b>Transcript</b> (slides with the lecturer\'s words below) and <b>Video</b>.',
-        '<b>Review</b>: flashcards with the questions from your notes. Read the question, think of the answer, tap the card to flip it and say whether you knew it. At the top there is <b>Review the subject</b>, with the questions from all lectures of the same subject: the ones you didn\'t know come first next time. It\'s free.',
         'In the <b>⋯</b> menu: create or redo notes, rename, open the folder, delete the video (frees space, notes stay) or the whole recording (goes to the Recycle Bin).',
         'If the PC switched off while preparing the files, tap <b>Complete</b>.']},
-      {ico: 'chat', t: 'Ask, mind map and lecturer\'s slides', p: [
+      {ico: 'cards', v: 'ripasso', t: 'Reviewing with flashcards', p: [
+        'In «My recordings» tap <b>Review</b> on a lecture, or at the top <b>Review the subject</b>: the questions from all lectures of the same subject together.',
+        'Choose which questions: <b>to review first</b> (recommended), all shuffled, or only the ★★★ of the Exam format.',
+        'Read the question and think of the answer. Tap the card to flip it: the answer is on the back, with slide and keywords. Then tap <b>I knew it</b> or <b>To review</b> (keyboard: space, ← and →).',
+        'At the end you see how many you knew. The ones to review come back first next time. It\'s free: it uses the questions already in the notes.']},
+      {ico: 'chat', v: 'chiedi', t: 'Ask, mind map and lecturer\'s slides', p: [
         '<b>Ask</b> (purple button on the lecture): type what you didn\'t understand. The answer uses only what the lecturer said and shows slide and minute: tap the minute to see that point of the video again. You can also ask about <b>the whole subject</b>. Less than 1 cent per question.',
         '<b>Mind map</b> (<b>⋯</b> menu): the tree outline of the lecture, to save as PDF or print. About 1 cent, once.',
         '<b>Lecturer\'s slides</b> (<b>⋯</b> menu → «Add the lecturer\'s slides (PDF)…»): the notes are redone with the original, sharp slides instead of the screen photos. The previous notes stay as a copy.']},
@@ -124,6 +134,8 @@ const GUIDA = {
       {ico: 'aud', t: 'If something goes wrong', p: [
         '<b>«No sound for a minute»</b>: check that the PC volume is not at zero and that sound comes out of the speakers or headphones.',
         '<b>Notes don\'t arrive</b>: an internet connection is needed; tap <b>Retry</b> next to the part. If the key is missing, enter it in Settings.',
+        '<b>In class the green microphone bars don\'t move</b>: choose another microphone in the list, check it isn\'t muted (key on the keyboard or headset) and in Windows → Settings → Privacy & security → Microphone allow apps to use the microphone.',
+        '<b>«Ask» or the map don\'t answer</b>: they need internet and the Claude key (Settings). The video doesn\'t start at the minute? If you deleted it you still see the slide and the lecturer\'s words.',
         '<b>Low disk space</b>: in «My recordings» delete the videos of old lectures (notes stay).',
         'The <b>registra_lezione.log</b> file in the recordings folder tells what happened: send it to support.']},
     ]},

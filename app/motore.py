@@ -934,7 +934,7 @@ class Motore:
                     t0 = nuovo[0]
                 pezzi.append(nuovo[1])
             durata = sum(len(p) for p in pezzi) / 48000
-            if pezzi and (durata >= 45 or (fermo and durata >= 2)):
+            if pezzi and (durata >= float(os.environ.get("RL_DIRETTA_SECONDI") or 45) or (fermo and durata >= 2)):
                 audio = np.concatenate(pezzi)
                 audio = audio[:len(audio) // 3 * 3].reshape(-1, 3).mean(axis=1).astype(np.float32)   # 48 -> 16 kHz
                 inizio, t0, pezzi = t0, None, []
