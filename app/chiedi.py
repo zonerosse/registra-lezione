@@ -210,16 +210,11 @@ def crea_mappa(chiave, cartella, lingua=None):
                        "(definizioni, formule, nomi di teoremi, esempi). Niente frasi lunghe. Scrivi in "
                        f"{testi.nome_lingua(lingua, 'it')}. Chiama lo strumento salva_mappa.",
              "tools": [{"name": "salva_mappa", "description": "Salva la mappa mentale.", "input_schema": SCHEMA_MAPPA}],
-             "tool_choice": {"type": "tool", "name": "salva_mappa"},
+             # come per gli appunti: "auto" (alcuni modelli non accettano "tool"); le istruzioni chiedono lo strumento
+             # e c'e' il piano B (JSON nel testo)
+             "tool_choice": {"type": "auto"},
              "messages": [{"role": "user", "content": materiale}]}
-    try:
-        r = _chiama(chiave, corpo)
-    except ap.ErroreAppunti:
-        raise
-    except Exception:
-        # se il modello non accetta tool_choice "tool" riprovo con "auto"
-        corpo["tool_choice"] = {"type": "auto"}
-        r = _chiama(chiave, corpo)
+    r = _chiama(chiave, corpo)
     blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
     dati = blocco["input"] if blocco else None
     if not dati:

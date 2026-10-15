@@ -275,6 +275,7 @@ async function inizia() {
     const v = await A.verifica_inizio();
     if (v.occupato) { toast(t('aspetta')); return; }
     const aula = R.modo === 'aula';
+    if (aula && MICS && !MICS.length) { await dialogo({titolo: t('src.mic.no'), testo: t('in.mic')}); return; }
     if (!aula && !v.audio_ok && !await conferma(t('in.audio.t'), t('in.audio'), t('in.audio.si'), t('annulla'))) return;
     if (v.liberi != null && v.liberi < 3 && !await conferma(t('in.spazio.t'), t('in.spazio', {g: num(v.liberi.toFixed(1))}), t('continua'))) return;
     if (!v.cartella_ok) { await dialogo({titolo: t('in.cart.t'), testo: t('in.cart')}); vai('imp'); return; }

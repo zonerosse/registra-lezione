@@ -1,6 +1,6 @@
 {
- "versione": "3.10",
+ "versione": "3.11",
  "librerie": 2,
- "novita": "Ripassa: flashcard con le domande dei tuoi appunti, per una lezione o per tutta la materia. Quelle che non sapevi tornano per prime. Gratis, senza chiamare Claude.",
- "novita_en": "Review: flashcards with the questions from your notes, for one lecture or the whole subject. The ones you didn't know come back first. Free, Claude is not called."
+ "novita": "Sei novità: lezioni in aula col microfono, testo in diretta mentre registri, parole difficili per materia, «Chiedi alla lezione», mappa mentale e slide del docente in PDF.",
+ "novita_en": "Six new features: classroom lectures with the microphone, live text while recording, difficult words per subject, «Ask the lecture», mind map and the lecturer's PDF slides."
 }

@@ -4,7 +4,7 @@ const TESTI = {
   it: {
     'pr.dove': 'Dove si tiene la lezione?', 'pr.online.t': 'Online', 'pr.online': 'Meet, Teams, Zoom: registro schermo e audio del PC.', 'pr.aula.t': 'In aula', 'pr.aula': 'Il docente è lì davanti: registro dal microfono del portatile.',
     'pr.p.aula': 'Microfono e slide del docente: penso a tutto io.', 'pr.prima.aula': 'Metti il portatile vicino alla cattedra e non scriverci sopra mentre registri: il rumore dei tasti si sente.',
-    'src.mic': 'Microfono', 'src.mic.no': 'Nessun microfono trovato', 'src.mic.pred': '{n} (quello di Windows)', 'src.pdf': 'Slide del docente', 'src.pdf.s': 'Facoltativo: il PDF, se il docente lo pubblica', 'src.pdf.b': 'Scegli il PDF…', 'togli': 'Togli', 'src.scr.no': 'Non serve in aula',
+    'src.mic': 'Microfono', 'src.mic.no': 'Nessun microfono trovato', 'in.mic': 'Collega un microfono (o le cuffie col microfono) e riapri il programma. Per le lezioni online scegli «Online».', 'src.mic.pred': '{n} (quello di Windows)', 'src.pdf': 'Slide del docente', 'src.pdf.s': 'Facoltativo: il PDF, se il docente lo pubblica', 'src.pdf.b': 'Scegli il PDF…', 'togli': 'Togli', 'src.scr.no': 'Non serve in aula',
     'lv.dir': 'Testo in diretta', 'lv.dir.rit': 'circa 2 minuti di ritardo', 'lv.dir.att': 'Il testo compare qui tra poco…', 'lv.dir.lav': 'trascrivo…',
     'im.dir': 'Testo in diretta', 'im.dir.s': 'Mentre registri vedi il testo con circa 2 minuti di ritardo. Il PC lavora di più: su un portatile lento può rallentare Meet.',
     'pw.t': 'Parole difficili', 'pw.s': 'Nomi, termini tecnici, il nome del docente: la trascrizione li sbaglia molto meno e Claude li scrive giusti. Una materia alla volta.', 'pw.ph': 'Aggiungi una parola e premi Invio…', 'pw.agg': 'Aggiungi',
@@ -127,7 +127,7 @@ const TESTI = {
   en: {
     'pr.dove': 'Where is the lecture?', 'pr.online.t': 'Online', 'pr.online': 'Meet, Teams, Zoom: I record the screen and PC audio.', 'pr.aula.t': 'In the classroom', 'pr.aula': 'The lecturer is right there: I record from the laptop microphone.',
     'pr.p.aula': 'Microphone and lecturer\'s slides: I take care of everything.', 'pr.prima.aula': 'Put the laptop close to the lecturer\'s desk and don\'t type on it while recording: key noise is picked up.',
-    'src.mic': 'Microphone', 'src.mic.no': 'No microphone found', 'src.mic.pred': '{n} (Windows default)', 'src.pdf': 'Lecturer\'s slides', 'src.pdf.s': 'Optional: the PDF, if the lecturer publishes it', 'src.pdf.b': 'Choose the PDF…', 'togli': 'Remove', 'src.scr.no': 'Not needed in class',
+    'src.mic': 'Microphone', 'src.mic.no': 'No microphone found', 'in.mic': 'Connect a microphone (or a headset with a microphone) and reopen the program. For online lectures choose «Online».', 'src.mic.pred': '{n} (Windows default)', 'src.pdf': 'Lecturer\'s slides', 'src.pdf.s': 'Optional: the PDF, if the lecturer publishes it', 'src.pdf.b': 'Choose the PDF…', 'togli': 'Remove', 'src.scr.no': 'Not needed in class',
     'lv.dir': 'Live text', 'lv.dir.rit': 'about 2 minutes behind', 'lv.dir.att': 'The text will appear here shortly…', 'lv.dir.lav': 'transcribing…',
     'im.dir': 'Live text', 'im.dir.s': 'While recording you see the text about 2 minutes behind. The PC works harder: on a slow laptop it can slow down Meet.',
     'pw.t': 'Difficult words', 'pw.s': 'Names, technical terms, the lecturer\'s name: the transcript gets them wrong far less and Claude spells them right. One subject at a time.', 'pw.ph': 'Add a word and press Enter…', 'pw.agg': 'Add',

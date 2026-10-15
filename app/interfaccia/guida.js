@@ -6,7 +6,8 @@ const GUIDA = {
     capitoli: [
       {ico: 'spark', t: 'Perché Registra Lezione', perche: true, p: [
         '<b>Nessun bot nella riunione</b>: registra dal tuo PC quello che vedi e senti. Nessun «assistente» entra nella chiamata e nessuno deve accettarlo.',
-        '<b>Funziona con tutto</b>: Meet, Teams, Zoom, webinar, video online… e con «Importa un video» anche le lezioni riprese col telefono o scaricate dall\'università.',
+        '<b>Funziona con tutto</b>: Meet, Teams, Zoom, webinar, video online… <b>anche in aula</b> col microfono del portatile, e con «Importa un video» le lezioni riprese col telefono o scaricate dall\'università.',
+        '<b>Chiedi alla lezione</b>: scrivi cosa non hai capito e la risposta arriva da quello che ha detto il docente, con la slide e il minuto.',
         '<b>La trascrizione si fa sul tuo PC</b>: l\'audio non va su internet. A Claude arrivano solo testo e slide, e solo se scegli gli appunti automatici.',
         '<b>Le slide le fotografa da solo</b> e le mette negli appunti accanto alle parole del docente, con il punto preciso della lezione.',
         '<b>Appunti per studiare, non un riassunto</b>: Cornell per capire e ripassare, Formato Esame per prepararsi a rispondere. Anche tutti e due sulla stessa lezione, più le <b>flashcard per ripassare</b>.',
@@ -14,7 +15,7 @@ const GUIDA = {
         '<b>Lezioni in altre lingue</b>: gli appunti arrivano nella tua lingua, con i termini tecnici originali tra parentesi.',
         'Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi.']},
       {ico: 'rec', v: 'registrare', t: 'Registrare una lezione', p: [
-        'Entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo <b>schermo principale</b>, con il volume acceso.',
+        'Scegli <b>dove si tiene la lezione</b>. <b>Online</b>: entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo <b>schermo principale</b>, con il volume acceso. <b>In aula</b>: il programma registra dal microfono del portatile (scegli quale e guarda le tacche verdi che si muovono); se il docente pubblica le slide in PDF, aggiungile subito con <b>Scegli il PDF…</b>.',
         'In <b>Registra</b> scrivi il nome, per esempio «Analisi 1 – Limiti». Data e ora le aggiunge il programma. Le materie usate di recente compaiono sotto: un tocco e sono già scritte.',
         'Scegli <b>in che lingua parla il docente</b>. Se non è la lingua del programma, gli appunti arrivano comunque tradotti, con i termini tecnici originali tra parentesi.',
         'Tocca il pulsante rosso <b>REGISTRA</b>. Se te lo chiede, attiva «Non disturbare» di Windows: così i suoni delle notifiche non finiscono nella registrazione.',
@@ -27,6 +28,7 @@ const GUIDA = {
         'La finestra grande si riduce e compare la <b>mini finestra</b> in basso a destra, sempre in primo piano. Si sposta trascinandola dall\'alto. Non finisce nel video.',
         '<b>Pausa</b> durante l\'intervallo: non registra niente e il tempo si ferma. <b>Riprendi</b> quando ricomincia.',
         'Le slide vengono fotografate da sole quando cambiano sullo schermo.',
+        'Con <b>Testo in diretta</b> acceso (in Impostazioni) le parole del docente compaiono sotto il timer, con circa 2 minuti di ritardo.',
         'Ogni 30 minuti (o ogni ora, in Impostazioni) prepara un <b>pacchetto</b>: slide e parole del docente di quel tratto. Con gli appunti automatici, Claude comincia a scriverli subito.']},
       {ico: 'stop', v: 'fine', t: 'Fine della lezione', p: [
         'Tocca <b>Fine</b> nella mini finestra o nella finestra grande e conferma.',
@@ -43,10 +45,15 @@ const GUIDA = {
         '<b>Ripassa</b>: flashcard con le domande dei tuoi appunti. Leggi la domanda, pensa alla risposta, tocca la carta per girarla e di\' se la sapevi. In alto c\'è <b>Ripassa la materia</b>, con le domande di tutte le lezioni della stessa materia: quelle che non sapevi tornano per prime la volta dopo. Non costa niente.',
         'Nel menu <b>⋯</b>: crea o rifai gli appunti, rinomina, apri la cartella, elimina il video (libera spazio, gli appunti restano) o tutta la registrazione (va nel Cestino).',
         'Se il PC si è spento mentre preparava i file, tocca <b>Completa</b>.']},
+      {ico: 'chat', t: 'Chiedi, mappa mentale e slide del docente', p: [
+        '<b>Chiedi</b> (bottone viola sulla lezione): scrivi cosa non hai capito. La risposta usa solo quello che ha detto il docente e indica slide e minuto: tocca il minuto e rivedi quel punto del video. Puoi chiedere anche su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.',
+        '<b>Mappa mentale</b> (menu <b>⋯</b>): lo schema ad albero della lezione, da salvare in PDF o stampare. Circa 1 centesimo, una volta sola.',
+        '<b>Slide del docente</b> (menu <b>⋯</b> → «Aggiungi le slide del docente (PDF)…»): gli appunti vengono rifatti con le slide originali, nitide, al posto delle foto dallo schermo. Gli appunti di prima restano come copia.']},
       {ico: 'set', v: 'impostazioni', t: 'Impostazioni', p: [
         '<b>Lingua</b>: italiano o inglese, per il programma e per gli appunti.',
         '<b>Intelligenza artificiale</b>: «Appunti automatici con Claude» con la tua chiave (circa 0,20 $ per ora registrata), oppure «Cartella per l\'AI che vuoi»: prepara solo i pacchetti zip da portare a Claude, ChatGPT, Gemini…',
-        '<b>Formato degli appunti</b>, <b>ogni quanto preparo un pacchetto</b> (30 minuti o 1 ora), <b>mini finestra</b>, promemoria <b>Non disturbare</b>.',
+        '<b>Formato degli appunti</b>, <b>ogni quanto preparo un pacchetto</b> (30 minuti o 1 ora), <b>mini finestra</b>, <b>Testo in diretta</b>, promemoria <b>Non disturbare</b>.',
+        '<b>Parole difficili</b>: per ogni materia scrivi nomi e termini tecnici (o tocca quelli proposti dai tuoi appunti). La trascrizione li sbaglia molto meno e Claude li scrive giusti.',
         '<b>Dove salvo i pacchetti</b> e <b>I tuoi dati</b> (nome, università, corso, anno): compaiono sugli appunti e aiutano Claude.']},
       {ico: 'info', v: 'aggiornamenti', t: 'Aggiornamenti e assistenza', p: [
         'In basso a sinistra tocca <b>Aggiorna</b>: se c\'è una versione nuova, <b>Installa</b> e il programma si riapre già aggiornato.',
@@ -62,7 +69,8 @@ const GUIDA = {
     capitoli: [
       {ico: 'spark', t: 'Why Registra Lezione', perche: true, p: [
         '<b>No bot in the meeting</b>: it records from your PC what you see and hear. No «assistant» joins the call and nobody has to admit it.',
-        '<b>Works with everything</b>: Meet, Teams, Zoom, webinars, online videos… and with «Import a video» also lectures filmed with your phone or downloaded from the university.',
+        '<b>Works with everything</b>: Meet, Teams, Zoom, webinars, online videos… <b>also in the classroom</b> with the laptop microphone, and with «Import a video» lectures filmed with your phone or downloaded from the university.',
+        '<b>Ask the lecture</b>: type what you didn\'t understand and the answer comes from what the lecturer said, with the slide and the minute.',
         '<b>Transcription happens on your PC</b>: the audio never goes online. Claude only receives text and slides, and only if you choose automatic notes.',
         '<b>Slides are captured automatically</b> and placed in the notes next to the lecturer\'s words, with the exact point of the lecture.',
         '<b>Notes for studying, not a summary</b>: Cornell to understand and review, Exam format to get ready to answer. Even both for the same lecture, plus <b>flashcards to review</b>.',
@@ -70,7 +78,7 @@ const GUIDA = {
         '<b>Lectures in other languages</b>: notes arrive in your language, with the original technical terms in brackets.',
         'Videos, notes and transcripts stay <b>on your PC</b>: they are yours.']},
       {ico: 'rec', v: 'registrare', t: 'Recording a lecture', p: [
-        'Join the lecture (Meet, Teams, Zoom…) and keep its window on the <b>main screen</b>, with the volume on.',
+        'Choose <b>where the lecture is</b>. <b>Online</b>: join the lecture (Meet, Teams, Zoom…) and keep its window on the <b>main screen</b>, with the volume on. <b>In the classroom</b>: the program records from the laptop microphone (choose which one and watch the green bars move); if the lecturer publishes the slides as a PDF, add them right away with <b>Choose the PDF…</b>.',
         'In <b>Record</b> type the name, e.g. «Calculus 1 – Limits». The program adds date and time. Recent subjects appear below: one tap and they are typed in.',
         'Choose <b>which language the lecturer speaks</b>. If it is not the program language, the notes still arrive translated, with the original technical terms in brackets.',
         'Tap the red <b>RECORD</b> button. If asked, turn on Windows «Do not disturb», so notification sounds don\'t end up in the recording.',
@@ -83,6 +91,7 @@ const GUIDA = {
         'The main window minimises and the <b>mini window</b> appears at the bottom right, always on top. Drag it from the top to move it. It does not end up in the video.',
         '<b>Pause</b> during the break: nothing is recorded and the clock stops. <b>Resume</b> when the lecture restarts.',
         'Slides are captured automatically when they change on screen.',
+        'With <b>Live text</b> on (in Settings) the lecturer\'s words appear below the timer, about 2 minutes behind.',
         'Every 30 minutes (or every hour, in Settings) a <b>package</b> is prepared: slides and the lecturer\'s words for that stretch. With automatic notes, Claude starts writing them straight away.']},
       {ico: 'stop', v: 'fine', t: 'End of the lecture', p: [
         'Tap <b>Stop</b> in the mini window or in the main window and confirm.',
@@ -99,10 +108,15 @@ const GUIDA = {
         '<b>Review</b>: flashcards with the questions from your notes. Read the question, think of the answer, tap the card to flip it and say whether you knew it. At the top there is <b>Review the subject</b>, with the questions from all lectures of the same subject: the ones you didn\'t know come first next time. It\'s free.',
         'In the <b>⋯</b> menu: create or redo notes, rename, open the folder, delete the video (frees space, notes stay) or the whole recording (goes to the Recycle Bin).',
         'If the PC switched off while preparing the files, tap <b>Complete</b>.']},
+      {ico: 'chat', t: 'Ask, mind map and lecturer\'s slides', p: [
+        '<b>Ask</b> (purple button on the lecture): type what you didn\'t understand. The answer uses only what the lecturer said and shows slide and minute: tap the minute to see that point of the video again. You can also ask about <b>the whole subject</b>. Less than 1 cent per question.',
+        '<b>Mind map</b> (<b>⋯</b> menu): the tree outline of the lecture, to save as PDF or print. About 1 cent, once.',
+        '<b>Lecturer\'s slides</b> (<b>⋯</b> menu → «Add the lecturer\'s slides (PDF)…»): the notes are redone with the original, sharp slides instead of the screen photos. The previous notes stay as a copy.']},
       {ico: 'set', v: 'impostazioni', t: 'Settings', p: [
         '<b>Language</b>: Italian or English, for the program and the notes.',
         '<b>Artificial intelligence</b>: «Automatic notes with Claude» with your key (about 0.20 $ per recorded hour), or «Folder for the AI of your choice»: only the zip packages, to take to Claude, ChatGPT, Gemini…',
-        '<b>Notes format</b>, <b>how often a package is prepared</b> (30 minutes or 1 hour), <b>mini window</b>, <b>Do not disturb</b> reminder.',
+        '<b>Notes format</b>, <b>how often a package is prepared</b> (30 minutes or 1 hour), <b>mini window</b>, <b>Live text</b>, <b>Do not disturb</b> reminder.',
+        '<b>Difficult words</b>: for each subject type names and technical terms (or tap the ones suggested from your notes). The transcript gets them wrong far less and Claude spells them right.',
         '<b>Where packages are saved</b> and <b>Your details</b> (name, university, course, year): they appear on the notes and help Claude.']},
       {ico: 'info', v: 'aggiornamenti', t: 'Updates and support', p: [
         'Bottom left, tap <b>Update</b>: if there is a new version, <b>Install</b> and the program reopens already updated.',
