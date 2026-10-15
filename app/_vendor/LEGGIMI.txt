@@ -4,3 +4,5 @@ Librerie in Python puro copiate qui (non serve rifare il programma completo):
   in formato ICS, anche gli impegni che si ripetono), python-dateutil 2.9.0, six 1.17.0, typing_extensions 4.16.0,
   tzdata 2026.5 (fusi orari). Licenze nella cartella "licenze". In x_wr_timezone.py "click" e' facoltativo
   (serve solo alla riga di comando, che qui non si usa).
+- zoneinfo (dalla libreria standard di Python 3.12, licenza PSF): nell'exe non c'era; in _tzpath.py sysconfig e'
+  facoltativo. I fusi orari li prende da tzdata.
