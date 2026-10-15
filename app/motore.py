@@ -477,6 +477,9 @@ class Motore:
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
+                "modello": self.cfg.get("modello") or "generica", "modelli_nome": self.cfg.get("modelli_nome") or {},
+                "modello_mio": self.cfg.get("modello_mio") or None,
+                "modelli": [{"k": k, "nome": v.get(testi.LINGUA, v["it"])} for k, v in ap.MODELLI.items()],
                 "quando": "dopo" if self.cfg.get("quando") == "dopo" else "durante",
                 "solo_carica": bool(self.cfg.get("solo_carica", True)),
                 "velocita": self.cfg.get("velocita_trascrizione_precisa" if self.cfg.get("trascrizione_precisa")
@@ -508,6 +511,10 @@ class Motore:
             v = valore or {}
             self.cfg["mio"] = {"nome": str(v.get("nome") or "").strip()[:60] or tr("fmt_mio"),
                                "descrizione": str(v.get("descrizione") or "").strip()[:2000]}
+        elif campo == "modello_mio":
+            v = valore or {}
+            self.cfg["modello_mio"] = {"nome": str(v.get("nome") or "").strip()[:60] or tr("modello_mio"),
+                                       "descrizione": str(v.get("descrizione") or "").strip()[:2000]}
         elif campo == "lingua_lezione":
             if valore not in testi.LEZIONE:
                 return {"ok": False, "msg": "?"}
@@ -591,6 +598,11 @@ class Motore:
         dopo = (opzioni.get("quando") or self.cfg.get("quando")) == "dopo"
         tipo = opzioni.get("tipo") if opzioni.get("tipo") in ap.FORMATI_TIPO else self._tipo()
         partecipanti = [str(x).strip() for x in (opzioni.get("partecipanti") or []) if str(x).strip()][:30]
+        modello = opzioni.get("modello") if opzioni.get("modello") in tuple(ap.MODELLI) + ("mio",) else None
+        if tipo == "riunione" and modello:
+            self.cfg.setdefault("modelli_nome", {})[nome.strip().lower()[:80]] = modello
+            self.cfg["modello"] = modello
+            salva_config(self.cfg)
         if tipo != self._tipo():
             self.cfg["tipo"] = tipo
             salva_config(self.cfg)
@@ -614,7 +626,9 @@ class Motore:
                                                 "quando": "dopo" if dopo else "durante",
                                                 "tipo": tipo, "partecipanti": partecipanti,
                                                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
-                                                "mio": self.cfg.get("mio") or None})
+                                                "mio": self.cfg.get("mio") or None,
+                                                "modello": modello if tipo == "riunione" else None,
+                                                "modello_mio": self.cfg.get("modello_mio") if modello == "mio" else None})
             self.aperte = []
             if tipo == "riunione":
                 try:
@@ -802,6 +816,24 @@ class Motore:
     def note(self, cartella=None):
         c = cartella or self.cartella_corrente
         return el.leggi_json(Path(c) / "note.json", []) or [] if c else []
+
+    def chiedi_diretta(self, domanda, storia=None):
+        """«Chiedi in diretta»: una domanda su quello che si e' detto finora nella registrazione in corso."""
+        if self.reg is None or self.cartella_corrente is None:
+            return {"ok": False, "msg": tr("dd_finita")}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            with self._lock:
+                diretta = list(self.diretta)
+            r = ch.domanda_in_diretta(self.chiave(), self.cartella_corrente, diretta, float(self.reg.secondi()),
+                                      storia or [], str(domanda or "")[:500])
+            return {"ok": True, **r}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("chiedi in diretta")
+            return {"ok": False, "msg": tr("ch_err")}
 
     def nota_togli(self, i):
         if self.cartella_corrente is None:
@@ -1343,6 +1375,153 @@ class Motore:
                           "inizio": lungo["inizio"], "ora": el.hms(lungo["inizio"])} if lungo and nomi else None,
                 "argomenti": argomenti, "voci_fatte": bool(nomi)}
 
+    def spezzone(self, cartella, da, a, solo_audio=False):
+        """Un pezzo della registrazione (video con i sottotitoli, o solo audio) da mandare a qualcuno."""
+        cart = Path(cartella)
+        src = video_di(cart)
+        if not src:
+            return {"ok": False, "msg": tr("sp_novideo")}
+        da, a = max(0.0, float(da or 0)), float(a or 0)
+        if a - da < 1:
+            return {"ok": False, "msg": tr("sp_corto")}
+        if a - da > 3600:
+            return {"ok": False, "msg": tr("sp_lungo")}
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        audio = solo_audio or src.suffix.lower() in (".m4a", ".mp3", ".wav", ".aac", ".ogg", ".opus", ".flac")
+        dest_dir = Path(self.cfg["cartella_pacchetti"]) / tr("sp_cartella")
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        nome = f"{el.nome_sicuro(info.get('nome'))} – {el.hms(da).replace(':', '.')}-{el.hms(a).replace(':', '.')}"
+        dest = dest_dir / (nome + (".m4a" if audio else ".mp4"))
+        cmd = [el.ffmpeg_exe(), "-y", "-nostdin", "-loglevel", "error", "-ss", f"{da:.2f}", "-t", f"{a - da:.2f}", "-i", str(src)]
+        srt = None
+        if not audio:
+            # i sottotitoli: le frasi di quel tratto (con chi parla), come traccia che si accende nel lettore
+            righe, n = [], 0
+            for f in sorted(cart.glob("trascrizione_*.json")):
+                for x in el.leggi_json(f, []) or []:
+                    if x["fine"] <= da or x["inizio"] >= a:
+                        continue
+                    n += 1
+                    t1, t2 = max(0.0, x["inizio"] - da), min(a - da, x["fine"] - da)
+                    ts = lambda v: f"{int(v // 3600):02d}:{int(v // 60 % 60):02d}:{int(v % 60):02d},{int(v * 1000 % 1000):03d}"
+                    righe.append(f"{n}\n{ts(t1)} --> {ts(t2)}\n" + (f"{x['chi']}: " if x.get("chi") else "") + x["testo"] + "\n")
+            if righe:
+                srt = cart / "spezzone.srt"
+                srt.write_text("\n".join(righe), encoding="utf-8")
+                cmd += ["-i", str(srt)]
+            cmd += ["-map", "0:v:0?", "-map", "0:a:0?"] + (["-map", "1:0", "-c:s", "mov_text", "-metadata:s:s:0", "language=ita"] if srt else []) + \
+                   ["-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
+                    "-movflags", "+faststart", str(dest)]
+        else:
+            cmd += ["-vn", "-c:a", "aac", "-b:a", "96k", str(dest)]
+        r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, creationflags=el.NO_WINDOW)
+        if srt:
+            try:
+                srt.unlink()
+            except OSError:
+                pass
+        if r.returncode != 0 or not dest.exists():
+            log.error("spezzone: %s", r.stderr.decode("utf-8", "replace")[-800:])
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        return {"ok": True, "file": str(dest), "nome": dest.name, "mb": round(dest.stat().st_size / 1e6, 1)}
+
+    def spezzone_email(self, file):
+        """Email pronta con lo spezzone allegato (Outlook / Posta)."""
+        import condividi as cd
+        f = Path(file)
+        m = cd.crea_eml(None, [], f.stem, tr("sp_mail"), f.with_suffix(".eml"), [f])
+        return {"ok": bool(apri(m))}
+
+    # ------------------------------------------------------------------ preparazione all'esame (per materia)
+
+    def esame_info(self, materia, cartelle, rifai=False):
+        import esame as es
+        L = testi.LINGUA
+        d = es.leggi(BASE, materia)
+        spesa = 0.0
+        if self.chiave() and cartelle:
+            try:
+                d, spesa = es.classifica(BASE, materia, cartelle, self.chiave(), rifai)
+            except ap.ErroreAppunti as e:
+                if not d.get("classifica"):
+                    return {"ok": False, "msg": str(e)}
+            except Exception:
+                log.exception("classifica esame")
+                if not d.get("classifica"):
+                    return {"ok": False, "msg": tr("es_err")}
+        elif not d.get("classifica"):
+            return {"ok": False, "msg": tr("manca_chiave")}
+        oggi = datetime.date.today()
+        giorni = (datetime.date.fromisoformat(d["data_esame"]) - oggi).days if d.get("data_esame") else None
+        sim = (d.get("simulazioni") or [None])[-1]
+        return {"ok": True, "materia": materia, "classifica": d.get("classifica"), "data_esame": d.get("data_esame") or "",
+                "giorni": giorni, "piano": es.piano(d, L=L), "n_lezioni": d.get("n_lezioni", len(cartelle)),
+                "simulazione": sim, "voti": [s.get("voto") for s in d.get("simulazioni") or [] if s.get("voto") is not None],
+                "spesa": spesa}
+
+    def esame_data(self, materia, data):
+        import esame as es
+        d = es.leggi(BASE, materia)
+        try:
+            d["data_esame"] = datetime.date.fromisoformat(str(data)).isoformat() if data else ""
+        except ValueError:
+            return {"ok": False}
+        es.salva(BASE, materia, d)
+        return {"ok": True}
+
+    def esame_simulazione(self, materia):
+        import esame as es
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            sim, spesa = es.simulazione(BASE, materia, self.chiave(), testi.LINGUA)
+            return {"ok": True, "simulazione": sim, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("simulazione")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def esame_correggi(self, materia, risposte):
+        import esame as es
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            sim, spesa = es.correggi(BASE, materia, risposte or [], self.chiave(), testi.LINGUA)
+            return {"ok": True, "simulazione": sim, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("correzione")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def esame_calendario(self, materia, modo="outlook"):
+        import condividi as cd
+        import esame as es
+        import webbrowser
+        d = es.leggi(BASE, materia)
+        ev = es.eventi_calendario(d, materia, testi.LINGUA)
+        if not ev:
+            return {"ok": False, "msg": tr("cd_cal_niente")}
+        f = cd.crea_ics(ev, BASE / "esami" / f"{el.nome_sicuro(materia)} – {tr('es_pdf_piano')}.ics")
+        if modo == "google":
+            webbrowser.open("https://calendar.google.com/calendar/r/settings/export")
+            mostra_file(f)
+        else:
+            apri(f)
+        return {"ok": True, "n": len(ev)}
+
+    def esame_pdf(self, materia):
+        import esame as es
+        try:
+            d = es.leggi(BASE, materia)
+            f = es.pdf(d, materia, Path(self.cfg["cartella_pacchetti"]) / f"{tr('es_pdf_t')} – {el.nome_sicuro(materia)}.pdf", testi.LINGUA)
+            apri(f)
+            return {"ok": True, "file": str(f)}
+        except Exception:
+            log.exception("pdf esame")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
     def cose_da_fare(self):
         import cose
         lista = cose.tutte(BASE)
@@ -1442,7 +1621,7 @@ class Motore:
         cart = Path(cartella)
         out = sorted(ap.capitoli_di(cart), key=lambda c: c.get("sec", 0))
         info = el.leggi_json(cart / "info.json", {}) or {}
-        return {"capitoli": out, "video": self.video_url(cartella), "nome": info.get("nome", ""),
+        return {"capitoli": out, "video": self.video_url(cartella), "nome": info.get("nome", ""), "durata": info.get("durata") or 0,
                 "audio": bool(video_di(cart)) and str(video_di(cart)).endswith(".m4a")}
 
     def infografica(self, cartella, rifai=False):

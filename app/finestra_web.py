@@ -141,6 +141,9 @@ class Api:
     def note(self, cartella=None):
         return self._m.note(cartella)
 
+    def chiedi_diretta(self, domanda, storia=None):
+        return self._m.chiedi_diretta(domanda, storia)
+
     def nota_togli(self, i):
         return self._m.nota_togli(i)
 
@@ -189,6 +192,30 @@ class Api:
 
     def statistiche(self, cartella):
         return self._m.statistiche(cartella)
+
+    def spezzone(self, cartella, da, a, solo_audio=False):
+        return self._m.spezzone(cartella, da, a, solo_audio)
+
+    def spezzone_email(self, file):
+        return self._m.spezzone_email(file)
+
+    def esame_info(self, materia, cartelle, rifai=False):
+        return self._m.esame_info(materia, cartelle, rifai)
+
+    def esame_data(self, materia, data):
+        return self._m.esame_data(materia, data)
+
+    def esame_simulazione(self, materia):
+        return self._m.esame_simulazione(materia)
+
+    def esame_correggi(self, materia, risposte):
+        return self._m.esame_correggi(materia, risposte)
+
+    def esame_calendario(self, materia, modo="outlook"):
+        return self._m.esame_calendario(materia, modo)
+
+    def esame_pdf(self, materia):
+        return self._m.esame_pdf(materia)
 
     def cose_da_fare(self):
         return self._m.cose_da_fare()

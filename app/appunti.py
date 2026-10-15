@@ -445,7 +445,7 @@ def _pdf_del_pacchetto(cartella, k):
         return Path(zp), z.read(nome)
 
 
-def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell", mio=None):
+def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell", mio=None, modello=None, modello_mio=None):
     """Le istruzioni, con la lingua degli appunti e quella in cui parla il docente."""
     nome_app = {"it": "ITALIANO", "en": "INGLESE (English)"}.get(lingua_appunti, "ITALIANO")
     extra = (f"\n\nLINGUA DEGLI APPUNTI: {nome_app}. Scrivi TUTTO in questa lingua: titolo, domande, "
@@ -462,13 +462,58 @@ def istruzioni_lingua(lingua_appunti="it", lingua_lezione="it", formato="cornell
         return ISTRUZIONI_ESAME.replace("in FORMATO ESAME, in italiano,", "in FORMATO ESAME") \
             .replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
     if formato == "verbale":
-        return ISTRUZIONI_VERBALE + extra
+        return ISTRUZIONI_VERBALE + testo_modello(modello, modello_mio) + extra
     if formato == "webinar":
         return ISTRUZIONI_WEBINAR.replace("in italiano, ", "").replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
     if formato == "mio":
         return ISTRUZIONI_MIO.replace("{descrizione}", (mio or {}).get("descrizione") or "") + extra
     return ISTRUZIONI.replace("con il METODO CORNELL, in italiano,", "con il METODO CORNELL") \
         .replace("Rispondi SOLO", TESTO_CAPITOLI.strip() + "\nRispondi SOLO") + extra
+
+
+# --------------------------------------------------------------------------- modelli di riunione
+# Ogni modello aggiunge al verbale le sue sezioni (in "sezioni_extra"), dopo «In breve».
+MODELLI = {
+    "generica": {"it": "Riunione generica", "en": "General meeting", "sezioni": []},
+    "vendita": {"it": "Vendita / cliente", "en": "Sales / customer", "sezioni": [
+        "Cosa vuole il cliente (bisogni, problemi, obiettivi detti)", "Obiezioni e dubbi del cliente",
+        "Prezzo, sconti e condizioni dette (solo cifre dette davvero)", "Prossimo passo concordato (chi, cosa, quando)",
+        "Probabilita' di chiudere: bassa, media o alta, con il perche' in una riga (dai segnali detti)"]},
+    "colloquio": {"it": "Colloquio di lavoro", "en": "Job interview", "sezioni": [
+        "Esperienza e competenze raccontate dal candidato", "Punti di forza emersi", "Dubbi o punti da approfondire",
+        "Domande fatte dal candidato", "Condizioni dette (disponibilita', stipendio, preavviso), solo se dette"]},
+    "uno_a_uno": {"it": "Riunione 1 a 1", "en": "1-to-1 meeting", "sezioni": [
+        "Cosa va bene", "Difficolta' e ostacoli", "Obiettivi concordati", "Cosa serve dal responsabile"]},
+    "classe": {"it": "Consiglio di classe", "en": "Class council", "sezioni": [
+        "Andamento della classe", "Situazioni particolari segnalate (solo come dette, senza giudizi aggiunti)",
+        "Decisioni didattiche e disciplinari", "Comunicazioni alle famiglie"]},
+    "condominio": {"it": "Assemblea di condominio", "en": "Condominium meeting", "sezioni": [
+        "Presenti e deleghe (come detti)", "Ordine del giorno",
+        "Delibere: per ognuna favorevoli, contrari, astenuti (e millesimi se detti)", "Spese approvate e ripartizione",
+        "Varie ed eventuali"]},
+    "consulenza": {"it": "Consulenza / visita", "en": "Consultation / visit", "sezioni": [
+        "Situazione del cliente", "Richieste del cliente", "Consigli e indicazioni date",
+        "Documenti o cose da portare", "Prossimo appuntamento"]},
+}
+
+
+def testo_modello(modello, mio=None):
+    """Le istruzioni da aggiungere al verbale per il modello di riunione scelto."""
+    if modello == "mio" and (mio or {}).get("descrizione"):
+        return ("\nMODELLO DI RIUNIONE scelto da chi registra: «" + mio["descrizione"] + "». Oltre al verbale normale, metti "
+                "in \"sezioni_extra\" le sezioni che chiede (ciascuna con \"titolo\" e \"punti\" brevi; vuote se non se ne "
+                "parla). Solo cose dette nella registrazione.")
+    m = MODELLI.get(modello)
+    if not m or not m["sezioni"]:
+        return ""
+    return ("\nMODELLO DI RIUNIONE: " + m["it"].upper() + ". Oltre al verbale normale, metti in \"sezioni_extra\" queste "
+            "sezioni, in quest'ordine, ciascuna con \"titolo\" (breve) e \"punti\" brevi: " + "; ".join(m["sezioni"]) +
+            ". Se di una sezione non si parla, lasciala con i punti vuoti. Solo cose dette nella registrazione: niente "
+            "giudizi o cifre inventate.")
+
+
+SCHEMA_VERBALE["properties"]["sezioni_extra"] = {"type": "array", "items": {"type": "object", "properties": {
+    "titolo": {"type": "string"}, "punti": {"type": "array", "items": {"type": "string"}}}, "required": ["titolo", "punti"]}}
 
 
 SCHEMI = {"cornell": SCHEMA, "esame": SCHEMA_ESAME, "verbale": SCHEMA_VERBALE, "webinar": SCHEMA, "mio": SCHEMA_MIO}
@@ -494,11 +539,12 @@ def _testo_note(note, lingua):
 
 
 def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
-                    formato="cornell", parole=None, mio=None, partecipanti=None, note=None, aperte=None):
+                    formato="cornell", parole=None, mio=None, partecipanti=None, note=None, aperte=None, modello=None,
+                    modello_mio=None):
     corpo = {
         "model": MODELLO,
         "max_tokens": 12000,
-        "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato, mio),
+        "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato, mio, modello, modello_mio),
         "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di questo tratto di registrazione.",
                    "input_schema": SCHEMI.get(formato, SCHEMA)}],
         # Sonnet 5.5 non accetta tool_choice "tool"/"any" (errore 400): si usa "auto"
@@ -882,6 +928,12 @@ def _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO
     if dati.get("in_breve"):
         _sezione_colore(pdf, font, t, tr("vb_breve", L), ARANCIO)
         testo(dati["in_breve"])
+    for se in dati.get("sezioni_extra") or []:
+        punti = [x for x in se.get("punti") or [] if str(x).strip()]
+        if punti:
+            _sezione_colore(pdf, font, t, se.get("titolo", ""), ARANCIO)
+            for x in punti:
+                testo(f"• {x}")
     if dati.get("decisioni"):
         _sezione_colore(pdf, font, t, tr("vb_decisioni", L), ARANCIO)
         for n, d in enumerate(dati["decisioni"], 1):
@@ -1608,7 +1660,8 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                                       parole=el.parole_lezione(cartella), mio=info0.get("mio"),
                                       partecipanti=info0.get("partecipanti") or None,
                                       note=note_della_parte(cartella, k),
-                                      aperte=info0.get("aperte_prima") or None)
+                                      aperte=info0.get("aperte_prima") or None,
+                                      modello=info0.get("modello"), modello_mio=info0.get("modello_mio"))
         if formato == "mio" and info0.get("mio"):
             dati["mio_nome"] = info0["mio"].get("nome", "")
         dati["formato"] = formato

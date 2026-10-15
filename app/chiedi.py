@@ -75,11 +75,13 @@ def testo_lezione(cartella):
     """La trascrizione con gli orari e i punti in cui cambia slide."""
     slides = slide_della_lezione(cartella)
     righe, i = [], 0
-    for s in segmenti_lezione(cartella):
+    segs = segmenti_lezione(cartella)
+    voci = len({s.get("chi") for s in segs if s.get("chi")}) >= 2
+    for s in segs:
         while i < len(slides) and slides[i]["t"] <= s["inizio"]:
             righe.append(f"--- Slide {slides[i]['n']} ({hms(slides[i]['t'])}) ---")
             i += 1
-        chi = f"{s['chi']}: " if s.get("chi") else ""
+        chi = f"{s['chi']}: " if voci and s.get("chi") else ""
         righe.append(f"[{hms(s['inizio'])}] {chi}{s['testo']}")
     return "\n".join(righe)
 
@@ -563,3 +565,44 @@ def suggerisci_nomi(cartella, chiave):
     el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
     log.info("nomi delle voci: %s su %s, spesa %.4f $", dati, len(senza), spesa)
     return dati
+
+
+# --------------------------------------------------------------------------- «Chiedi in diretta»
+
+def domanda_in_diretta(chiave, cartella, diretta, adesso, storia, testo_domanda, lingua=None):
+    """Una domanda su quello che si e' detto FINORA in una registrazione in corso: le parti gia' trascritte,
+    poi il testo in diretta, poi le note. Ritorna {"testo", "spesa"}."""
+    lingua = lingua or testi.LINGUA
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    righe, fino = [], -1.0
+    segs = segmenti_lezione(cartella)
+    voci = len({s.get("chi") for s in segs if s.get("chi")}) >= 2
+    for s in segs:
+        chi = f"{s['chi']}: " if voci and s.get("chi") else ""
+        righe.append(f"[{hms(s['inizio'])}] {chi}{s['testo']}")
+        fino = max(fino, s["fine"])
+    for d in diretta or []:
+        if d["t"] > fino:
+            righe.append(f"[{hms(d['t'])}] {d['testo']}")
+    note = el.leggi_json(cartella / "note.json", []) or []
+    if note:
+        righe.append("\nNOTE DI CHI REGISTRA: " + "; ".join(f"[{n.get('ora')}] {n.get('tipo', '')} {n.get('testo', '')}".strip() for n in note))
+    if not righe:
+        raise ap.ErroreAppunti(tr("dd_vuoto"))
+    tipo = {"riunione": "una riunione di lavoro", "webinar": "un webinar"}.get(info.get("tipo"), "una lezione")
+    sistema = (f"Stai ascoltando insieme a chi registra {tipo} ANCORA IN CORSO («{info.get('nome', '')}»). Adesso siamo a "
+               f"{hms(adesso)} dall'inizio. Ricevi la trascrizione automatica di quello che si e' detto finora (puo' avere "
+               "errori; gli ultimi minuti possono mancare). Rispondi alla domanda in modo BREVE (2-5 frasi o pochi punti), "
+               "solo con quello che c'e' nella trascrizione; se non c'e', dillo. Quando riporti qualcosa indica il minuto "
+               "cosi': [[00:26:12]]. Le parole tra «» copiale come sono. Scrivi in " + testi.nome_lingua(lingua, "it") + ".")
+    messaggi = [{"role": "user", "content": "TRASCRIZIONE FINORA:\n" + "\n".join(righe)[-150_000:]},
+                {"role": "assistant", "content": "Ho letto. Chiedimi pure."}]
+    for m in (storia or [])[-6:]:
+        messaggi.append({"role": "user" if m.get("chi") == "io" else "assistant", "content": str(m.get("testo", ""))})
+    messaggi.append({"role": "user", "content": testo_domanda})
+    r = _chiama(chiave, {"model": MODELLO, "max_tokens": 600, "system": sistema, "messages": messaggi})
+    risposta = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text").strip()
+    spesa = _costo(r.get("usage", {}))
+    el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
+    return {"testo": risposta, "spesa": spesa}

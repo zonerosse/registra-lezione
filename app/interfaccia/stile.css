@@ -458,3 +458,31 @@ html.android .dove.tre{grid-template-columns:1fr}
 .fare input{width:17px;height:17px;cursor:pointer}
 .avviso2{background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;border-radius:14px;padding:12px 14px;font-size:13.5px;line-height:1.5}
 .avviso2 b{display:block;margin-bottom:2px}
+
+/* spezzoni */
+.sptl{position:relative;height:30px;background:#e2e8f0;border-radius:8px;margin:4px 0 12px;overflow:hidden}
+.sptl .sel{position:absolute;top:0;bottom:0;background:rgba(2,132,199,.3);border:2px solid var(--sky);border-radius:6px}
+.sptl .pos{position:absolute;top:0;bottom:0;width:2px;background:#e11d48}
+.capi .spz{font-size:15px;padding:0 6px;opacity:.6}.capi .spz:hover{opacity:1}
+
+/* preparazione all'esame */
+.col2{display:flex;flex-direction:column;gap:6px;align-items:stretch}
+.esq{display:flex;gap:12px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:13.5px;line-height:1.45}
+.esq:hover{background:#f8fafc}
+.esq .st{color:#f59e0b;width:44px;flex:none;font-weight:700;letter-spacing:1px}
+.esq b{color:var(--ink)}.esq ol{margin:6px 0 0;padding-left:18px;color:var(--txt)}
+.escal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.esd{border-radius:10px;padding:7px 8px;font-size:11.5px;line-height:1.35;min-height:64px;background:#f8fafc;color:var(--txt)}
+.esd b{display:block;color:var(--ink);font-size:11.5px;margin-bottom:2px}
+.esd.vuoto{background:transparent}.esd.riposo{background:#f1f5f9;color:var(--mut)}
+.esd.ripasso{background:#f0f9ff}.esd.simulazione{background:#f3efff}
+.esd.esame{background:#fff1f2;border:1px solid #fecdd3}.esd.esame div{color:#be123c;font-weight:800}
+.essim{margin-top:12px}.essim textarea{margin-top:6px;resize:vertical}
+.escorr{background:#f8fafc;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5}
+@media (max-width:720px){.escal{grid-template-columns:repeat(2,1fr)}}
+
+/* chiedi in diretta */
+#ddChat{max-height:300px;overflow:auto}
+.bolla{background:#f3efff;border-radius:12px;padding:9px 12px;font-size:13.5px;line-height:1.5;margin-top:8px;color:var(--txt)}
+.bolla.io{background:#e0f2fe;margin-left:48px}
+.bolla .pill{font-size:11px;padding:1px 7px}

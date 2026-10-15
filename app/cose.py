@@ -133,6 +133,8 @@ def applica_fatte(base, cartella, dati):
         if not a:
             continue
         segna(base, a["id"], True, come=Path(cartella).name)
+        # se il verbale nuovo la rimette anche fra le cose da fare, e' la stessa: fatta anche li'
+        segna(base, id_cosa(cartella, a["cosa"]), True, come=Path(cartella).name)
         buone.append({"id": a["id"], "cosa": a["cosa"], "chi": a.get("chi", ""), "dove": f.get("dove", "")})
     dati["fatte"] = buone
     return dati

@@ -95,6 +95,11 @@
         <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
         <div class="calora hidden" id="calOra"></div>
         <div class="chips" id="recenti"></div>
+        <div id="modBox" class="hidden solo-pc" style="margin-top:14px">
+          <div class="lbl" style="margin:0 0 6px" data-t="md.h">Che riunione è?</div>
+          <div class="chips" id="modChips"></div>
+          <div class="hint" id="modHint" style="margin-top:6px"></div>
+        </div>
         <div id="partBox" class="hidden" style="margin-top:14px">
           <div class="lbl" style="margin:0 0 6px" data-t="tp.part">Chi partecipa (facoltativo)</div>
           <div class="tags" id="partTags"></div>
@@ -164,6 +169,13 @@
         <div id="noteLista"></div>
         <input class="in" id="notaIn" data-tp="nt.ph" placeholder="Scrivi una nota e premi Invio…" maxlength="300" autocomplete="off" style="margin-top:6px">
         <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><span class="chip" data-nota="importante">⭐ <span data-t="nt.imp">Importante</span></span><span class="chip" data-nota="chiarire">❓ <span data-t="nt.chi">Da chiarire</span></span><span class="chip" data-nota="fare">✅ <span data-t="nt.fare">Cosa da fare</span></span><span class="sp"></span><span class="hint" data-t="nt.s">Claude le userà per gli appunti</span></div>
+      </div>
+      <div class="card mt solo-pc" id="ddCard">
+        <div class="row"><div class="lbl sp" style="margin:0" data-t="dd.h">Chiedi adesso</div><span class="hint" data-t="dd.costo">circa 1 centesimo a domanda</span></div>
+        <div id="ddChat"></div>
+        <div class="row" style="margin-top:8px;gap:8px"><input class="in sp" id="ddIn" data-tp="dd.ph" placeholder="Fai una domanda su quello che si è detto finora…" maxlength="500" autocomplete="off"><button class="btn b-cor b-sm" id="ddVai" data-t="dd.chiedi">Chiedi</button></div>
+        <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap" id="ddChips"></div>
+        <div class="hint hidden" id="ddNoDir" style="margin-top:6px" data-t="dd.nodir">Senza «Testo in diretta» Claude vede solo le parti già trascritte. Si accende in Impostazioni e vale dalla prossima registrazione.</div>
       </div>
       <div class="card mt hidden" id="dirCard">
         <div class="row" style="margin-bottom:10px"><div class="lbl" style="margin:0" data-t="lv.dir">Testo in diretta</div><span class="sp"></span><span class="pill p-blue" data-t="lv.dir.rit">circa 2 minuti di ritardo</span></div>
@@ -241,6 +253,23 @@
         <div class="card" style="padding:0;overflow:hidden"><div id="cpMedia"></div><div class="hint" style="padding:10px 14px" data-t="cp.tocca">Tocca un capitolo: si riparte da lì.</div></div>
         <div class="card"><div class="lbl" data-t="cp.h">Capitoli</div><div id="cpLista"></div></div>
       </div>
+      <div class="card mt solo-pc" id="spCard">
+        <div class="lbl" data-t="sp.h">✂ Spezzone da mandare</div>
+        <div class="sptl" id="spTl"><div class="sel" id="spSel"></div><div class="pos" id="spPos"></div></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap">
+          <span class="hint" data-t="sp.dal">dal</span><input class="in" id="spDa" value="00:00:00" style="width:104px"><button class="btn b-ghost b-sm" id="spDaQui" data-t="sp.qui">⏱ da qui</button>
+          <span class="hint" data-t="sp.al">al</span><input class="in" id="spA" value="00:01:00" style="width:104px"><button class="btn b-ghost b-sm" id="spAQui" data-t="sp.qui2">⏱ fino a qui</button>
+          <span class="hint sp" id="spDur"></span>
+        </div>
+        <div class="row" style="margin-top:10px;justify-content:flex-end;gap:8px"><button class="btn b-ghost b-sm" id="spAudio">🎧 <span data-t="sp.audio">Solo audio</span></button><button class="btn b-main b-sm" id="spVideo">🎬 <span data-t="sp.video">Video con sottotitoli</span></button></div>
+        <div class="hint" style="margin-top:6px" data-t="sp.nota">Scorciatoia: tocca ✂ accanto a un capitolo. Il video si ferma e si guarda dal punto «dal».</div>
+      </div>
+    </section>
+
+    <!-- PREPARAZIONE ALL'ESAME -->
+    <section class="pg hidden" id="v-esame">
+      <div class="hd"><div><h2 id="esTit"></h2><p id="esSub"></p></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="esPdf"><svg><use href="#i-doc"/></svg><span data-t="mp.pdf">Salva in PDF</span></button></div></div>
+      <div id="esBox"></div>
     </section>
 
     <!-- COSE DA FARE -->

@@ -118,6 +118,13 @@ def documento(cartella, formato=None):
         doc["breve"] = breve
         if breve:
             sez(tr("vb_breve", L), testo=breve)
+        extra = {}
+        for d in parti:
+            for se in d.get("sezioni_extra") or []:
+                extra.setdefault(_pulisci(se.get("titolo")), []).extend(_pulisci(x) for x in se.get("punti") or [] if _pulisci(x))
+        for tit, punti in extra.items():
+            if punti:
+                sez(tit, punti=_unici(punti))
         dec = _unici([d2 for d in parti for d2 in d.get("decisioni") or []], lambda x: x.get("testo"))
         if dec:
             sez(tr("vb_decisioni", L), numerati=True,

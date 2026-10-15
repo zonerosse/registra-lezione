@@ -1,6 +1,6 @@
 {
- "versione": "3.21",
+ "versione": "3.22",
  "librerie": 2,
- "novita": "Cerca in tutto (anche le parole dette), Statistiche (chi ha parlato e quanto), Le tue note durante la registrazione (⭐ anche dalla mini finestra), la pagina Cose da fare con il promemoria «Dall'ultima volta».",
- "novita_en": "Search everything (including words spoken), Statistics (who spoke and how much), Your notes while recording (⭐ also from the mini window), the To-dos page with the «Since last time» reminder."
+ "novita": "Modelli di riunione (vendita, colloquio, 1 a 1, consiglio di classe, condominio, consulenza, il mio modello), Spezzoni video o audio da mandare, Preparazione all'esame per materia (domande di tutto il corso, piano di studio, simulazione corretta da Claude), Chiedi in diretta durante la registrazione.",
+ "novita_en": "Meeting templates (sales, interview, 1-to-1, class council, condominium, consultation, my template), video or audio Clips to send, Exam preparation per course (questions of the whole course, study plan, mock exam corrected by Claude), Ask live while recording."
 }

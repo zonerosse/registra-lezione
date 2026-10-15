@@ -59,7 +59,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat'].includes(pagina)) { vai('arch'); return true; }
+  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(pagina)) { vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -112,8 +112,8 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat'].includes(p) ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'fare', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
@@ -132,7 +132,7 @@ function inizializza() {
   $('btnCercaAgg').onclick = () => A.cerca_aggiornamenti();
   $('btnAss').onclick = () => A.assistenza();
   // pronto
-  $('nome').addEventListener('input', anteprimaNome);
+  $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); });
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });
   $('btnRec').onclick = inizia;
   $('btnImporta').onclick = scegliVideo;
@@ -272,10 +272,41 @@ function disegnaTipo() {
   const k = R.tipo || 'lezione';
   $('tipoBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.k === k));
   $('partBox').classList.toggle('hidden', k !== 'riunione');
+  $('modBox').classList.toggle('hidden', k !== 'riunione' || ANDROID);
+  if (k === 'riunione' && !ANDROID) disegnaModelli();
   $('nome').placeholder = k === 'riunione' ? t('tp.ph.riu') : k === 'webinar' ? t('tp.ph.web') : t('pr.ph');
   $('partTags').innerHTML = PART.map((n, i) => `<span class="tag2">${esc(n)}<b data-i="${i}" title="${esc(t('togli'))}">×</b></span>`).join('');
   $('partTags').querySelectorAll('b[data-i]').forEach(b => b.onclick = () => { PART.splice(+b.dataset.i, 1); disegnaTipo(); });
   if (R.appunti_on && k !== 'lezione') $('pillAI').innerHTML = `<span class="pill p-cor">${ico('spark', 13)}${esc(nomeFormato(formatoTipo()))}</span>`;
+}
+let MOD = null, MOD_RICORDO = false;
+function disegnaModelli() {
+  const sel = MOD || R.modello || 'generica';
+  const L = (R.modelli || []).map(m => [m.k, m.nome]).concat([['mio', R.modello_mio && R.modello_mio.descrizione ? '✎ ' + R.modello_mio.nome : t('md.mio')]]);
+  $('modChips').innerHTML = L.map(([k, n]) => `<span class="chip${k === sel ? ' on' : ''}" data-k="${k}">${esc(n)}</span>`).join('');
+  $('modChips').querySelectorAll('.chip').forEach(c => c.onclick = async () => {
+    if (c.dataset.k === 'mio' && !(R.modello_mio && R.modello_mio.descrizione) && !await modelloMio()) return;
+    MOD = c.dataset.k; MOD_RICORDO = false; disegnaModelli();
+  });
+  const h = sel === 'mio' ? t('md.mio.s', {d: (R.modello_mio || {}).descrizione || ''}) + ` <button class="lnk" id="modMio">${esc(t('md.modifica'))}</button>` : esc(t('md.' + sel + '.s'));
+  $('modHint').innerHTML = h + (MOD_RICORDO ? `<div style="margin-top:4px">${esc(t('md.ricordo'))}</div>` : '');
+  if ($('modMio')) $('modMio').onclick = () => modelloMio();
+}
+async function modelloMio() {
+  const m = R.modello_mio || {};
+  const html = `<input class="in" id="mmNome" placeholder="${esc(t('md.mio.nome'))}" value="${esc(m.nome || '')}" maxlength="60"><textarea class="in" id="mmDesc" rows="4" style="margin-top:8px;resize:vertical">${esc(m.descrizione || '')}</textarea>`;
+  return new Promise(fatto => {
+    dialogo({titolo: t('md.mio.t'), testo: t('md.mio.d'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', fn: async () => {
+      const d = $('mmDesc').value.trim(); if (!d) { $('mmDesc').focus(); return; }
+      await A.imposta('modello_mio', {nome: $('mmNome').value, descrizione: d});
+      document.querySelector('.velo').remove(); R = await A.riepilogo(); MOD = 'mio'; disegnaModelli(); fatto(true);
+    }}]}).then(v => { if (v === false) fatto(false); });
+  });
+}
+function modelloDaNome() {
+  if (ANDROID || (R.tipo || 'lezione') !== 'riunione') return;
+  const k = (R.modelli_nome || {})[$('nome').value.trim().toLowerCase()];
+  if (k && k !== MOD) { MOD = k; MOD_RICORDO = true; disegnaModelli(); }
 }
 function aggiungiPartecipante() {
   const v = $('partIn').value.trim();
@@ -339,8 +370,8 @@ async function inizia() {
       if (r.v !== 'si') return;
     }
     const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
-                                tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : []});
-    if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; disegnaModo(); await aggiorna(); }
+                                tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : [], modello: R.tipo === 'riunione' ? (MOD || R.modello || 'generica') : ''});
+    if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; MOD = null; MOD_RICORDO = false; R = await A.riepilogo(); disegnaModo(); await aggiorna(); }
   } finally { $('btnRec').disabled = false; }
 }
 
@@ -442,6 +473,7 @@ function disegnaReg() {
   disegnaParti($('lParti'));
   disegnaDiretta();
   if (!ANDROID && S.n_note !== NOTE.n) { NOTE.n = S.n_note; A.note().then(disegnaNote); }
+  if (!ANDROID) disegnaDD();
   const ap = S.aperte || [];
   $('aperteCard').classList.toggle('hidden', !ap.length);
   if (ap.length) $('aperteCard').innerHTML = `<b>${esc(t('cf.ultima', {n: ap.length}))}</b><div>${esc(t('cf.ultima.s', {l: ap.map(a => a.cosa + (a.chi ? ' (' + a.chi + ')' : '')).join('; ')}))}</div>`;
@@ -451,6 +483,29 @@ function disegnaReg() {
       : `<div class="vuoto">${t('lv.vuoto')}</div>`;
     $('thumbs').scrollLeft = 99999;
   }); }
+}
+const DD = {storia: [], nome: null};
+function disegnaDD() {
+  $('ddNoDir').classList.toggle('hidden', !!S.diretta_on);
+  if (DD.nome !== S.nome) {           // registrazione nuova: si riparte da zero
+    DD.nome = S.nome; DD.storia = [];
+    const c2 = (S.tipo || R.tipo) === 'lezione' ? 'dd.c2.lez' : 'dd.c2.riu';
+    $('ddChips').innerHTML = ['dd.c1', c2, 'dd.c3'].map(k => `<span class="chip" data-q="${esc(t(k))}">${esc(t(k))}</span>`).join('');
+    $('ddChips').querySelectorAll('.chip').forEach(c => c.onclick = () => chiediDiretta(c.dataset.q));
+    disegnaDDChat();
+  }
+}
+function disegnaDDChat(lav) {
+  const md = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\[\[(\d{1,2}:\d{2}(?::\d{2})?)\]\]/g, '<span class="pill p-blue">▶ $1</span>').replace(/\n/g, '<br>');
+  $('ddChat').innerHTML = DD.storia.map(m => `<div class="bolla${m.chi === 'io' ? ' io' : ''}">${m.chi === 'io' ? esc(m.testo) : md(m.testo)}</div>`).join('') +
+    (lav ? `<div class="bolla"><span class="spin" style="width:12px;height:12px"></span> ${esc(t('dd.lav'))}</div>` : '');
+}
+async function chiediDiretta(q) {
+  q = (q || $('ddIn').value).trim(); if (!q) return;
+  $('ddIn').value = ''; DD.storia.push({chi: 'io', testo: q}); disegnaDDChat(true);
+  const r = await A.chiedi_diretta(q, DD.storia.slice(0, -1));
+  if (r.ok) DD.storia.push({chi: 'cl', testo: r.testo}); else DD.storia.push({chi: 'cl', testo: '⚠ ' + (r.msg || '')});
+  disegnaDDChat();
 }
 const NOTE = {n: -1};
 const ICO_NOTA = {importante: '⭐', chiarire: '❓', fare: '✅'};
@@ -615,6 +670,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'infografica') return apriInfografica(l);
   if (a === 'voci') return apriVoci(l);
   if (a === 'stat') return apriStatistiche(l);
+  if (a === 'spezzone') { await apriCapitoli(l); $('spCard').scrollIntoView({block: 'center'}); return; }
   if (a === 'condividi') return apriCondividi(l);
   if (a === 'voci_rifai') return apriVoci(l, true);
   if (a === 'pdf') return aggiungiPdf(l);
@@ -674,6 +730,7 @@ function menuLezione(l, btn) {
   if (l.trascritta && l.stato === 'pronta' && !ANDROID && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
   if (l.n_appunti && l.stato === 'pronta' && !ANDROID) voci.push(['condividi', 'share', t('ar.cond')]);
   if (l.trascritta && l.stato === 'pronta' && !ANDROID) voci.push(['stat', 'chat', t('ar.m.stat')]);
+  if (l.video && l.stato === 'pronta' && !ANDROID) voci.push(['spezzone', 'film', t('ar.m.sp')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -1037,8 +1094,17 @@ async function apriCapitoli(l) {
   const C = r.capitoli || [];
   $('cpMedia').innerHTML = r.video ? (r.audio ? `<audio id="cpV" controls preload="metadata" src="${esc(r.video)}"></audio>` : `<video id="cpV" controls preload="metadata" src="${esc(r.video)}"></video>`)
     : `<div class="hint" style="padding:14px">${esc(t('mom.novid'))}</div>`;
-  $('cpLista').innerHTML = C.length ? C.map((c, i) => `<div class="capi" data-i="${i}"><span class="t">${esc(c.inizio)}</span><div><b>${esc(c.titolo)}</b>${c.dettaglio ? `<div class="hint">${esc(c.dettaglio)}</div>` : ''}</div></div>`).join('')
+  $('cpLista').innerHTML = C.length ? C.map((c, i) => `<div class="capi" data-i="${i}"><span class="t">${esc(c.inizio)}</span><div class="sp"><b>${esc(c.titolo)}</b>${c.dettaglio ? `<div class="hint">${esc(c.dettaglio)}</div>` : ''}</div>${ANDROID ? '' : `<button class="lnk spz" title="${esc(t('sp.h'))}">✂</button>`}</div>`).join('')
     : `<div class="hint">${esc(t('cp.vuoto'))}</div>`;
+  SPZ = {l, C, durata: r.durata || 0};
+  spSegna();
+  $('cpLista').querySelectorAll('.spz').forEach(b => b.onclick = ev => {
+    ev.stopPropagation();
+    const i = +b.closest('.capi').dataset.i, c = C[i];
+    const fine = i + 1 < C.length ? C[i + 1].sec : (SPZ.durata || c.sec + 120);
+    $('spDa').value = hms(Math.floor(c.sec)); $('spA').value = hms(Math.round(Math.min(fine, c.sec + 3600))); spSegna();
+    $('spCard').scrollIntoView({behavior: 'smooth', block: 'center'});
+  });
   $('cpLista').querySelectorAll('.capi').forEach(e => e.onclick = () => {
     $('cpLista').querySelectorAll('.capi').forEach(x => x.classList.toggle('on', x === e));
     const v = $('cpV'), c = C[+e.dataset.i];
@@ -1109,6 +1175,77 @@ async function nomiVoci() {
     if (r.ok) { disegnaVoci(r); toast(t('vc.salvato')); } else toast(r.msg || '');
   };
   return dialogo({titolo: t('vc.dlg.t'), testo: t('vc.dlg.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', fn: salva}]});
+}
+
+/* ------------------------------------------------------------------ preparazione all'esame */
+let ES = {m: null, d: null};
+async function apriEsame(m, rifai = false) {
+  ES = {m, d: null};
+  $('esTit').textContent = t('es.h', {m: m.m}); $('esSub').textContent = t('es.sub', {n: m.cartelle.length});
+  $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.lav'))}</div></div>`;
+  vai('esame');
+  const d = await A.esame_info(m.m, m.cartelle, rifai);
+  if (ES.m !== m) return;
+  if (!d.ok) { $('esBox').innerHTML = `<div class="card"><div class="hint" style="color:#be123c">⚠ ${esc(d.msg || '')}</div></div>`; return; }
+  ES.d = d; disegnaEsame();
+}
+const fmtG = (iso, o) => new Date(iso + 'T12:00').toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', o);
+function disegnaEsame() {
+  const d = ES.d, C = d.classifica || {domande: []};
+  const quando = d.giorni == null ? `<span class="hint">${esc(t('es.nodata'))}</span>` : `<span class="pill ${d.giorni < 0 ? 'p-grey' : d.giorni <= 7 ? 'p-red' : 'p-blue'}">${esc(d.giorni > 0 ? t('es.tra', {n: d.giorni}) : d.giorni === 0 ? t('es.oggi') : t('es.passato'))}</span>`;
+  const dom = C.domande.map((q, i) => `<div class="esq" data-i="${i}"><span class="st">${'★'.repeat(q.stelle)}</span><div class="sp"><b>${esc(q.domanda)}</b>
+      <div class="hint">${esc(q.lezioni.length === 1 ? t('es.lez1') : t('es.lez', {n: q.lezioni.length}))}${q.lezioni.length ? ' (' + esc(q.lezioni.join(', ')) + ')' : ''}${q.perche ? ' · ' + esc(q.perche) : ''}</div>
+      <ol class="hidden">${(q.schema || []).map(x => `<li>${esc(x)}</li>`).join('')}</ol></div></div>`).join('');
+  const P = d.piano || [];
+  let piano = '';
+  if (P.length) {
+    const primo = new Date(P[0].giorno + 'T12:00'), vuoti = (primo.getDay() + 6) % 7;
+    const celle = Array(vuoti).fill('<div class="esd vuoto"></div>').concat(P.map(g => `<div class="esd ${g.tipo}"><b>${esc(fmtG(g.giorno, {weekday: 'short', day: '2-digit', month: '2-digit'}))}</b>${g.cose.map(x => `<div>${esc(x)}</div>`).join('')}</div>`));
+    piano = `<div class="escal">${celle.join('')}</div>`;
+  }
+  const voti = d.voti && d.voti.length ? `<div class="hint" style="margin-top:8px">${esc(t('es.voti', {v: d.voti.join(', ')}))}</div>` : '';
+  $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;flex-wrap:wrap"><div class="lbl sp" style="margin:0">${esc(t('es.data'))}</div><input class="in" type="date" id="esData" value="${esc(d.data_esame)}" style="width:170px">${quando}</div></div>
+    <div class="card mt"><div class="lbl">${esc(t('es.dom'))}</div>${dom}
+      <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="esRifai" style="text-align:left">${esc(t('es.rifai'))}</button><button class="btn b-cor b-sm" id="esSim">${esc(t('es.sim'))}</button></div>${voti}</div>
+    <div class="card mt" id="esSimBox"></div>
+    <div class="card mt"><div class="row" style="margin-bottom:8px"><div class="lbl sp" style="margin:0">${esc(t('es.piano'))}</div>${P.length ? `<button class="btn b-ghost b-sm" id="esCal">${esc(t('es.cal'))}</button>` : ''}</div>
+      ${piano || `<div class="hint">${esc(t('es.nodata'))}</div>`}<div class="hint" style="margin-top:8px">${esc(t('es.piano.s'))}</div></div>`;
+  $('esData').onchange = async () => { await A.esame_data(ES.m.m, $('esData').value); apriEsame(ES.m); };
+  $('esBox').querySelectorAll('.esq').forEach(e => e.onclick = () => e.querySelector('ol').classList.toggle('hidden'));
+  $('esRifai').onclick = () => apriEsame(ES.m, true);
+  $('esSim').onclick = () => nuovaSimulazione();
+  if ($('esCal')) $('esCal').onclick = () => dialogo({titolo: t('es.cal.t'), testo: t('es.cal.s'), bottoni: [{t: t('annulla'), v: false},
+    {t: 'Google Calendar', fn: () => { A.esame_calendario(ES.m.m, 'google'); document.querySelector('.velo').remove(); }}, {t: 'Outlook', cls: 'b-main', fn: () => { A.esame_calendario(ES.m.m, 'outlook'); document.querySelector('.velo').remove(); }}]});
+  disegnaSimulazione(d.simulazione);
+}
+function disegnaSimulazione(sim) {
+  const box = $('esSimBox');
+  if (!sim) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const corr = sim.correzione || [];
+  box.innerHTML = `<div class="row"><div class="lbl sp" style="margin:0">${esc(t('es.sim.h'))}</div>${sim.voto != null ? `<span class="pill ${sim.voto >= 18 ? 'p-ok' : 'p-red'}" style="font-size:14px">${esc(t('es.voto', {v: sim.voto}))}</span>` : ''}</div>
+    ${sim.voto == null ? `<div class="hint" style="margin:4px 0 8px">${esc(t('es.sim.s'))}</div>` : ''}
+    ${sim.domande.map((q, i) => { const c = corr.find(x => x.n === i + 1);
+      return `<div class="essim"><b>${i + 1}. ${esc(q.domanda)}</b> <span class="hint">(${q.punti})</span>
+        <textarea class="in" rows="4" data-i="${i}" placeholder="${esc(t('es.risp'))}"${sim.voto != null ? ' readonly' : ''}>${esc((sim.risposte || [])[i] || '')}</textarea>
+        ${c ? `<div class="escorr"><b>${esc(t('es.punti', {p: num(c.punti), s: num(c.su)}))}</b>${c.bene ? `<div><span style="color:var(--ok)">✓</span> ${esc(c.bene)}</div>` : ''}${c.manca ? `<div><span style="color:#be123c">✗</span> ${esc(c.manca)}</div>` : ''}</div>` : ''}</div>`; }).join('')}
+    ${sim.consiglio ? `<div class="avviso2 mt">${esc(sim.consiglio)}</div>` : ''}
+    <div class="row mt" style="justify-content:flex-end;gap:8px">${sim.voto == null ? `<button class="btn b-main b-sm" id="esCorr">${esc(t('es.correggi'))}</button>` : `<button class="btn b-cor b-sm" id="esNuova">${esc(t('es.nuova'))}</button>`}</div>`;
+  if ($('esCorr')) $('esCorr').onclick = async () => {
+    const b = $('esCorr'); b.disabled = true; b.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('es.corr.lav'))}`;
+    const r = await A.esame_correggi(ES.m.m, [...box.querySelectorAll('textarea')].map(x => x.value));
+    if (!r.ok) { b.disabled = false; b.textContent = t('es.correggi'); return toast(r.msg); }
+    ES.d.simulazione = r.simulazione; ES.d.voti = (ES.d.voti || []).concat([r.simulazione.voto]); disegnaEsame(); $('esSimBox').scrollIntoView({block: 'start'});
+  };
+  if ($('esNuova')) $('esNuova').onclick = () => nuovaSimulazione();
+}
+async function nuovaSimulazione() {
+  const box = $('esSimBox'); box.classList.remove('hidden');
+  box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.sim.lav'))}</div>`;
+  box.scrollIntoView({block: 'start'});
+  const r = await A.esame_simulazione(ES.m.m);
+  if (!r.ok) { box.innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  ES.d.simulazione = r.simulazione; disegnaSimulazione(r.simulazione);
 }
 
 /* ------------------------------------------------------------------ cose da fare */
@@ -1316,6 +1453,30 @@ async function disegnaCollegamenti() {
   });
 }
 
+/* ------------------------------------------------------------------ spezzoni */
+let SPZ = {l: null, C: [], durata: 0};
+const daHms = v => { const p = String(v || '').trim().split(/[:.]/).map(Number); if (p.some(isNaN)) return NaN; return p.reduce((a, x) => a * 60 + x, 0); };
+function spSegna() {
+  const v = $('cpV'), d = (v && v.duration && isFinite(v.duration)) ? v.duration : (SPZ.durata || 0);
+  const a = daHms($('spDa').value), b = daHms($('spA').value);
+  if (d && !isNaN(a) && !isNaN(b) && b > a) { $('spSel').style.left = (100 * a / d) + '%'; $('spSel').style.width = Math.max(0.6, 100 * (b - a) / d) + '%'; $('spSel').classList.remove('hidden'); }
+  else $('spSel').classList.add('hidden');
+  if (v && d) $('spPos').style.left = (100 * (v.currentTime || 0) / d) + '%';
+  const cap = [...SPZ.C].reverse().find(c => c.sec <= a + 1);
+  $('spDur').textContent = !isNaN(a) && !isNaN(b) && b > a ? t('sp.dur', {d: durataBreve(b - a), c: cap ? cap.titolo : ''}).replace(' · «»', '') : '';
+}
+const durataBreve = s => s < 60 ? Math.round(s) + ' s' : Math.floor(s / 60) + ' min' + (Math.round(s % 60) ? ' ' + Math.round(s % 60) + ' s' : '');
+async function faiSpezzone(soloAudio) {
+  const a = daHms($('spDa').value), b = daHms($('spA').value);
+  const btn = soloAudio ? $('spAudio') : $('spVideo'); const prima = btn.innerHTML;
+  btn.disabled = true; btn.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('sp.lav'))}`;
+  const r = await A.spezzone(SPZ.l.cartella, a, b, soloAudio);
+  btn.disabled = false; btn.innerHTML = prima;
+  if (!r.ok) return dialogo({titolo: t('sp.h'), testo: r.msg});
+  dialogo({titolo: t('sp.ok.t'), testo: t('sp.ok', {f: r.nome, mb: num(r.mb)}), bottoni: [{t: t('sp.email'), fn: () => { A.spezzone_email(r.file); document.querySelector('.velo').remove(); }},
+    {t: t('sp.cartella'), fn: () => { A.mostra_file(r.file); document.querySelector('.velo').remove(); }}, {t: t('sp.apri'), cls: 'b-main', fn: () => { A.apri(r.file); document.querySelector('.velo').remove(); }}]});
+}
+
 /* ------------------------------------------------------------------ infografica */
 let IG = {lez: null, dati: null};
 async function apriInfografica(l, rifai = false) {
@@ -1428,7 +1589,15 @@ function collegaNovita() {
   $('vcNomi').onclick = () => nomiVoci();
   $('vcRifai').onclick = () => VC.lez && apriVoci(VC.lez, true);
   $('vcStat').onclick = () => VC.lez && apriStatistiche(VC.lez);
+  $('esPdf').onclick = () => ES.m && A.esame_pdf(ES.m.m);
+  ['spDa', 'spA'].forEach(i => $(i).addEventListener('input', spSegna));
+  $('spDaQui').onclick = () => { const v = $('cpV'); if (v) { $('spDa').value = hms(Math.floor(v.currentTime || 0)); spSegna(); } };
+  $('spAQui').onclick = () => { const v = $('cpV'); if (v) { $('spA').value = hms(Math.ceil(v.currentTime || 0)); spSegna(); } };
+  $('spVideo').onclick = () => faiSpezzone(false); $('spAudio').onclick = () => faiSpezzone(true);
+  setInterval(() => { if (!$('v-cap').classList.contains('hidden') && $('cpV')) spSegna(); }, 500);
   $('notaIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiNota(''); });
+  $('ddIn').addEventListener('keydown', e => { if (e.key === 'Enter') chiediDiretta(); });
+  $('ddVai').onclick = () => chiediDiretta();
   document.querySelectorAll('[data-nota]').forEach(c => c.onclick = () => aggiungiNota(c.dataset.nota));
   $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
   $('pwAgg').onclick = aggiungiParola;
@@ -1449,7 +1618,8 @@ function materieRip() {
   (LZ ? LZ.lezioni : []).forEach(l => {
     if (!l.ripasso || !l.ripasso.n || l.stato === 'in_corso') return;
     let m = M.find(x => x.m.toLowerCase() === l.materia.toLowerCase());
-    if (!m) M.push(m = {m: l.materia, cartelle: [], n: 0, no: 0, tre: 0});
+    if (!m) M.push(m = {m: l.materia, cartelle: [], n: 0, no: 0, tre: 0, lezioni: true});
+    if ((l.tipo || 'lezione') !== 'lezione') m.lezioni = false;
     m.cartelle.push(l.cartella); m.n += l.ripasso.n; m.no += l.ripasso.no; m.tre += l.ripasso.tre;
   });
   return M;
@@ -1464,13 +1634,14 @@ function disegnaBanda() {
     if (m.no) det.push(t('rp.dariv', {n: m.no}));
     h = `<div class="banda"><span class="ico">${ico('cards')}</span><div class="sp"><b style="color:var(--ink);font-size:15px">${t('rp.banda.t')}</b><div class="hint">${esc(m.m)}: ${esc(det.join(' · '))}</div>
       ${M.length > 1 ? `<div class="chips">${M.slice(0, 6).map(x => `<span class="chip${x.m === m.m ? ' on' : ''}" data-m="${esc(x.m)}">${esc(x.m)}</span>`).join('')}</div>` : ''}</div>
-      <button class="btn b-rip" id="bandaVai">${ico('cards')}${esc(t('rp.vai', {m: m.m}))}</button></div>`;
+      <div class="col2">${!ANDROID && m.lezioni ? `<button class="btn b-cor" id="bandaEsame">${esc(t('es.banda'))}</button>` : ''}<button class="btn b-rip" id="bandaVai">${ico('cards')}${esc(t('rp.vai', {m: m.m}))}</button></div></div>`;
   }
   const b = $('ripBanda');
   if (b.dataset.h === h) return;
   b.dataset.h = h; b.innerHTML = h;
   b.querySelectorAll('.chip').forEach(c => c.onclick = () => { materiaRip = c.dataset.m; disegnaBanda(); });
   if ($('bandaVai')) $('bandaVai').onclick = () => sceltaRipasso(M.find(x => x.m === materiaRip) || M[0]);
+  if ($('bandaEsame')) $('bandaEsame').onclick = () => apriEsame(M.find(x => x.m === materiaRip) || M[0]);
 }
 let modoRip = 'prima';
 function sceltaRipasso(m) {
