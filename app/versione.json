@@ -1,6 +1,6 @@
 {
- "versione": "3.18",
+ "versione": "3.19",
  "librerie": 2,
- "novita": "Importa da link: incolla il link di un video (YouTube, Google Drive, OneDrive, Dropbox, Vimeo, registrazioni di Zoom…) e diventa una registrazione con trascrizione, slide e appunti.",
- "novita_en": "Import from a link: paste the link of a video (YouTube, Google Drive, OneDrive, Dropbox, Vimeo, Zoom recordings…) and it becomes a recording with transcript, slides and notes."
+ "novita": "Chi parla: la trascrizione e gli appunti dicono chi ha detto cosa (le voci si riconoscono sul PC, l'audio non va su internet). Nelle riunioni Claude suggerisce i nomi; si correggono con «Dai i nomi alle voci». Calendario: si collega anche Gmail, Outlook/Hotmail o iCloud.",
+ "novita_en": "Who is speaking: the transcript and the notes say who said what (voices are recognised on the PC, the audio does not go on the internet). In meetings Claude suggests the names; fix them with «Name the voices». Calendar: connect Gmail, Outlook/Hotmail or iCloud."
 }

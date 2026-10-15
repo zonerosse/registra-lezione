@@ -79,7 +79,8 @@ def testo_lezione(cartella):
         while i < len(slides) and slides[i]["t"] <= s["inizio"]:
             righe.append(f"--- Slide {slides[i]['n']} ({hms(slides[i]['t'])}) ---")
             i += 1
-        righe.append(f"[{hms(s['inizio'])}] {s['testo']}")
+        chi = f"{s['chi']}: " if s.get("chi") else ""
+        righe.append(f"[{hms(s['inizio'])}] {chi}{s['testo']}")
     return "\n".join(righe)
 
 
@@ -494,3 +495,71 @@ def pdf_infografica(cartella, cartella_pacchetti):
     Path(cartella_pacchetti).mkdir(parents=True, exist_ok=True)
     pdf.output(str(dest))
     return dest
+
+
+# --------------------------------------------------------------------------- «Chi parla»: i nomi delle voci
+
+SCHEMA_NOMI = {"type": "object", "properties": {"voci": {"type": "array", "items": {"type": "object", "properties": {
+    "voce": {"type": "integer"}, "nome": {"type": "string"}}, "required": ["voce", "nome"]}}}, "required": ["voci"]}
+
+
+def suggerisci_nomi(cartella, chiave):
+    """Le voci senza nome di una riunione/webinar: Claude guarda i partecipanti e come si chiamano tra loro
+    («Giulia, mi prepari i numeri?») e propone un nome solo se e' chiaro. Il nome deve comparire nella
+    trascrizione o fra i partecipanti, altrimenti lo scarto. Ritorna quanti nomi ha dato."""
+    import voci
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    if (info.get("tipo") or "lezione") == "lezione":
+        return 0            # in aula bastano «Docente» e «Domanda»
+    d = voci._leggi(cartella)
+    senza = [v["id"] for v in d.get("voci") or [] if not v.get("nome") and v.get("sec", 0) >= 5]
+    if not senza or len(d.get("voci") or []) < 2:
+        return 0
+    righe, prima = [], None
+    for s in segmenti_lezione(cartella):
+        if s.get("voce") != prima:
+            righe.append(f"\n[{hms(s['inizio'])}] Voce {s.get('voce', '?')}: {s['testo']}")
+            prima = s.get("voce")
+        else:
+            righe[-1] += " " + s["testo"]
+    testo = "".join(righe)[:120_000]
+    part = info.get("partecipanti") or []
+    corpo = {"model": MODELLO, "max_tokens": 600,
+             "system": "Ricevi la trascrizione di una registrazione in cui le voci sono state separate in automatico "
+                       "(«Voce 1», «Voce 2»...). Per ciascuna delle voci indicate trova il NOME della persona, ma solo "
+                       "se e' chiaro: si presenta («sono Marco»), gli altri la chiamano per nome subito prima che parli "
+                       "o le rispondono per nome, oppure un solo partecipante dell'elenco puo' essere quella voce. "
+                       "Se non e' chiaro, nome vuoto. Mai inventare. Due voci diverse non possono avere lo stesso nome. "
+                       "Chiama lo strumento salva_nomi.",
+             "tools": [{"name": "salva_nomi", "description": "Salva i nomi delle voci.", "input_schema": SCHEMA_NOMI}],
+             "tool_choice": {"type": "tool", "name": "salva_nomi"},
+             "messages": [{"role": "user", "content":
+                           (f"Partecipanti: {', '.join(part)}.\n" if part else "Partecipanti: non indicati.\n") +
+                           f"Voci da riconoscere: {', '.join('Voce %d' % i for i in senza)}.\n\nTrascrizione:{testo}"}]}
+    r = _chiama(chiave, corpo)
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    proposte = (blocco or {}).get("input", {}).get("voci") or []
+    usati = {str(v.get("nome") or "").lower() for v in d.get("voci") or [] if v.get("nome")}
+    testo_l = testo.lower()
+    dati = 0
+    for p in proposte:
+        nome = str(p.get("nome") or "").strip()[:60]
+        if not nome or p.get("voce") not in senza or nome.lower() in usati:
+            continue
+        nel_testo = all(x in testo_l for x in nome.lower().split()[:1])
+        tra_part = any(nome.lower() in x.lower() or x.lower() in nome.lower() for x in part)
+        if not (nel_testo or tra_part):
+            continue
+        usati.add(nome.lower())
+        dati += 1
+        for v in d["voci"]:
+            if v["id"] == p["voce"]:
+                v["nome"], v["suggerito"] = nome, True
+    if dati:
+        voci._salva(cartella, d)
+        voci.rinomina(cartella, {})
+    spesa = _costo(r.get("usage", {}))
+    el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
+    log.info("nomi delle voci: %s su %s, spesa %.4f $", dati, len(senza), spesa)
+    return dati

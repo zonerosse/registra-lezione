@@ -492,6 +492,9 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti=
               if contesto and formato in ("cornell", "esame") else "") +
              (" Partecipanti (usa questi nomi, scritti cosi'): " + ", ".join(partecipanti) + "."
               if partecipanti else "") +
+             (" Se un paragrafo comincia con un nome e i due punti (es. «Giulia: ...», «Voce 2: ...», «Domanda: ...»)"
+              " e' chi sta parlando, riconosciuto in automatico dalla voce: usalo per dire chi ha detto o deciso cosa"
+              " (puo' sbagliare: se il testo dice chiaramente altro, segui il testo; «Voce N» e' una persona senza nome).") +
              (" Termini e nomi che il docente usa (la trascrizione automatica puo' averli storpiati: "
               "scrivili esattamente cosi'): " + ", ".join(parole) + "." if parole else "")}]}],
     }

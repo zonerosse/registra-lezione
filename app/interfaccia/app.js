@@ -58,7 +58,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (['rip', 'chiedi', 'mappa', 'cap', 'ig'].includes(pagina)) { vai('arch'); return true; }
+  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci'].includes(pagina)) { vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -111,8 +111,8 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig'].includes(p) ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci'].includes(p) ? 'arch' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
@@ -569,7 +569,8 @@ function disegnaLezioni() {
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = ANDROID ? '' : `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
     const chiedi = l.trascritta && l.stato === 'pronta' ? `<button class="btn b-cor b-sm" data-a="chiedi">${ico('chat')}${t('ar.chiedi')}</button>` : '';
-    const capi = l.capitoli && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="capitoli">${ico('text')}${t('ar.cap')}</button>` : '';
+    const capi = (l.capitoli && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="capitoli">${ico('text')}${t('ar.cap')}</button>` : '') +
+      (l.voci >= 2 && l.stato === 'pronta' && !ANDROID ? `<button class="btn b-ghost b-sm" data-a="voci">${ico('chat')}${t('ar.voci')}</button>` : '');
     const sec = chiedi + capi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
@@ -589,6 +590,8 @@ async function azioneLezione(l, a, e) {
   if (a === 'mappa') return apriMappa(l);
   if (a === 'capitoli') return apriCapitoli(l);
   if (a === 'infografica') return apriInfografica(l);
+  if (a === 'voci') return apriVoci(l);
+  if (a === 'voci_rifai') return apriVoci(l, true);
   if (a === 'pdf') return aggiungiPdf(l);
   if (a === 'tras') return A.apri_lezione(c);
   if (a === 'video') return A.apri(l.video);
@@ -643,6 +646,7 @@ function menuLezione(l, btn) {
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
+  if (l.trascritta && l.stato === 'pronta' && !ANDROID && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -693,6 +697,7 @@ function disegnaImpostazioni() {
   $('swDnd').classList.toggle('on', !!R.dnd);
   $('swDir').classList.toggle('on', !!R.diretta);
   $('swPrec').classList.toggle('on', !!R.precisa);
+  $('swVoci').classList.toggle('on', !!R.chi_parla);
   if (ANDROID) {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
     $('swCarica').classList.toggle('on', !!R.solo_carica);
@@ -972,11 +977,11 @@ async function disegnaCalendario() {
   $('calImpegni').querySelectorAll('.seg').forEach(g => g.querySelectorAll('span').forEach(x => x.onclick = async () => { await A.cal_scelta(I[+g.dataset.i].uid, x.dataset.v); disegnaCalendario(); }));
 }
 async function collegaCalendario(quale) {
-  const html = `<div class="passi">${t(quale === 'g' ? 'cal.g.passi' : 'cal.o.passi')}</div><input class="in" style="margin-top:12px" placeholder="${esc(t('cal.link.ph'))}"><div class="hint" style="margin-top:8px">${esc(t('cal.privato'))}</div>`;
-  const ok = await dialogo({titolo: t(quale === 'g' ? 'cal.g.t' : 'cal.o.t'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cal.collega'), cls: 'b-main', v: true}]});
+  const html = `<div class="passi">${t('cal.' + quale + '.passi')}</div><input class="in" style="margin-top:12px" placeholder="${esc(t('cal.link.ph'))}"><div class="hint" style="margin-top:8px">${esc(t('cal.privato'))}</div>`;
+  const ok = await dialogo({titolo: t('cal.' + quale + '.t'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('cal.collega'), cls: 'b-main', v: true}]});
   if (!ok || !dialogo.valore) return;
   const r = await A.cal_aggiungi(dialogo.valore);
-  if (r.ok) toast(t('cal.ok', {n: r.n})); else await dialogo({titolo: t(quale === 'g' ? 'cal.g.t' : 'cal.o.t'), testo: r.msg || ''});
+  if (r.ok) toast(t('cal.ok', {n: r.n})); else await dialogo({titolo: t('cal.' + quale + '.t'), testo: r.msg || ''});
   disegnaCalendario();
 }
 async function orarioLezioni() {
@@ -1013,6 +1018,70 @@ async function apriCapitoli(l) {
     if (!v) { mostraMomento(l.cartella, c.sec, null, l.nome); return; }
     try { v.currentTime = c.sec; v.play().catch(() => {}); } catch (err) {}
   });
+}
+
+/* ------------------------------------------------------------------ chi parla */
+const COL_VOCI = ['#0369a1', '#7c3aed', '#c2410c', '#059669', '#be123c', '#a16207', '#0f766e', '#6d28d9', '#b45309', '#1d4ed8', '#9d174d', '#4d7c0f'];
+const PILL_VOCI = [['#e0f2fe', '#0369a1'], ['#ede9fe', '#7c3aed'], ['#fff7ed', '#c2410c'], ['#ecfdf5', '#059669'], ['#fff1f2', '#be123c'], ['#fefce8', '#a16207']];
+let VC = {lez: null, d: null};
+const colVoce = id => COL_VOCI[((id || 1) - 1) % COL_VOCI.length];
+async function apriVoci(l, rifai = false) {
+  VC = {lez: l, d: null};
+  $('vcSub').textContent = `${l.nome} · ${l.quando}`;
+  $('vcRighe').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(rifai ? t('vc.lav') : '…')}</div>`;
+  $('vcPill').innerHTML = ''; $('vcMedia').innerHTML = '';
+  vai('voci');
+  const r = rifai ? await A.voci_rifai(l.cartella) : await A.voci(l.cartella);
+  if (VC.lez !== l) return;
+  if (r.ok === false) { $('vcRighe').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  disegnaVoci(r);
+  if (rifai) caricaLezioni();
+}
+function disegnaVoci(d) {
+  VC.d = d;
+  const l = VC.lez, n = d.voci.length;
+  $('vcSub').textContent = [l.nome, l.quando, d.durata, n > 1 ? t('vc.n', {n}) : n === 1 ? t('vc.n1') : ''].filter(Boolean).join(' · ');
+  if (!$('vcMedia').innerHTML && d.video) $('vcMedia').innerHTML = d.audio ? `<audio id="vcV" controls preload="metadata" src="${esc(d.video)}"></audio>` : `<video id="vcV" controls preload="metadata" src="${esc(d.video)}"></video>`;
+  $('vcNomi').classList.toggle('hidden', !n);
+  if (!d.fatte) {
+    $('vcRighe').innerHTML = `<div class="hint">${esc(t('vc.nessuna'))}</div><button class="btn b-main b-sm mt" id="vcVia">${ico('chat')}${esc(t('vc.avvia'))}</button>`;
+    $('vcVia').onclick = () => apriVoci(l, true);
+  } else {
+    $('vcRighe').innerHTML = d.righe.map((r, i) => `<div class="spk" data-i="${i}"><div class="n" style="color:${r.voce ? colVoce(r.voce) : 'var(--mut)'}">${esc(r.chi || '—')}<span class="t">${esc(r.ora)}</span></div><div>${esc(r.testo)}</div></div>`).join('');
+    $('vcRighe').querySelectorAll('.spk').forEach(e => e.onclick = () => {
+      $('vcRighe').querySelectorAll('.spk').forEach(x => x.classList.toggle('on', x === e));
+      const v = $('vcV'), r = d.righe[+e.dataset.i];
+      if (!v) { mostraMomento(l.cartella, r.sec, null, l.nome); return; }
+      try { v.currentTime = r.sec; v.play().catch(() => {}); } catch (err) {}
+    });
+  }
+  $('vcPill').innerHTML = d.voci.map(v => { const c = PILL_VOCI[(v.id - 1) % PILL_VOCI.length] || ['#f1f5f9', colVoce(v.id)];
+    return `<span class="pill" style="background:${c[0]};color:${colVoce(v.id)}">${esc(t('vc.voce', {n: v.id}))} → ${esc(v.mostra)}${v.suggerito ? ' ✨' : ''} · ${Math.round(v.quota * 100)}%</span>`; }).join('');
+  document.querySelector('#v-voci [data-t="vc.nota"]').textContent = t(d.tipo === 'lezione' ? 'vc.nota.lez' : 'vc.nota');
+}
+async function nomiVoci() {
+  const d = VC.d; if (!d || !d.voci.length) return;
+  const proposte = [...new Set([...(d.partecipanti || []), ...d.voci.map(v => v.nome).filter(Boolean)])];
+  const html = `<div>${d.voci.map(v => `<div class="vrow" data-id="${v.id}"><span class="dot" style="background:${colVoce(v.id)}"></span>
+      <div class="q">${v.esempio ? `<button class="lnk" data-s="${v.esempio.sec}">▶ ${esc(t('vc.ascolta'))}</button> «${esc(v.esempio.testo)}»` : esc(t('vc.voce', {n: v.id}))}${v.suggerito ? `<div class="hint">✨ ${esc(t('vc.suggerito'))}</div>` : ''}</div>
+      <input class="in" maxlength="60" placeholder="${esc(v.mostra || t('vc.chi'))}" value="${esc(v.nome || '')}"></div>`).join('')}</div>
+    ${proposte.length ? `<div class="vchips">${proposte.map(p => `<button type="button">${esc(p)}</button>`).join('')}</div>` : ''}`;
+  let ultimo = null;
+  setTimeout(() => {
+    const box = document.querySelector('.velo .dlg'); if (!box) return;
+    box.style.maxWidth = '720px';
+    box.querySelectorAll('.vrow .in').forEach(i => i.onfocus = () => { ultimo = i; });
+    box.querySelectorAll('.vchips button').forEach(b => b.onclick = () => { const i = ultimo || [...box.querySelectorAll('.vrow .in')].find(x => !x.value); if (i) { i.value = b.textContent; i.focus(); } });
+    box.querySelectorAll('.vrow [data-s]').forEach(b => b.onclick = () => { const v = $('vcV'); if (v) { try { v.currentTime = +b.dataset.s; v.play().catch(() => {}); } catch (e) {} } else mostraMomento(VC.lez.cartella, +b.dataset.s, null, VC.lez.nome); });
+  }, 0);
+  const salva = async () => {
+    const out = {};
+    document.querySelectorAll('.velo .vrow').forEach(r => { out[r.dataset.id] = r.querySelector('.in').value.trim(); });
+    document.querySelector('.velo').remove();
+    const r = await A.voci_nomi(VC.lez.cartella, out);
+    if (r.ok) { disegnaVoci(r); toast(t('vc.salvato')); } else toast(r.msg || '');
+  };
+  return dialogo({titolo: t('vc.dlg.t'), testo: t('vc.dlg.s'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('salva'), cls: 'b-main', fn: salva}]});
 }
 
 /* ------------------------------------------------------------------ infografica */
@@ -1115,6 +1184,7 @@ function collegaNovita() {
   };
   $('calGoogle').onclick = () => collegaCalendario('g');
   $('calOutlook').onclick = () => collegaCalendario('o');
+  $('calAltro').onclick = () => collegaCalendario('a');
   $('calOrario').onclick = orarioLezioni;
   $('igPdf').onclick = async () => { if (!IG.dati) return; const r = await A.infografica_pdf(IG.lez.cartella, true); if (r.ok) toast(t('ig.salvata')); };
   $('igRifai').onclick = async () => { if (IG.lez && await conferma(t('ig.rifai.t'), t('ig.rifai.c'))) apriInfografica(IG.lez, true); };
@@ -1122,6 +1192,9 @@ function collegaNovita() {
   $('swCarica').onclick = async () => { await A.imposta('solo_carica', !R.solo_carica); await rileggi(); };
   $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
+  $('swVoci').onclick = async () => { await A.imposta('chi_parla', !R.chi_parla); await rileggi(); };
+  $('vcNomi').onclick = () => nomiVoci();
+  $('vcRifai').onclick = () => VC.lez && apriVoci(VC.lez, true);
   $('pwIn').addEventListener('keydown', e => { if (e.key === 'Enter') aggiungiParola(); });
   $('pwAgg').onclick = aggiungiParola;
   $('chVai').onclick = inviaDomanda;

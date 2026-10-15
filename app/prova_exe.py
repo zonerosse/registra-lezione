@@ -200,6 +200,19 @@ def main(radice):
             righe.append(f"yt-dlp per «importa da link»: {v}")
         except OSError:
             righe.append("yt-dlp: saltato (senza internet)")
+        # «Chi parla»: modello delle voci (scaricato al primo uso) e onnxruntime dentro il programma
+        try:
+            import numpy as _np
+            import voci
+            if not voci.modello_presente():
+                voci.scarica_modello()
+            t = _np.arange(16000 * 3) / 16000
+            suono = (0.2 * _np.sin(2 * _np.pi * 180 * t) * (1 + _np.sin(2 * _np.pi * 3 * t))).astype(_np.float32)
+            e = voci.impronta(suono)
+            assert e is not None and len(e) == 256, "chi parla: impronta della voce non calcolata"
+            righe.append("chi parla (impronta della voce): ok")
+        except OSError:
+            righe.append("chi parla: saltato (senza internet)")
         if sys.platform == "win32":
             righe.append(prova_finestra())
         righe.append("TUTTO A POSTO")

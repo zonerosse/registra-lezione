@@ -178,6 +178,15 @@ class Api:
     def infografica(self, cartella, rifai=False):
         return self._m.infografica(cartella, rifai)
 
+    def voci(self, cartella):
+        return self._m.voci(cartella)
+
+    def voci_nomi(self, cartella, nomi):
+        return self._m.voci_nomi(cartella, nomi)
+
+    def voci_rifai(self, cartella):
+        return self._m.voci_rifai(cartella)
+
     def infografica_pdf(self, cartella, apri_dopo=True):
         return self._m.infografica_pdf(cartella, apri_dopo)
 

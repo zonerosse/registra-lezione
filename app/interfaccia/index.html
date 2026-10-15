@@ -233,6 +233,17 @@
       </div>
     </section>
 
+    <!-- CHI PARLA -->
+    <section class="pg hidden" id="v-voci">
+      <div class="hd"><div><h2 id="vcTit" data-t="vc.h">Chi parla</h2><p id="vcSub"></p></div></div>
+      <div id="vcMedia"></div>
+      <div class="card"><div class="row" style="margin-bottom:8px"><div class="lbl sp" style="margin:0" data-t="vc.tras">Trascrizione · chi parla</div><button class="btn b-ghost b-sm" id="vcNomi" data-t="vc.nomi">Dai i nomi alle voci…</button></div>
+        <div id="vcRighe"></div></div>
+      <div class="card"><div class="lbl" data-t="vc.voci">Voci</div><div class="row" id="vcPill" style="flex-wrap:wrap;gap:8px"></div>
+        <div class="hint" style="margin-top:8px" data-t="vc.nota">Il programma separa le voci da solo, sul PC: l'audio non va su internet. Può sbagliare: i nomi si correggono con «Dai i nomi alle voci».</div>
+        <div class="row mt"><span class="sp"></span><button class="lnk" id="vcRifai" data-t="vc.rifai">Riconosci di nuovo le voci</button></div></div>
+    </section>
+
     <!-- INFOGRAFICA -->
     <section class="pg hidden" id="v-ig">
       <div class="hd"><div><h2 data-t="ig.h">Infografica</h2><p id="igSub"></p></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="igPdf"><svg><use href="#i-doc"/></svg><span data-t="mp.pdf">Salva in PDF</span></button></div></div>
@@ -307,8 +318,9 @@
         <div class="hint" data-t="cal.s">Collega il calendario (o scrivi l'orario delle lezioni): il programma sa quando inizia un impegno, ti avvisa o registra da solo, con il nome giusto.</div>
         <div id="calFonti" style="margin-top:10px"></div>
         <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:10px">
-          <button class="btn b-ghost b-sm" id="calGoogle">📅 <span data-t="cal.google">Collega Google Calendar…</span></button>
-          <button class="btn b-ghost b-sm" id="calOutlook">📆 <span data-t="cal.outlook">Collega Outlook…</span></button>
+          <button class="btn b-ghost b-sm" id="calGoogle">📅 <span data-t="cal.google">Collega Gmail (Google Calendar)…</span></button>
+          <button class="btn b-ghost b-sm" id="calOutlook">📆 <span data-t="cal.outlook">Collega Outlook / Hotmail…</span></button>
+          <button class="btn b-ghost b-sm" id="calAltro">🔗 <span data-t="cal.altro">Altro calendario (iCloud…)…</span></button>
           <button class="btn b-ghost b-sm" id="calOrario">🗓 <span data-t="cal.orario">Orario delle lezioni…</span></button>
         </div>
         <div class="set" style="margin-top:12px"><div class="t"><b data-t="cal.modo.t">Quando inizia un impegno</b><span data-t="cal.modo.s">Vale per tutti; per un impegno solo lo cambi qui sotto.</span></div><div class="seg" id="segCal"><span data-v="avvisa" data-t="cal.avvisa">Avvisami</span><span data-v="solo" data-t="cal.solo">Registra da solo</span><span data-v="niente" data-t="cal.niente">Niente</span></div></div>
@@ -319,6 +331,7 @@
         <div class="set"><div class="t"><b data-t="im.ogni">Ogni quanto preparo un pacchetto</b><span data-t="im.ogni.s">Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30" data-t="im.30">30 min</span><span data-v="60" data-t="im.60">1 ora</span></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.mini">Mini finestra durante la registrazione</b><span data-t="im.mini.s">Piccola, sempre in primo piano, con Pausa e Fine.</span></div><div class="sw" id="swMini"></div></div>
         <div class="set"><div class="t"><b data-t="im.prec">Trascrizione più precisa</b><span data-t="im.prec.s">Sbaglia meno parole, ma ci mette circa una volta e mezza il tempo. Vale per le prossime registrazioni.</span></div><div class="sw" id="swPrec"></div></div>
+        <div class="set solo-pc"><div class="t"><b data-t="im.voci">Riconosci chi parla</b><span data-t="im.voci.s">Nella trascrizione e negli appunti c'è scritto chi ha detto cosa.</span></div><div class="sw" id="swVoci"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dir">Testo in diretta</b><span data-t="im.dir.s">Mentre registri vedi il testo con circa 2 minuti di ritardo. Il PC lavora di più: su un portatile lento può rallentare Meet.</span></div><div class="sw" id="swDir"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dnd">Ricordami «Non disturbare»</b><span data-t="im.dnd.s">Così i suoni delle notifiche non finiscono nella registrazione.</span></div><div class="sw" id="swDnd"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo i pacchetti</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>

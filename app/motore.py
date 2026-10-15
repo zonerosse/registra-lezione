@@ -287,6 +287,7 @@ class Motore:
         self.on_riavvia = None
         # calendario: impegni, avviso prima, avvio da solo, domanda a fine impegno
         self.cal = cal.Calendari(BASE / "calendario")
+        el.DOPO_VOCI = self._nomi_voci
         self.cal_lista, self.cal_avviso, self.cal_fine, self.cal_rec = [], None, None, None
         self.cal_gestiti = set()
         self.on_avviso = None          # la finestra si mette davanti
@@ -465,6 +466,7 @@ class Motore:
                 "modo": "aula" if self.cfg.get("modo") == "aula" else "online", "microfono": self.cfg.get("microfono") or "",
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
+                "chi_parla": bool(self.cfg.get("chi_parla", True)),
                 "quando": "dopo" if self.cfg.get("quando") == "dopo" else "durante",
                 "solo_carica": bool(self.cfg.get("solo_carica", True)),
                 "velocita": self.cfg.get("velocita_trascrizione_precisa" if self.cfg.get("trascrizione_precisa")
@@ -503,7 +505,7 @@ class Motore:
             self.cfg["lingua_lezione_scelta"] = True
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica"):
+        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
             self.cfg[campo] = bool(valore)
         elif campo == "quando":
             self.cfg["quando"] = "dopo" if valore == "dopo" else "durante"
@@ -601,6 +603,7 @@ class Motore:
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                                                 "quando": "dopo" if dopo else "durante",
                                                 "tipo": tipo, "partecipanti": partecipanti,
+                                                "chi_parla": bool(self.cfg.get("chi_parla", True)),
                                                 "mio": self.cfg.get("mio") or None})
             self.trascrivi_dopo = dopo
             self.cartella_corrente = cart
@@ -700,7 +703,8 @@ class Motore:
                                                 "lingua_appunti": testi.LINGUA, "lingua_lezione": lingua,
                                                 "formato_appunti": self._formato(), "parole": self.parole_di(nome),
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
-                                                "tipo": self._tipo(), "mio": self.cfg.get("mio") or None})
+                                                "tipo": self._tipo(), "mio": self.cfg.get("mio") or None,
+                                                "chi_parla": bool(self.cfg.get("chi_parla", True))})
             self.cartella_corrente = cart
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato()
@@ -1049,6 +1053,7 @@ class Motore:
                 "nome_mio": (info.get("mio") or self.cfg.get("mio") or {}).get("nome") or "",
                 "capitoli": any(ap.capitoli_di(cart)),
                 "infografica": (cart / "infografica.json").exists(),
+                "voci": len((el.leggi_json(cart / "voci.json", {}) or {}).get("voci") or []),
                 "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
                 "docente": (cart / "docente.json").exists(), "mappa": (cart / "mappa.json").exists(),
                 "aula": info.get("modo") == "aula", "trascritta": any(cart.glob("trascrizione_*.json")),
@@ -1285,6 +1290,54 @@ class Motore:
         except Exception:
             log.exception("infografica")
             return {"ok": False, "msg": tr("ch_err")}
+
+    # ------------------------------------------------------------------ «Chi parla»
+
+    def _nomi_voci(self, cartella):
+        """Dopo ogni parte: Claude propone i nomi delle voci nuove (riunioni e webinar, se c'e' la chiave)."""
+        if self.chiave():
+            ch.suggerisci_nomi(cartella, self.chiave())
+
+    def voci(self, cartella):
+        """Per la pagina «Chi parla»: voci, trascrizione con i nomi e indirizzo del video."""
+        import voci as vc
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        d = vc.elenco(cart)
+        d.update({"nome": info.get("nome", ""), "tipo": info.get("tipo") or "lezione",
+                  "video": self.video_url(cartella), "fatte": (cart / "voci.json").exists(),
+                  "audio": bool(video_di(cart)) and str(video_di(cart)).endswith(".m4a"),
+                  "durata": el.durata_leggibile(info.get("durata", 0)) if info.get("durata") else ""})
+        return d
+
+    def voci_nomi(self, cartella, nomi):
+        """Salva i nomi dati a mano e rifa' la trascrizione completa (HTML, PDF per Claude, testo)."""
+        import voci as vc
+        try:
+            vc.rinomina(cartella, {str(k): v for k, v in (nomi or {}).items()})
+            if (el.leggi_json(Path(cartella) / "info.json", {}) or {}).get("stato") == "pronta":
+                el.crea_completa(cartella)
+            return {"ok": True, **self.voci(cartella)}
+        except Exception:
+            log.exception("nomi delle voci")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def voci_rifai(self, cartella):
+        """Riconosce le voci di una registrazione gia' finita (anche di prima di «Chi parla»)."""
+        import voci as vc
+        try:
+            el.aggiorna_info(cartella, chi_parla=True)
+            vc.rifai(cartella)
+            try:
+                self._nomi_voci(cartella)
+            except Exception:
+                log.exception("nomi delle voci")
+            if (el.leggi_json(Path(cartella) / "info.json", {}) or {}).get("stato") == "pronta":
+                el.crea_completa(cartella)
+            return {"ok": True, **self.voci(cartella)}
+        except Exception:
+            log.exception("chi parla")
+            return {"ok": False, "msg": tr("vc_err")}
 
     def infografica_pdf(self, cartella, apri_dopo=True):
         try:

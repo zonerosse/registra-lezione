@@ -185,7 +185,7 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     gia = leggi_json(pj)
     if gia is not None:
         progresso(1.0)
-        return gia
+        return chi_parla(cartella, k, gia)
     wav = cartella / f"audio_{k:03d}.wav"
     if not wav.exists() or durata_wav(wav) < 1:
         scrivi_json(pj, [])
@@ -233,7 +233,32 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     scrivi_json(pj, out)
     log.info("trascrizione parte %s: %.0f s di audio in %.0f s (%s thread)", k, durata,
              time.monotonic() - t0, threads)
-    return out
+    return chi_parla(cartella, k, out)
+
+
+DOPO_VOCI = None       # il motore ci mette una funzione(cartella): Claude suggerisce i nomi delle voci
+
+
+def chi_parla(cartella, k, segmenti):
+    """«Chi parla»: da' una voce a ogni frase della parte k (se l'opzione e' attiva e non e' gia' fatto).
+    Se qualcosa va storto (es. niente internet per scaricare il modello la prima volta) la trascrizione resta com'e'."""
+    info = leggi_json(Path(cartella) / "info.json", {}) or {}
+    if not info.get("chi_parla") or not segmenti:
+        return segmenti
+    try:
+        import voci
+        if voci.fatta(cartella, k):
+            return segmenti
+        voci.assegna(cartella, k)
+        if DOPO_VOCI:
+            try:
+                DOPO_VOCI(cartella)
+            except Exception:
+                log.exception("nomi delle voci")
+        return leggi_json(Path(cartella) / f"trascrizione_{k:03d}.json", segmenti) or segmenti
+    except Exception:
+        log.exception("chi parla, parte %s", k)
+        return segmenti
 
 
 _MODELLO = {}
@@ -434,14 +459,21 @@ def raggruppa(slides, segmenti, inizio, fine):
             j += 1
         gruppi[j]["frasi"].append(seg)
 
+    # «Chi parla»: con almeno due voci ogni cambio di voce e' un paragrafo nuovo che comincia con il nome
+    con_voci = len({seg.get("chi") for seg in segmenti if seg.get("chi")}) >= 2
     for g in gruppi:
-        paragrafi, corrente, ultimo = [], [], None
+        paragrafi, corrente, ultimo, chi = [], [], None, None
         for seg in g["frasi"]:
+            cambia = con_voci and seg.get("chi") and seg.get("chi") != chi
             # pausa lunga = nuovo paragrafo, cosi' il testo non e' un muro unico
-            if corrente and ultimo is not None and (seg["inizio"] - ultimo > 2.5 or len(corrente) >= 6):
+            if corrente and ultimo is not None and (cambia or seg["inizio"] - ultimo > 2.5 or len(corrente) >= 6):
                 paragrafi.append(" ".join(corrente))
                 corrente = []
-            corrente.append(seg["testo"])
+            if con_voci and seg.get("chi") and (cambia or not corrente):
+                chi = seg["chi"]
+                corrente.append(f"{chi}: {seg['testo']}" if not corrente else seg["testo"])
+            else:
+                corrente.append(seg["testo"])
             ultimo = seg["fine"]
         if corrente:
             paragrafi.append(" ".join(corrente))
@@ -617,8 +649,10 @@ def crea_txt(info, gruppi, segmenti, destinazione, titolo_extra=""):
         righe.append("")
     righe.append("")
     righe.append(f"=== {tr('tr_completa', testi.lingua_di(info))} ===")
+    con_voci = len({s.get("chi") for s in segmenti if s.get("chi")}) >= 2
     for s in segmenti:
-        righe.append(f"[{hms(s['inizio'])}] {s['testo']}")
+        chi = f"{s['chi']}: " if con_voci and s.get("chi") else ""
+        righe.append(f"[{hms(s['inizio'])}] {chi}{s['testo']}")
     Path(destinazione).write_text("\n".join(righe), encoding="utf-8")
 
 
@@ -720,6 +754,28 @@ def unisci_video(cartella, meta):
 
 # --------------------------------------------------------------------------- lezione completa
 
+def crea_completa(cartella, segmenti=None, avanzamento=lambda f: None):
+    """Lezione.html, «Per Claude - ....pdf» e trascrizione.txt di tutta la registrazione
+    (si rifanno anche dopo aver dato i nomi alle voci)."""
+    cartella = Path(cartella)
+    meta = leggi_json(cartella / "meta.json", {}) or {}
+    if segmenti is None:
+        segmenti = []
+        for p in sorted(cartella.glob("trascrizione_*.json")):
+            segmenti += leggi_json(p, []) or []
+    info = leggi_json(cartella / "info.json", {}) or {}
+    durata = info.get("durata") or sum(durata_wav(p) for p in file_parti(cartella).values())
+    if not durata and segmenti:
+        durata = max(s["fine"] for s in segmenti)
+    gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, 0, max(durata, 1))
+    info = aggiorna_info(cartella, durata=round(durata), n_slide=len([g for g in gruppi if g["slide"]]))
+    crea_html(cartella, info, gruppi)
+    avanzamento(0.92)
+    crea_pdf(cartella, info, gruppi, cartella / f"Per Claude - {nome_sicuro(info.get('nome'))}.pdf")
+    crea_txt(info, gruppi, segmenti, cartella / "trascrizione.txt")
+    avanzamento(0.97)
+
+
 def elabora_finale(cartella, cartella_pacchetti, avanzamento=lambda f: None, threads=None):
     """A fine lezione: parti mancanti, video, lezione completa. avanzamento(0..1)."""
     cartella = Path(cartella)
@@ -744,15 +800,7 @@ def elabora_finale(cartella, cartella_pacchetti, avanzamento=lambda f: None, thr
     avanzamento(0.88)
 
     # 3. lezione completa
-    info = leggi_json(cartella / "info.json", {}) or {}
-    durata = info.get("durata") or sum(durata_wav(p) for p in file_parti(cartella).values())
-    gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, 0, max(durata, 1))
-    info = aggiorna_info(cartella, durata=round(durata), n_slide=len([g for g in gruppi if g["slide"]]))
-    crea_html(cartella, info, gruppi)
-    avanzamento(0.92)
-    crea_pdf(cartella, info, gruppi, cartella / f"Per Claude - {nome_sicuro(info.get('nome'))}.pdf")
-    crea_txt(info, gruppi, segmenti, cartella / "trascrizione.txt")
-    avanzamento(0.97)
+    crea_completa(cartella, segmenti, avanzamento)
 
     # 4. pulizia: l'audio grezzo e' enorme, lo tolgo se e' gia' dentro video.mp4 / audio.m4a
     if video_ok and ((cartella / "video.mp4").exists() or (cartella / "audio.m4a").exists()):
