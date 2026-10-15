@@ -1,7 +1,7 @@
 {
- "versione": "0.7",
+ "versione": "0.7.1",
  "codice": 7,
- "novita": "«Aggiorna l'app» ora scarica anche gli aggiornamenti piccoli (testi, guida, pagine) in pochi secondi, senza reinstallare. Icona dell'app e «Scarica» funzionante.",
- "novita_en": "«Update the app» now also downloads small updates (texts, guide, pages) in seconds, without reinstalling. App icon and working «Download».",
- "contenuto": 7
+ "novita": "Prova dell'aggiornamento leggero: si scarica in pochi secondi e l'app si riapre da sola. Nessun'altra novità.",
+ "novita_en": "Test of the light update: it downloads in seconds and the app reopens by itself. No other changes.",
+ "contenuto": 8
 }
