@@ -1,0 +1,9 @@
+macOS 15.7.9 · x86_64
+voce: Alice (it)
+lezione parlata: 30.3 s
+avvio cattura: PRONTO 48000
+eventi: 360 livelli (max 1.00), 19 foto, fine: True
+audio registrato: 39.1 s, volume medio 0.1492
+trascrizione: 95% delle parole ritrovate · «Buongiorno ragazzi, oggi parliamo di limiti notevoli. Il primo limite notevole è il seno di x fratto x, che tende a uno quando x tende a zero. Si dimostra con i…»
+slide: 4 testate diverse viste in 19 foto
+TUTTO A POSTO

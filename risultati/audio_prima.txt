@@ -1,0 +1,17 @@
+Audio:
+
+    Devices:
+
+        Null Audio Device:
+
+          Default Input Device: Yes
+          Default Output Device: Yes
+          Default System Output Device: Yes
+          Input Channels: 2
+          Manufacturer: Apple Inc.
+          Output Channels: 2
+          Current SampleRate: 44100
+          Transport: Virtual
+          Input Source: Data Source Item 0
+          Output Source: Data Source Item 0
+
