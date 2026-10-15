@@ -343,6 +343,9 @@ def _prepara(cartella_app, lingua_tel):
     import motore as mt
 
     def apri(percorso):
+        if str(percorso).startswith(("http://", "https://")):     # es. «Scarica» l'app nuova: si apre nel browser
+            Ponte.apriLink(str(percorso))
+            return True
         p = Path(str(percorso))
         if p.is_dir():
             return False

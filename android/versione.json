@@ -1,6 +1,6 @@
 {
- "versione": "0.5",
- "codice": 5,
- "novita": "L'app ha la sua icona (la stessa del programma per il PC). Nella Guida, «Prima di iniziare» è il primo passo di «Registrare una lezione».",
- "novita_en": "The app has its own icon (the same as the PC program). In the Guide, «Before starting» is the first step of «Recording a lecture»."
+ "versione": "0.6",
+ "codice": 6,
+ "novita": "«Scarica» in «Aggiorna l'app» ora funziona. L'app ha la sua icona e nella Guida «Prima di iniziare» è il primo passo.",
+ "novita_en": "«Download» in «Update the app» now works. The app has its own icon and in the Guide «Before starting» is the first step."
 }
