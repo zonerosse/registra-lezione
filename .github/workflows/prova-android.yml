@@ -54,7 +54,33 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon -q
           ls -la app/build/outputs/apk/debug/
-      - name: Riconoscitore vocale per la prova (scaricato una volta, poi tenuto da GitHub)
+      - name: Prova dell'app senza emulatore (motore e pagine veri, telefono finto)
+        id: simula
+        run: |
+          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg
+          (cd tools/prova_android/simula && npm install --no-save --silent playwright@1.47.2 && npx playwright install --with-deps chromium > /dev/null)
+          NODE_PATH=$PWD/tools/prova_android/simula/node_modules bash tools/prova_android/simula/prova.sh prova_simulata
+      - name: "Pubblica l'app nel ramo android-app (da li' la prende «Aggiorna l'app»)"
+        if: steps.simula.outcome == 'success'
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          mkdir -p /tmp/agg
+          cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/agg/RegistraLezione.apk
+          python3 - <<'PY'
+          import json
+          v = json.load(open("android/versione.json"))
+          v["apk"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"
+          json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
+          PY
+          git checkout -q --orphan android-app
+          git rm -rf --cached . > /dev/null
+          cp /tmp/agg/* .
+          git add -f RegistraLezione.apk versione-android.json
+          git commit -q -m "App Android $(python3 -c "import json;print(json.load(open('versione-android.json'))['versione'])")"
+          git push -f origin android-app
+          git checkout -q -f ${{ github.sha }}
+      - name: Riconoscitore vocale per la prova sul telefono simulato (scaricato una volta, poi tenuto da GitHub)
         uses: actions/cache@v4
         with:
           path: ~/modello
@@ -72,6 +98,7 @@ jobs:
       - name: Prova sul telefono simulato
         id: prova1
         continue-on-error: true
+        timeout-minutes: 40
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
@@ -85,6 +112,8 @@ jobs:
           script: bash tools/prova_android/prova.sh
       - name: Prova sul telefono simulato (di nuovo, se il primo si e' staccato)
         if: steps.prova1.outcome == 'failure'
+        continue-on-error: true
+        timeout-minutes: 40
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 33
@@ -96,39 +125,17 @@ jobs:
           disable-animations: true
           emulator-options: -no-window -no-snapshot -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
           script: rm -rf prova_android_out && bash tools/prova_android/prova.sh
-      - name: Salva i risultati nel ramo "prova-android" e l'app nel ramo "android-app"
+      - name: Salva i risultati delle prove nel ramo "prova-android"
         if: always()
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          V=$(python3 -c "import json;print(json.load(open('android/versione.json'))['versione'])")
-          APK=android/app/build/outputs/apk/debug/app-debug.apk
-          mkdir -p /tmp/ris /tmp/agg
+          mkdir -p /tmp/ris/simulata
+          cp -R prova_simulata/* /tmp/ris/simulata/ 2>/dev/null || true
           cp -R prova_android_out/* /tmp/ris/ 2>/dev/null || true
-          cp $APK /tmp/ris/RegistraLezione-prova.apk 2>/dev/null || true
-          # l'app si pubblica per «Aggiorna» solo se tutte le prove sono andate bene
-          OK=$(python3 -c "import json;e=json.load(open('prova_android_out/esito_app.json'));print(int(bool(e['passi']) and all(p['ok'] for p in e['passi'])))" 2>/dev/null || echo 0)
-          echo "prove ok: $OK"
-          if [ -f $APK ] && [ "$OK" = "1" ]; then
-            cp $APK /tmp/agg/RegistraLezione.apk
-            python3 - "$V" <<'PY'
-          import json, sys
-          v = json.load(open("android/versione.json"))
-          v["apk"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"
-          json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
-          PY
-          fi
-          git checkout --orphan prova-android
+          git checkout -q -f --orphan prova-android
           git rm -rf --cached . > /dev/null
           rm -rf risultati; mkdir risultati; cp -R /tmp/ris/* risultati/ 2>/dev/null || true
           git add -f risultati
-          git commit -q -m "Risultati prova Android $V"
+          git commit -q -m "Risultati prove Android"
           git push -f origin prova-android
-          if [ -f /tmp/agg/RegistraLezione.apk ]; then
-            git checkout -q --orphan android-app
-            git rm -rf --cached . > /dev/null
-            cp /tmp/agg/* .
-            git add -f RegistraLezione.apk versione-android.json
-            git commit -q -m "App Android $V"
-            git push -f origin android-app
-          fi

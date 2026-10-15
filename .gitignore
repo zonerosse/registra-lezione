@@ -14,3 +14,5 @@ mac/rl-cattura
 android/app/src/main/assets/rl/
 tools/prova_android/node_modules/
 prova_android_out/
+tools/prova_android/simula/node_modules/
+prova_simulata/
