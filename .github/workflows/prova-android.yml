@@ -50,6 +50,16 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon -q
           ls -la app/build/outputs/apk/debug/
+      - name: Riconoscitore vocale per la prova (scaricato una volta, poi tenuto da GitHub)
+        uses: actions/cache@v4
+        with:
+          path: ~/modello
+          key: ggml-small-q5_1
+      - name: Scarica il riconoscitore se non c'e'
+        run: |
+          mkdir -p ~/modello
+          [ -s ~/modello/ggml-small-q5_1.bin ] || curl -sL -o ~/modello/ggml-small-q5_1.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
+          ls -la ~/modello
       - name: Attiva la virtualizzazione (per il telefono simulato)
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules

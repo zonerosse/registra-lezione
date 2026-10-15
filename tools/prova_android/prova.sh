@@ -14,7 +14,10 @@ adb logcat -c; (adb logcat -v time > $OUT/logcat_tutto.txt 2>&1 &)
 (set +x; while true; do sleep 60; echo "--- $(date +%T)"; adb devices; timeout 10 adb shell "cat /proc/meminfo | head -3; uptime"; done > $OUT/memoria.txt 2>&1 &)
 adb shell getprop ro.product.cpu.abi > $OUT/abi.txt
 adb shell dumpsys battery set ac 1
-adb shell wm size 1080x2340; adb shell wm density 420     # come un telefono vero
+adb shell wm size 720x1560; adb shell wm density 300     # proporzioni di un telefono vero
+# il riconoscitore lo metto io: scaricarlo dentro il telefono simulato lo faceva staccare
+adb shell mkdir -p $DIR
+adb push ~/modello/ggml-small-q5_1.bin $DIR/ggml-small-q5_1.bin
 adb shell am start -n $PKG/.Principale
 sleep 30
 adb exec-out screencap -p > $OUT/schermo_avvio.png
