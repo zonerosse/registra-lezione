@@ -11,7 +11,9 @@ const passo = (n, ok, d = '') => {
 (async () => {
   let b;
   try {
-    const [dev] = await _android.devices();
+    let dev;
+    for (let i = 0; i < 30 && !dev; i++) { [dev] = await _android.devices(); if (!dev) await new Promise(r => setTimeout(r, 2000)); }
+    if (!dev) throw new Error('nessun telefono visto da Playwright');
     const wv = await dev.webView({pkg: 'it.puntowebferrara.registralezione'}, {timeout: 120000});
     const p = await wv.page();
     p.on('pageerror', x => esito.errori.push(x.message));
@@ -36,16 +38,23 @@ const passo = (n, ok, d = '') => {
     await foto('04-fine');
     const s2 = await p.evaluate(() => A.stato());
     passo('lezione dal microfono pronta', s2.finale === 'ok', JSON.stringify(s2.parti));
-    // lezione registrata con "Dopo" (preparata dalla prova): Trascrivi ora
-    await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(2500); await foto('05-lezioni');
+    // seconda lezione con "Dopo": registra e basta, poi «Trascrivi ora» in Le mie lezioni
+    await p.click('#fNuova'); await p.waitForTimeout(1500);
+    await p.fill('#nome', 'Prova – Dopo');
+    await p.click('#quandoBox [data-q="dopo"]');
+    await p.click('#btnRec'); await p.waitForTimeout(25000);
+    await p.click('#btnFine'); await p.click('.dlg .b-end'); await p.waitForTimeout(4000); await foto('05-fine-dopo');
+    const s3 = await p.evaluate(() => A.stato());
+    passo('«Dopo»: salvata senza trascrivere', s3.finale === 'ok' && (s3.parti || []).every(x => x.stato === 'dopo'), JSON.stringify(s3.parti));
+    await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(2500); await foto('06-lezioni');
     const btn = await p.$('.lez [data-a="completa"]');
     passo('c\'è «Trascrivi ora»', !!btn);
     if (btn) {
-      await btn.click(); await p.waitForTimeout(4000); await foto('06-trascrivo');
+      await btn.click(); await p.waitForTimeout(4000); await foto('07-trascrivo');
       const t0 = Date.now();
-      for (let i = 0; i < 400; i++) { const s = await p.evaluate(() => A.stato()); if (i % 10 === 0) console.log('  … ' + JSON.stringify({finale: s.finale, modello: s.modello, parti: s.parti})); if (s.finale === 'ok' && !s.occupato) break; await p.waitForTimeout(3000); }
-      passo('Trascrivi ora finito', true, `${Math.round((Date.now() - t0) / 1000)} s`);
-      await foto('07-pronta');
+      for (let i = 0; i < 400; i++) { const s = await p.evaluate(() => A.stato()); if (i % 10 === 0) console.log('  … ' + JSON.stringify({finale: s.finale, parti: s.parti, carica: s.aspetta_carica})); if (s.finale === 'ok' && !s.occupato) break; await p.waitForTimeout(3000); }
+      const s4 = await p.evaluate(() => A.stato());
+      passo('«Trascrivi ora» finito', s4.finale === 'ok', `${Math.round((Date.now() - t0) / 1000)} s`);
     }
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(2500); await foto('08-lezioni');
     const lz = await p.evaluate(() => A.lezioni());
