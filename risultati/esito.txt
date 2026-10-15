@@ -1,0 +1,7 @@
+Windows sys.getwindowsversion(major=10, minor=0, build=26100, platform=2, service_pack='')
+OK   slide del docente (PDF) (4.2 s): 3 pagine (1600, 1131), testo: '1. Limiti notevoli\nseno di x fratto x te'
+OK   elenco microfoni (0.1 s): 0 microfoni [], livello None
+OK   server dei video (0.7 s): http://127.0.0.1:57568/v/2539004015ea9ff674f9cbad.mp4
+OK   video nella finestra (5.2 s): ok 640x360 t=12.8
+OK   parole difficili (0.1 s): hotwords accettato
+TUTTO A POSTO
