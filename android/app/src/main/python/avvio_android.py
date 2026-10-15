@@ -497,5 +497,9 @@ def avvia(cartella_app, lingua_tel="it"):
         _stato_android(M)
         threading.Thread(target=_avvisi, args=(M,), daemon=True).start()
     _PORTA = _server(API, Path(cartella_app) / "interfaccia")
+    try:      # per le prove automatiche: da qui si sa dove risponde il motore
+        (Path(str(Ponte.cartellaDati())) / "porta.txt").write_text(str(_PORTA))
+    except OSError:
+        pass
     log.info("Android: pagine su 127.0.0.1:%s", _PORTA)
     return _PORTA
