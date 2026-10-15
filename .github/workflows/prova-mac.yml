@@ -1,0 +1,67 @@
+name: Prova Mac
+
+# Si lancia a mano (o da Claude): finta lezione su un Mac vero di GitHub, registrata con il pezzo per macOS.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prova:
+    strategy:
+      fail-fast: false
+      matrix:
+        mac: [macos-15, macos-15-intel]
+    runs-on: ${{ matrix.mac }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Librerie
+        run: |
+          python -m pip install --upgrade pip
+          pip install faster-whisper==1.2.1 numpy Pillow
+      - name: Scheda audio (se il Mac non ne ha una, ne installo una virtuale)
+        run: |
+          system_profiler SPAudioDataType | tee audio_prima.txt
+          if ! grep -q "Output Channels" audio_prima.txt; then
+            brew install --cask blackhole-2ch || true
+            sudo killall coreaudiod || true
+            sleep 5
+          fi
+          brew install switchaudio-osx || true
+          SwitchAudioSource -a || true
+          SwitchAudioSource -t output -s "BlackHole 2ch" || true
+          SwitchAudioSource -c || true
+      - name: Compila il pezzo per macOS
+        run: |
+          swiftc -O mac/cattura.swift -o mac/rl-cattura
+          ls -la mac/rl-cattura
+      - name: Permesso di registrare lo schermo (sui Mac di prova)
+        continue-on-error: true
+        run: |
+          for c in "$PWD/mac/rl-cattura" "$(which python)" /bin/bash /bin/zsh; do
+            sudo sqlite3 "/Library/Application Support/com.apple.TCC/TCC.db" \
+              "INSERT OR REPLACE INTO access VALUES('kTCCServiceScreenCapture','$c',1,2,4,1,NULL,NULL,0,'UNUSED',NULL,0,$(date +%s),NULL,NULL,'UNUSED',$(date +%s));" || true
+          done
+      - name: Prova
+        timeout-minutes: 20
+        run: |
+          python tools/prova_mac.py
+          cat prova_mac/esito.txt
+      - name: Salva i risultati nel ramo "prova-mac-${{ matrix.mac }}"
+        if: always()
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          mkdir -p risultati
+          cp -R prova_mac/* risultati/ 2>/dev/null || true
+          rm -rf risultati/rec risultati/lezione.aiff
+          cp audio_prima.txt risultati/ 2>/dev/null || true
+          git checkout --orphan "prova-mac-${{ matrix.mac }}"
+          git rm -rf --cached . > /dev/null
+          git add -f risultati
+          git commit -m "Risultati prova Mac"
+          git push -f origin "prova-mac-${{ matrix.mac }}"
