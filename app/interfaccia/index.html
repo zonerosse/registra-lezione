@@ -162,6 +162,15 @@
         <div class="wave" id="lWave"></div>
         <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">pacchetti pronti</small></div></div>
       </div>
+      <div class="card mt avv-card hidden" id="avvCard">
+        <div class="avv-testa"><span class="avv-ic">📣</span><div class="sp"><b class="avv-t" id="avvT"></b><div class="hint" id="avvSub"></div></div></div>
+        <textarea class="in avv-msg" id="avvMsg" rows="4"></textarea>
+        <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap">
+          <button class="btn b-main b-sm" id="avvCopia"></button><span class="hint" id="avvDove"></span><span class="sp"></span>
+          <button class="btn b-ghost b-sm" id="avvFatto" data-t="av.fatto">✓ Fatto, ho avvisato</button>
+        </div>
+      </div>
+      <div class="avv-ok mt hidden" id="avvOk">✓ <b data-t="av.ok">Partecipanti avvisati</b> <span class="hint" id="avvOra"></span> <a id="avvRiapri" data-t="av.rivedi">rivedi il messaggio</a></div>
       <div class="avviso mt hidden" id="lAvv"></div>
       <div class="avviso2 mt hidden" id="aperteCard"></div>
       <div class="card mt" id="noteCard">

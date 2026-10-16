@@ -268,6 +268,9 @@ class Api:
     def voci_rifai(self, cartella):
         return self._m.voci_rifai(cartella)
 
+    def avvisati(self):
+        return self._m.avvisati()
+
     def infografica_pdf(self, cartella, apri_dopo=True):
         return self._m.infografica_pdf(cartella, apri_dopo)
 

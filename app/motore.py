@@ -401,7 +401,8 @@ class Motore:
                          livello=float(r.livello), livelli=list(self._livelli), pausa=pausa,
                          pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso,
                          modo=r.modo, diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav,
-                         n_note=len(self.note()), aperte=getattr(self, "aperte", []))
+                         n_note=len(self.note()), aperte=getattr(self, "aperte", []),
+                         avvisa=getattr(self, "avvisa", None))
             parti = []
             for k in sorted(self.parti):
                 p = dict(self.parti[k])
@@ -669,6 +670,8 @@ class Motore:
                     log.exception("cose aperte")
             self.trascrivi_dopo = dopo
             self.cartella_corrente = cart
+            self.avvisa = {"id": cart.name, "tipo": tipo, "modo": modo, "fatto": "",
+                           "lingua": self.cfg.get("lingua_lezione") or testi.LINGUA}
             self.appunti_lezione = bool(self.cfg.get("appunti_attivi") and self.chiave())
             self.formato_vista = self._formato(tipo)
             self.parti = {1: {"stato": "reg", "orario": self._orario(1)}}
@@ -1692,6 +1695,18 @@ class Motore:
         except Exception:
             log.exception("nomi delle voci")
             return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def avvisati(self):
+        """«Fatto, ho avvisato»: segna l'ora (anche in info.json, resta con la registrazione)."""
+        a = getattr(self, "avvisa", None)
+        if not a or self.cartella_corrente is None:
+            return {"ok": False}
+        a["fatto"] = datetime.datetime.now().strftime("%H.%M")
+        try:
+            el.aggiorna_info(self.cartella_corrente, partecipanti_avvisati=datetime.datetime.now().isoformat(timespec="seconds"))
+        except Exception:
+            log.exception("partecipanti avvisati")
+        return {"ok": True, "ora": a["fatto"]}
 
     def voci_rifai(self, cartella):
         """Riconosce le voci di una registrazione gia' finita (anche di prima di «Chi parla»)."""

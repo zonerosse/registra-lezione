@@ -135,6 +135,8 @@ function inizializza() {
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); });
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });
   $('btnRec').onclick = inizia;
+  $('avvCopia').onclick = avvCopia; $('avvFatto').onclick = avvFatto;
+  $('avvRiapri').onclick = () => { AVV.aperto = true; AVV.copiato = false; disegnaAvvisa(); };
   $('btnImporta').onclick = scegliVideo;
   collegaRipasso();
   collegaNovita();
@@ -378,6 +380,54 @@ async function inizia() {
   } finally { $('btnRec').disabled = false; }
 }
 
+/* ------------------------------------------------------------------ avvisa i partecipanti */
+// A ogni registrazione: messaggio pronto per dire agli altri che si registra. Non si spegne dalle impostazioni.
+const AVV = {id: null, aperto: true, copiato: false};
+function avvTipo(a) {
+  if (a.modo === 'aula') return 'aula';
+  return a.tipo === 'riunione' ? 'riu' : a.tipo === 'webinar' ? 'web' : 'lez';
+}
+function disegnaAvvisa() {
+  const a = S.avvisa;
+  const card = $('avvCard'), ok = $('avvOk');
+  if (!a) { card.classList.add('hidden'); ok.classList.add('hidden'); return; }
+  const k = avvTipo(a);
+  if (AVV.id !== a.id) {          // registrazione nuova: messaggio nella lingua di chi parla
+    AVV.id = a.id; AVV.aperto = !a.fatto; AVV.copiato = false;
+    const L = String(a.lingua || LINGUA).toLowerCase().startsWith('it') ? 'it' : 'en';
+    $('avvMsg').value = (TESTI[L] || TESTI.it)['av.m.' + k];
+  }
+  const aperto = AVV.aperto || !a.fatto;
+  card.classList.toggle('hidden', !aperto);
+  ok.classList.toggle('hidden', aperto);
+  $('avvT').textContent = t('av.t.' + k);
+  $('avvSub').textContent = t('av.s.' + k);
+  $('avvCopia').textContent = k === 'aula' ? t('av.letto') : AVV.copiato ? t('av.copiato') : t('av.copia');
+  if (k === 'aula') $('avvDove').textContent = t('av.dove.aula');
+  else $('avvDove').innerHTML = AVV.copiato ? t(ANDROID ? 'av.incolla.tel' : 'av.incolla') : esc(t('av.dove'));
+  $('avvOra').textContent = a.fatto ? '· ' + t('av.ok.alle', {o: a.fatto}) : '';
+}
+async function avvFatto() {
+  AVV.aperto = false;
+  try { const r = await A.avvisati(); if (S.avvisa && r && r.ora) S.avvisa.fatto = r.ora; } catch (e) {}
+  disegnaAvvisa();
+}
+function avvCopia() {
+  const a = S.avvisa; if (!a) return;
+  if (avvTipo(a) === 'aula') { avvFatto(); return; }
+  const testo = $('avvMsg').value;
+  const fatto = () => { AVV.copiato = true; disegnaAvvisa(); };
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(testo).then(fatto, () => { copiaVecchia(testo); fatto(); }); return; }
+  } catch (e) {}
+  copiaVecchia(testo); fatto();
+}
+function copiaVecchia(testo) {
+  const x = $('avvMsg'); x.focus(); x.select();
+  try { document.execCommand('copy'); } catch (e) {}
+  x.setSelectionRange(0, 0); x.blur();
+}
+
 /* ------------------------------------------------------------------ importa un video */
 let IV = null;   // video scelto da importare
 function durataTesto(sec) {
@@ -471,6 +521,7 @@ function disegnaReg() {
   const bp = $('btnPausa');
   bp.className = 'btn sp ' + (S.pausa ? 'b-ri' : 'b-pz');
   bp.innerHTML = S.pausa ? ico('play') + t('lv.ri') : ico('pause') + t('lv.pz');
+  disegnaAvvisa();
   $('lAvv').classList.toggle('hidden', !S.avviso);
   $('lAvv').textContent = S.avviso ? '⚠ ' + S.avviso : '';
   disegnaParti($('lParti'));

@@ -1,6 +1,6 @@
 {
- "versione": "3.24",
+ "versione": "3.25",
  "librerie": 2,
- "novita": "Privacy: «Chi parla» non conserva più nessuna impronta della voce. Le impronte servono solo mentre la registrazione viene elaborata e poi vengono cancellate; restano solo i nomi delle voci. Vengono ripulite anche le registrazioni fatte prima.",
- "novita_en": "Privacy: «Who speaks» no longer keeps any voiceprint. Voiceprints are only used while the recording is processed and are then deleted; only the voice names remain. Older recordings are cleaned up too."
+ "novita": "Nuovo riquadro «Avvisa i partecipanti»: a ogni registrazione trovi un messaggio pronto da copiare nella chat o da leggere, per dire a tutti che stai registrando. Quando premi «Fatto, ho avvisato» l'ora viene annotata nella registrazione.",
+ "novita_en": "New «Notify participants» card: every recording now offers a ready-made message to paste into the chat or read aloud, telling everyone you are recording. When you press «Done, I've told them» the time is noted in the recording."
 }

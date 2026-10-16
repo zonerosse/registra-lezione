@@ -499,3 +499,13 @@ html.android #segCal [data-v=solo],html.android #calImpegni .seg [data-v=solo]{d
 html.android .calt th:nth-child(3),html.android .calt td:nth-child(3){display:none}
 html.android .calt td:last-child{white-space:normal!important}
 html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px 0}
+
+/* avvisa i partecipanti (a ogni registrazione) */
+.avv-card{border:2px solid #fbbf24;background:linear-gradient(180deg,#fffbeb,#fff)}
+.avv-testa{display:flex;gap:12px;align-items:flex-start;margin-bottom:10px}
+.avv-ic{font-size:26px;line-height:1}
+.avv-t{font-size:16.5px;color:var(--ink)}
+.avv-msg{resize:vertical;font-size:14.5px;line-height:1.5;background:#fff;width:100%}
+.avv-card .b-sm{padding:9px 14px;font-size:14px;border-radius:11px}
+.avv-ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;border-radius:12px;padding:10px 14px;font-size:13.5px}
+.avv-ok a{color:#047857;text-decoration:underline;cursor:pointer;margin-left:6px}
