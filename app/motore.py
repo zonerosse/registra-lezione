@@ -1130,6 +1130,13 @@ class Motore:
             info = el.leggi_json(cart / "info.json", {}) or {}
             stato = info.get("stato")
             in_corso = self.cartella_corrente is not None and cart == Path(self.cartella_corrente) and self.occupato
+            if stato == "pronta" and not in_corso and ((cart / "voci_impronte.tmp").exists() or (
+                    (cart / "voci.json").exists() and '"centro"' in (cart / "voci.json").read_text(encoding="utf-8", errors="ignore"))):
+                try:       # registrazioni fatte prima: via le impronte della voce rimaste
+                    import voci as vc
+                    vc.dimentica(cart)
+                except Exception:
+                    log.exception("impronte vecchie")
             video = video_di(cart) if stato == "pronta" and not in_corso else None
             vb = video.stat().st_size if video else 0
             tot_video += vb

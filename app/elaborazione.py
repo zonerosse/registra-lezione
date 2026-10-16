@@ -821,6 +821,12 @@ def elabora_finale(cartella, cartella_pacchetti, avanzamento=lambda f: None, thr
             except OSError:
                 pass
     shutil.rmtree(cartella / "pacchetti", ignore_errors=True)
+    # «Chi parla»: a registrazione pronta nessuna impronta della voce resta sul disco
+    try:
+        import voci
+        voci.dimentica(cartella)
+    except Exception:
+        log.exception("cancello le impronte delle voci")
     info = aggiorna_info(cartella, stato="pronta")
     avanzamento(1.0)
     return info

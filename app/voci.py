@@ -4,7 +4,11 @@
 
 Per ogni frase della trascrizione calcolo l'"impronta" della voce con un piccolo modello (WeSpeaker ResNet34,
 26 MB, scaricato la prima volta) e la confronto con le voci gia' sentite in questa registrazione: se somiglia
-abbastanza e' la stessa persona, altrimenti e' una voce nuova. Le voci di una registrazione stanno in voci.json;
+abbastanza e' la stessa persona, altrimenti e' una voce nuova.
+
+NESSUN DATO BIOMETRICO: le impronte servono solo mentre la registrazione viene elaborata. Stanno in un file
+temporaneo (IMPRONTE) che viene cancellato quando la registrazione e' pronta (dimentica()); in voci.json
+restano solo numero, nome e quanto parla ogni voce. Le voci di una registrazione stanno in voci.json;
 i nomi si danno con «Dai i nomi alle voci» (oppure: lezione -> la voce che parla di piu' e' «Docente»).
 Ogni frase della trascrizione riceve "voce" (numero) e "chi" (nome da mostrare).
 """
@@ -130,12 +134,53 @@ def impronta(audio):
 
 # --------------------------------------------------------------------------- voci della registrazione
 
+IMPRONTE = "voci_impronte.tmp"     # file temporaneo: si cancella a registrazione pronta
+
+
 def _leggi(cartella):
-    return el.leggi_json(Path(cartella) / "voci.json", {}) or {"voci": []}
+    """voci.json con, se la registrazione e' ancora in lavorazione, le impronte del file temporaneo."""
+    cartella = Path(cartella)
+    d = el.leggi_json(cartella / "voci.json", {}) or {"voci": []}
+    imp = el.leggi_json(cartella / IMPRONTE, {}) or {}
+    for v in d.get("voci") or []:
+        c = imp.get(str(v.get("id")))
+        if c is not None:
+            v["centro"] = c
+    return d
 
 
 def _salva(cartella, d):
-    el.scrivi_json(Path(cartella) / "voci.json", d)
+    """In voci.json solo id, nome, quante frasi e quanti secondi: le impronte vanno nel file temporaneo."""
+    cartella = Path(cartella)
+    voci, imp = [], {}
+    for v in d.get("voci") or []:
+        v = dict(v)
+        c = v.pop("centro", None)
+        if c is not None:
+            imp[str(v.get("id"))] = c
+        voci.append(v)
+    el.scrivi_json(cartella / "voci.json", {**d, "voci": voci})
+    if imp:
+        el.scrivi_json(cartella / IMPRONTE, imp)
+
+
+def dimentica(cartella):
+    """Registrazione pronta: cancella ogni impronta della voce (file temporaneo e vecchi voci.json che la
+    contenevano). Restano solo i nomi e le etichette «Voce 1», «Docente»..."""
+    cartella = Path(cartella)
+    try:
+        (cartella / IMPRONTE).unlink(missing_ok=True)
+    except OSError:
+        log.exception("cancello le impronte")
+    f = cartella / "voci.json"
+    try:
+        if f.exists() and '"centro"' in f.read_text(encoding="utf-8"):
+            d = el.leggi_json(f, {}) or {}
+            for v in d.get("voci") or []:
+                v.pop("centro", None)
+            el.scrivi_json(f, d)
+    except OSError:
+        log.exception("tolgo le impronte da voci.json")
 
 
 def fatta(cartella, k):
@@ -171,10 +216,16 @@ def rifai(cartella, progresso=lambda f: None):
     cartella = Path(cartella)
     parti = sorted(int(f.stem.split("_")[1]) for f in cartella.glob("trascrizione_*.json"))
     _salva(cartella, {"voci": []})
+    try:
+        (cartella / IMPRONTE).unlink(missing_ok=True)
+    except OSError:
+        pass
     for i, k in enumerate(parti):
         assegna(cartella, k)
         progresso((i + 1) / max(1, len(parti)))
-    return len(_leggi(cartella).get("voci") or [])
+    n = len(_leggi(cartella).get("voci") or [])
+    dimentica(cartella)
+    return n
 
 
 def nomi(cartella, d=None):
