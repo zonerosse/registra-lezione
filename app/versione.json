@@ -1,6 +1,6 @@
 {
- "versione": "3.23",
+ "versione": "3.24",
  "librerie": 2,
- "novita": "Guida nuova e completa, in italiano e in inglese: 18 capitoli con un video per ogni cosa (Chi parla, Condividi, Cose da fare, Preparazione all'esame, Chiedi, Calendario e il resto). Anche la guida del telefono è nuova. Piccole correzioni.",
- "novita_en": "New, complete guide in Italian and English: 18 chapters with a video for each feature (Who speaks, Share, To-dos, Exam preparation, Ask, Calendar and the rest). The phone guide is new too. Small fixes."
+ "novita": "Privacy: «Chi parla» non conserva più nessuna impronta della voce. Le impronte servono solo mentre la registrazione viene elaborata e poi vengono cancellate; restano solo i nomi delle voci. Vengono ripulite anche le registrazioni fatte prima.",
+ "novita_en": "Privacy: «Who speaks» no longer keeps any voiceprint. Voiceprints are only used while the recording is processed and are then deleted; only the voice names remain. Older recordings are cleaned up too."
 }
