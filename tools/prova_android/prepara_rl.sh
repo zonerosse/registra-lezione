@@ -9,6 +9,8 @@ for f in app/*.py; do
   case "$(basename $f)" in classica.py|prova_exe.py|registra_lezione.py|manca_edge.py) ;; *) cp $f $R/ ;; esac
 done
 rm -f $R/interfaccia/mini.html
+# sul telefono servono solo i video della guida del telefono (tel-*)
+find $R/interfaccia/video -name '*.webm' ! -name 'tel-*' -delete 2>/dev/null || true
 cp -R android/risorse/font $R/font
 cp android/versione.json $R/versione_android.json
 find $R -name __pycache__ -prune -exec rm -rf {} \;

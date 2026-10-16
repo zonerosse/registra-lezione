@@ -245,7 +245,8 @@ function disegnaStato() {
 
 /* ------------------------------------------------------------------ pronto */
 function anteprimaNome() {
-  const n = $('nome').value.trim() || t('pr.lezione');
+  const k = (R && R.tipo) || 'lezione';
+  const n = $('nome').value.trim() || t(k === 'riunione' ? 'tp.riu.t' : k === 'webinar' ? 'tp.web.t' : 'pr.lezione');
   const d = new Date();
   const ora = LINGUA === 'it' ? `ore ${due(d.getHours())}.${due(d.getMinutes())}` : `${due(d.getHours())}:${due(d.getMinutes())}`;
   $('nomeAnt').textContent = t('pr.ant', {n, d: `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${ora}`});
@@ -272,6 +273,8 @@ function disegnaTipo() {
   const k = R.tipo || 'lezione';
   $('tipoBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.k === k));
   $('partBox').classList.toggle('hidden', k !== 'riunione');
+  document.querySelector('#v-pronto [data-t="pr.lingua"]').textContent = t(k === 'lezione' ? 'pr.lingua' : 'pr.lingua.si');
+  anteprimaNome();
   $('modBox').classList.toggle('hidden', k !== 'riunione' || ANDROID);
   if (k === 'riunione' && !ANDROID) disegnaModelli();
   $('nome').placeholder = k === 'riunione' ? t('tp.ph.riu') : k === 'webinar' ? t('tp.ph.web') : t('pr.ph');
@@ -593,7 +596,7 @@ function disegnaFine() {
       <div class="hint" style="margin-bottom:14px">${esc(det)}${inCorso ? t('fn.altri') : ''}</div>
       <button class="btn b-main" style="width:100%" id="fApri">${ico('doc', 18)}${t('fn.apri')}</button></div>${prev}</div>`;
   } else if (inCorso && R.appunti_on) {
-    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t(S.formato === 'esame' ? 'fn.claude.e.t' : 'fn.claude.t')}</b>
+    h = `<div class="row"><span class="ico i-vio"><svg><use href="#i-spark"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t({esame: 'fn.claude.e.t', verbale: 'fn.claude.v.t', webinar: 'fn.claude.w.t', mio: 'fn.claude.m.t'}[S.formato] || 'fn.claude.t')}</b>
       <div class="hint">${t('fn.claude')}</div></div><span class="spin"></span></div>`;
   } else {
     h = `<div class="row"><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:16px">${t('fn.pac.t')}</b>
@@ -1322,10 +1325,10 @@ function disegnaParole2(r, q) {
   const chips = [['', 'cp.tutte'], ['riunione', 'cp.riu'], ['lezione', 'cp.lez'], ['webinar', 'cp.web']].map(([k, n]) => `<span class="chip${CP.tipo === k ? ' on' : ''}" data-tipo="${k}">${esc(t(n))}</span>`).join('');
   const testa = `<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--ink)">${esc(R2.length === 1 ? t('cp.detto1') : R2.length ? t('cp.detto', {n: R2.length}) : t('cp.nessuna', {q}))}</b>${R2.length ? `<span class="hint">· ${esc(t('cp.volte', {n: r.volte}))}</span>` : ''}<span class="sp"></span>${chips}</div>`;
   box.innerHTML = `<div class="card">${testa}${R2.map((x, i) => `<div class="lbl" style="margin-top:10px">${esc(x.nome)} · ${esc(x.quando)}</div>
-    ${x.frasi.map((f, j) => `<div class="ris" data-i="${i}" data-j="${j}"><span class="t">${esc(f.ora)}</span><div>${f.chi ? `<b>${esc(f.chi)}:</b> ` : ''}${evidenzia(f.testo, r.parole)}</div></div>`).join('')}
+    ${x.frasi.map((f, j) => `<div class="pris" data-i="${i}" data-j="${j}"><span class="t">${esc(f.ora)}</span><div>${f.chi ? `<b>${esc(f.chi)}:</b> ` : ''}${evidenzia(f.testo, r.parole)}</div></div>`).join('')}
     ${x.n > x.frasi.length ? `<div class="hint" style="padding-left:84px">${esc(t('cp.altre', {n: x.n - x.frasi.length}))}</div>` : ''}`).join('')}</div>`;
   box.classList.remove('hidden');
-  box.querySelectorAll('.ris').forEach(e => e.onclick = () => { const x = R2[+e.dataset.i]; mostraMomento(x.cartella, x.frasi[+e.dataset.j].sec, null, x.nome); });
+  box.querySelectorAll('.pris').forEach(e => e.onclick = () => { const x = R2[+e.dataset.i]; mostraMomento(x.cartella, x.frasi[+e.dataset.j].sec, null, x.nome); });
   box.querySelectorAll('[data-tipo]').forEach(c => c.onclick = () => { CP.tipo = c.dataset.tipo; cercaParole(); });
 }
 
@@ -1371,9 +1374,9 @@ async function azioneCondividi(l, info, k, b) {
 }
 async function emailCondividi(l, info) {
   const html = `<div style="margin-top:6px">${info.partecipanti.map((p, i) => `<div class="dest"><b title="${esc(p.nome)}">${esc(p.nome)}</b><input class="in" data-n="${i}" type="email" placeholder="${esc(t('cd.em.ph'))}" value="${esc(p.email)}"></div>`).join('')}</div>
-    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.altri'))}</div><input class="in" id="emAltri" placeholder="nome@esempio.it">
+    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.altri'))}</div><input class="in" id="emAltri" placeholder="${esc(t('cd.em.altri.ph'))}">
     <div class="lbl" style="margin-top:10px">${esc(t('cd.em.ogg'))}</div><input class="in" id="emOgg" value="${esc(info.oggetto)}">
-    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.testo'))}</div><textarea class="in" id="emTesto" rows="8" style="resize:vertical">${esc(info.testo)}</textarea>
+    <div class="lbl" style="margin-top:10px">${esc(t('cd.em.testo'))}</div><textarea class="in" id="emTesto" rows="6" style="resize:vertical">${esc(info.testo)}</textarea>
     <div class="hint" style="margin-top:8px">${esc(t('cd.em.nota'))}</div><div class="dlgerr hidden" id="emErr"></div>`;
   const manda = modo => async () => {
     const dest = {}; document.querySelectorAll('.velo .dest .in').forEach(i => { dest[info.partecipanti[+i.dataset.n].nome] = i.value.trim(); });

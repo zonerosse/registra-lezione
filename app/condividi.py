@@ -247,9 +247,14 @@ def data_da_testo(testo, riferimento):
 def ora_da_testo(testo):
     """"ore 15:30", "alle 15", "15.30", "3pm" -> "15:30" ("" se non c'e')."""
     t = (testo or "").lower()
-    m = re.search(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\b", t)
+    m = re.search(r"\b([01]?\d|2[0-3])[:.]([0-5]\d)\b\s*(am|pm|a\.m\.|p\.m\.)?", t)
     if m and not re.search(r"\b\d{1,2}[.]\d{1,2}[.]\d{2,4}\b", t):
-        return f"{int(m.group(1)):02d}:{m.group(2)}"
+        h = int(m.group(1))
+        if m.group(3) and m.group(3).startswith("p") and h < 12:
+            h += 12
+        elif m.group(3) and m.group(3).startswith("a") and h == 12:
+            h = 0
+        return f"{h:02d}:{m.group(2)}"
     m = re.search(r"\b(?:ore|alle|at)\s+([01]?\d|2[0-3])\b", t)
     if m:
         return f"{int(m.group(1)):02d}:00"

@@ -189,7 +189,7 @@ h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 /* ===== finestre di dialogo ===== */
 .velo{position:fixed;inset:0;background:rgba(6,30,54,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:40;animation:fade .15s}
 @keyframes fade{from{opacity:0}}
-.dlg{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:540px;box-shadow:0 30px 70px -20px rgba(6,30,54,.6);animation:pop .18s}
+.dlg{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:540px;box-shadow:0 30px 70px -20px rgba(6,30,54,.6);animation:pop .18s;max-height:calc(100vh - 40px);overflow-y:auto}
 @keyframes pop{from{transform:scale(.96);opacity:0}}
 .dlg h3{margin:0 0 8px;font-size:18px;color:var(--ink)}
 .dlg .tx{font-size:14px;line-height:1.5;color:var(--txt);white-space:pre-line}
@@ -431,9 +431,9 @@ html.android .dove.tre{grid-template-columns:1fr}
 /* cerca in tutto */
 #paroleRis{margin-bottom:12px}
 #paroleRis mark{background:#fde68a;border-radius:3px;padding:0 2px;color:inherit}
-.ris{padding:8px 10px;border-radius:10px;display:flex;gap:12px;align-items:baseline;cursor:pointer;font-size:13.5px;line-height:1.5}
-.ris:hover{background:#f1f6fb}
-.ris .t{font-weight:700;color:var(--blue);width:64px;flex:none;font-size:13px;font-variant-numeric:tabular-nums}
+.pris{padding:8px 10px;border-radius:10px;display:flex;gap:12px;align-items:baseline;cursor:pointer;font-size:13.5px;line-height:1.5}
+.pris:hover{background:#f1f6fb}
+.pris .t{font-weight:700;color:var(--blue);width:64px;flex:none;font-size:13px;font-variant-numeric:tabular-nums}
 
 /* statistiche */
 .stnum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stnum div{background:#f8fafc;border-radius:12px;padding:12px;text-align:center}
@@ -486,3 +486,4 @@ html.android .dove.tre{grid-template-columns:1fr}
 .bolla{background:#f3efff;border-radius:12px;padding:9px 12px;font-size:13.5px;line-height:1.5;margin-top:8px;color:var(--txt)}
 .bolla.io{background:#e0f2fe;margin-left:48px}
 .bolla .pill{font-size:11px;padding:1px 7px}
+html.android .banda{flex-wrap:wrap}html.android .banda .col2{width:100%}
