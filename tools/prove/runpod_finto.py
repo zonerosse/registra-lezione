@@ -33,7 +33,7 @@ class H(BaseHTTPRequestHandler):
         if p[3] == "run":
             i = corpo["input"]; b = base64.b64decode(i["audio_base64"]); d = durata(b)
             print("LAVORO", len(b), "byte", round(d, 1), "s", i["model"], i.get("language"), i.get("initial_prompt"), flush=True)
-            jid = str(uuid.uuid4()); LAVORI[jid] = {"t0": time.time(), "d": d}
+            jid = str(uuid.uuid4()); LAVORI[jid] = {"t0": time.time(), "d": d, "m": i["model"]}
             self._r(200, {"id": jid, "status": "IN_QUEUE"})
         else:
             self._r(200, {"status": "CANCELLED"})
@@ -44,6 +44,8 @@ class H(BaseHTTPRequestHandler):
         if not j: return self._r(404, {"error": "no job"})
         if time.time() - j["t0"] < 2:
             return self._r(200, {"id": p[4], "status": "IN_PROGRESS"})
+        if j["m"] == "turbo":        # come l'immagine 0.4.1 vera: «turbo» non c'e'
+            return self._r(200, {"id": p[4], "status": "FAILED", "error": json.dumps({"error_type": "<class 'ValueError'>", "error_message": "Model 'turbo' not found."})})
         segs, t = [], 0.0
         while t + 4 <= j["d"]:
             segs.append({"id": len(segs), "start": t, "end": t + 4, "text": f" Frase dal server al secondo {int(t)}.", "tokens": [1, 2]})

@@ -1,7 +1,7 @@
 {
- "versione": "0.9.2",
+ "versione": "0.9.3",
  "codice": 9,
- "novita": "Dove trascrivo: in Impostazioni puoi scegliere «Sul server (veloce)» con il tuo conto RunPod: pronta in un minuto e il telefono non scalda. Di serie resta sul telefono.",
- "novita_en": "Where I transcribe: in Settings you can choose «On the server (fast)» with your RunPod account: ready in a minute and the phone does not heat up. By default it stays on the phone.",
- "contenuto": 13
+ "novita": "Trascrizione sul server: corretto il modello di trascrizione.",
+ "novita_en": "Server transcription: fixed the transcription model.",
+ "contenuto": 14
 }

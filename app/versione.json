@@ -1,6 +1,6 @@
 {
- "versione": "3.27",
+ "versione": "3.28",
  "librerie": 2,
- "novita": "Dove trascrivo: in Impostazioni puoi scegliere «Sul server (veloce)» con il tuo conto RunPod: un'ora di lezione in circa un minuto, pochi centesimi. Di serie resta sul PC; se il server non risponde si trascrive sul PC come prima.",
- "novita_en": "Where I transcribe: in Settings you can choose «On the server (fast)» with your RunPod account: an hour of lecture in about a minute, a few cents. By default it stays on the PC; if the server does not answer it transcribes on the PC as before."
+ "novita": "Trascrizione sul server: corretto il modello di trascrizione (il server rispondeva «Model 'turbo' not found»).",
+ "novita_en": "Server transcription: fixed the transcription model (the server answered «Model 'turbo' not found»)."
 }

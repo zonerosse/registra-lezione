@@ -21,7 +21,8 @@ import urllib.request
 log = logging.getLogger("registra_lezione")
 
 API = os.environ.get("RL_RUNPOD_API") or "https://api.runpod.ai/v2/"     # (le prove usano un server finto)
-MODELLO = "turbo"               # large-v3-turbo: preciso e veloce sulla scheda grafica
+MODELLI = ["large-v3", "turbo", "large-v2"]    # il primo che il server conosce (l'immagine 0.4.1 non ha «turbo»)
+_MODELLO = {"i": 0}
 PEZZO_MAX = 600                 # secondi per richiesta (il server accetta al massimo circa 10 MB)
 PREZZO_SECONDO = 0.69 / 3600    # scheda da 24 GB: 0,69 $ l'ora, si paga a millisecondi
 ATTESA_MAX = 900                # un pezzo non puo' metterci piu' di 15 minuti (con l'accensione del server)
@@ -68,7 +69,23 @@ def comprimi(audio):
 
 def _pezzo(audio, endpoint, chiave, lingua, parole, progresso, precisa=True):
     """Un pezzo (<= 10 minuti): lo manda, aspetta il risultato. Ritorna (segmenti, secondi pagati, lingua)."""
-    corpo = {"input": {"audio_base64": base64.b64encode(comprimi(audio)).decode("ascii"), "model": MODELLO,
+    dati = base64.b64encode(comprimi(audio)).decode("ascii")
+    while True:
+        try:
+            return _lavoro(dati, len(audio), endpoint, chiave, lingua, parole, progresso, precisa, MODELLI[_MODELLO["i"]])
+        except ErroreModello:
+            if _MODELLO["i"] + 1 >= len(MODELLI):
+                raise ErroreServer("modello")
+            _MODELLO["i"] += 1
+            log.info("il server non ha questo modello: provo %s", MODELLI[_MODELLO["i"]])
+
+
+class ErroreModello(Exception):
+    pass
+
+
+def _lavoro(dati, n_campioni, endpoint, chiave, lingua, parole, progresso, precisa, modello):
+    corpo = {"input": {"audio_base64": dati, "model": modello,
                        "language": None if lingua in (None, "", "auto") else lingua,
                        "initial_prompt": ", ".join(parole) if parole else None,
                        "beam_size": 5 if precisa else 1, "best_of": 5 if precisa else 1,
@@ -85,7 +102,12 @@ def _pezzo(audio, endpoint, chiave, lingua, parole, progresso, precisa=True):
         if stato == "COMPLETED":
             break
         if stato in ("FAILED", "CANCELLED", "TIMED_OUT"):
-            raise ErroreServer(f"{stato}: {str(st.get('error') or st.get('output'))[:300]}")
+            err = str(st.get("error") or st.get("output"))
+            if "not found" in err.lower() and "model" in err.lower() or "Invalid model" in err:
+                raise ErroreModello(err)
+            log.warning("server: %s %s", stato, err[:2000])
+            from testi import tr
+            raise ErroreServer(tr("srv_err", e=stato))
         if time.monotonic() - t0 > ATTESA_MAX:
             try:
                 _chiama(base + "cancel/" + jid, chiave, {})
@@ -93,10 +115,12 @@ def _pezzo(audio, endpoint, chiave, lingua, parole, progresso, precisa=True):
                 pass
             raise ErroreServer("timeout")
         # il server non dice a che punto e' arrivato: avanzo piano verso il 90%
-        progresso(min(0.9, (time.monotonic() - t0) / max(20.0, len(audio) / 16000 / 30)))
+        progresso(min(0.9, (time.monotonic() - t0) / max(20.0, n_campioni / 16000 / 30)))
         time.sleep(1.5)
     out = st.get("output") or {}
     if isinstance(out, dict) and out.get("error"):
+        if "Invalid model" in str(out["error"]) or "not found" in str(out["error"]).lower():
+            raise ErroreModello(str(out["error"]))
         raise ErroreServer(str(out["error"])[:300])
     segs = [{"inizio": float(s["start"]), "fine": float(s["end"]), "testo": (s.get("text") or "").strip()}
             for s in (out.get("segments") or [])]
