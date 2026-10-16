@@ -1824,3 +1824,46 @@ function disegnaAgg() {
   if ($('aggX')) $('aggX').onclick = () => A.chiudi_agg();
   if ($('aggOk')) $('aggOk').onclick = () => A.installa_aggiornamento();
 }
+
+/* ------------------------------------------------------------------ tasto destro: Taglia, Copia, Incolla */
+(() => {
+  if (ANDROID) return;      // sul telefono c'e' il menu del telefono (tocco lungo)
+  const via = () => { const m = document.getElementById('menuDx'); if (m) m.remove(); };
+  document.addEventListener('click', via, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') via(); });
+  window.addEventListener('blur', via);
+  document.addEventListener('contextmenu', e => {
+    via();
+    const el = e.target.closest('input:not([type=checkbox]):not([type=radio]):not([type=date]):not([type=time]), textarea');
+    const selTesto = String(window.getSelection() || '');
+    if (!el && !selTesto) { e.preventDefault(); return; }
+    e.preventDefault();
+    const scrivibile = el && !el.readOnly && !el.disabled;
+    const sel = el ? (el.selectionEnd || 0) - (el.selectionStart || 0) > 0 && el.type !== 'password' : !!selTesto;
+    const voci = el ? [['taglia', 'dx.taglia', 'Ctrl+X', scrivibile && sel], ['copia', 'dx.copia', 'Ctrl+C', sel], ['incolla', 'dx.incolla', 'Ctrl+V', scrivibile], null, ['tutto', 'dx.tutto', 'Ctrl+A', true]]
+      : [['copia', 'dx.copia', 'Ctrl+C', true]];
+    const m = document.createElement('div');
+    m.className = 'menu'; m.id = 'menuDx';
+    m.innerHTML = voci.map(v => v ? `<button data-a="${v[0]}"${v[3] ? '' : ' disabled'}><span class="sp">${esc(t(v[1]))}</span><small class="hint">${v[2]}</small></button>` : '<div class="menusep"></div>').join('');
+    document.body.appendChild(m);
+    const r = m.getBoundingClientRect();
+    m.style.left = Math.min(e.clientX, innerWidth - r.width - 8) + 'px';
+    m.style.top = Math.min(e.clientY, innerHeight - r.height - 8) + 'px';
+    m.querySelectorAll('button').forEach(b => b.onclick = async ev => {
+      ev.stopPropagation(); via();
+      const a = b.dataset.a;
+      if (el) el.focus();
+      if (a === 'copia' || a === 'taglia') document.execCommand(a === 'copia' ? 'copy' : 'cut');
+      else if (a === 'tutto') el.select();
+      else if (a === 'incolla') {
+        let x = await A.appunti_testo();
+        if (!x && navigator.clipboard) try { x = await navigator.clipboard.readText(); } catch (_) {}
+        if (!x) return;
+        if (el.tagName === 'INPUT') x = x.replace(/[\r\n]+/g, ' ').trim();
+        const s0 = el.selectionStart ?? el.value.length, s1 = el.selectionEnd ?? el.value.length;
+        el.setRangeText(x, s0, s1, 'end');
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+      }
+    });
+  });
+})();

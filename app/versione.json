@@ -1,6 +1,6 @@
 {
- "versione": "3.28",
+ "versione": "3.29",
  "librerie": 2,
- "novita": "Trascrizione sul server: corretto il modello di trascrizione (il server rispondeva «Model 'turbo' not found»).",
- "novita_en": "Server transcription: fixed the transcription model (the server answered «Model 'turbo' not found»)."
+ "novita": "Tasto destro nei campi di testo: Taglia, Copia, Incolla, Seleziona tutto.",
+ "novita_en": "Right click in text fields: Cut, Copy, Paste, Select all."
 }

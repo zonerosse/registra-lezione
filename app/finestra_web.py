@@ -18,6 +18,36 @@ PAGINE = QUI / "interfaccia"
 log = logging.getLogger("registra_lezione")
 
 
+def _leggi_appunti():
+    """Il testo copiato (Ctrl+C) in Windows, per «Incolla» del tasto destro."""
+    if sys.platform != "win32":
+        return ""
+    import ctypes
+    from ctypes import wintypes
+    u32, k32 = ctypes.windll.user32, ctypes.windll.kernel32
+    u32.GetClipboardData.restype = wintypes.HANDLE
+    k32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+    k32.GlobalLock.restype = wintypes.LPVOID
+    k32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+    for _ in range(5):                      # un altro programma puo' tenere gli appunti un attimo
+        if u32.OpenClipboard(None):
+            break
+        time.sleep(0.05)
+    else:
+        return ""
+    try:
+        h = u32.GetClipboardData(13)        # CF_UNICODETEXT
+        if not h:
+            return ""
+        p = k32.GlobalLock(h)
+        try:
+            return ctypes.wstring_at(p) if p else ""
+        finally:
+            k32.GlobalUnlock(h)
+    finally:
+        u32.CloseClipboard()
+
+
 class Api:
     """Metodi che la pagina puo' chiamare. Gli attributi iniziano con _ cosi' pywebview non li espone."""
 
@@ -243,6 +273,13 @@ class Api:
 
     def server_scollega(self):
         return self._m.server_scollega()
+
+    def appunti_testo(self):
+        try:
+            return _leggi_appunti()
+        except Exception:
+            log.exception("appunti di Windows")
+            return ""
 
     def cond_manda(self, cartella):
         return self._m.cond_manda(cartella)
