@@ -49,6 +49,7 @@ jobs:
         run: |
           gradle assembleDebug --no-daemon -q
           ls -la app/build/outputs/apk/debug/
+          echo "APK: $(du -m app/build/outputs/apk/debug/app-debug.apk | cut -f1) MB"
       - name: Prova dell'app senza emulatore (motore e pagine veri, telefono finto)
         id: simula
         run: |
@@ -57,23 +58,30 @@ jobs:
           NODE_PATH=$PWD/tools/prova_android/simula/node_modules bash tools/prova_android/simula/prova.sh prova_simulata
       - name: "Pubblica l'app nel ramo android-app (da li' la prende «Aggiorna l'app»)"
         if: steps.simula.outcome == 'success' && inputs.pubblica
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
-          mkdir -p /tmp/agg
-          cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/agg/RegistraLezione.apk
+          mkdir -p /tmp/agg /tmp/apk
+          # l'app (piu' di 100 MB) va in una "release" a parte: nel ramo GitHub non ci sta.
+          # E' "prerelease", cosi' il programma per Windows non la scambia per un suo aggiornamento.
+          cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/apk/RegistraLezione.apk
+          gh release view app-android > /dev/null 2>&1 || gh release create app-android --prerelease --latest=false \
+            --title "App Android (Verba Manent IA)" --notes "L'app per il telefono: si scarica da «Aggiorna l'app»."
+          gh release upload app-android /tmp/apk/RegistraLezione.apk --clobber
           cp contenuto.zip /tmp/agg/contenuto.zip
           python3 - <<'PY'
           import json
           v = json.load(open("android/versione.json"))
-          v["apk"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"
+          v["apk"] = "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk"
           v["zip"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
           json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
           PY
           git checkout -q --orphan android-app
           git rm -rf --cached . > /dev/null
           cp /tmp/agg/* .
-          git add -f RegistraLezione.apk contenuto.zip versione-android.json
+          git add -f contenuto.zip versione-android.json
           git commit -q -m "App Android $(python3 -c "import json;print(json.load(open('versione-android.json'))['versione'])")"
           git push -f origin android-app
           git checkout -q -f ${{ github.sha }}
