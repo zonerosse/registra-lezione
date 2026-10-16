@@ -1,6 +1,6 @@
 {
- "versione": "3.25",
+ "versione": "3.26",
  "librerie": 2,
- "novita": "Nuovo riquadro «Avvisa i partecipanti»: a ogni registrazione trovi un messaggio pronto da copiare nella chat o da leggere, per dire a tutti che stai registrando. Quando premi «Fatto, ho avvisato» l'ora viene annotata nella registrazione.",
- "novita_en": "New «Notify participants» card: every recording now offers a ready-made message to paste into the chat or read aloud, telling everyone you are recording. When you press «Done, I've told them» the time is noted in the recording."
+ "novita": "Pronta subito: mentre registri la trascrizione va avanti a pezzi di 5 minuti, così alla fine resta poco da fare e la registrazione è pronta in un paio di minuti. Stessa qualità, l'audio resta sul PC.",
+ "novita_en": "Ready right away: while you record, the transcription goes ahead in 5-minute pieces, so at the end there is little left to do and the recording is ready in a couple of minutes. Same quality, the audio stays on the PC."
 }

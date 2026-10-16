@@ -2131,11 +2131,27 @@ class Motore:
 
     # ------------------------------------------------------------------ lavoro in sottofondo
 
+    def _pezzo_in_corso(self, threads):
+        """«Pronta subito»: niente in coda e si sta registrando? Trascrivo intanto la parte in corso, a pezzi
+        di 5 minuti, cosi' alla fine resta solo l'ultimo pezzo. (Non con «Dopo» del telefono: li' si aspetta.)"""
+        reg, cart = self.reg, self.cartella_corrente
+        if reg is None or cart is None or self.trascrivi_dopo:
+            return
+        try:
+            k = int(getattr(reg, "parte", 0) or 0) + 1
+            el.pre_trascrivi(cart, k, threads)
+        except Exception:
+            log.exception("trascrizione della parte in corso")
+
     def _lavoratore(self):
         while True:
-            lavoro = self.lavori.get()
-            tipo, cart = lavoro[0], lavoro[1]
             cores = os.cpu_count() or 2
+            try:
+                lavoro = self.lavori.get(timeout=float(os.environ.get("RL_ATTESA_PEZZO") or 20))
+            except queue.Empty:
+                self._pezzo_in_corso(max(1, cores // 2))
+                continue
+            tipo, cart = lavoro[0], lavoro[1]
             # mentre si registra meta' del processore (Meet non rallenta); dopo ne lascio libero un po'
             # anche per la finestra, che altrimenti puo' sembrare bloccata
             threads = max(1, cores // 2) if self.reg is not None else max(2, cores - 1)

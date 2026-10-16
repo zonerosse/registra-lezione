@@ -329,7 +329,7 @@ function disegnaQuando() {
   if (v) {
     const lav = 7200 / v;
     h = QUANDO === 'dopo' ? t('and.stima.dopo', {t: durataTesto(lav)})
-      : t('and.stima.dur', {m: Math.max(5, Math.round(Math.min(lav, (R.minuti || 30) * 60 / v) / 60 + 3))});
+      : t('and.stima.dur', {m: Math.max(2, Math.round(Math.min(lav, 360 / v) / 60 + 2))});
   }
   $('quandoStima').textContent = h;
 }

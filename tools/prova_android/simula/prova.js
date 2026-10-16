@@ -30,6 +30,8 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.waitForTimeout(6000);
     await p.click('#btnFine'); await p.click('.dlg .b-end');
     s = await aspetta(x => x.finale === 'ok' && !x.occupato, 120); await foto('03-fine');
+    const logf = require('child_process').execSync(`cat "${dati}"/Documents/*/registra_lezione.log 2>/dev/null || true`).toString();
+    passo('«Pronta subito»: trascrive a pezzi mentre registra', /in corso: trascritta fino a/.test(logf), (logf.match(/parte \d+ in corso: trascritta fino a [\d.]+ s/g) || []).slice(0, 3).join('; '));
     passo('«Durante»: lezione pronta', s.finale === 'ok' && s.parti.every(x => x.stato === 'ok'), JSON.stringify(s.parti.map(x => x.stato)));
     // «Dopo» + online (vivavoce)
     await p.click('#fNuova'); await p.waitForTimeout(800);

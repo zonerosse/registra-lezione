@@ -4,7 +4,7 @@
 QUI=$(cd "$(dirname "$0")" && pwd)
 OUT=$(mkdir -p "$1" && cd "$1" && pwd)
 T=$(mktemp -d)
-export SIM_DATI=$T/dati SIM_RL=$T/rl SIM_PORTA=$T/porta SIM_CARICA=1 SIM_VELOCITA=4 RL_PARTE_SECONDI=20 \
+export SIM_DATI=$T/dati SIM_RL=$T/rl SIM_PORTA=$T/porta SIM_CARICA=1 SIM_VELOCITA=4 RL_PARTE_SECONDI=20 RL_PEZZO_SECONDI=5 RL_ATTESA_PEZZO=1 \
        SIM_WAV=$QUI/../lezione_it.wav PYTHON=${PYTHON:-python3}
 (cd "$QUI/../../.." && bash tools/prova_android/prepara_rl.sh $T/zip_rl $T/contenuto.zip > /dev/null)
 export SIM_ZIP=$T/contenuto.zip

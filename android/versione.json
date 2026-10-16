@@ -1,7 +1,7 @@
 {
- "versione": "0.9",
+ "versione": "0.9.1",
  "codice": 9,
- "novita": "Sul telefono arrivano le funzioni del PC: Chi parla, Condividi (email col PDF, WhatsApp, Word, calendario, Slack, Teams, Notion, CRM), Da fare, Cerca nelle parole dette, Statistiche, Preparazione all'esame, Le tue note e Chiedi adesso, Spezzoni audio, Modelli di riunione e la notifica del calendario.",
- "novita_en": "The PC features come to the phone: Who speaks, Share (email with the PDF, WhatsApp, Word, calendar, Slack, Teams, Notion, CRM), To-dos, Search the words spoken, Statistics, Exam preparation, Your notes and Ask now, Audio clips, Meeting templates and the calendar notification.",
- "contenuto": 11
+ "novita": "Pronta subito: con «Durante» la trascrizione va avanti a pezzi di 5 minuti mentre registri, così alla fine la lezione è pronta in pochi minuti. L'audio resta sul telefono.",
+ "novita_en": "Ready right away: with «During» the transcription goes ahead in 5-minute pieces while you record, so at the end the lecture is ready in a few minutes. The audio stays on the phone.",
+ "contenuto": 12
 }

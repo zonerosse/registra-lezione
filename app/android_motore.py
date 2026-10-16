@@ -6,7 +6,7 @@ Registra Lezione per Android: la parte in Python che adatta il motore al telefon
 Il motore e' lo stesso del programma per Windows (motore.py, appunti.py, ripasso.py...). Qui sostituisco
 solo le parti che su Windows usano cose di Windows:
   - registrazione   -> servizio Android "Registrazione" (microfono, notifica fissa con Pausa / Fine)
-  - trascrizione    -> whisper.cpp dentro l'app (Whisper.trascriviFile)
+  - trascrizione    -> whisper.cpp dentro l'app (Whisper.trascriviFile), anche a pezzi mentre registra
   - riconoscitore   -> scaricato una volta (ggml-small-q5_1.bin, 190 MB)
   - audio finale    -> le parti WAV unite in audio.m4a dal telefono
   - PDF del docente -> disegnati con il lettore PDF di Android
@@ -181,35 +181,33 @@ def _aspetta_caricatore(cartella):
     M.aspetta_carica = False
 
 
-def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
+def trascrivi_campioni(audio, cartella, progresso=lambda f: None, threads=None):
+    """Come elaborazione.trascrivi_campioni, ma con whisper.cpp dentro l'app: i campioni vanno in un WAV
+    nella cache e il riconoscitore lo legge. Orari dall'inizio dei campioni."""
+    import wave
+    import numpy as np
     import elaborazione as el
     cartella = Path(cartella)
-    pj = cartella / f"trascrizione_{k:03d}.json"
-    gia = el.leggi_json(pj)
-    if gia is not None:
-        progresso(1.0)
-        return el.chi_parla(cartella, k, gia)
-    wav = cartella / f"audio_{k:03d}.wav"
-    if not wav.exists() or el.durata_wav(wav) < 1:
-        el.scrivi_json(pj, [])
-        progresso(1.0)
-        return []
     _aspetta_modello()
     _aspetta_caricatore(cartella)
     info_lez = el.leggi_json(cartella / "info.json", {}) or {}
     lingua = info_lez.get("lingua_lezione") or "it"
     parole = el.parole_lezione(cartella)
-    prec = cartella / f"audio_{k - 1:03d}.wav"
     # i telefoni hanno 4 processori veloci e 4 lenti: oltre 4 thread si va piu' piano
     n = max(2, min(4, int(threads or 4)))
     beam = 5 if info_lez.get("precisa") else 1
+    tmp = Path(str(Ponte.cartellaCache())) / f"pezzo_{threading.get_ident()}.wav"
+    with wave.open(str(tmp), "wb") as w:
+        w.setnchannels(1)
+        w.setsampwidth(2)
+        w.setframerate(16000)
+        w.writeframes((np.clip(np.asarray(audio, dtype=np.float32), -1, 1) * 32767).astype("<i2").tobytes())
     esito = {}
 
     def lavora():
         try:
-            esito["r"] = str(Whisper.INSTANCE.trascriviFile(
-                str(_modello()), str(wav), str(prec) if k > 1 and prec.exists() else "",
-                jfloat(el.SOVRAPPOSIZIONE), lingua, ", ".join(parole), n, beam))
+            esito["r"] = str(Whisper.INSTANCE.trascriviFile(str(_modello()), str(tmp), "", jfloat(0.0), lingua,
+                                                            ", ".join(parole), n, beam))
         except Exception as e:
             esito["r"] = "ERRORE " + str(e)
     t0 = time.monotonic()
@@ -218,29 +216,38 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     while th.is_alive():
         th.join(0.7)
         progresso(min(0.99, int(Whisper.INSTANCE.progresso()) / 100))
+    try:
+        tmp.unlink()
+    except OSError:
+        pass
     r = esito.get("r", "ERRORE")
     if r.startswith("ERRORE"):
         raise RuntimeError("trascrizione: " + r)
-    prima, offset, out = 0.0, (k - 1) * el.parte_secondi(cartella), []
+    out = []
     for riga in r.splitlines():
         if riga.startswith("PRIMA|"):
-            prima = float(riga[6:] or 0)
-        elif riga.startswith("LANG|"):
+            continue
+        if riga.startswith("LANG|"):
             if lingua == "auto":
                 el.aggiorna_info(cartella, lingua_rilevata=riga[5:].strip())
-        else:
-            c = riga.split("|", 2)
-            if len(c) < 3:
-                continue
-            a, b, testo = float(c[0]), float(c[1]), c[2].strip()
-            if testo and b > prima + 0.3:
-                out.append({"inizio": round(offset + max(0.0, a - prima), 2), "fine": round(offset + b - prima, 2),
-                            "testo": testo})
+            continue
+        c = riga.split("|", 2)
+        if len(c) == 3:
+            out.append({"inizio": float(c[0]), "fine": float(c[1]), "testo": c[2].strip()})
     progresso(1.0)
-    el.scrivi_json(pj, out)
-    log.info("trascrizione parte %s: %.0f s di audio in %.0f s (%s thread, beam %s)", k, el.durata_wav(wav),
-             time.monotonic() - t0, n, beam)
-    return el.chi_parla(cartella, k, out)
+    log.info("whisper: %.0f s di audio in %.0f s (%s thread, beam %s)", len(audio) / 16000, time.monotonic() - t0, n, beam)
+    return out
+
+
+def audio_parziale(wav):
+    """La parte che si sta ancora registrando: l'intestazione del WAV si scrive alla fine, quindi leggo
+    i dati dopo i primi 44 byte (16 kHz, mono, 16 bit, come li scrive il registratore dell'app)."""
+    import numpy as np
+    with open(wav, "rb") as f:
+        f.seek(44)
+        b = f.read()
+    b = b[:len(b) // 2 * 2]
+    return np.frombuffer(b, dtype="<i2").astype(np.float32) / 32768.0
 
 
 def audio_16k(wav):
@@ -501,7 +508,8 @@ def _prepara(cartella_app, lingua_tel):
     testi.lingua_windows = lambda: "it" if str(lingua_tel).lower().startswith("it") else "en"
 
     import elaborazione as el
-    el.trascrivi_parte = trascrivi_parte
+    el.trascrivi_campioni = trascrivi_campioni
+    el.audio_parziale = audio_parziale
     el.audio_16k = audio_16k
     el.modello_presente = modello_presente
     el.scarica_modello = scarica_modello

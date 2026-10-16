@@ -21,6 +21,7 @@ import shutil
 import subprocess
 import sys
 import threading
+import time
 import wave
 import zipfile
 from pathlib import Path
@@ -182,9 +183,115 @@ def audio_16k(wav):
 SOVRAPPOSIZIONE = 6    # secondi della parte precedente riascoltati all'inizio di ogni parte
 
 
+# «Pronta subito»: mentre si registra, la parte in corso si trascrive a pezzi di 5 minuti (tagliati in un
+# momento di silenzio). Alla fine resta da trascrivere solo l'ultimo pezzo: la registrazione e' pronta in fretta.
+PEZZO = int(os.environ.get("RL_PEZZO_SECONDI") or 300)
+
+
+def audio_parziale(wav):
+    """L'audio (16 kHz) di una parte che si sta ancora registrando. Sul telefono si cambia."""
+    return audio_16k(wav)
+
+
+def trascrivi_campioni(audio, cartella, progresso=lambda f: None, threads=None):
+    """Trascrive dei campioni (16 kHz): [{"inizio", "fine", "testo"}] con gli orari dall'inizio dei campioni.
+    Sul telefono questa funzione si cambia (whisper.cpp dentro l'app)."""
+    if threads is None:
+        threads = max(1, (os.cpu_count() or 2) - 1)
+    model = _modello(threads)
+    cartella = Path(cartella)
+    info_lez = leggi_json(cartella / "info.json", {}) or {}
+    lingua = info_lez.get("lingua_lezione") or LINGUA
+    parole = parole_lezione(cartella)
+    segmenti, info = model.transcribe(
+        audio, language=None if lingua == "auto" else lingua, vad_filter=True,
+        beam_size=5 if info_lez.get("precisa") else 1,       # "trascrizione piu' precisa" (Impostazioni)
+        condition_on_previous_text=False, hotwords=", ".join(parole) if parole else None)
+    if lingua == "auto" and getattr(info, "language", None):
+        aggiorna_info(cartella, lingua_rilevata=info.language)
+    durata = info.duration or 1.0
+    out = []
+    for s in segmenti:
+        out.append({"inizio": s.start, "fine": s.end, "testo": (s.text or "").strip()})
+        progresso(min(1.0, s.end / durata))
+    return out
+
+
+def _trascrivi_tratto(cartella, audio, da, a=None, threads=None, progresso=lambda f: None, coda=None):
+    """Trascrive audio[da:a] (secondi dall'inizio della parte). Davanti metto gli ultimi secondi gia' trascritti
+    (o la coda della parte prima): una parola a cavallo del taglio non si perde. Tengo le frasi che arrivano
+    dentro il tratto. Orari dall'inizio della parte."""
+    import numpy as np
+    r = 16000
+    if da > 0:
+        coda = audio[max(0, int((da - SOVRAPPOSIZIONE) * r)):int(da * r)]
+    elif coda is not None:
+        coda = coda[-SOVRAPPOSIZIONE * r:]
+    prima = len(coda) / r if coda is not None else 0.0
+    x = audio[int(da * r):None if a is None else int(a * r)]
+    if prima:
+        x = np.concatenate([coda, x])
+    out = []
+    for s in trascrivi_campioni(x, cartella, progresso, threads):
+        if s["testo"] and s["fine"] > prima + 0.3:   # finita del tutto prima del taglio: c'e' gia'
+            out.append({"inizio": round(da + max(0.0, s["inizio"] - prima), 2), "fine": round(da + s["fine"] - prima, 2),
+                        "testo": s["testo"]})
+    return out
+
+
+def _taglio(audio, da, a):
+    """Il momento piu' silenzioso fra da e a secondi (finestre di mezzo secondo): li' taglio il pezzo."""
+    import numpy as np
+    r, w = 16000, 8000
+    x = audio[int(da * r):int(a * r)]
+    n = len(x) // w
+    if n < 2:
+        return a
+    e = (x[:n * w].reshape(n, w) ** 2).mean(axis=1)
+    return round(da + (int(np.argmin(e)) + 0.5) * w / r, 2)
+
+
+def _file_pre(cartella, k):
+    return Path(cartella) / f"trascrizione_{k:03d}_in_corso.json"
+
+
+def pre_trascrivi(cartella, k, threads=None):
+    """Mentre si registra: se della parte k ci sono almeno 5 minuti nuovi, li trascrive (fino a un silenzio).
+    Ritorna True se ha trascritto un pezzo."""
+    cartella = Path(cartella)
+    wav = cartella / f"audio_{k:03d}.wav"
+    if not wav.exists() or (cartella / f"trascrizione_{k:03d}.json").exists():
+        return False
+    pre = leggi_json(_file_pre(cartella, k), {}) or {}
+    fino = float(pre.get("fino") or 0.0)
+    try:
+        audio = audio_parziale(wav)
+    except Exception:
+        log.exception("audio della parte in corso")
+        return False
+    tot = len(audio) / 16000
+    if tot - fino < PEZZO + min(20, PEZZO / 2):        # un po' di margine per cercare il silenzio
+        return False
+    coda = None
+    prec = cartella / f"audio_{k - 1:03d}.wav"
+    if fino == 0 and k > 1 and prec.exists():
+        try:
+            coda = audio_16k(prec)
+        except Exception:
+            coda = None
+    taglio = _taglio(audio, fino + PEZZO, min(tot - 1, fino + PEZZO + min(15, PEZZO / 2)))
+    t0 = time.monotonic()
+    segs = _trascrivi_tratto(cartella, audio, fino, taglio, threads, coda=coda)
+    scrivi_json(_file_pre(cartella, k), {"fino": taglio, "segmenti": (pre.get("segmenti") or []) + segs})
+    log.info("parte %s in corso: trascritta fino a %.0f s (%.0f s di audio in %.0f s)", k, taglio, taglio - fino,
+             time.monotonic() - t0)
+    return True
+
+
 def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     """Trascrive audio_00k.wav. Orari gia' riferiti all'inizio della lezione.
-    Salva trascrizione_00k.json (se esiste gia' la riusa)."""
+    Salva trascrizione_00k.json (se esiste gia' la riusa). Se la parte e' gia' stata trascritta in parte
+    mentre si registrava, fa solo il pezzo che manca."""
     cartella = Path(cartella)
     pj = cartella / f"trascrizione_{k:03d}.json"
     gia = leggi_json(pj)
@@ -196,47 +303,34 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
         scrivi_json(pj, [])
         progresso(1.0)
         return []
-    import time
-    if threads is None:
-        threads = max(1, (os.cpu_count() or 2) - 1)
-    model = _modello(threads)
     t0 = time.monotonic()
-    info_lez = leggi_json(cartella / "info.json", {}) or {}
-    lingua = info_lez.get("lingua_lezione") or LINGUA
-    parole = parole_lezione(cartella)
     audio = audio_16k(wav)
+    pre = leggi_json(_file_pre(cartella, k), {}) or {}
+    fino = float(pre.get("fino") or 0.0)
+    if fino * 16000 > len(audio):          # non dovrebbe succedere: rifaccio tutto
+        pre, fino = {}, 0.0
     # parole perse: le parti sono tagliate al campione, quindi una parola puo' finire a cavallo di due
-    # parti. Davanti a questa parte metto gli ultimi secondi della precedente e tengo le frasi che
-    # arrivano dentro questa parte (anche quelle cominciate un attimo prima del taglio).
-    prima = 0.0
+    # parti. Davanti a questa parte metto gli ultimi secondi della precedente.
+    coda = None
     prec = cartella / f"audio_{k - 1:03d}.wav"
-    if k > 1 and prec.exists():
+    if fino == 0 and k > 1 and prec.exists():
         try:
-            import numpy as np
-            coda = audio_16k(prec)[-SOVRAPPOSIZIONE * 16000:]
-            prima = len(coda) / 16000
-            audio = np.concatenate([coda, audio])
+            coda = audio_16k(prec)
         except Exception:
             log.exception("sovrapposizione parte %s", k)
-            prima = 0.0
-    segmenti, info = model.transcribe(
-        audio, language=None if lingua == "auto" else lingua, vad_filter=True,
-        beam_size=5 if info_lez.get("precisa") else 1,       # "trascrizione piu' precisa" (Impostazioni)
-        condition_on_previous_text=False, hotwords=", ".join(parole) if parole else None)
-    if lingua == "auto" and getattr(info, "language", None):
-        aggiorna_info(cartella, lingua_rilevata=info.language)
+    tot = len(audio) / 16000 or 1.0
+    fatto = fino / tot
+    segs = (pre.get("segmenti") or []) + _trascrivi_tratto(
+        cartella, audio, fino, None, threads, lambda f: progresso(fatto + (1 - fatto) * f), coda)
     offset = (k - 1) * parte_secondi(cartella)
-    durata = info.duration or 1.0
-    out = []
-    for s in segmenti:
-        testo = (s.text or "").strip()
-        if testo and s.end > prima + 0.3:        # finita del tutto prima del taglio: e' gia' nella parte prima
-            out.append({"inizio": round(offset + max(0.0, s.start - prima), 2),
-                        "fine": round(offset + s.end - prima, 2), "testo": testo})
-        progresso(min(1.0, s.end / durata))
+    out = [{"inizio": round(offset + x["inizio"], 2), "fine": round(offset + x["fine"], 2), "testo": x["testo"]} for x in segs]
     progresso(1.0)
     scrivi_json(pj, out)
-    log.info("trascrizione parte %s: %.0f s di audio in %.0f s (%s thread)", k, durata,
+    try:
+        _file_pre(cartella, k).unlink()
+    except OSError:
+        pass
+    log.info("trascrizione parte %s: %.0f s di audio (%.0f gia' fatti mentre registravo) in %.0f s (%s thread)", k, tot, fino,
              time.monotonic() - t0, threads)
     return chi_parla(cartella, k, out)
 
