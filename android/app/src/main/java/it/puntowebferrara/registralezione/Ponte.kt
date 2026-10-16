@@ -270,6 +270,214 @@ object Ponte {
         } catch (e: Exception) { "" }
     }
 
+    // ------------------------------------------------------------------ email (Gmail o l'app di posta del telefono)
+    /** Email pronta: destinatari, oggetto, testo e allegati. La persona preme Invia. */
+    @JvmStatic fun email(dest: Array<String>, oggetto: String, testo: String, allegati: Array<String>): Boolean {
+        val file = allegati.map { File(it) }.filter { it.exists() }
+        val uris = ArrayList(file.map { uri(it) })
+        val i = if (uris.size > 1) Intent(Intent.ACTION_SEND_MULTIPLE).putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
+                else Intent(Intent.ACTION_SEND).also { if (uris.size == 1) it.putExtra(Intent.EXTRA_STREAM, uris[0]) }
+        i.type = if (uris.isEmpty()) "text/plain" else "application/octet-stream"
+        if (uris.isNotEmpty()) {     // il permesso di leggere gli allegati passa con ClipData
+            val clip = android.content.ClipData.newRawUri("", uris[0])
+            for (u in uris.drop(1)) clip.addItem(android.content.ClipData.Item(u))
+            i.clipData = clip
+        }
+        i.putExtra(Intent.EXTRA_EMAIL, dest).putExtra(Intent.EXTRA_SUBJECT, oggetto).putExtra(Intent.EXTRA_TEXT, testo)
+            .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
+        // solo le app di posta (Gmail, Outlook...)
+        i.selector = Intent(Intent.ACTION_SENDTO).setData(Uri.parse("mailto:"))
+        return try {
+            app.startActivity(i); true
+        } catch (e: Exception) {
+            try {
+                i.selector = null
+                app.startActivity(Intent.createChooser(i, oggetto).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); true
+            } catch (e2: Exception) { false }
+        }
+    }
+
+    // ------------------------------------------------------------------ calendario del telefono
+    /** Apre il calendario del telefono con un impegno gia' scritto (la persona tocca Salva). */
+    @JvmStatic fun evento(titolo: String, inizio: Long, fine: Long, tuttoIlGiorno: Boolean, descrizione: String, luogo: String): Boolean {
+        val i = Intent(Intent.ACTION_INSERT).setData(android.provider.CalendarContract.Events.CONTENT_URI)
+            .putExtra(android.provider.CalendarContract.Events.TITLE, titolo)
+            .putExtra(android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME, inizio)
+            .putExtra(android.provider.CalendarContract.EXTRA_EVENT_END_TIME, fine)
+            .putExtra(android.provider.CalendarContract.EXTRA_EVENT_ALL_DAY, tuttoIlGiorno)
+            .putExtra(android.provider.CalendarContract.Events.DESCRIPTION, descrizione)
+            .putExtra(android.provider.CalendarContract.Events.EVENT_LOCATION, luogo)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return try { app.startActivity(i); true } catch (e: Exception) { false }
+    }
+
+    /** Avviso all'ora di un impegno (anche con l'app chiusa): la notifica la mostra Sveglia. */
+    @JvmStatic fun sveglia(id: Int, quando: Long, titolo: String, testo: String) {
+        val am = app.getSystemService(android.app.AlarmManager::class.java)
+        val pi = PendingIntent.getBroadcast(app, id,
+            Intent(app, Sveglia::class.java).putExtra("id", id).putExtra("titolo", titolo).putExtra("testo", testo),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+        val esatta = android.os.Build.VERSION.SDK_INT < 31 || am.canScheduleExactAlarms()
+        try {
+            if (esatta) am.setExactAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, quando, pi)
+            else am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, quando, pi)
+        } catch (e: SecurityException) {
+            am.setAndAllowWhileIdle(android.app.AlarmManager.RTC_WAKEUP, quando, pi)
+        }
+    }
+
+    @JvmStatic fun togliSveglia(id: Int) {
+        val am = app.getSystemService(android.app.AlarmManager::class.java)
+        val pi = PendingIntent.getBroadcast(app, id, Intent(app, Sveglia::class.java),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_NO_CREATE) ?: return
+        am.cancel(pi); pi.cancel()
+    }
+
+    // ------------------------------------------------------------------ pezzi d'audio
+    /** Copia un pezzo dell'audio (da..a millisecondi) in un altro file .m4a, senza ricodificarlo. */
+    @JvmStatic fun tagliaAudio(sorgente: String, uscita: String, da: Long, a: Long): Boolean {
+        val tmp = File("$uscita.tmp")
+        val ex = android.media.MediaExtractor()
+        try {
+            ex.setDataSource(sorgente)
+            var traccia = -1
+            for (t in 0 until ex.trackCount) if (ex.getTrackFormat(t).getString(android.media.MediaFormat.KEY_MIME)?.startsWith("audio/") == true) { traccia = t; break }
+            if (traccia < 0) return false
+            ex.selectTrack(traccia)
+            val mux = android.media.MediaMuxer(tmp.path, android.media.MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
+            val dest = mux.addTrack(ex.getTrackFormat(traccia))
+            mux.start()
+            ex.seekTo(da * 1000, android.media.MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
+            val buf = java.nio.ByteBuffer.allocate(1 shl 18)
+            val info = android.media.MediaCodec.BufferInfo()
+            var t0 = -1L
+            var scritti = 0
+            while (true) {
+                val n = ex.readSampleData(buf, 0)
+                if (n < 0) break
+                val t = ex.sampleTime
+                if (t > a * 1000) break
+                if (t >= da * 1000 - 100_000) {
+                    if (t0 < 0) t0 = t
+                    info.set(0, n, t - t0, android.media.MediaCodec.BUFFER_FLAG_KEY_FRAME)
+                    mux.writeSampleData(dest, buf, info)
+                    scritti++
+                }
+                ex.advance()
+            }
+            mux.stop(); mux.release()
+            return scritti > 0 && tmp.renameTo(File(uscita))
+        } catch (e: Exception) {
+            android.util.Log.e("RegistraLezione", "taglia audio", e)
+            tmp.delete()
+            return false
+        } finally { ex.release() }
+    }
+
+    /** Il pezzo d'audio da..da+durata (millisecondi) come WAV 16 kHz mono: per riconoscere le voci.
+     *  Scrive mentre decodifica (un'ora d'audio non sta in memoria). */
+    @JvmStatic fun decodificaWav(sorgente: String, uscita: String, da: Long, durata: Long): Boolean {
+        val ex = android.media.MediaExtractor()
+        var cod: android.media.MediaCodec? = null
+        val f = java.io.RandomAccessFile(uscita, "rw")
+        var campioni = 0L
+        try {
+            f.setLength(0); f.write(ByteArray(44))
+            ex.setDataSource(sorgente)
+            var traccia = -1
+            for (t in 0 until ex.trackCount) if (ex.getTrackFormat(t).getString(android.media.MediaFormat.KEY_MIME)?.startsWith("audio/") == true) { traccia = t; break }
+            if (traccia < 0) return false
+            ex.selectTrack(traccia)
+            val fmt = ex.getTrackFormat(traccia)
+            var rate = fmt.getInteger(android.media.MediaFormat.KEY_SAMPLE_RATE)
+            var canali = fmt.getInteger(android.media.MediaFormat.KEY_CHANNEL_COUNT)
+            val c = android.media.MediaCodec.createDecoderByType(fmt.getString(android.media.MediaFormat.KEY_MIME)!!)
+            cod = c
+            c.configure(fmt, null, null, 0)
+            c.start()
+            ex.seekTo(da * 1000, android.media.MediaExtractor.SEEK_TO_PREVIOUS_SYNC)
+            val info = android.media.MediaCodec.BufferInfo()
+            val fineUs = (da + durata) * 1000
+            var fineIngresso = false
+            var fine = false
+            var pos = 0.0          // per passare a 16 kHz: dove sono nel suono originale
+            while (!fine) {
+                if (!fineIngresso) {
+                    val i = c.dequeueInputBuffer(10000)
+                    if (i >= 0) {
+                        val b = c.getInputBuffer(i)!!
+                        val n = ex.readSampleData(b, 0)
+                        if (n < 0 || ex.sampleTime > fineUs) {
+                            c.queueInputBuffer(i, 0, 0, 0, android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM); fineIngresso = true
+                        } else { c.queueInputBuffer(i, 0, n, ex.sampleTime, 0); ex.advance() }
+                    }
+                }
+                val o = c.dequeueOutputBuffer(info, 10000)
+                if (o == android.media.MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+                    rate = c.outputFormat.getInteger(android.media.MediaFormat.KEY_SAMPLE_RATE)
+                    canali = c.outputFormat.getInteger(android.media.MediaFormat.KEY_CHANNEL_COUNT)
+                } else if (o >= 0) {
+                    if (info.size > 0 && info.presentationTimeUs >= da * 1000 - 50_000 && info.presentationTimeUs <= fineUs) {
+                        val sb = c.getOutputBuffer(o)!!.apply { position(info.offset); limit(info.offset + info.size) }
+                            .slice().order(java.nio.ByteOrder.LITTLE_ENDIAN).asShortBuffer()
+                        val n = sb.remaining() / maxOf(1, canali)
+                        val passo = rate / 16000.0
+                        val dest = java.nio.ByteBuffer.allocate((n / passo + 2).toInt() * 2).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+                        while (pos < n) {
+                            val k = pos.toInt()
+                            var v = 0
+                            for (ch in 0 until canali) v += sb.get(k * canali + ch)
+                            dest.putShort((v / canali).toShort())
+                            pos += passo
+                        }
+                        pos -= n
+                        f.write(dest.array(), 0, dest.position())
+                        campioni += dest.position() / 2
+                    }
+                    c.releaseOutputBuffer(o, false)
+                    if (info.flags and android.media.MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0) fine = true
+                }
+            }
+            val h = java.nio.ByteBuffer.allocate(44).order(java.nio.ByteOrder.LITTLE_ENDIAN)
+            h.put("RIFF".toByteArray()).putInt((36 + campioni * 2).toInt()).put("WAVE".toByteArray()).put("fmt ".toByteArray())
+                .putInt(16).putShort(1).putShort(1).putInt(16000).putInt(32000).putShort(2).putShort(16)
+                .put("data".toByteArray()).putInt((campioni * 2).toInt())
+            f.seek(0); f.write(h.array())
+            return campioni > 0
+        } catch (e: Exception) {
+            android.util.Log.e("RegistraLezione", "decodifica audio", e)
+            return false
+        } finally {
+            try { cod?.stop(); cod?.release() } catch (e: Exception) {}
+            ex.release()
+            f.close()
+        }
+    }
+
+    // ------------------------------------------------------------------ chi parla: impronta della voce
+    private var sessioneVoci: ai.onnxruntime.OrtSession? = null
+    private var modelloVoci = ""
+
+    /** L'impronta (256 numeri) di una frase: dati = bande mel (frame x 80), calcolate in Python. */
+    @JvmStatic @Synchronized fun impronta(modello: String, dati: FloatArray, frame: Int): FloatArray {
+        val env = ai.onnxruntime.OrtEnvironment.getEnvironment()
+        if (sessioneVoci == null || modelloVoci != modello) {
+            sessioneVoci?.close()
+            val o = ai.onnxruntime.OrtSession.SessionOptions()
+            o.setIntraOpNumThreads(2)
+            sessioneVoci = env.createSession(modello, o)
+            modelloVoci = modello
+        }
+        val s = sessioneVoci!!
+        val x = ai.onnxruntime.OnnxTensor.createTensor(env, java.nio.FloatBuffer.wrap(dati), longArrayOf(1, frame.toLong(), (dati.size / maxOf(1, frame)).toLong()))
+        x.use {
+            s.run(mapOf(s.inputNames.first() to x)).use { r ->
+                @Suppress("UNCHECKED_CAST")
+                return (r.get(0).value as Array<FloatArray>)[0]
+            }
+        }
+    }
+
     // ------------------------------------------------------------------ notifiche
     @JvmStatic fun notifica(titolo: String, testo: String) {
         val nm = app.getSystemService(NotificationManager::class.java)

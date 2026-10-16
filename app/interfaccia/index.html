@@ -58,7 +58,7 @@
     <nav class="nav" id="nav">
       <a data-p="reg" class="on"><svg><use href="#i-rec"/></svg><span data-t="nav.reg">Registra</span><span class="recdot hidden" id="navRec"></span></a>
       <a data-p="arch"><svg><use href="#i-lib"/></svg><span data-t="nav.arch">Le mie registrazioni</span><span class="cnt hidden" id="navCnt"></span></a>
-      <a data-p="fare" class="solo-pc"><svg><use href="#i-check"/></svg><span data-t="nav.fare">Cose da fare</span><span class="cnt hidden" id="navFare"></span></a>
+      <a data-p="fare"><svg><use href="#i-check"/></svg><span data-t="nav.fare">Cose da fare</span><span class="cnt hidden" id="navFare"></span></a>
       <a data-p="imp"><svg><use href="#i-set"/></svg><span data-t="nav.imp">Impostazioni</span></a>
       <a data-p="guida"><svg><use href="#i-guida"/></svg><span data-t="nav.guida">Guida</span></a>
       <a data-p="info" class="solo-pc"><svg><use href="#i-info"/></svg><span data-t="nav.info">Informazioni</span></a>
@@ -95,7 +95,7 @@
         <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
         <div class="calora hidden" id="calOra"></div>
         <div class="chips" id="recenti"></div>
-        <div id="modBox" class="hidden solo-pc" style="margin-top:14px">
+        <div id="modBox" class="hidden" style="margin-top:14px">
           <div class="lbl" style="margin:0 0 6px" data-t="md.h">Che riunione è?</div>
           <div class="chips" id="modChips"></div>
           <div class="hint" id="modHint" style="margin-top:6px"></div>
@@ -163,14 +163,14 @@
         <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">pacchetti pronti</small></div></div>
       </div>
       <div class="avviso mt hidden" id="lAvv"></div>
-      <div class="avviso2 mt hidden solo-pc" id="aperteCard"></div>
-      <div class="card mt solo-pc" id="noteCard">
+      <div class="avviso2 mt hidden" id="aperteCard"></div>
+      <div class="card mt" id="noteCard">
         <div class="lbl" data-t="nt.h">Le tue note</div>
         <div id="noteLista"></div>
         <input class="in" id="notaIn" data-tp="nt.ph" placeholder="Scrivi una nota e premi Invio…" maxlength="300" autocomplete="off" style="margin-top:6px">
         <div class="row" style="margin-top:8px;gap:6px;flex-wrap:wrap"><span class="chip" data-nota="importante">⭐ <span data-t="nt.imp">Importante</span></span><span class="chip" data-nota="chiarire">❓ <span data-t="nt.chi">Da chiarire</span></span><span class="chip" data-nota="fare">✅ <span data-t="nt.fare">Cosa da fare</span></span><span class="sp"></span><span class="hint" data-t="nt.s">Claude le userà per gli appunti</span></div>
       </div>
-      <div class="card mt solo-pc" id="ddCard">
+      <div class="card mt" id="ddCard">
         <div class="row"><div class="lbl sp" style="margin:0" data-t="dd.h">Chiedi adesso</div><span class="hint" data-t="dd.costo">circa 1 centesimo a domanda</span></div>
         <div id="ddChat"></div>
         <div class="row" style="margin-top:8px;gap:8px"><input class="in sp" id="ddIn" data-tp="dd.ph" placeholder="Fai una domanda su quello che si è detto finora…" maxlength="500" autocomplete="off"><button class="btn b-cor b-sm" id="ddVai" data-t="dd.chiedi">Chiedi</button></div>
@@ -253,7 +253,7 @@
         <div class="card" style="padding:0;overflow:hidden"><div id="cpMedia"></div><div class="hint" style="padding:10px 14px" data-t="cp.tocca">Tocca un capitolo: si riparte da lì.</div></div>
         <div class="card"><div class="lbl" data-t="cp.h">Capitoli</div><div id="cpLista"></div></div>
       </div>
-      <div class="card mt solo-pc" id="spCard">
+      <div class="card mt" id="spCard">
         <div class="lbl" data-t="sp.h">✂ Spezzone da mandare</div>
         <div class="sptl" id="spTl"><div class="sel" id="spSel"></div><div class="pos" id="spPos"></div></div>
         <div class="row" style="gap:8px;flex-wrap:wrap">
@@ -261,7 +261,7 @@
           <span class="hint" data-t="sp.al">al</span><input class="in" id="spA" value="00:01:00" style="width:104px"><button class="btn b-ghost b-sm" id="spAQui" data-t="sp.qui2">⏱ fino a qui</button>
           <span class="hint sp" id="spDur"></span>
         </div>
-        <div class="row" style="margin-top:10px;justify-content:flex-end;gap:8px"><button class="btn b-ghost b-sm" id="spAudio">🎧 <span data-t="sp.audio">Solo audio</span></button><button class="btn b-main b-sm" id="spVideo">🎬 <span data-t="sp.video">Video con sottotitoli</span></button></div>
+        <div class="row" style="margin-top:10px;justify-content:flex-end;gap:8px"><button class="btn b-ghost b-sm" id="spAudio">🎧 <span data-t="sp.audio">Solo audio</span></button><button class="btn b-main b-sm solo-pc" id="spVideo">🎬 <span data-t="sp.video">Video con sottotitoli</span></button></div>
         <div class="hint" style="margin-top:6px" data-t="sp.nota">Scorciatoia: tocca ✂ accanto a un capitolo. Il video si ferma e si guarda dal punto «dal».</div>
       </div>
     </section>
@@ -364,7 +364,7 @@
         <div class="hint" style="margin-top:6px" data-t="im.fmt.tipi">Per le riunioni gli appunti sono il verbale, per i webinar i punti chiave.</div>
         <div class="hint" style="margin-top:10px" data-t="im.fmt.s">Vale per le prossime registrazioni. Su una lezione già fatta: «⋯» → «Rifai appunti» nel formato scelto.</div>
       </div>
-      <div class="card mt solo-pc" id="cgCard">
+      <div class="card mt" id="cgCard">
         <div class="lbl" data-t="cg.h">Condividi e collega</div>
         <div class="hint" data-t="cg.s">Email, Word, Google Docs e calendario funzionano subito, dal pulsante «Condividi» di ogni registrazione. Questi si collegano una volta sola:</div>
         <div id="cgLista" style="margin-top:6px"></div>
@@ -387,7 +387,7 @@
         <div class="set"><div class="t"><b data-t="im.ogni">Ogni quanto preparo un pacchetto</b><span data-t="im.ogni.s">Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30" data-t="im.30">30 min</span><span data-v="60" data-t="im.60">1 ora</span></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.mini">Mini finestra durante la registrazione</b><span data-t="im.mini.s">Piccola, sempre in primo piano, con Pausa e Fine.</span></div><div class="sw" id="swMini"></div></div>
         <div class="set"><div class="t"><b data-t="im.prec">Trascrizione più precisa</b><span data-t="im.prec.s">Sbaglia meno parole, ma ci mette circa una volta e mezza il tempo. Vale per le prossime registrazioni.</span></div><div class="sw" id="swPrec"></div></div>
-        <div class="set solo-pc"><div class="t"><b data-t="im.voci">Riconosci chi parla</b><span data-t="im.voci.s">Nella trascrizione e negli appunti c'è scritto chi ha detto cosa.</span></div><div class="sw" id="swVoci"></div></div>
+        <div class="set"><div class="t"><b data-t="im.voci">Riconosci chi parla</b><span data-t="im.voci.s">Nella trascrizione e negli appunti c'è scritto chi ha detto cosa.</span></div><div class="sw" id="swVoci"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dir">Testo in diretta</b><span data-t="im.dir.s">Mentre registri vedi il testo con circa 2 minuti di ritardo. Il PC lavora di più: su un portatile lento può rallentare Meet.</span></div><div class="sw" id="swDir"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dnd">Ricordami «Non disturbare»</b><span data-t="im.dnd.s">Così i suoni delle notifiche non finiscono nella registrazione.</span></div><div class="sw" id="swDnd"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo i pacchetti</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>

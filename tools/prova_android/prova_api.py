@@ -102,6 +102,31 @@ try:
             passo("trascrizione in italiano", False, e)
     lz = api("lezioni")["lezioni"]
     passo("Le mie lezioni", len(lz) >= 2, [(l["nome"], l["stato"]) for l in lz])
+
+    # 3. le funzioni del PC sul telefono (parti nuove dell'app: onnxruntime, MediaExtractor/Muxer, sveglie)
+    if dopo:
+        cart = dopo[0]["cartella"]
+        t0 = time.time()
+        r = api("voci_rifai", cart, t=900)
+        passo("chi parla (modello delle voci nell'app)", r.get("ok") and len(r.get("voci") or []) >= 1,
+              f"{time.time() - t0:.0f} s; voci {[v.get('nome') or v.get('n') for v in r.get('voci') or []]}; {r.get('msg', '')}")
+        r = api("spezzone", cart, 3, 15, True)
+        passo("spezzone audio (pezzo copiato dal telefono)", r.get("ok"), r)
+        st = api("statistiche", cart)
+        passo("statistiche", st.get("durata", 0) > 0, st.get("durata_t"))
+        r = api("cerca_parole", "lezione")
+        passo("cerca nelle parole dette", "risultati" in r, len(r.get("risultati") or []))
+    ora = time.localtime(time.time() + 40 * 60)
+    fra = time.localtime(time.time() + 100 * 60)
+    api("cal_orario", [{"giorno": ora.tm_wday, "dalle": time.strftime("%H:%M", ora), "alle": time.strftime("%H:%M", fra), "nome": "Fisica 1", "dove": "aula"}])
+    sv = ""
+    for i in range(16):
+        time.sleep(6)
+        sv = subprocess.run(["timeout", "30", "adb", "shell", "dumpsys", "alarm"], capture_output=True, text=True).stdout
+        if "registralezione" in sv and "Sveglia" in sv:
+            break
+    righe = [x.strip() for x in sv.splitlines() if "registralezione" in x]
+    passo("calendario: sveglia per la notifica", any("Sveglia" in x for x in sv.splitlines()) and righe, righe[:6])
 except Exception as e:
     passo("errore nella prova", False, repr(e))
 salva()

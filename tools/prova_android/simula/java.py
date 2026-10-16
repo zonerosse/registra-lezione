@@ -1,6 +1,6 @@
 """Finto modulo 'java' di Chaquopy: fa finta di essere il telefono (Ponte, Registrazione, Whisper)
 per provare la parte Python dell'app Android su un PC normale, senza emulatore."""
-import os, threading, time, wave, base64, subprocess, shutil, glob
+import os, threading, time, wave, base64, subprocess, shutil, glob, json
 from pathlib import Path
 DATI = Path(os.environ["SIM_DATI"]); DATI.mkdir(parents=True, exist_ok=True)
 CACHE = DATI / "cache"; CACHE.mkdir(exist_ok=True)
@@ -11,8 +11,8 @@ class _Ponte:
     def contesto(self): return None
     def cartellaDati(self): return str(DATI)
     def cartellaCache(self): return str(CACHE)
-    def versione(self): return "0.7"
-    def codice(self): return 7
+    def versione(self): return "0.9"
+    def codice(self): return 9
     def getScaricati(self): return self.scaricati
     def getTotale(self): return self.totale
     def riavvia(self):
@@ -47,6 +47,41 @@ class _Ponte:
     def cifra(self, s): return base64.b64encode(s[::-1].encode()).decode()
     def decifra(self, s): return base64.b64decode(s).decode()[::-1]
     def notifica(self, a, b): print("NOTIFICA", a, b, flush=True)
+    def _scrivi(self, nome, d):
+        with open(DATI / nome, "a", encoding="utf-8") as f: f.write(json.dumps(d, ensure_ascii=False) + "\n")
+    def email(self, dest, ogg, testo, allegati):
+        print("EMAIL", list(dest), ogg, list(allegati), flush=True)
+        self._scrivi("email.txt", {"dest": list(dest), "oggetto": ogg, "testo": testo, "allegati": list(allegati)}); return True
+    def evento(self, titolo, a, b, tutto, descr, luogo):
+        print("EVENTO", titolo, flush=True)
+        self._scrivi("eventi.txt", {"titolo": titolo, "inizio": a, "fine": b, "tutto": tutto}); return True
+    def sveglia(self, i, quando, titolo, testo):
+        print("SVEGLIA", i, quando, titolo, flush=True)
+        self._scrivi("sveglie.txt", {"id": i, "quando": quando, "titolo": titolo, "testo": testo})
+    def togliSveglia(self, i): self._scrivi("sveglie.txt", {"via": i})
+    def tagliaAudio(self, src, dest, da, a):
+        import imageio_ffmpeg
+        r = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-ss", str(da / 1000), "-t", str((a - da) / 1000),
+                            "-i", src, "-vn", "-c:a", "copy", "-f", "mp4", dest + ".tmp"])
+        if r.returncode != 0: return False
+        os.replace(dest + ".tmp", dest); return True
+    def decodificaWav(self, src, out, da, durata):
+        import imageio_ffmpeg
+        r = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-y", "-loglevel", "error", "-ss", str(da / 1000), "-t", str(durata / 1000),
+                            "-i", src, "-vn", "-ac", "1", "-ar", "16000", "-f", "wav", out])
+        return r.returncode == 0 and os.path.getsize(out) > 44
+    _ort = None
+    def impronta(self, modello, dati, frame):
+        import numpy as np
+        x = np.asarray(dati, dtype=np.float32).reshape(1, frame, -1)
+        try:
+            import onnxruntime as ort
+            if self._ort is None: _Ponte._ort = ort.InferenceSession(modello, providers=["CPUExecutionProvider"])
+            s = self._ort
+            return list(s.run(None, {s.get_inputs()[0].name: x})[0][0])
+        except ImportError:        # senza onnxruntime: un'impronta finta ma stabile (stessa voce -> stessi numeri)
+            v = np.concatenate([x[0].mean(axis=0), x[0].std(axis=0)])
+            return list(np.resize(v, 256))
 SORGENTE = os.environ.get("SIM_WAV")
 class _Reg:
     RATE = 16000

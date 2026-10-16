@@ -4,6 +4,11 @@ name: Prova Android
 # e mette l'APK nel ramo "android-app" (da li' l'app si aggiorna con «Aggiorna l'app»).
 on:
   workflow_dispatch:
+    inputs:
+      pubblica:
+        description: "Pubblica l'app (no = solo prova)"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -47,11 +52,11 @@ jobs:
       - name: Prova dell'app senza emulatore (motore e pagine veri, telefono finto)
         id: simula
         run: |
-          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg
+          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg onnxruntime
           (cd tools/prova_android/simula && npm install --no-save --silent playwright@1.47.2 && npx playwright install --with-deps chromium > /dev/null)
           NODE_PATH=$PWD/tools/prova_android/simula/node_modules bash tools/prova_android/simula/prova.sh prova_simulata
       - name: "Pubblica l'app nel ramo android-app (da li' la prende «Aggiorna l'app»)"
-        if: steps.simula.outcome == 'success'
+        if: steps.simula.outcome == 'success' && inputs.pubblica
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@users.noreply.github.com"
@@ -76,11 +81,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/modello
-          key: ggml-small-q5_1
+          key: ggml-small-q5_1-voci
       - name: Scarica il riconoscitore se non c'e'
         run: |
           mkdir -p ~/modello
           [ -s ~/modello/ggml-small-q5_1.bin ] || curl -sL -o ~/modello/ggml-small-q5_1.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
+          [ -s ~/modello/voci_resnet34.onnx ] || curl -sL -o ~/modello/voci_resnet34.onnx https://github.com/k2-fsa/sherpa-onnx/releases/download/speaker-recongition-models/wespeaker_en_voxceleb_resnet34_LM.onnx
           ls -la ~/modello
       - name: Attiva la virtualizzazione (per il telefono simulato)
         run: |

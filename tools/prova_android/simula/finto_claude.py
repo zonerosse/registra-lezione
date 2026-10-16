@@ -36,7 +36,8 @@ def _chiama(chiave, corpo, tentativi=3):
               {"titolo": "Theorems" if en else "Teoremi", "foglie": ["squeeze theorem" if en else "confronto (carabinieri)", "uniqueness" if en else "unicità del limite", "sign permanence" if en else "permanenza del segno"]},
               {"titolo": "Exercises" if en else "Esercizi", "foglie": ["lim x→0 (1−cos x)/x²"]}]}}]}
     dom = corpo["messages"][-1]["content"]
-    print("CHIEDI", len(corpo["messages"][0]["content"][0]["text"]), "caratteri;", dom, flush=True)
+    c0 = corpo["messages"][0]["content"]
+    print("CHIEDI", len(c0 if isinstance(c0, str) else c0[0]["text"]), "caratteri;", dom, flush=True)
     materia = "L2" in corpo["system"]
     if "inglese" in corpo["system"]:
         rif = "[[L2 00:00:12]] and [[L1 slide 2]]" if materia else "[[00:00:12]] and [[slide 2]]"
@@ -46,3 +47,19 @@ def _chiama(chiave, corpo, tentativi=3):
             "content": [{"type": "text", "text": f"Il docente lo spiega con il **teorema del confronto**: per x vicino a 0, in radianti, vale cos x ≤ sin x / x ≤ 1, quindi il limite è 1.\nHa detto: «in gradi non vale, all'esame ci cascate sempre». Se ne parla qui: {rif}."}]}
 chm._chiama = _chiama
 ap.prova_chiave = lambda k: None if k.startswith("sk-ant") else (_ for _ in ()).throw(ap.ErroreAppunti("Chiave non valida."))
+# riunioni: il verbale (con cose da fare e prossima riunione) e i capitoli
+verbale = {"titolo": "Listino 2027", "in_breve": "Listino 2027 con aumento medio del 4%, prodotti di punta invariati, consegna separata dal prezzo.",
+  "decisioni": [{"testo": "Aumento medio del 4% sul listino 2027", "chi": "Marco Rossi", "dove": "00:00:12"}],
+  "azioni": [{"cosa": "Numeri sui costi di consegna", "chi": "Giulia Bianchi", "entro": "venerdì 23/10", "dove": "00:00:30"},
+             {"cosa": "Bozza del listino 2027", "chi": "Marco Rossi", "entro": "martedì 27/10", "dove": "00:00:40"}],
+  "da_decidere": [{"testo": "Sconti ai clienti storici", "dove": "00:00:50"}], "prossima_riunione": {"quando": "giovedì 29/10 ore 15:30", "note": ""},
+  "punti_discussi": [{"titolo": "Prezzi", "punti": ["Aumento 4%", "Prodotti di punta invariati"], "dove": "00:00:12"}], "da_controllare": []}
+CAP = [{"inizio": "00:00:00", "titolo": "Il listino 2027", "dettaglio": "aumento del 4%"}, {"inizio": "00:00:08", "titolo": "Costi di consegna"}, {"inizio": "00:00:16", "titolo": "Concorrenti e sconti"}]
+_chiedi_base = _chiedi
+def _chiedi(chiave, pdf, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it", formato="cornell", **kw):
+    if formato == "verbale":
+        print("CLAUDE verbale", kw.get("partecipanti"), "NOTE", kw.get("note"), flush=True); time.sleep(2)
+        return dict(verbale, capitoli=CAP), 0.04
+    d, sp = _chiedi_base(chiave, pdf, tentativi, contesto, lingua_appunti, lingua_lezione, formato, **kw)
+    return dict(d, capitoli=CAP), sp
+ap.chiedi_a_claude = _chiedi

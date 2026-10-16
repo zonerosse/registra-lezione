@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <application
         android:label="Verba Manent IA"
         android:icon="@mipmap/ic_launcher"
@@ -26,6 +28,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <service android:name=".Registrazione" android:exported="false"
             android:foregroundServiceType="microphone" />
+        <receiver android:name=".Sveglia" android:exported="false" />
         <provider android:name="androidx.core.content.FileProvider"
             android:authorities="it.puntowebferrara.registralezione.file"
             android:exported="false" android:grantUriPermissions="true">

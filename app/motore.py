@@ -125,6 +125,35 @@ def mostra_file(percorso):
     return apri(p.parent)
 
 
+def manda_email(dest, oggetto, testo, file_eml, allegati, doc=None):
+    """Email pronta da mandare: su Windows un .eml che si apre in Outlook / Posta (sul telefono: l'app di posta)."""
+    import condividi as cd
+    return apri(cd.crea_eml(doc, dest, oggetto, testo, file_eml, allegati))
+
+
+def apri_calendario(eventi, file_ics):
+    """Gli impegni nel calendario: su Windows il file .ics (Outlook / Calendario); sul telefono il calendario del telefono."""
+    import condividi as cd
+    return apri(cd.crea_ics(eventi, file_ics))
+
+
+def taglia(src, dest, da, a, audio, srt=None):
+    """Un pezzo della registrazione con ffmpeg (sul telefono: solo l'audio, copiato senza ricodificarlo)."""
+    cmd = [el.ffmpeg_exe(), "-y", "-nostdin", "-loglevel", "error", "-ss", f"{da:.2f}", "-t", f"{a - da:.2f}", "-i", str(src)]
+    if not audio:
+        if srt:
+            cmd += ["-i", str(srt)]
+        cmd += ["-map", "0:v:0?", "-map", "0:a:0?"] + (["-map", "1:0", "-c:s", "mov_text", "-metadata:s:s:0", "language=ita"] if srt else []) + \
+               ["-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
+                "-movflags", "+faststart", str(dest)]
+    else:
+        cmd += ["-vn", "-c:a", "aac", "-b:a", "96k", str(dest)]
+    r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, creationflags=el.NO_WINDOW)
+    if r.returncode != 0:
+        log.error("spezzone: %s", r.stderr.decode("utf-8", "replace")[-800:])
+    return r.returncode == 0 and Path(dest).exists()
+
+
 def gb_testo(byte):
     gb = byte / 1e9
     return (f"{gb:.1f} GB" if gb >= 0.1 else f"{byte / 1e6:.0f} MB").replace(".", ",")
@@ -1392,7 +1421,6 @@ class Motore:
         dest_dir.mkdir(parents=True, exist_ok=True)
         nome = f"{el.nome_sicuro(info.get('nome'))} – {el.hms(da).replace(':', '.')}-{el.hms(a).replace(':', '.')}"
         dest = dest_dir / (nome + (".m4a" if audio else ".mp4"))
-        cmd = [el.ffmpeg_exe(), "-y", "-nostdin", "-loglevel", "error", "-ss", f"{da:.2f}", "-t", f"{a - da:.2f}", "-i", str(src)]
         srt = None
         if not audio:
             # i sottotitoli: le frasi di quel tratto (con chi parla), come traccia che si accende nel lettore
@@ -1408,20 +1436,13 @@ class Motore:
             if righe:
                 srt = cart / "spezzone.srt"
                 srt.write_text("\n".join(righe), encoding="utf-8")
-                cmd += ["-i", str(srt)]
-            cmd += ["-map", "0:v:0?", "-map", "0:a:0?"] + (["-map", "1:0", "-c:s", "mov_text", "-metadata:s:s:0", "language=ita"] if srt else []) + \
-                   ["-c:v", "libx264", "-preset", "veryfast", "-crf", "26", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "96k",
-                    "-movflags", "+faststart", str(dest)]
-        else:
-            cmd += ["-vn", "-c:a", "aac", "-b:a", "96k", str(dest)]
-        r = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, creationflags=el.NO_WINDOW)
+        ok = taglia(src, dest, da, a, audio, srt)
         if srt:
             try:
                 srt.unlink()
             except OSError:
                 pass
-        if r.returncode != 0 or not dest.exists():
-            log.error("spezzone: %s", r.stderr.decode("utf-8", "replace")[-800:])
+        if not ok:
             return {"ok": False, "msg": tr("ap_imprevisto")}
         return {"ok": True, "file": str(dest), "nome": dest.name, "mb": round(dest.stat().st_size / 1e6, 1)}
 
@@ -1429,8 +1450,7 @@ class Motore:
         """Email pronta con lo spezzone allegato (Outlook / Posta)."""
         import condividi as cd
         f = Path(file)
-        m = cd.crea_eml(None, [], f.stem, tr("sp_mail"), f.with_suffix(".eml"), [f])
-        return {"ok": bool(apri(m))}
+        return {"ok": bool(manda_email([], f.stem, tr("sp_mail"), f.with_suffix(".eml"), [f]))}
 
     # ------------------------------------------------------------------ preparazione all'esame (per materia)
 
@@ -1503,12 +1523,12 @@ class Motore:
         ev = es.eventi_calendario(d, materia, testi.LINGUA)
         if not ev:
             return {"ok": False, "msg": tr("cd_cal_niente")}
-        f = cd.crea_ics(ev, BASE / "esami" / f"{el.nome_sicuro(materia)} – {tr('es_pdf_piano')}.ics")
+        f = BASE / "esami" / f"{el.nome_sicuro(materia)} – {tr('es_pdf_piano')}.ics"
         if modo == "google":
             webbrowser.open("https://calendar.google.com/calendar/r/settings/export")
-            mostra_file(f)
+            mostra_file(cd.crea_ics(ev, f))
         else:
-            apri(f)
+            apri_calendario(ev, f)
         return {"ok": True, "n": len(ev)}
 
     def esame_pdf(self, materia):
@@ -2251,8 +2271,7 @@ class Motore:
             ev = cd.eventi(doc)
             if ev:
                 allegati.append(cd.crea_ics(ev, cart / ("Calendario – " + el.nome_sicuro(doc["titolo"]) + ".ics")))
-            f = cd.crea_eml(doc, dest, oggetto, testo, cart / (el.nome_sicuro(oggetto)[:80] + ".eml"), allegati)
-            if not apri(f):
+            if not manda_email(dest, oggetto, testo, cart / (el.nome_sicuro(oggetto)[:80] + ".eml"), allegati, doc):
                 return {"ok": False, "msg": tr("cd_err_eml")}
             return {"ok": True}
         except cd.ErroreCondividi as e:
@@ -2276,6 +2295,19 @@ class Motore:
             return {"ok": False, "msg": str(e)}
         except Exception:
             log.exception("word")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def cond_manda(self, cartella):
+        """Il PDF (o il Word) da mandare con un'altra app: sul telefono il menu «Manda con…» (WhatsApp, Drive...)."""
+        import condividi as cd
+        try:
+            doc = cd.documento(cartella)
+            f = doc["pdf"] or self._docx(cartella)
+            return {"ok": bool(mostra_file(f))}
+        except cd.ErroreCondividi as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("manda")
             return {"ok": False, "msg": tr("ap_imprevisto")}
 
     def cond_gdocs(self, cartella):
@@ -2313,8 +2345,7 @@ class Motore:
                 return {"ok": True, "n": len(ev)}
             cart = Path(cartella) / "condividi"
             cart.mkdir(exist_ok=True)
-            f = cd.crea_ics(ev, cart / ("Calendario – " + el.nome_sicuro(doc["titolo"]) + ".ics"))
-            apri(f)
+            apri_calendario(ev, cart / ("Calendario – " + el.nome_sicuro(doc["titolo"]) + ".ics"))
             return {"ok": True, "n": len(ev)}
         except cd.ErroreCondividi as e:
             return {"ok": False, "msg": str(e)}

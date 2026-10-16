@@ -41,10 +41,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    packaging { jniLibs { pickFirsts += listOf("**/libc++_shared.so") } }
 }
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
+    // «Chi parla»: il modello delle voci (lo stesso del PC) gira sul telefono
+    implementation("com.microsoft.onnxruntime:onnxruntime-android:1.19.2")
 }
 
 // la parte di appunti, PDF, flashcard ecc. e' quella del programma per Windows (in Python)

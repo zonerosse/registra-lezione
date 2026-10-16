@@ -24,7 +24,7 @@ jobs:
         run: bash tools/prova_android/prepara_rl.sh /tmp/rl contenuto.zip
       - name: Prova dell'app senza emulatore
         run: |
-          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg
+          pip install -q numpy pillow fpdf2==2.8.9 imageio-ffmpeg onnxruntime
           (cd tools/prova_android/simula && npm install --no-save --silent playwright@1.47.2 && npx playwright install --with-deps chromium > /dev/null)
           NODE_PATH=$PWD/tools/prova_android/simula/node_modules bash tools/prova_android/simula/prova.sh prova_simulata
       - name: Pubblica i file nuovi

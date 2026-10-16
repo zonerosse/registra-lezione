@@ -235,6 +235,9 @@ class Api:
     def cond_word(self, cartella):
         return self._m.cond_word(cartella)
 
+    def cond_manda(self, cartella):
+        return self._m.cond_manda(cartella)
+
     def cond_gdocs(self, cartella):
         return self._m.cond_gdocs(cartella)
 

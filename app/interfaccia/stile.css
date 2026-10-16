@@ -487,3 +487,15 @@ html.android .dove.tre{grid-template-columns:1fr}
 .bolla.io{background:#e0f2fe;margin-left:48px}
 .bolla .pill{font-size:11px;padding:1px 7px}
 html.android .banda{flex-wrap:wrap}html.android .banda .col2{width:100%}
+/* telefono: «Da fare» in righe strette, niente «Registra da solo» nel calendario */
+html.android .fare.testa{display:none}
+html.android .fare{grid-template-columns:22px 1fr auto;gap:2px 8px;align-items:start}
+html.android .fare > input{grid-row:1/span 3;margin-top:2px}
+html.android .fare > div{grid-column:2;grid-row:1}
+html.android .fare > .en{grid-column:3;grid-row:1;font-weight:700;font-size:12px;white-space:nowrap}
+html.android .fare > span:not(.en){grid-column:2/4;grid-row:2;font-size:12px;color:var(--mut)}
+html.android .fare > .lnk{grid-column:2/4;grid-row:3;font-size:12px}
+html.android #segCal [data-v=solo],html.android #calImpegni .seg [data-v=solo]{display:none}
+html.android .calt th:nth-child(3),html.android .calt td:nth-child(3){display:none}
+html.android .calt td:last-child{white-space:normal!important}
+html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px 0}

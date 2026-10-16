@@ -11,6 +11,9 @@ solo le parti che su Windows usano cose di Windows:
   - audio finale    -> le parti WAV unite in audio.m4a dal telefono
   - PDF del docente -> disegnati con il lettore PDF di Android
   - aprire i file   -> l'app giusta del telefono; chiave di Claude protetta dal telefono
+  - email           -> Gmail (o l'app di posta) con gli allegati; impegni -> calendario del telefono
+  - spezzoni        -> pezzi dell'audio copiati dal telefono; chi parla -> modello delle voci dentro l'app
+  - calendario      -> notifica all'ora dell'impegno, anche con l'app chiusa
 Poi apro un piccolo server solo dentro il telefono (127.0.0.1) che da' le pagine e risponde a /api/...
 """
 import json
@@ -185,7 +188,7 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     gia = el.leggi_json(pj)
     if gia is not None:
         progresso(1.0)
-        return gia
+        return el.chi_parla(cartella, k, gia)
     wav = cartella / f"audio_{k:03d}.wav"
     if not wav.exists() or el.durata_wav(wav) < 1:
         el.scrivi_json(pj, [])
@@ -237,7 +240,7 @@ def trascrivi_parte(cartella, k, progresso=lambda f: None, threads=None):
     el.scrivi_json(pj, out)
     log.info("trascrizione parte %s: %.0f s di audio in %.0f s (%s thread, beam %s)", k, el.durata_wav(wav),
              time.monotonic() - t0, n, beam)
-    return out
+    return el.chi_parla(cartella, k, out)
 
 
 def audio_16k(wav):
@@ -281,6 +284,133 @@ def disegna_pagine(pdf, cartella_tmp):
     cartella_tmp = Path(cartella_tmp)
     Ponte.pdfInPng(str(pdf), str(cartella_tmp), dc.LARGHEZZA)
     return sorted(cartella_tmp.glob("p[0-9][0-9][0-9].png"))
+
+
+# ----------------------------------------------------------------------------- le funzioni del PC, sul telefono
+
+def _stringhe(lista):
+    return jarray(jclass("java.lang.String"))([str(x) for x in lista])
+
+
+def manda_email(dest, oggetto, testo, file_eml, allegati, doc=None):
+    """Gmail (o l'app di posta del telefono) con destinatari, oggetto, testo e allegati: si preme Invia."""
+    return bool(Ponte.email(_stringhe(dest), str(oggetto), str(testo), _stringhe([a for a in allegati if a])))
+
+
+def apri_calendario(eventi, file_ics):
+    """Gli impegni nel calendario del telefono: si aprono gia' scritti, uno sopra l'altro, e si tocca Salva.
+    Tanti impegni (il piano di studio): il file .ics, da mandare all'app di calendario."""
+    import datetime
+    import condividi as cd
+    if len(eventi) > 8:
+        return bool(Ponte.condividi(str(cd.crea_ics(eventi, file_ics))))
+    ok = False
+    for e in reversed(eventi):          # l'ultimo aperto resta davanti: cosi' si salvano nell'ordine giusto
+        d = datetime.date.fromisoformat(e["data"])
+        if e.get("ora"):
+            h, m = (int(x) for x in e["ora"].split(":"))
+            a = datetime.datetime.combine(d, datetime.time(h, m)).astimezone()
+            b, tutto = a + datetime.timedelta(hours=1), False
+        else:                           # tutto il giorno: il calendario vuole la mezzanotte UTC
+            a = datetime.datetime(d.year, d.month, d.day, tzinfo=datetime.timezone.utc)
+            b, tutto = a + datetime.timedelta(days=1), True
+        ok = bool(Ponte.evento(str(e["titolo"]), int(a.timestamp() * 1000), int(b.timestamp() * 1000), tutto,
+                               str(e.get("note") or ""), "")) or ok
+        time.sleep(0.4)
+    return ok
+
+
+def taglia(src, dest, da, a, audio, srt=None):
+    """Lo spezzone sul telefono: un pezzo dell'audio, copiato com'e' (niente video: il telefono registra l'audio)."""
+    return bool(Ponte.tagliaAudio(str(src), str(dest), int(da * 1000), int(a * 1000)))
+
+
+class _SessioneVoci:
+    """Come onnxruntime.InferenceSession per voci.py, ma il modello gira dentro l'app (onnxruntime per Android)."""
+
+    def get_inputs(self):
+        return [types.SimpleNamespace(name="feats")]
+
+    def run(self, _uscite, ingressi):
+        import numpy as np
+        import voci as vc
+        f = np.ascontiguousarray(next(iter(ingressi.values()))[0], dtype=np.float32)
+        r = Ponte.impronta(str(vc.file_modello()), jarray(jfloat)(f.ravel()), int(f.shape[0]))
+        return [np.asarray(list(r), dtype=np.float32)[None, :]]
+
+
+def _audio_parte(cartella, k, inizio):
+    """L'audio della parte k per «Chi parla»: la parte WAV, o (registrazione finita) il pezzo di audio.m4a."""
+    import elaborazione as el
+    cartella = Path(cartella)
+    wav = cartella / f"audio_{k:03d}.wav"
+    if wav.exists() and wav.stat().st_size > 1000:
+        return el.audio_16k(wav)
+    m4a = cartella / "audio.m4a"
+    if not m4a.exists():
+        return None
+    tmp = Path(str(Ponte.cartellaCache())) / f"voci_{k:03d}.wav"
+    try:
+        if Ponte.decodificaWav(str(m4a), str(tmp), int(max(0.0, inizio) * 1000), int((el.parte_secondi(cartella) + 1) * 1000)):
+            return el.audio_16k(tmp)
+        return None
+    finally:
+        try:
+            tmp.unlink()
+        except OSError:
+            pass
+
+
+def _sveglie(m):
+    """Calendario: per ogni impegno con «Avvisami» una sveglia del telefono, che all'ora giusta mostra la notifica
+    anche se l'app e' chiusa. sveglie.json ricorda quelle messe (all'avvio le rimetto tutte: col riavvio si perdono)."""
+    import datetime
+    import zlib
+    from testi import tr
+    f = Path(str(Ponte.cartellaDati())) / "sveglie.json"
+    prima = {}
+    try:
+        vecchie = json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+    except (OSError, ValueError):
+        vecchie = {}
+    for i in vecchie:                   # quelle di prima (anche di impegni tolti): via, le rimetto qui sotto
+        try:
+            Ponte.togliSveglia(int(i))
+        except Exception:
+            pass
+    while True:
+        try:
+            ora = datetime.datetime.now().astimezone()
+            nuove = {}
+            for ev in list(getattr(m, "cal_lista", None) or []):
+                if m._cal_modo(ev) != "avvisa" or ev["inizio"] <= ora:
+                    continue
+                i = zlib.crc32(str(ev["id"]).encode("utf-8")) & 0x3FFFFFFF
+                ms = int((ev["inizio"] - datetime.timedelta(minutes=2)).timestamp() * 1000)
+                nuove[str(i)] = ms
+                if prima.get(str(i)) != ms:
+                    Ponte.sveglia(i, ms, tr("and_cal_t", n=ev["titolo"]), tr("and_cal"))
+            for i in set(prima) - set(nuove):
+                Ponte.togliSveglia(int(i))
+            if nuove != prima:
+                f.write_text(json.dumps(nuove), encoding="utf-8")
+            prima = nuove
+        except Exception:
+            log.exception("sveglie del calendario")
+        time.sleep(60)
+
+
+def _funzioni_pc(mt):
+    """Condividi, spezzoni, chi parla e calendario: le parti di Windows diventano quelle del telefono."""
+    mt.manda_email = manda_email
+    mt.apri_calendario = apri_calendario
+    mt.taglia = taglia
+    import voci as vc
+    vc._sessione = lambda: _SessioneVoci()
+    vc._audio_parte = _audio_parte
+    # «Registra da solo» non si puo': Android non lascia accendere il microfono a un'app chiusa
+    modo = mt.Motore._cal_modo
+    mt.Motore._cal_modo = lambda self, ev: "avvisa" if modo(self, ev) == "solo" else modo(self, ev)
 
 
 # ----------------------------------------------------------------------------- aggiornamenti
@@ -411,6 +541,7 @@ def _prepara(cartella_app, lingua_tel):
     mt.mostra_file = lambda percorso: bool(Ponte.condividi(str(percorso)))     # "mostra" = manda (WhatsApp, Drive...)
     mt.apri_non_disturbare = lambda: None
     mt.schermo_risoluzione = lambda: ""
+    _funzioni_pc(mt)
     return mt
 
 
@@ -557,6 +688,7 @@ def avvia(cartella_app, lingua_tel="it"):
         M.aspetta_carica = False
         _stato_android(M)
         threading.Thread(target=_avvisi, args=(M,), daemon=True).start()
+        threading.Thread(target=_sveglie, args=(M,), daemon=True).start()
     _PORTA = _server(API, Path(cartella_app) / "interfaccia")
     try:      # per le prove automatiche: da qui si sa dove risponde il motore
         (Path(str(Ponte.cartellaDati())) / "porta.txt").write_text(str(_PORTA))
