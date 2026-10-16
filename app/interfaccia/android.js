@@ -37,6 +37,10 @@ if (ANDROID) {
       'src.mic.pred': '{n} (quello del telefono)', 'im.k.ok': '✓ Chiave salvata (protetta dal telefono)', 'ar.cerca': 'Cerca per nome o data…',
       'im.k.dove': 'Si crea su platform.claude.com → Settings → API keys. Resta salvata solo su questo telefono, protetta.',
       'nav.fare': 'Da fare',
+      'cal.privato': 'Il link resta solo su questo telefono. Il programma legge il calendario, non lo modifica.',
+      'sp.ok': '«{f}» ({mb} MB) è pronto: mandalo con «Manda con…» (WhatsApp, Telegram…) o per email.',
+      'vc.nota': "L'app separa le voci da sola, sul telefono: l'audio non va su internet. Può sbagliare: i nomi si correggono con «Dai i nomi alle voci».",
+      'vc.nota.lez': "In aula chi parla di più è «Docente», gli altri «Domanda». L'app separa le voci da sola, sul telefono: l'audio non va su internet.",
       'cal.s': "Collega il calendario (o scrivi l'orario delle lezioni): quando inizia un impegno arriva una notifica, anche con l'app chiusa. La tocchi e il nome è già scritto.",
       'cd.em.nota': "Si apre l'app di posta (Gmail…) con il PDF già allegato: controlla e premi Invia.",
       'cd.cal.nota': 'Si apre il calendario del telefono con l\'impegno già scritto: tocca «Salva» (se sono più di uno, uno dopo l\'altro). Le righe senza data non vanno nel calendario.',
@@ -79,6 +83,10 @@ if (ANDROID) {
       'src.mic.pred': '{n} (phone default)', 'im.k.ok': '✓ Key saved (protected by the phone)', 'ar.cerca': 'Search by name or date…',
       'im.k.dove': 'Create it on platform.claude.com → Settings → API keys. It is stored only on this phone, protected.',
       'nav.fare': 'To-dos',
+      'cal.privato': 'The link stays only on this phone. The app reads the calendar, it does not change it.',
+      'sp.ok': '«{f}» ({mb} MB) is ready: send it with «Send with…» (WhatsApp, Telegram…) or by email.',
+      'vc.nota': 'The app separates the voices by itself, on the phone: the audio does not go on the internet. It can make mistakes: fix the names with «Name the voices».',
+      'vc.nota.lez': 'In class whoever speaks most is «Lecturer», the others «Question». The app separates the voices by itself, on the phone: the audio does not go on the internet.',
       'cal.s': 'Connect your calendar (or type your timetable): when an event starts you get a notification, even with the app closed. Tap it and the name is already filled in.',
       'cd.em.nota': 'Your mail app (Gmail…) opens with the PDF already attached: check it and press Send.',
       'cd.cal.nota': 'The phone calendar opens with the appointment already filled in: tap «Save» (if there are several, one after the other). Rows without a date do not go into the calendar.',
@@ -110,7 +118,8 @@ if (ANDROID) {
       "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard e <b>Chiedi alla lezione</b>.",
       "<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave di Claude (circa 0,20 $ per ora registrata).",
       "Audio, appunti e trascrizioni restano <b>sul tuo telefono</b>: sono tuoi.",
-      "Sul PC (Windows) ci sono anche: Chi parla, Cerca nelle parole dette, Cose da fare, Condividi (email, Word, Slack…), Calendario, Preparazione all'esame, Le tue note e Chiedi adesso durante la registrazione. Arriveranno anche sul telefono."
+      "<b>Chi ha detto cosa</b>: il telefono riconosce le voci, senza mandare l'audio su internet.",
+      "<b>Dalla riunione al lavoro</b>: il verbale va per email, WhatsApp, Slack, Teams, Notion o nel CRM; le cose da fare stanno tutte in <b>Da fare</b>."
      ]
     },
     {
@@ -132,6 +141,8 @@ if (ANDROID) {
      "p": [
       "Scegli <b>Riunione di lavoro</b> e scrivi <b>chi partecipa</b>: i nomi finiscono giusti nel verbale.",
       "Alla fine arriva il <b>verbale</b>: in breve, decisioni, <b>cose da fare</b> (chi, entro quando), cosa resta da decidere, prossima riunione e capitoli. Per i <b>webinar</b> arrivano i <b>punti chiave</b>.",
+      "Sotto «Che riunione è?» scegli un <b>modello</b> (vendita, colloquio, 1 a 1, consiglio di classe, condominio, consulenza o ✎ il tuo): il verbale ha le sezioni giuste.",
+      "Se la riunione ha lo stesso nome di una precedente, compare <b>Dall'ultima volta</b>: le cose rimaste da fare. Se nella riunione si dice che sono fatte, si spuntano da sole.",
       "Nomi, date e cifre li scrive Claude dalla registrazione: <b>controllali sempre</b> prima di mandare il verbale."
      ]
     },
@@ -143,7 +154,9 @@ if (ANDROID) {
       "Puoi <b>spegnere lo schermo</b> o usare altre app: la registrazione continua. Nelle notifiche c'è «Registro» con <b>Pausa</b> e <b>Fine</b>.",
       "<b>Pausa</b> durante l'intervallo: non registra niente e il tempo si ferma. <b>Riprendi</b> quando ricomincia.",
       "Se hai scelto «Durante» e il telefono non è in carica, compare <b>Collega il caricatore</b>.",
-      "Ogni 30 minuti (o ogni ora, in Impostazioni) prepara una <b>parte</b>. Con gli appunti automatici, Claude comincia subito a scriverli."
+      "Ogni 30 minuti (o ogni ora, in Impostazioni) prepara una <b>parte</b>. Con gli appunti automatici, Claude comincia subito a scriverli.",
+      "<b>Le tue note</b>: scrivi due parole e premi Invio, o tocca ⭐ <b>Importante</b>, ❓ <b>Da chiarire</b>, ✅ <b>Cosa da fare</b>. La nota prende il minuto giusto e Claude la mette negli appunti.",
+      "<b>Chiedi adesso</b>: ti sei distratto? Chiedi cosa si è detto. Claude vede le parti già trascritte (con «Durante»). Circa 1 centesimo a domanda."
      ]
     },
     {
@@ -174,10 +187,44 @@ if (ANDROID) {
      "v": "tel-lezioni",
      "t": "Le mie lezioni",
      "p": [
-      "Qui trovi tutte le registrazioni, con la ricerca per nome o data.",
-      "<b>Apri appunti</b>, <b>Chiedi</b>, <b>Capitoli</b> (l'indice: tocca un argomento e l'audio riparte da lì), <b>Trascrizione</b> e <b>Audio</b>. <b>Trascrivi ora</b> su quelle registrate con «Dopo».",
-      "Nel menu <b>⋯</b>: crea o rifai gli appunti, mappa mentale, infografica, slide del docente in PDF, rinomina, elimina l'audio (libera spazio, gli appunti restano) o tutta la registrazione.",
+      "Qui trovi tutte le registrazioni. Cerca per <b>nome o data</b>, o scrivi una parola: trovi <b>dove è stata detta</b>, in tutte le registrazioni. Tocca il minuto e riascolti da lì.",
+      "<b>Apri appunti</b>, <b>Chiedi</b>, <b>Capitoli</b> (l'indice: tocca un argomento e l'audio riparte da lì), <b>Chi parla</b>, <b>Condividi</b>, <b>Trascrizione</b> e <b>Audio</b>. <b>Trascrivi ora</b> su quelle registrate con «Dopo».",
+      "Nel menu <b>⋯</b>: crea o rifai gli appunti, mappa mentale, infografica, <b>Statistiche</b>, <b>Spezzone da mandare</b>, slide del docente in PDF, rinomina, elimina l'audio (libera spazio, gli appunti restano) o tutta la registrazione.",
       "Se il telefono si è spento mentre lavorava, tocca <b>Completa</b>."
+     ]
+    },
+    {
+     "ico": "chat",
+     "v": "tel-chiparla",
+     "t": "Chi parla",
+     "p": [
+      "Dopo la registrazione il telefono <b>riconosce le voci</b> e scrive chi ha detto cosa, nella trascrizione e negli appunti. L'audio non va su internet; la prima volta scarica un modello di 26 MB.",
+      "In aula chi parla di più è «Docente», gli altri «Domanda». Nelle riunioni ci sono Voce 1, Voce 2…: tocca <b>Dai i nomi alle voci</b>, ascolta un pezzo e scrivi chi è.",
+      "<b>Statistiche</b>: chi ha parlato e quanto, quante domande, quanto è durato ogni argomento.",
+      "Si accende e si spegne in Impostazioni → <b>Riconosci chi parla</b>. Su una registrazione vecchia: menu <b>⋯</b> → «Riconosci chi parla»."
+     ]
+    },
+    {
+     "ico": "share",
+     "v": "tel-condividi",
+     "t": "Condividi e spezzoni",
+     "p": [
+      "Tocca <b>Condividi</b> su una registrazione con gli appunti.",
+      "<b>Email</b>: scrivi gli indirizzi (si ricordano per la volta dopo): si apre Gmail, o l'app di posta che usi, con oggetto, testo e PDF già allegato. Controlla e premi Invia.",
+      "<b>WhatsApp e altre app</b>: il PDF, con il menu «Manda con…» del telefono. <b>Word</b>: il file .docx da modificare.",
+      "<b>Nel calendario</b>: le cose da fare e la prossima riunione, con la data giusta. Si apre il calendario del telefono con l'impegno già scritto: tocca «Salva».",
+      "<b>Slack, Teams, Notion, CRM</b>: si collegano una volta (te lo chiede al primo uso, o in Impostazioni). Poi il verbale va lì con un tocco, o da solo a fine riunione.",
+      "<b>✂ Spezzone</b>: in Capitoli tocca ✂ accanto a un argomento, o menu <b>⋯</b> → «Spezzone da mandare». Scegli da dove a dove e tocca <b>Crea lo spezzone</b>: un pezzo dell'audio da mandare a chi vuoi."
+     ]
+    },
+    {
+     "ico": "check",
+     "v": "tel-cose",
+     "t": "Da fare",
+     "p": [
+      "In basso c'è <b>Da fare</b>: tutte le cose da fare uscite dai verbali, in un posto solo, con chi, entro quando e da quale riunione. Il numero dice quante sono aperte.",
+      "Fatta? Tocca la casella. Tocca il nome della riunione per riascoltare il punto in cui se n'è parlato.",
+      "Filtra per persona, o guarda le aperte, le fatte o tutte."
      ]
     },
     {
@@ -191,12 +238,33 @@ if (ANDROID) {
      ]
     },
     {
+     "ico": "spark",
+     "v": "tel-esame",
+     "t": "Preparazione all'esame",
+     "p": [
+      "In «Le mie lezioni», nella fascia della materia, tocca <b>🎯 Preparati all'esame</b>.",
+      "Le <b>domande più probabili di tutto il corso</b>, con le stelle: quelle ripetute in più lezioni o su cui il docente ha insistito vengono prima. Tocca una domanda per lo schema della risposta.",
+      "Scegli la <b>data dell'esame</b>: arriva il <b>piano di studio</b> giorno per giorno, da mettere nel calendario o salvare in PDF.",
+      "<b>Simulazione d'esame</b>: rispondi come allo scritto, poi <b>Correggi</b>: punti, cosa manca e voto. Pochi centesimi."
+     ]
+    },
+    {
      "ico": "chat",
      "t": "Chiedi, mappa, infografica e slide del docente",
      "p": [
       "<b>Chiedi</b>: scrivi cosa non hai capito. La risposta usa solo quello che si è detto e indica slide e minuto: tocca il minuto e riascolti quel punto. Meno di 1 centesimo a domanda.",
       "<b>Mappa mentale</b> e <b>Infografica</b> (menu <b>⋯</b>): lo schema ad albero o tutta la registrazione in una pagina, da salvare in PDF. Circa 1 centesimo, una volta sola.",
       "<b>Slide del docente</b> (menu <b>⋯</b>): scegli il PDF delle slide e gli appunti vengono rifatti con le slide originali."
+     ]
+    },
+    {
+     "ico": "info",
+     "v": "tel-calendario",
+     "t": "Calendario",
+     "p": [
+      "In Impostazioni → <b>Calendario</b> collega <b>Gmail</b>, <b>Outlook</b> o un altro calendario: segui i passi e incolla il link. Oppure scrivi a mano l'<b>orario delle lezioni</b>.",
+      "Quando inizia un impegno arriva una <b>notifica</b>, anche con l'app chiusa. La tocchi e in Registra il nome e i partecipanti sono già scritti: tocca <b>Usa questi dati</b> e registra.",
+      "Per ogni impegno scegli <b>Avvisami</b> o <b>Niente</b>. (Sul telefono l'app non può accendere il microfono da sola: basta un tocco sulla notifica.)"
      ]
     },
     {
@@ -208,7 +276,8 @@ if (ANDROID) {
       "<b>Quando trascrivo, di solito</b> e <b>Trascrivi solo sotto carica</b>: con «Dopo» il telefono aspetta il caricatore prima di trascrivere.",
       "<b>Trascrizione più precisa</b>: sbaglia meno, ma ci mette circa una volta e mezza il tempo.",
       "<b>Parole difficili</b>: per ogni materia nomi e termini tecnici, così la trascrizione li sbaglia molto meno.",
-      "<b>I tuoi dati</b> (nome, università, corso, anno): compaiono sugli appunti."
+      "<b>I tuoi dati</b> (nome, università, corso, anno): compaiono sugli appunti.",
+      "<b>Condividi e collega</b>: Slack, Teams, Notion e CRM, una volta sola. <b>Riconosci chi parla</b> e <b>Calendario</b>."
      ]
     },
     {
@@ -227,7 +296,8 @@ if (ANDROID) {
       "<b>La registrazione si ferma a schermo spento</b>: in Impostazioni di Android → App → Verba Manent IA → Batteria, scegli <b>Senza restrizioni</b>.",
       "<b>Gli appunti non arrivano</b>: serve internet; tocca <b>Riprova</b> accanto alla parte.",
       "<b>La prima volta</b> l'app scarica il riconoscitore vocale (circa 190 MB): meglio col Wi-Fi.",
-      "<b>Poco spazio</b>: in «Le mie lezioni» elimina l'audio delle registrazioni vecchie (gli appunti restano)."
+      "<b>Poco spazio</b>: in «Le mie lezioni» elimina l'audio delle registrazioni vecchie (gli appunti restano).",
+      "<b>La notifica del calendario non arriva</b>: in Impostazioni di Android → App → Verba Manent IA → Notifiche, accendile; e apri l'app almeno una volta dopo aver riacceso il telefono."
      ]
     }
    ]
@@ -248,7 +318,8 @@ if (ANDROID) {
       "<b>For the exam</b>: Cornell, Exam format, flashcards and <b>Ask the lecture</b>.",
       "<b>No subscription</b>: you only pay what you use with your Claude key (about $0.20 per recorded hour).",
       "Audio, notes and transcripts stay <b>on your phone</b>: they are yours.",
-      "On the PC (Windows) there are also: Who is speaking, Search the words spoken, To-dos, Share (email, Word, Slack…), Calendar, Exam preparation, Your notes and Ask now while recording. They will come to the phone too."
+      "<b>Who said what</b>: the phone recognises the voices, without sending the audio to the internet.",
+      "<b>From the meeting to the work</b>: the minutes go by email, WhatsApp, Slack, Teams, Notion or into the CRM; the action items are all in <b>To-dos</b>."
      ]
     },
     {
@@ -270,6 +341,8 @@ if (ANDROID) {
      "p": [
       "Choose <b>Work meeting</b> and type the <b>participants</b>: the names come out right in the minutes.",
       "At the end you get the <b>minutes</b>: summary, decisions, <b>action items</b> (who, by when), open points, next meeting and chapters. <b>Webinars</b> get <b>key points</b>.",
+      "Under «What kind of meeting?» choose a <b>template</b> (sales, interview, 1-to-1, class council, condominium, consultation or ✎ your own): the minutes get the right sections.",
+      "If the meeting has the same name as an earlier one, <b>Since last time</b> appears: the open action items. If the meeting says they are done, they are ticked by themselves.",
       "Names, dates and figures are written by Claude from the recording: <b>always check them</b> before sending the minutes."
      ]
     },
@@ -281,7 +354,9 @@ if (ANDROID) {
       "You can <b>turn the screen off</b> or use other apps: recording continues. In the notifications there is «Recording» with <b>Pause</b> and <b>Stop</b>.",
       "<b>Pause</b> during the break: nothing is recorded and the time stops. <b>Resume</b> when it starts again.",
       "If you chose «During» and the phone is not charging, <b>Plug in the charger</b> appears.",
-      "Every 30 minutes (or every hour, in Settings) a <b>part</b> is prepared. With automatic notes, Claude starts writing them right away."
+      "Every 30 minutes (or every hour, in Settings) a <b>part</b> is prepared. With automatic notes, Claude starts writing them right away.",
+      "<b>Your notes</b>: type a few words and press Enter, or tap ⭐ <b>Important</b>, ❓ <b>To clarify</b>, ✅ <b>To-do</b>. The note gets the right minute and Claude puts it in the notes.",
+      "<b>Ask now</b>: distracted? Ask what was said. Claude sees the parts already transcribed (with «During»). About 1 cent per question."
      ]
     },
     {
@@ -312,10 +387,44 @@ if (ANDROID) {
      "v": "tel-lezioni",
      "t": "My lectures",
      "p": [
-      "Here are all your recordings, with search by name or date.",
-      "<b>Open notes</b>, <b>Ask</b>, <b>Chapters</b> (the index: tap a topic and the audio starts from there), <b>Transcript</b> and <b>Audio</b>. <b>Transcribe now</b> on those recorded with «After».",
-      "In the <b>⋯</b> menu: create or redo the notes, mind map, infographic, lecturer's slides as PDF, rename, delete the audio (frees space, notes stay) or the whole recording.",
+      "Here are all your recordings. Search by <b>name or date</b>, or type a word: you find <b>where it was said</b>, in all recordings. Tap the minute to listen from there.",
+      "<b>Open notes</b>, <b>Ask</b>, <b>Chapters</b> (the index: tap a topic and the audio starts from there), <b>Who speaks</b>, <b>Share</b>, <b>Transcript</b> and <b>Audio</b>. <b>Transcribe now</b> on those recorded with «After».",
+      "In the <b>⋯</b> menu: create or redo the notes, mind map, infographic, <b>Statistics</b>, <b>Clip to send</b>, lecturer's slides as PDF, rename, delete the audio (frees space, notes stay) or the whole recording.",
       "If the phone switched off while working, tap <b>Complete</b>."
+     ]
+    },
+    {
+     "ico": "chat",
+     "v": "tel-chiparla",
+     "t": "Who speaks",
+     "p": [
+      "After the recording the phone <b>recognises the voices</b> and writes who said what, in the transcript and in the notes. The audio does not go on the internet; the first time it downloads a 26 MB model.",
+      "In class whoever speaks most is «Lecturer», the others «Question». In meetings there are Voice 1, Voice 2…: tap <b>Name the voices</b>, listen to a piece and type who it is.",
+      "<b>Statistics</b>: who spoke and how much, how many questions, how long each topic lasted.",
+      "Turn it on and off in Settings → <b>Recognise who is speaking</b>. On an old recording: <b>⋯</b> menu → «Recognise who is speaking»."
+     ]
+    },
+    {
+     "ico": "share",
+     "v": "tel-condividi",
+     "t": "Share and clips",
+     "p": [
+      "Tap <b>Share</b> on a recording with notes.",
+      "<b>Email</b>: type the addresses (remembered for next time): Gmail, or the mail app you use, opens with subject, text and the PDF already attached. Check it and press Send.",
+      "<b>WhatsApp and other apps</b>: the PDF, with the phone «Send with…» menu. <b>Word</b>: the .docx file to edit.",
+      "<b>Add to calendar</b>: the action items and the next meeting, with the right date. The phone calendar opens with the event already filled in: tap «Save».",
+      "<b>Slack, Teams, Notion, CRM</b>: connect them once (it asks the first time, or in Settings). Then the minutes go there with one tap, or by themselves at the end of the meeting.",
+      "<b>✂ Clip</b>: in Chapters tap ✂ next to a topic, or <b>⋯</b> menu → «Clip to send». Choose from where to where and tap <b>Create the clip</b>: a piece of the audio to send to anyone."
+     ]
+    },
+    {
+     "ico": "check",
+     "v": "tel-cose",
+     "t": "To-dos",
+     "p": [
+      "At the bottom there is <b>To-dos</b>: all the action items from the minutes, in one place, with who, by when and from which meeting. The number tells how many are open.",
+      "Done? Tap the box. Tap the meeting name to listen to the point where it was discussed.",
+      "Filter by person, or look at open, done or all."
      ]
     },
     {
@@ -329,12 +438,33 @@ if (ANDROID) {
      ]
     },
     {
+     "ico": "spark",
+     "v": "tel-esame",
+     "t": "Exam preparation",
+     "p": [
+      "In «My lectures», in the subject band, tap <b>🎯 Prepare for the exam</b>.",
+      "The <b>most likely questions of the whole course</b>, with stars: those repeated in several lectures or stressed by the lecturer come first. Tap a question for the answer outline.",
+      "Choose the <b>exam date</b>: you get the <b>study plan</b> day by day, to put in the calendar or save as PDF.",
+      "<b>Mock exam</b>: answer as in the written exam, then <b>Correct</b>: points, what is missing and the mark. A few cents."
+     ]
+    },
+    {
      "ico": "chat",
      "t": "Ask, mind map, infographic and lecturer's slides",
      "p": [
       "<b>Ask</b>: write what you did not understand. The answer only uses what was said and shows slide and minute: tap the minute to listen to that point again. Less than 1 cent per question.",
       "<b>Mind map</b> and <b>Infographic</b> (<b>⋯</b> menu): the tree outline or the whole recording on one page, to save as PDF. About 1 cent, once.",
       "<b>Lecturer's slides</b> (<b>⋯</b> menu): choose the slides PDF and the notes are redone with the original slides."
+     ]
+    },
+    {
+     "ico": "info",
+     "v": "tel-calendario",
+     "t": "Calendar",
+     "p": [
+      "In Settings → <b>Calendar</b> connect <b>Gmail</b>, <b>Outlook</b> or another calendar: follow the steps and paste the link. Or type your <b>lecture timetable</b> by hand.",
+      "When an event starts you get a <b>notification</b>, even with the app closed. Tap it and in Record the name and participants are already filled in: tap <b>Use these details</b> and record.",
+      "For each event choose <b>Remind me</b> or <b>Nothing</b>. (On the phone the app cannot turn on the microphone by itself: one tap on the notification is enough.)"
      ]
     },
     {
@@ -346,7 +476,8 @@ if (ANDROID) {
       "<b>When I transcribe, usually</b> and <b>Transcribe only while charging</b>: with «After» the phone waits for the charger before transcribing.",
       "<b>More accurate transcription</b>: fewer mistakes, but about one and a half times the time.",
       "<b>Difficult words</b>: names and technical terms for each subject, so the transcription gets them right.",
-      "<b>Your details</b> (name, university, course, year): they appear on the notes."
+      "<b>Your details</b> (name, university, course, year): they appear on the notes.",
+      "<b>Share and connect</b>: Slack, Teams, Notion and CRM, once only. <b>Recognise who is speaking</b> and <b>Calendar</b>."
      ]
     },
     {
@@ -365,7 +496,8 @@ if (ANDROID) {
       "<b>Recording stops with the screen off</b>: in Android Settings → Apps → Verba Manent IA → Battery, choose <b>Unrestricted</b>.",
       "<b>Notes do not arrive</b>: you need internet; tap <b>Retry</b> next to the part.",
       "<b>The first time</b> the app downloads the speech recogniser (about 190 MB): better on Wi-Fi.",
-      "<b>Low space</b>: in «My lectures» delete the audio of old recordings (notes stay)."
+      "<b>Low space</b>: in «My lectures» delete the audio of old recordings (notes stay).",
+      "<b>The calendar notification does not arrive</b>: in Android Settings → Apps → Verba Manent IA → Notifications, turn them on; and open the app at least once after restarting the phone."
      ]
     }
    ]

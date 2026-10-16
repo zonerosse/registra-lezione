@@ -12,6 +12,8 @@ import avvio_android as aa
 porta = aa.avvia(RL, "it")
 import android_motore
 exec(open(os.path.join(QUI, "finto_claude.py")).read())          # Claude finto: niente chiave, niente costi
+if os.environ.get("SIM_EXTRA"):          # dati in piu' (per i video della guida)
+    exec(open(os.environ["SIM_EXTRA"]).read())
 # un aggiornamento finto, per provare il bottone «Scarica»
 def aa_cerca():
     tipo = (open(os.path.join(os.environ["SIM_DATI"], "agg_tipo.txt")).read().strip()

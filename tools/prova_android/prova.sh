@@ -18,8 +18,7 @@ adb shell wm size 720x1560; adb shell wm density 300     # proporzioni di un tel
 # il riconoscitore lo metto io: scaricarlo dentro il telefono simulato lo faceva staccare
 adb shell mkdir -p $DIR
 adb push ~/modello/ggml-small-q5_1.bin $DIR/ggml-small-q5_1.bin
-adb shell mkdir -p $DIR/.local/share/RegistraLezione/modelli
-[ -s ~/modello/voci_resnet34.onnx ] && adb push ~/modello/voci_resnet34.onnx $DIR/.local/share/RegistraLezione/modelli/voci_resnet34.onnx
+[ -s ~/modello/voci_resnet34.onnx ] && adb push ~/modello/voci_resnet34.onnx $DIR/voci_resnet34.onnx
 adb shell am start -n $PKG/.Principale
 sleep 30
 adb exec-out screencap -p > $OUT/schermo_avvio.png

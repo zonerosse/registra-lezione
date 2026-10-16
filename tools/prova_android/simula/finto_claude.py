@@ -54,12 +54,44 @@ verbale = {"titolo": "Listino 2027", "in_breve": "Listino 2027 con aumento medio
              {"cosa": "Bozza del listino 2027", "chi": "Marco Rossi", "entro": "martedì 27/10", "dove": "00:00:40"}],
   "da_decidere": [{"testo": "Sconti ai clienti storici", "dove": "00:00:50"}], "prossima_riunione": {"quando": "giovedì 29/10 ore 15:30", "note": ""},
   "punti_discussi": [{"titolo": "Prezzi", "punti": ["Aumento 4%", "Prodotti di punta invariati"], "dove": "00:00:12"}], "da_controllare": []}
+verbale_en = {"titolo": "2027 price list", "in_breve": "2027 price list with an average 4% increase, flagship products unchanged, delivery priced separately.",
+  "decisioni": [{"testo": "Average 4% increase on the 2027 price list", "chi": "Mark Ross", "dove": "00:00:12"}],
+  "azioni": [{"cosa": "Figures on delivery costs", "chi": "Julia White", "entro": "Friday 23/10", "dove": "00:00:30"},
+             {"cosa": "Draft of the 2027 price list", "chi": "Mark Ross", "entro": "Tuesday 27/10", "dove": "00:00:40"}],
+  "da_decidere": [{"testo": "Discounts for long-standing customers", "dove": "00:00:50"}], "prossima_riunione": {"quando": "Thursday 29/10 at 15:30", "note": ""},
+  "punti_discussi": [{"titolo": "Prices", "punti": ["4% increase", "Flagship products unchanged"], "dove": "00:00:12"}], "da_controllare": []}
+CAP_EN = [{"inizio": "00:00:00", "titolo": "The 2027 price list", "dettaglio": "4% increase"}, {"inizio": "00:00:08", "titolo": "Delivery costs"}, {"inizio": "00:00:16", "titolo": "Competitors and discounts"}]
 CAP = [{"inizio": "00:00:00", "titolo": "Il listino 2027", "dettaglio": "aumento del 4%"}, {"inizio": "00:00:08", "titolo": "Costi di consegna"}, {"inizio": "00:00:16", "titolo": "Concorrenti e sconti"}]
 _chiedi_base = _chiedi
 def _chiedi(chiave, pdf, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it", formato="cornell", **kw):
     if formato == "verbale":
         print("CLAUDE verbale", kw.get("partecipanti"), "NOTE", kw.get("note"), flush=True); time.sleep(2)
-        return dict(verbale, capitoli=CAP), 0.04
+        return (dict(verbale_en, capitoli=CAP_EN) if lingua_appunti == "en" else dict(verbale, capitoli=CAP)), 0.04
     d, sp = _chiedi_base(chiave, pdf, tentativi, contesto, lingua_appunti, lingua_lezione, formato, **kw)
-    return dict(d, capitoli=CAP), sp
+    return dict(d, capitoli=CAP_EN if lingua_appunti == "en" else CAP), sp
 ap.chiedi_a_claude = _chiedi
+
+# preparazione all'esame: classifica, simulazione e correzione finte
+_chiama_base = chm._chiama
+def _chiama(chiave, corpo, tentativi=3):
+    n = (corpo.get("tools") or [{}])[0].get("name")
+    en = "inglese" in corpo.get("system", "") or "English" in corpo.get("system", "")
+    if n == "salva_classifica":
+        return {"usage": {"input_tokens": 9000, "output_tokens": 900}, "content": [{"type": "tool_use", "input": {
+            "domande": [{"domanda": "Prove that sin x / x → 1" if en else "Dimostra che sin x / x → 1", "stelle": 3, "lezioni": ["13/10", "16/10"], "perche": "repeated in two lectures" if en else "ripetuta in due lezioni", "schema": ["radians" if en else "radianti", "squeeze" if en else "confronto", "conclusion" if en else "conclusione"]},
+                        {"domanda": "Lagrange's theorem" if en else "Teorema di Lagrange", "stelle": 3, "lezioni": ["13/10"], "perche": "«I always ask it at the exam»" if en else "«all'esame lo chiedo sempre»", "schema": ["statement" if en else "enunciato", "geometric meaning" if en else "significato geometrico"]},
+                        {"domanda": "Indeterminate forms" if en else "Forme indeterminate", "stelle": 2, "lezioni": ["16/10"], "schema": ["list" if en else "elenco", "how to resolve them" if en else "come si sciolgono"]}],
+            "argomenti": [{"titolo": "Notable limits" if en else "Limiti notevoli", "lezione": "16/10", "peso": 3}, {"titolo": "Indeterminate forms" if en else "Forme indeterminate", "lezione": "16/10", "peso": 2},
+                          {"titolo": "Derivative" if en else "Derivata: definizione", "lezione": "13/10", "peso": 2}, {"titolo": "Lagrange", "lezione": "13/10", "peso": 3}]}}]}
+    if n == "salva_simulazione":
+        return {"usage": {"input_tokens": 2000, "output_tokens": 500}, "content": [{"type": "tool_use", "input": {"domande": [
+            {"domanda": "Prove that sin x / x → 1 as x → 0" if en else "Dimostra che sin x / x → 1 per x → 0", "deve_contenere": "radians, squeeze" if en else "radianti, confronto", "punti": 10},
+            {"domanda": "State Lagrange's theorem" if en else "Enuncia il teorema di Lagrange", "deve_contenere": "continuous, differentiable" if en else "continua in [a,b], derivabile in (a,b)", "punti": 10},
+            {"domanda": "Compute lim x→0 (1−cos x)/x²" if en else "Calcola lim x→0 (1−cos x)/x²", "deve_contenere": "1/2", "punti": 10}]}}]}
+    if n == "salva_correzione":
+        return {"usage": {"input_tokens": 2000, "output_tokens": 400}, "content": [{"type": "tool_use", "input": {"risposte": [
+            {"n": 1, "punti": 8, "su": 10, "bene": "Squeeze theorem used well" if en else "Teorema del confronto usato bene", "manca": "You don't say x must be in radians" if en else "Non dici che x deve essere in radianti"},
+            {"n": 2, "punti": 0, "su": 10, "bene": "", "manca": "Empty answer" if en else "Risposta vuota"}, {"n": 3, "punti": 10, "su": 10, "bene": "Result 1/2 correct" if en else "Risultato 1/2 corretto", "manca": ""}],
+            "voto": 18, "consiglio": "Review Lagrange's theorem (lecture of 13/10)." if en else "Ripassa il teorema di Lagrange (lezione del 13/10)."}}]}
+    return _chiama_base(chiave, corpo, tentativi)
+chm._chiama = _chiama

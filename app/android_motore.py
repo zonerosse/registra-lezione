@@ -407,6 +407,7 @@ def _funzioni_pc(mt):
     mt.taglia = taglia
     import voci as vc
     vc._sessione = lambda: _SessioneVoci()
+    vc.cartella_modelli = lambda: Path(str(Ponte.cartellaDati()))      # accanto al riconoscitore vocale
     vc._audio_parte = _audio_parte
     # «Registra da solo» non si puo': Android non lascia accendere il microfono a un'app chiusa
     modo = mt.Motore._cal_modo

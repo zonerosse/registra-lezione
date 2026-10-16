@@ -114,7 +114,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1200);
     const be = await p.$('#bandaEsame');
     passo('bottone «Preparati all\'esame»', be);
-    if (be) { await be.click(); await p.waitForSelector('#esBox .card', {timeout: 30000}).catch(() => {}); await foto('16-esame'); passo('preparazione all\'esame', await p.$('#esBox .card')); }
+    if (be) { await be.click(); await p.waitForSelector('.esq', {timeout: 30000}).catch(() => {}); await foto('16-esame'); passo('preparazione all\'esame: le domande del corso', await p.$('.esq')); }
     // chapters e spezzone
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1200);
     // calendario: avviso all'ora dell'impegno, anche con l'app chiusa
