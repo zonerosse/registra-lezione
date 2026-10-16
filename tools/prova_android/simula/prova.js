@@ -48,14 +48,16 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('Le mie lezioni', lz.lezioni.length === 2 && lz.lezioni.every(l => l.stato === 'pronta'), lz.lezioni.map(l => l.nome + ':' + l.stato).join(', '));
     // ---- le funzioni del PC sul telefono
     const leggi = f => fs.existsSync(`${dati}/${f}`) ? fs.readFileSync(`${dati}/${f}`, 'utf8') : '';
-    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(800);
-    if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(800); }
+    await aspetta(x => !x.occupato, 60);
+    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(1500);
+    if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(1200); }
     await p.click('#tipoBox [data-k="riunione"]'); await p.waitForTimeout(400);
     passo('riunione: modelli di riunione', await p.isVisible('#modBox'));
     await p.click('#doveBox [data-m="aula"]');
     await p.fill('#nome', 'Riunione commerciale – listino 2027');
     for (const n of ['Marco Rossi', 'Giulia Bianchi']) { await p.fill('#partIn', n); await p.press('#partIn', 'Enter'); }
-    await p.click('#quandoBox [data-q="durante"]'); await p.click('#btnRec'); await p.waitForTimeout(3000);
+    await p.click('#quandoBox [data-q="durante"]'); await p.click('#btnRec');
+    await p.waitForSelector('#noteCard', {state: 'visible', timeout: 30000}).catch(() => {}); await p.waitForTimeout(1500); await foto('09b-riunione');
     passo('durante: «Le tue note» e «Chiedi adesso»', await p.isVisible('#noteCard') && await p.isVisible('#ddCard'));
     await p.fill('#notaIn', 'Chiedere lo sconto per 3 anni'); await p.press('#notaIn', 'Enter'); await p.waitForTimeout(500);
     await p.click('#noteCard [data-nota="importante"]'); await p.waitForTimeout(1500);
