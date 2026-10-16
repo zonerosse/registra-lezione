@@ -235,6 +235,15 @@ class Api:
     def cond_word(self, cartella):
         return self._m.cond_word(cartella)
 
+    def server_collega(self, endpoint, chiave):
+        return self._m.server_collega(endpoint, chiave)
+
+    def server_scegli(self, dove):
+        return self._m.server_scegli(dove)
+
+    def server_scollega(self):
+        return self._m.server_scollega()
+
     def cond_manda(self, cartella):
         return self._m.cond_manda(cartella)
 

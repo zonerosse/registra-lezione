@@ -181,8 +181,8 @@ def _aspetta_caricatore(cartella):
     M.aspetta_carica = False
 
 
-def trascrivi_campioni(audio, cartella, progresso=lambda f: None, threads=None):
-    """Come elaborazione.trascrivi_campioni, ma con whisper.cpp dentro l'app: i campioni vanno in un WAV
+def trascrivi_locale(audio, cartella, progresso=lambda f: None, threads=None):
+    """Come elaborazione.trascrivi_locale, ma con whisper.cpp dentro l'app: i campioni vanno in un WAV
     nella cache e il riconoscitore lo legge. Orari dall'inizio dei campioni."""
     import wave
     import numpy as np
@@ -407,11 +407,36 @@ def _sveglie(m):
         time.sleep(60)
 
 
+def _comprimi(audio):
+    """«Sul server» dal telefono: i campioni diventano AAC (m4a) con il codificatore del telefono."""
+    import wave
+    import numpy as np
+    cache = Path(str(Ponte.cartellaCache()))
+    wav, m4a = cache / f"srv_{threading.get_ident()}.wav", cache / f"srv_{threading.get_ident()}.m4a"
+    try:
+        with wave.open(str(wav), "wb") as w:
+            w.setnchannels(1)
+            w.setsampwidth(2)
+            w.setframerate(16000)
+            w.writeframes((np.clip(np.asarray(audio, dtype=np.float32), -1, 1) * 32767).astype("<i2").tobytes())
+        if not Ponte.unisciAudio(_stringhe([str(wav)]), str(m4a)):
+            raise RuntimeError("codifica audio")
+        return m4a.read_bytes()
+    finally:
+        for f in (wav, m4a):
+            try:
+                f.unlink()
+            except OSError:
+                pass
+
+
 def _funzioni_pc(mt):
     """Condividi, spezzoni, chi parla e calendario: le parti di Windows diventano quelle del telefono."""
     mt.manda_email = manda_email
     mt.apri_calendario = apri_calendario
     mt.taglia = taglia
+    import server_trascrizione as st
+    st.comprimi = _comprimi
     import voci as vc
     vc._sessione = lambda: _SessioneVoci()
     vc.cartella_modelli = lambda: Path(str(Ponte.cartellaDati()))      # accanto al riconoscitore vocale
@@ -508,7 +533,7 @@ def _prepara(cartella_app, lingua_tel):
     testi.lingua_windows = lambda: "it" if str(lingua_tel).lower().startswith("it") else "en"
 
     import elaborazione as el
-    el.trascrivi_campioni = trascrivi_campioni
+    el.trascrivi_locale = trascrivi_locale
     el.audio_parziale = audio_parziale
     el.audio_16k = audio_16k
     el.modello_presente = modello_presente

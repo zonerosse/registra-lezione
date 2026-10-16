@@ -356,6 +356,22 @@
             <small data-t="im.b">Nessuna chiave: preparo i pacchetti (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
         </div>
       </div>
+      <div class="card mt" id="dvCard">
+        <div class="lbl" data-t="dv.h">Dove trascrivo</div>
+        <div class="ai" id="dvBox">
+          <div class="aiopt" data-d="qui"><span class="rd"></span><span class="ico i-blue">💻</span><b data-t="dv.qui.t">Sul PC</b><small data-t="dv.qui">Gratis. L'audio non esce dal PC. Pronta un paio di minuti dopo la fine.</small></div>
+          <div class="aiopt" data-d="server"><span class="rd"></span><span class="ico i-org">⚡</span><b data-t="dv.srv.t">Sul server (veloce)</b><small data-t="dv.srv">Un'ora di lezione in circa un minuto, anche se il PC è lento. Pochi centesimi l'ora sul tuo conto RunPod. L'audio va al server (in Europa) e viene cancellato finito il lavoro.</small></div>
+        </div>
+        <div id="srvBox" class="hidden" style="margin-top:12px">
+          <div class="lbl" data-t="dv.cod">Codice del server (Endpoint ID)</div>
+          <input class="in" id="srvCod" autocomplete="off" spellcheck="false" maxlength="40">
+          <div class="lbl" style="margin-top:10px" data-t="dv.chiave">Chiave di RunPod</div>
+          <input class="in" id="srvKey" type="password" autocomplete="off" spellcheck="false">
+          <div class="hint" style="margin-top:4px" data-t="dv.chiave.s">Resta solo su questo PC, protetta.</div>
+          <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap"><button class="btn b-main b-sm" id="srvVai" data-t="dv.vai">Collega e prova</button><span class="hint sp" id="srvEsito"></span><button class="lnk hidden" id="srvVia" data-t="dv.via">Scollega</button></div>
+          <div class="hint" style="margin-top:8px" data-t="dv.nota">Se manca internet o il server non risponde, trascrivo qui come prima: la registrazione non si perde mai.</div>
+        </div>
+      </div>
       <div class="card mt">
         <div class="lbl" data-t="im.fmt">Formato degli appunti</div>
         <div class="ai" id="fmtBox">

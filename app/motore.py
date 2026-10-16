@@ -325,6 +325,7 @@ class Motore:
         # calendario: impegni, avviso prima, avvio da solo, domanda a fine impegno
         self.cal = cal.Calendari(BASE / "calendario")
         el.DOPO_VOCI = self._nomi_voci
+        el.SERVER = self._server     # «Dove trascrivo: sul server»
         self._blocco_note = threading.Lock()
         self.cal_lista, self.cal_avviso, self.cal_fine, self.cal_rec = [], None, None, None
         self.cal_gestiti = set()
@@ -425,9 +426,11 @@ class Motore:
             return None
         info = el.leggi_json(Path(self.cartella_corrente) / "info.json", {}) or {}
         n = sum(len(info.get(ap.chiave_info(f)) or {}) for f in ap.FORMATI)
-        if not n:
+        srv = float(info.get("spesa_server") or 0)
+        if not n and not info.get("server"):
             return None
-        return {"n": n, "dollari": round(float(info.get("spesa_appunti") or 0), 2)}
+        return {"n": n, "dollari": round(float(info.get("spesa_appunti") or 0), 2), "server": bool(info.get("server")),
+                "server_dollari": round(srv, 3)}
 
     def _anteprima_cornell(self):
         """Le prime domande degli appunti, per la schermata di fine."""
@@ -507,6 +510,7 @@ class Motore:
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
+                "dove": self.cfg.get("trascrivi_dove") or "qui", "server_endpoint": (self._server_dati() or {}).get("endpoint", ""),
                 "modello": self.cfg.get("modello") or "generica", "modelli_nome": self.cfg.get("modelli_nome") or {},
                 "modello_mio": self.cfg.get("modello_mio") or None,
                 "modelli": [{"k": k, "nome": v.get(testi.LINGUA, v["it"])} for k, v in ap.MODELLI.items()],
@@ -2212,6 +2216,62 @@ class Motore:
                 self._invia_da_solo(cart)
         except Exception:
             log.exception("invio automatico")
+
+    # ------------------------------------------------------------------ «Dove trascrivo»: sul dispositivo o sul server
+
+    def _server_dati(self):
+        d = self.cfg.get("server_trascrizione")
+        if not d:
+            return None
+        try:
+            return json.loads(ap.leggi_chiave(d) or "{}") or None
+        except ValueError:
+            return None
+
+    def _server(self):
+        """(endpoint, chiave) se si trascrive sul server, altrimenti None."""
+        d = self._server_dati()
+        if self.cfg.get("trascrivi_dove") != "server" or not d or not d.get("endpoint") or not d.get("chiave"):
+            return None
+        return d["endpoint"], d["chiave"]
+
+    def server_collega(self, endpoint, chiave):
+        """«Collega e prova»: prova il server con 20 secondi di audio, poi salva codice e chiave (cifrati)."""
+        import server_trascrizione as st
+        endpoint, chiave = str(endpoint or "").strip(), str(chiave or "").strip()
+        vecchio = self._server_dati() or {}
+        if not chiave and vecchio.get("endpoint") == endpoint:
+            chiave = vecchio.get("chiave", "")          # chiave gia' salvata: si riprova senza riscriverla
+        if not re.fullmatch(r"[a-z0-9]{6,40}", endpoint):
+            return {"ok": False, "msg": tr("srv_codice")}
+        if len(chiave) < 10:
+            return {"ok": False, "msg": tr("srv_chiave")}
+        try:
+            r = st.prova(endpoint, chiave)
+        except st.ErroreServer as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("prova del server")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        self.cfg["server_trascrizione"] = ap.nascondi_chiave(json.dumps({"endpoint": endpoint, "chiave": chiave}))
+        self.cfg["trascrivi_dove"] = "server"
+        salva_config(self.cfg)
+        log.info("server di trascrizione collegato: %s (prova in %s s)", endpoint, r["secondi"])
+        return {"ok": True, **r}
+
+    def server_scegli(self, dove):
+        dove = "server" if dove == "server" else "qui"
+        if dove == "server" and not self._server_dati():
+            return {"ok": False, "msg": tr("srv_manca")}
+        self.cfg["trascrivi_dove"] = dove
+        salva_config(self.cfg)
+        return {"ok": True}
+
+    def server_scollega(self):
+        self.cfg.pop("server_trascrizione", None)
+        self.cfg["trascrivi_dove"] = "qui"
+        salva_config(self.cfg)
+        return {"ok": True}
 
     # ------------------------------------------------------------------ «Condividi e collega»
 

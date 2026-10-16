@@ -131,6 +131,13 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.click('#nav [data-p="imp"]'); await p.waitForTimeout(800);
     passo('impostazioni: collegamenti, chi parla, niente «registra da solo»', await p.isVisible('#cgCard') && await p.isVisible('#swVoci') && !(await p.isVisible('#segCal [data-v="solo"]')));
     await p.evaluate(() => document.getElementById('calCard').scrollIntoView()); await foto('17-calendario-imp');
+    // «Dove trascrivo: sul server» (RunPod finto)
+    await p.click('#dvBox [data-d="server"]'); await p.waitForTimeout(300);
+    await p.fill('#srvCod', 'prova123'); await p.fill('#srvKey', 'rpa_prova_telefono_1'); await p.click('#srvVai');
+    await p.waitForFunction(() => /✓|⚠/.test(document.getElementById('srvEsito').textContent), null, {timeout: 40000}).catch(() => {});
+    await p.evaluate(() => document.getElementById('dvCard').scrollIntoView()); await foto('18-server');
+    passo('«Sul server»: collegato dal telefono', (await p.textContent('#srvEsito')).includes('✓'), await p.textContent('#srvEsito'));
+    await p.evaluate(() => A.server_scollega());
     // impostazioni e «Aggiorna l'app» → «Scarica»
     await p.click('#nav [data-p="imp"]'); await p.waitForTimeout(600); await foto('07-impostazioni');
     passo('impostazioni del telefono', await p.isVisible('#segQuando') && !(await p.isVisible('#swMini')));

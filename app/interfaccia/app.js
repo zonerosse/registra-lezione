@@ -617,7 +617,7 @@ function disegnaFine() {
   if ($('fCheck').dataset.p !== String(pronto)) { $('fCheck').innerHTML = chk; $('fCheck').dataset.p = String(pronto); }
   $('fTit').textContent = pronto ? t('fn.ok') : S.importa ? t('fn.imp') : t('fn.lav');
   disegnaFasi();
-  const sp = S.spesa ? t('fn.spesa', {n: S.spesa.n, d: num(S.spesa.dollari.toFixed(2))}) : '';
+  const sp = !S.spesa ? '' : (S.spesa.n ? t('fn.spesa', {n: S.spesa.n, d: num(S.spesa.dollari.toFixed(2))}) : '') + (S.spesa.server ? t('fn.spesa.srv', {c: num((S.spesa.server_dollari * 100).toFixed(1))}) : '');
   $('fSub').textContent = (S.titolo_fine || '') + sp;
   $('fBar').classList.toggle('hidden', pronto || perc === null);
   if (perc !== null) $('fBar').firstElementChild.style.width = (perc * 100) + '%';
@@ -807,6 +807,38 @@ async function eliminaTuttiVideo() {
 }
 
 /* ------------------------------------------------------------------ impostazioni */
+/* «Dove trascrivo»: sul PC/telefono o sul server (RunPod) */
+const DV = {scelto: null};
+function disegnaDove() {
+  const dove = DV.scelto || R.dove || 'qui';
+  $('dvBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.d === dove));
+  $('srvBox').classList.toggle('hidden', dove !== 'server');
+  if (document.activeElement !== $('srvCod')) $('srvCod').value = R.server_endpoint || $('srvCod').value || '';
+  $('srvKey').placeholder = R.server_endpoint ? t('dv.chiave.gia') : '';
+  $('srvVia').classList.toggle('hidden', !R.server_endpoint);
+  if (!DV.esito) { $('srvEsito').textContent = R.server_endpoint && R.dove === 'server' ? t('dv.attivo') : ''; $('srvEsito').style.color = ''; }
+  $('dvBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => {
+    DV.esito = '';
+    if (o.dataset.d === 'qui') { DV.scelto = null; await A.server_scegli('qui'); await rileggi(); return; }
+    if (R.server_endpoint) { DV.scelto = null; await A.server_scegli('server'); await rileggi(); return; }
+    DV.scelto = 'server'; disegnaDove(); $('srvCod').focus();
+  });
+  $('srvVai').onclick = async () => {
+    const b = $('srvVai'); b.disabled = true; DV.esito = 'lav';
+    $('srvEsito').style.color = ''; $('srvEsito').textContent = t('dv.lav');
+    const r = await A.server_collega($('srvCod').value.trim(), $('srvKey').value.trim());
+    b.disabled = false;
+    if (!r.ok) { $('srvEsito').textContent = '⚠ ' + (r.msg || ''); $('srvEsito').style.color = '#be123c'; DV.esito = 'err'; return; }
+    $('srvKey').value = ''; DV.scelto = null;
+    await rileggi();
+    DV.esito = 'ok'; $('srvEsito').style.color = '#047857';
+    $('srvEsito').textContent = t('dv.ok', {s: r.secondi, c: num((r.dollari * 100).toFixed(2))});
+  };
+  $('srvVia').onclick = async () => {
+    if (!await conferma(t('dv.via.t'), t('dv.via.s'), t('dv.via'), t('annulla'))) return;
+    DV.esito = ''; DV.scelto = null; $('srvCod').value = ''; await A.server_scollega(); await rileggi();
+  };
+}
 function disegnaImpostazioni() {
   $('aiA').classList.toggle('on', !!R.appunti_on);
   $('aiB').classList.toggle('on', !R.appunti_on);
@@ -836,6 +868,7 @@ function disegnaImpostazioni() {
   $('swDir').classList.toggle('on', !!R.diretta);
   $('swPrec').classList.toggle('on', !!R.precisa);
   $('swVoci').classList.toggle('on', !!R.chi_parla);
+  disegnaDove();
   if (ANDROID) {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
     $('swCarica').classList.toggle('on', !!R.solo_carica);

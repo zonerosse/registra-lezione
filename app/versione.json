@@ -1,6 +1,6 @@
 {
- "versione": "3.26",
+ "versione": "3.27",
  "librerie": 2,
- "novita": "Pronta subito: mentre registri la trascrizione va avanti a pezzi di 5 minuti, così alla fine resta poco da fare e la registrazione è pronta in un paio di minuti. Stessa qualità, l'audio resta sul PC.",
- "novita_en": "Ready right away: while you record, the transcription goes ahead in 5-minute pieces, so at the end there is little left to do and the recording is ready in a couple of minutes. Same quality, the audio stays on the PC."
+ "novita": "Dove trascrivo: in Impostazioni puoi scegliere «Sul server (veloce)» con il tuo conto RunPod: un'ora di lezione in circa un minuto, pochi centesimi. Di serie resta sul PC; se il server non risponde si trascrive sul PC come prima.",
+ "novita_en": "Where I transcribe: in Settings you can choose «On the server (fast)» with your RunPod account: an hour of lecture in about a minute, a few cents. By default it stays on the PC; if the server does not answer it transcribes on the PC as before."
 }

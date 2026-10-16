@@ -193,9 +193,34 @@ def audio_parziale(wav):
     return audio_16k(wav)
 
 
+SERVER = None      # il motore ci mette una funzione() -> (endpoint, chiave) se si trascrive «Sul server»
+
+
 def trascrivi_campioni(audio, cartella, progresso=lambda f: None, threads=None):
     """Trascrive dei campioni (16 kHz): [{"inizio", "fine", "testo"}] con gli orari dall'inizio dei campioni.
-    Sul telefono questa funzione si cambia (whisper.cpp dentro l'app)."""
+    Con «Sul server» li manda al server; se il server non va, li trascrive qui (non si perde niente)."""
+    srv = SERVER() if SERVER else None
+    if srv and len(audio) > 16000:
+        import server_trascrizione as st
+        cartella = Path(cartella)
+        info_lez = leggi_json(cartella / "info.json", {}) or {}
+        lingua = info_lez.get("lingua_lezione") or LINGUA
+        try:
+            t0 = time.monotonic()
+            segs, dollari, rilevata = st.trascrivi(audio, srv[0], srv[1], lingua, parole_lezione(cartella), progresso)
+            with _BLOCCO_INFO:
+                prima = float((leggi_json(cartella / "info.json", {}) or {}).get("spesa_server") or 0)
+                aggiorna_info(cartella, spesa_server=round(prima + dollari, 5), server=True,
+                              **({"lingua_rilevata": rilevata} if lingua == "auto" and rilevata else {}))
+            log.info("server: %.0f s di audio in %.0f s, circa %.4f $", len(audio) / 16000, time.monotonic() - t0, dollari)
+            return segs
+        except Exception as e:
+            log.warning("trascrizione sul server non riuscita, la faccio qui: %s", e)
+    return trascrivi_locale(audio, cartella, progresso, threads)
+
+
+def trascrivi_locale(audio, cartella, progresso=lambda f: None, threads=None):
+    """Trascrive dei campioni (16 kHz) su questo PC. Sul telefono questa funzione si cambia (whisper.cpp)."""
     if threads is None:
         threads = max(1, (os.cpu_count() or 2) - 1)
     model = _modello(threads)

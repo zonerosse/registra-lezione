@@ -1,7 +1,7 @@
 {
- "versione": "0.9.1",
+ "versione": "0.9.2",
  "codice": 9,
- "novita": "Pronta subito: con «Durante» la trascrizione va avanti a pezzi di 5 minuti mentre registri, così alla fine la lezione è pronta in pochi minuti. L'audio resta sul telefono.",
- "novita_en": "Ready right away: with «During» the transcription goes ahead in 5-minute pieces while you record, so at the end the lecture is ready in a few minutes. The audio stays on the phone.",
- "contenuto": 12
+ "novita": "Dove trascrivo: in Impostazioni puoi scegliere «Sul server (veloce)» con il tuo conto RunPod: pronta in un minuto e il telefono non scalda. Di serie resta sul telefono.",
+ "novita_en": "Where I transcribe: in Settings you can choose «On the server (fast)» with your RunPod account: ready in a minute and the phone does not heat up. By default it stays on the phone.",
+ "contenuto": 13
 }
