@@ -1,9 +1,9 @@
 {
- "versione": "0.10.8",
+ "versione": "0.10.9",
  "codice": 10,
- "novita": "«Parole difficili» spiegata meglio: un esempio, titoli chiari («Le tue parole per…», «Trovate nei tuoi appunti · tocca quelle che vuoi aggiungere») e una conferma verde quando aggiungi una parola.",
- "novita_en": "«Difficult words» explained better: an example, clear titles («Your words for…», «Found in your notes · tap the ones you want to add») and a green confirmation when you add a word.",
- "contenuto": 39,
+ "novita": "Dove trascrivo: le due scelte («Sul telefono» e «Sul server») ora sono sempre in vista, una accanto all'altra, come «Online / In aula».",
+ "novita_en": "Where I transcribe: the two choices («On the phone» and «On the server») are now always visible, side by side, like «Online / In class».",
+ "contenuto": 40,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
 }
