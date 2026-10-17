@@ -142,7 +142,7 @@ const TESTI = {
     'lv.parti': 'Pacchetti e appunti', 'lv.pz': 'Pausa (intervallo)', 'lv.ri': 'Riprendi la registrazione', 'lv.fine': 'Fine', 'lv.riduci': 'Puoi ridurre questa finestra: la registrazione continua.',
     'fine.t': 'Fermo la registrazione?', 'fine': 'Poi preparo il video, la trascrizione e gli ultimi pacchetti.', 'fine.si': 'Sì, ferma',
     'pt.nessuna': 'Nessuna parte registrata.', 'pt.parte': 'Parte {k}', 'pt.reg': '● in registrazione', 'pt.coda': 'in coda…', 'pt.lav': 'Trascrivo… {p}%', 'pt.ok': '✓ Pacchetto pronto', 'pt.mostra': 'Mostra', 'pt.err': '⚠ problema',
-    'pt.ap.coda': 'Appunti in coda…', 'pt.ap.lav': 'Claude scrive…', 'pt.ap.ok': '✓ Appunti pronti', 'pt.apri': 'Apri', 'pt.ap.err': '⚠ Appunti non creati: {m}', 'pt.riprova': 'Riprova',
+    'ar.aplav': 'Appunti in preparazione… {p}%', 'pt.ap.coda': 'Appunti in coda…', 'pt.ap.lav': 'Claude scrive…', 'pt.ap.ok': '✓ Appunti pronti', 'pt.apri': 'Apri', 'pt.ap.err': '⚠ Appunti non creati: {m}', 'pt.riprova': 'Riprova',
     // fine
     'fn.ok': 'Registrazione salvata!', 'fn.lav': 'Preparo la registrazione completa…', 'fn.spesa': ' · {n} appunti creati da Claude · spesa circa {d} $',
     'fn.cornell': 'Formato Cornell', 'fn.primi': 'I primi appunti sono pronti', 'fn.tuoi': 'I tuoi appunti sono pronti',
@@ -350,7 +350,7 @@ const TESTI = {
     'lv.parti': 'Packages and notes', 'lv.pz': 'Pause (break)', 'lv.ri': 'Resume recording', 'lv.fine': 'Stop', 'lv.riduci': 'You can minimise this window: recording continues.',
     'fine.t': 'Stop the recording?', 'fine': "Then I'll prepare the video, the transcript and the last packages.", 'fine.si': 'Yes, stop',
     'pt.nessuna': 'No part recorded.', 'pt.parte': 'Part {k}', 'pt.reg': '● recording', 'pt.coda': 'queued…', 'pt.lav': 'Transcribing… {p}%', 'pt.ok': '✓ Package ready', 'pt.mostra': 'Show', 'pt.err': '⚠ problem',
-    'pt.ap.coda': 'Notes queued…', 'pt.ap.lav': 'Claude is writing…', 'pt.ap.ok': '✓ Notes ready', 'pt.apri': 'Open', 'pt.ap.err': '⚠ Notes not created: {m}', 'pt.riprova': 'Retry',
+    'ar.aplav': 'Preparing notes… {p}%', 'pt.ap.coda': 'Notes queued…', 'pt.ap.lav': 'Claude is writing…', 'pt.ap.ok': '✓ Notes ready', 'pt.apri': 'Open', 'pt.ap.err': '⚠ Notes not created: {m}', 'pt.riprova': 'Retry',
     'fn.ok': 'Recording saved!', 'fn.lav': 'Preparing the full recording…', 'fn.spesa': ' · {n} notes created by Claude · cost about {d} $',
     'fn.cornell': 'Cornell format', 'fn.primi': 'The first notes are ready', 'fn.tuoi': 'Your notes are ready',
     'fn.det': '{n} exam questions, summary{f}{e}, with the slides in the right place.', 'fn.det.f': ', formula sheet', 'fn.det.e': ', worked examples', 'fn.det0': 'Questions, notes and summary, with the slides in the right place.',

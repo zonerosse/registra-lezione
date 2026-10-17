@@ -35,6 +35,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('«Durante»: lezione pronta', s.finale === 'ok' && s.parti.every(x => x.stato === 'ok'), JSON.stringify(s.parti.map(x => x.stato)));
     // «Dopo» + online (vivavoce)
     await p.click('#fNuova'); await p.waitForTimeout(800);
+    await p.evaluate(() => A.imposta('appunti_attivi', false)); await rileggiPagina();      // niente appunti: si creano dopo da «Le mie lezioni»
     await p.click('#doveBox [data-m="online"]'); await p.fill('#nome', 'Fisica 1 – Cinematica'); await p.click('#quandoBox [data-q="dopo"]');
     await p.click('#btnRec'); await p.waitForTimeout(600);
     passo('online: avviso «Metti il vivavoce»', await p.$('.dlg .b-rec')); await p.click('.dlg .b-rec');
@@ -45,6 +46,23 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     const btn = await p.$('.lez [data-a="completa"]');
     passo('«Trascrivi ora» c\'è', btn);
     if (btn) { await btn.click(); s = await aspetta(x => x.finale === 'ok' && !x.occupato, 120); await foto('06-trascritta'); passo('«Trascrivi ora» finito', s.finale === 'ok' && s.parti.every(x => x.stato === 'ok')); }
+    await p.evaluate(() => A.imposta('appunti_attivi', true)); await rileggiPagina();
+    // «Crea appunti» sul telefono: si resta in Le mie lezioni, con la barra sulla scheda
+    await aspetta(x => !x.occupato, 60);
+    await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1500);
+    const bcrea = await p.$('.lez [data-a="crea"]');
+    passo('«Crea appunti» c\'è', bcrea);
+    if (bcrea) {
+      await bcrea.click(); await p.waitForTimeout(400);
+      await p.waitForSelector('#lista .bar.cor', {timeout: 5000}).catch(() => {}); await foto('06b-crea-appunti');
+      passo('«Crea appunti»: resta in Le mie lezioni con la barra', await p.evaluate(() => pagina === 'arch' && !!document.querySelector('#lista .bar.cor')),
+            await p.evaluate(() => pagina));
+      await p.waitForFunction(() => !APLAV, null, {timeout: 90000}).catch(() => {}); await p.waitForTimeout(1500);
+      const fis = (await p.evaluate(() => A.lezioni())).lezioni.find(l => l.nome.startsWith('Fisica'));
+      passo('«Crea appunti»: finito, c\'è «Apri appunti»', await p.evaluate(() => pagina === 'arch') && fis && fis.n_appunti > 0 &&
+            await p.$('.lez [data-a="appunti"]'), fis && fis.n_appunti);
+      await foto('06c-appunti-creati');
+    }
     // appunti, lezioni
     const lz = await p.evaluate(() => A.lezioni());
     passo('Le mie lezioni', lz.lezioni.length === 2 && lz.lezioni.every(l => l.stato === 'pronta'), lz.lezioni.map(l => l.nome + ':' + l.stato).join(', '));

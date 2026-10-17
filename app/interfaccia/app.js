@@ -243,12 +243,38 @@ async function ciclo() {
   }
 }
 let vistaPrima = null, contaLz = 0;
+/* telefono: «Crea appunti» resta in Le mie lezioni, con la barra sulla scheda della lezione */
+let APLAV = null, apVisti = false;
+function apPerc() {
+  const P = (S && S.parti) || [];
+  if (!P.length) return 0;
+  return Math.round(100 * P.reduce((a, p) => a + (p.ap === 'ok' ? 1 : p.ap === 'lav' ? (p.ap_perc || 0) : 0), 0) / P.length);
+}
+function apSegui() {
+  const P = (S && S.parti) || [];
+  const err = P.find(p => p.ap === 'errore');
+  const lav = P.some(p => p.ap === 'lav' || p.ap === 'attesa');
+  if (lav) apVisti = true;
+  if (err || (!lav && (apVisti || !P.length))) {
+    APLAV = null; apVisti = false;
+    if (err) toast(t('pt.ap.err', {m: err.ap_err || ''}));
+    caricaLezioni(); return;
+  }
+  disegnaLezioni();
+}
+async function creaQui(c, f) {
+  APLAV = c; apVisti = false;
+  const r = await A.appunti_mancanti(c, f);
+  if (!r.ok) { APLAV = null; if (r.msg) toast(r.msg); return; }
+  S = await A.stato(); vistaPrima = S.vista;
+  disegnaLezioni();
+}
 async function aggiorna() {
   S = await A.stato();
   if (S.vista !== vistaPrima) {
     const prima = vistaPrima; vistaPrima = S.vista;
     if (S.vista === 'reg') slideViste = -1;
-    if (pagina === 'reg' || (prima !== null && S.vista !== 'pronto')) vai('reg');
+    if (pagina === 'reg' || (prima !== null && S.vista !== 'pronto' && !(APLAV && pagina === 'arch'))) vai('reg');
     if (S.vista === 'pronto') { R = await A.riepilogo(); disegnaPronto(); }
   }
   if (S.vista === 'reg') disegnaReg();
@@ -256,7 +282,8 @@ async function aggiorna() {
   if (S.vista === 'pronto') disegnaSorgenti();
   disegnaStato();
   if (pagina === 'info') disegnaAgg();
-  if (pagina === 'arch' && ++contaLz % 8 === 0) caricaLezioni();
+  if (APLAV) { if (pagina === 'arch') apSegui(); }
+  else if (pagina === 'arch' && ++contaLz % 8 === 0) caricaLezioni();
   avvisiCalendario();
   for (const m of S.messaggi || []) { A.letto(m.id); await dialogo({titolo: m.titolo, testo: m.testo}); }
 }
@@ -725,7 +752,8 @@ function disegnaLezioni() {
       (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
     const errL = l.errore ? `<div class="hint" style="color:#be123c">⚠ ${esc(l.errore)}</div>` : '';
     let pill, prim = '';
-    if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
+    if (APLAV && APLAV === l.cartella) { const pc = apPerc(); pill = `<span class="pill p-cor">${ico('spark', 12)}${t('ar.aplav', {p: pc})}</span><div class="bar cor" style="width:100%;margin:2px 0 4px"><i style="width:${pc}%"></i></div>`; }
+    else if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
     else if (l.n_appunti) { pill = (l.formati || []).map(f => `<span class="pill ${f === 'esame' ? 'p-warn' : f === 'verbale' ? 'p-blue' : f === 'mio' ? 'p-mio' : 'p-cor'}">${ico('spark', 12)}${esc(nomeFormato(f, l.nome_mio))}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
@@ -766,6 +794,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'pacchetti') return A.apri_pacchetti();
   if (a === 'cartella') return A.apri(c);
   if (a === 'completa') { const r = await A.completa(c); if (!r.ok) toast(r.msg); else { await aggiorna(); vai('reg'); } return; }
+  if (a === 'crea' && ANDROID) return creaQui(c, null);
   if (a === 'crea') { const r = await A.appunti_mancanti(c, null); if (r.ok) { await aggiorna(); vai('reg'); } return; }
   if (a.startsWith('anche:') || a.startsWith('compl:')) {
     const f = a.split(':')[1];
@@ -773,6 +802,7 @@ async function azioneLezione(l, a, e) {
       const st = await A.stima_appunti(c);
       if (!await conferma(t('ar.anche.t', {f: nomeFormato(f, l.nome_mio)}), t('ar.anche', {n: l.nome, c: num(st.toFixed(2))}), t('ar.anche.si'), t('annulla'), f === 'esame' ? 'b-pz' : 'b-cor')) return;
     }
+    if (ANDROID) return creaQui(c, f);
     const r = await A.appunti_mancanti(c, f); if (r.ok) { await aggiorna(); vai('reg'); } return;
   }
   if (a === 'rifai') {

@@ -14,6 +14,7 @@ import base64
 import ctypes
 import json
 import logging
+import os
 import ssl
 import sys
 import time
@@ -1518,7 +1519,7 @@ def sistema_vecchi(cartella):
                      appunti_completi_esame=info.get("appunti_completi"), appunti_completi=None)
 
 
-PAROLE_MINIME = 15      # sotto: la parte e' vuota (silenzio, o pochi secondi dopo il cambio di parte)
+PAROLE_MINIME = int(os.environ.get("RL_PAROLE_MINIME") or 15)      # sotto: la parte e' vuota (silenzio, o pochi secondi dopo il cambio di parte)
 
 
 def parte_vuota(cartella, k):

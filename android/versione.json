@@ -1,7 +1,7 @@
 {
- "versione": "0.9.7",
+ "versione": "0.9.8",
  "codice": 9,
- "novita": "Corretto: gli appunti della lezione non mostrano più il «Tratto vuoto» dell'ultimo pezzo senza parole. Le lezioni già fatte si sistemano da sole.",
- "novita_en": "Fixed: lecture notes no longer show the «Empty stretch» of a last piece with no words. Existing lectures fix themselves.",
- "contenuto": 18
+ "novita": "«Crea appunti» ora resta in «Le mie lezioni»: sulla scheda della lezione vedi la barra che si riempie, e alla fine compare «Apri appunti».",
+ "novita_en": "«Create notes» now stays in «My lectures»: the lecture's card shows a filling bar, and «Open notes» appears when it's done.",
+ "contenuto": 19
 }
