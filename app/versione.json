@@ -1,6 +1,6 @@
 {
- "versione": "3.34",
+ "versione": "3.35",
  "librerie": 2,
- "novita": "Privacy: al primo avvio un riquadro spiega in breve cosa resta sul tuo computer e cosa esce, e chiede di confermare che hai il permesso di registrare le altre persone. Si rilegge quando vuoi in Impostazioni › Privacy.",
- "novita_en": "Privacy: on first start a box briefly explains what stays on your computer and what leaves, and asks you to confirm you have permission to record other people. You can read it again anytime in Settings › Privacy."
+ "novita": "Corretto: «Crea appunti» non dice più «non ci sono parole» quando la trascrizione c'è: rifà il pezzo che mancava e crea gli appunti. Una parte lunga ha sempre i suoi appunti.",
+ "novita_en": "Fixed: «Create notes» no longer says «no words» when there is a transcript: it rebuilds the missing piece and creates the notes. A long part always gets its notes."
 }
