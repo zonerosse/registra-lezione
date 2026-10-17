@@ -1,6 +1,6 @@
 {
- "versione": "3.42",
+ "versione": "3.43",
  "librerie": 2,
- "novita": "Nuovo: Inviti. In Impostazioni prepari un messaggio da mandare su WhatsApp: chi lo incolla in «Ho un invito» ha subito la chiave di Claude e il server, senza vederli.",
- "novita_en": "New: Invitations. In Settings you prepare a message to send on WhatsApp: whoever pastes it into «I have an invitation» instantly gets the Claude key and the server, without seeing them."
+ "novita": "Impostazioni › Dove trascrivo: con «Sul PC» si vedono velocità, «Trascrizione più precisa» e i limiti; le voci del server compaiono solo con «Sul server». «Altre opzioni» più visibile.",
+ "novita_en": "Settings › Where I transcribe: with «On the PC» you see speed, «More accurate transcript» and the limits; server fields appear only with «On the server». «More options» easier to see."
 }

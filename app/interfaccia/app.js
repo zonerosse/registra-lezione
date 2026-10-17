@@ -1043,6 +1043,10 @@ function disegnaDove() {
   if (document.activeElement !== $('srvCod')) $('srvCod').value = R.server_endpoint || $('srvCod').value || '';
   $('srvKey').placeholder = R.server_endpoint ? t('dv.chiave.gia') : '';
   $('srvVia').classList.toggle('hidden', !R.server_endpoint);
+  $('dvPc').classList.toggle('hidden', dove === 'server');
+  $('dvSrv').classList.toggle('hidden', dove !== 'server');
+  const v = parseFloat(R.velocita || 0);
+  $('dvVel').textContent = v > 0 ? t('dv.vel', {m: Math.max(1, Math.round(60 / v))}) : t('dv.vel0');
   const st = $('dvStato');
   st.className = 'dvstato';
   if (R.server_endpoint && R.dove === 'server') st.textContent = t('dv.attivo');

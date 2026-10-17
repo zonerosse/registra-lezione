@@ -403,14 +403,24 @@
       </div>
       <div class="card mt" id="dvCard">
         <div class="lbl" data-t="dv.h">Dove trascrivo</div>
-        <div class="dvcosa" data-t="dv.cosa">Cos'è il server? Un computer molto potente a noleggio (RunPod, in Europa) che trascrive al posto del PC: un'ora di lezione in circa un minuto. Si paga solo il tempo che lavora, pochi centesimi per un'ora di lezione. L'audio viene cancellato appena finito.</div>
         <div class="dvsel" id="dvSel"><span class="dvico" id="dvIco"></span><div class="sp"><b id="dvT"></b><small id="dvS"></small></div><span class="dvfr">▼</span></div>
         <div class="dvlista hidden" id="dvBox">
           <div data-d="qui"><span class="dvico">💻</span><div><b data-t="dv.qui.t">Sul PC</b><small data-t="dv.qui">Gratis. L'audio non esce dal PC. Pronta un paio di minuti dopo la fine.</small></div></div>
           <div data-d="server"><span class="dvico">⚡</span><div><b data-t="dv.srv.t">Sul server (veloce)</b><small data-t="dv.srv">Un'ora di lezione in circa un minuto, anche se il PC è lento. Pochi centesimi l'ora sul tuo conto RunPod. L'audio va al server (in Europa) e viene cancellato finito il lavoro.</small></div></div>
         </div>
+        <div class="dvpc" id="dvPc">
+          <div class="lbl" style="margin:0 0 4px" data-t="dv.pc.h">Trascrizione sul PC</div>
+          <div class="set"><div class="t"><b data-t="dv.vel.t">Velocità di questo PC</b><span id="dvVel"></span></div></div>
+          <div class="set"><div class="t"><b data-t="im.prec">Trascrizione più precisa</b><span data-t="im.prec.s">Sbaglia meno parole, ma ci mette circa una volta e mezza il tempo. Vale per le prossime registrazioni.</span></div><div class="sw" id="swPrec"></div></div>
+          <div class="set solo-and"><div class="t"><b data-t="and.q.t"></b><span data-t="and.q.s"></span></div><div class="seg" id="segQuando"><span data-v="durante" data-t="and.durante.t"></span><span data-v="dopo" data-t="and.dopo.t"></span></div></div>
+          <div class="set solo-and"><div class="t"><b data-t="and.c.t"></b><span data-t="and.c.s"></span></div><div class="sw" id="swCarica"></div></div>
+          <div class="dvlim" data-t="dv.lim.pc">⚠ Limiti: mentre trascrive il PC lavora molto e può scaldare o rallentare; non spegnerlo finché non ha finito (se lo spegni, riprende alla riaccensione). Se il PC è lento, conviene «Sul server».</div>
+        </div>
+        <div id="dvSrv">
+          <div class="dvcosa" data-t="dv.cosa">Cos'è il server? Un computer molto potente a noleggio (RunPod, in Europa) che trascrive al posto del PC: un'ora di lezione in circa un minuto. Si paga solo il tempo che lavora, pochi centesimi per un'ora di lezione. L'audio viene cancellato appena finito.</div>
+          <div class="dvlim" data-t="dv.lim.srv">⚠ Limiti: serve internet; se il server era spento, la prima volta ci mette fino a un minuto in più ad accendersi. Se manca internet trascrivo qui come prima.</div>
         <div class="dvstato" id="dvStato"></div>
-        <details class="dvaltre" id="dvAltre"><summary data-t="dv.altre">Altre opzioni</summary>
+        <details class="dvaltre" id="dvAltre"><summary><span data-t="dv.altre">⚙ Altre opzioni: codice e chiave del server</span></summary>
         <div id="srvBox" style="margin-top:10px;border-top:1px dashed #dbe5f0;padding-top:10px">
           <div class="lbl" data-t="dv.cod">Codice del server (Endpoint ID)</div>
           <input class="in" id="srvCod" autocomplete="off" spellcheck="false" maxlength="40">
@@ -421,7 +431,7 @@
           <div style="margin-top:14px"><button class="btn b-sm dvvia hidden" id="srvVia" data-t="dv.via">Scollega il server…</button></div>
         </div>
         </details>
-        <div class="hint" style="margin-top:10px" data-t="dv.nota">Se manca internet o il server non risponde, trascrivo qui come prima: la registrazione non si perde mai.</div>
+        </div>
       </div>
       <div class="card mt">
         <div class="lbl" data-t="im.fmt">Formato degli appunti</div>
@@ -462,7 +472,6 @@
       <div class="card mt">
         <div class="set"><div class="t"><b data-t="im.ogni">Ogni quanto preparo un pacchetto</b><span data-t="im.ogni.s">Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30" data-t="im.30">30 min</span><span data-v="60" data-t="im.60">1 ora</span></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.mini">Mini finestra durante la registrazione</b><span data-t="im.mini.s">Piccola, sempre in primo piano, con Pausa e Fine.</span></div><div class="sw" id="swMini"></div></div>
-        <div class="set"><div class="t"><b data-t="im.prec">Trascrizione più precisa</b><span data-t="im.prec.s">Sbaglia meno parole, ma ci mette circa una volta e mezza il tempo. Vale per le prossime registrazioni.</span></div><div class="sw" id="swPrec"></div></div>
         <div class="set"><div class="t"><b data-t="im.voci">Riconosci chi parla</b><span data-t="im.voci.s">Nella trascrizione e negli appunti c'è scritto chi ha detto cosa.</span></div><div class="sw" id="swVoci"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dir">Testo in diretta</b><span data-t="im.dir.s">Mentre registri vedi il testo con circa 2 minuti di ritardo. Il PC lavora di più: su un portatile lento può rallentare Meet.</span></div><div class="sw" id="swDir"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dnd">Ricordami «Non disturbare»</b><span data-t="im.dnd.s">Così i suoni delle notifiche non finiscono nella registrazione.</span></div><div class="sw" id="swDnd"></div></div>
@@ -471,8 +480,6 @@
       </div>
       <div class="card mt solo-and">
         <div class="lbl" data-t="and.imp">Telefono</div>
-        <div class="set"><div class="t"><b data-t="and.q.t"></b><span data-t="and.q.s"></span></div><div class="seg" id="segQuando"><span data-v="durante" data-t="and.durante.t"></span><span data-v="dopo" data-t="and.dopo.t"></span></div></div>
-        <div class="set"><div class="t"><b data-t="and.c.t"></b><span data-t="and.c.s"></span></div><div class="sw" id="swCarica"></div></div>
         <div class="set" id="andAgg" style="cursor:pointer"><div class="t"><b data-t="and.agg.t"></b><span id="andVer"></span></div><span style="font-size:22px;color:var(--mut)">›</span></div>
       </div>
       <div class="card mt">
