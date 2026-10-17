@@ -1,7 +1,7 @@
 {
- "versione": "0.9.8",
+ "versione": "0.9.9",
  "codice": 9,
- "novita": "«Crea appunti» ora resta in «Le mie lezioni»: sulla scheda della lezione vedi la barra che si riempie, e alla fine compare «Apri appunti».",
- "novita_en": "«Create notes» now stays in «My lectures»: the lecture's card shows a filling bar, and «Open notes» appears when it's done.",
- "contenuto": 19
+ "novita": "Privacy: al primo avvio un riquadro spiega in breve cosa resta sul telefono e cosa esce, e chiede di confermare che hai il permesso di registrare le altre persone. Si rilegge in Impostazioni › Privacy. Nuova pagina «Licenze» in Informazioni.",
+ "novita_en": "Privacy: on first start a box briefly explains what stays on your phone and what leaves, and asks you to confirm you have permission to record other people. Read it again in Settings › Privacy. New «Licenses» page under About.",
+ "contenuto": 20
 }
