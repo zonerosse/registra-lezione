@@ -1,6 +1,6 @@
 {
- "versione": "3.60",
+ "versione": "3.61",
  "librerie": 2,
- "novita": "L'avviso di aggiornamento dice che il programma si chiude e si riapre da solo (circa un minuto). Il bottone ora è «Aggiorna e riapri».",
- "novita_en": "The update notice says the program closes and reopens by itself (about a minute). The button is now «Update and reopen»."
+ "novita": "Freccia per tornare indietro: in Chiedi, Mappa, Capitoli, Esame, Infografica, Chi parla, Statistiche e Ripassa c'è in alto «← …» che riporta alla pagina da cui sei arrivato.",
+ "novita_en": "Back arrow: in Ask, Map, Chapters, Exam, Infographic, Who speaks, Statistics and Review there is «← …» at the top that takes you back to where you came from."
 }

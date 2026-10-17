@@ -62,7 +62,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(pagina)) { vai('arch'); return true; }
+  if (INTERNE.includes(pagina)) { const b = $('v-' + pagina).querySelector(':scope > .indietro'); if (b) b.click(); else vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -114,12 +114,34 @@ window.chiusura = async c => {
 };
 
 /* ------------------------------------------------------------------ navigazione */
-function vai(p) {
+// pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
+const INTERNE = ['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'];
+let STORIA = [];
+function titoloPagina(p) {
+  const n = document.querySelector(`#nav a[data-p="${p}"]`);
+  if (n) return (n.querySelector('span[data-t]') || n).textContent.trim();
+  const h = $('v-' + p) && $('v-' + p).querySelector('h2');
+  return h ? h.textContent.trim() : '';
+}
+function frecciaIndietro(p) {
+  const sec = $('v-' + p);
+  let b = sec.querySelector(':scope > .indietro');
+  if (!b) { b = document.createElement('button'); b.className = 'indietro'; sec.insertBefore(b, sec.firstChild); }
+  const prima = STORIA[STORIA.length - 1] || 'arch';
+  b.textContent = '← ' + (titoloPagina(prima) || t('indietro'));
+  b.onclick = () => { STORIA.pop(); vai(prima, true); };
+}
+function vai(p, tornando = false) {
+  if (!tornando) {
+    if (INTERNE.includes(p)) { if (pagina && pagina !== p && STORIA[STORIA.length - 1] !== pagina) STORIA.push(pagina); if (STORIA.length > 12) STORIA.shift(); }
+    else STORIA = [];
+  }
   pagina = p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
   ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
+  if (INTERNE.includes(p)) frecciaIndietro(p);
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'fare') apriCose();
@@ -1576,7 +1598,7 @@ async function nomiVoci() {
 let ES = {m: null, d: null};
 async function apriEsame(m, rifai = false) {
   ES = {m, d: null};
-  $('esTit').textContent = t('es.h', {m: m.m}); $('esSub').textContent = t('es.sub', {n: m.cartelle.length});
+  $('esTit').textContent = t('es.h', {m: m.m}); $('esSub').textContent = m.cartelle.length === 1 ? t('rp.lez1') : t('es.sub', {n: m.cartelle.length});
   $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.lav'))}</div></div>`;
   vai('esame');
   const d = await A.esame_info(m.m, m.cartelle, rifai);

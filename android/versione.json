@@ -1,7 +1,7 @@
 {
- "versione": "0.10.17",
+ "versione": "0.10.18",
  "codice": 10,
- "novita": "L'avviso di aggiornamento dice che l'app si chiude e si riapre da sola. Il bottone ora è «Aggiorna e riapri».",
- "novita_en": "The update notice says the app closes and reopens by itself. The button is now «Update and reopen».",
- "contenuto": 48
+ "novita": "Freccia per tornare indietro: nelle pagine di una lezione (Chiedi, Mappa, Esame…) c'è in alto «← …» che riporta alla pagina da cui sei arrivato. Anche il tasto Indietro fa lo stesso.",
+ "novita_en": "Back arrow: in a lecture's pages (Ask, Map, Exam…) there is «← …» at the top that takes you back to where you came from. The Back key does the same.",
+ "contenuto": 49
 }
