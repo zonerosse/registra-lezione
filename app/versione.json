@@ -1,6 +1,6 @@
 {
- "versione": "3.30",
+ "versione": "3.31",
  "librerie": 2,
- "novita": "Le mie registrazioni: se una registrazione ha qualcosa che non va, le altre si vedono lo stesso (e quella mostra il motivo). Corretto un file di lavoro di «Pronta subito» che poteva confondere Chiedi e Chi parla.",
- "novita_en": "My recordings: if one recording has a problem, the others are still shown (and that one shows why). Fixed a «Ready right away» work file that could confuse Ask and Who speaks."
+ "novita": "Corretto: una registrazione con appunti scritti male non dà più errore in «Le mie registrazioni» e nel ripasso.",
+ "novita_en": "Fixed: a recording with badly written notes no longer gives an error in «My recordings» and in review."
 }

@@ -40,7 +40,7 @@ def carte_lezione(cartella):
         # Formato Esame con la classifica di tutta la lezione: quella (niente doppioni fra le parti)
         classifica = el.leggi_json(ap.file_classifica(cart)) if formato == "esame" else None
         if classifica and classifica.get("domande_probabili"):
-            fonti = [(int(v.get("parte") or 1), {"domande_probabili": [v]}) for v in classifica["domande_probabili"]]
+            fonti = [(int(v.get("parte") or 1), {"domande_probabili": [v]}) for v in classifica["domande_probabili"] if isinstance(v, dict)]
         else:
             fonti = []
             for f in sorted(cart.glob("appunti_esame_*.json" if formato == "esame" else "appunti_[0-9]*.json")):
@@ -49,15 +49,17 @@ def carte_lezione(cartella):
                 except ValueError:
                     continue
                 d = el.leggi_json(f)
-                if d:
+                if isinstance(d, dict) and d:
                     fonti.append((k, ap.normalizza(d)))
         for k, d in fonti:
             if (formato == "esame") != bool(ap.e_esame(d)):
                 continue
-            mappa = {m.get("n"): m for m in (el.leggi_json(cart / f"pacchetto_{k:03d}.json", []) or [])}
+            mappa = {m.get("n"): m for m in (el.leggi_json(cart / f"pacchetto_{k:03d}.json", []) or []) if isinstance(m, dict)}
             voci = d.get("domande_probabili") if formato == "esame" else d.get("blocchi")
-            for v in voci or []:
-                dom = (v.get("domanda") or "").strip()
+            for v in voci if isinstance(voci, list) else []:
+                if not isinstance(v, dict):       # appunti scritti male (una riga di testo al posto della domanda)
+                    continue
+                dom = str(v.get("domanda") or "").strip()
                 if not dom:
                     continue
                 try:
