@@ -1,7 +1,7 @@
 {
- "versione": "0.10.6",
+ "versione": "0.10.7",
  "codice": 10,
- "novita": "Piccole sistemazioni (in vista della copia nel cloud, per ora solo sul PC).",
- "novita_en": "Small tidy-ups (ahead of the cloud copy, PC only for now).",
- "contenuto": 37
+ "novita": "Dove trascrivo: spunta ✓ sulla scelta attiva e conferma verde «Adesso trascrivo…»; i limiti diventano «Da sapere», in grigio. «Impostazioni avanzate» nello stile delle altre schede. Corretto: eliminando una lezione mentre gli appunti erano in preparazione poteva restare una cartella a metà.",
+ "novita_en": "Where I transcribe: ✓ on the active choice and green «Right now I transcribe…»; limits become «Good to know», in grey. «Advanced settings» in the same style as the other cards. Fixed: deleting a lecture while notes were being prepared could leave a half-deleted folder.",
+ "contenuto": 38
 }

@@ -1050,6 +1050,7 @@ function avanzate(apri) {
   let a = apri;
   if (a === undefined) { try { a = localStorage.getItem('vm_avanzate') === '1'; } catch (e) { a = false; } }
   $('imAvanzate').classList.toggle('hidden', !a); $('imAvz').classList.toggle('aperto', !!a);
+  const l = $('imAvz').querySelector('[data-t="im.avz.apri"]'); if (l) l.textContent = t(a ? 'im.avz.chiudi' : 'im.avz.apri');
   try { localStorage.setItem('vm_avanzate', a ? '1' : '0'); } catch (e) {}
 }
 function disegnaInviti() {
@@ -1092,11 +1093,11 @@ function disegnaDove() {
   $('dvSrv').classList.toggle('hidden', dove !== 'server');
   const v = parseFloat(R.velocita || 0);
   $('dvVel').textContent = v > 0 ? t('dv.vel', {m: Math.max(1, Math.round(60 / v))}) : t('dv.vel0');
-  const st = $('dvStato');
-  st.className = 'dvstato';
-  if (R.server_endpoint && R.dove === 'server') st.textContent = t('dv.attivo');
-  else if (R.server_endpoint) { st.textContent = t('dv.quistato'); st.className = 'dvstato grigio'; }
-  else st.textContent = '';
+  // la scelta che vale davvero adesso (spunta nella tendina e riga verde)
+  const attivo = R.server_endpoint && R.dove === 'server' ? 'server' : 'qui';
+  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.classList.toggle('attivo', o.dataset.d === attivo));
+  $('dvAttivo').textContent = attivo === 'server' ? t('dv.att.srv') : dove === 'server' ? t('dv.att.manca') : t('dv.att.qui');
+  $('dvStato').textContent = '';
   if (!DV.esito) { $('srvEsito').textContent = ''; $('srvEsito').style.color = ''; }
   $('dvSel').onclick = () => { const h = $('dvBox').classList.toggle('hidden'); $('dvSel').classList.toggle('aperto', !h); };
   $('dvBox').querySelectorAll('[data-d]').forEach(o => o.onclick = async () => {

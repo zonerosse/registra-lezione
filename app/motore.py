@@ -173,7 +173,14 @@ def al_cestino(percorsi):
     if sys.platform != "win32":
         for p in percorsi:
             if Path(p).is_dir():
-                shutil.rmtree(p)
+                for prova in range(6):          # se un lavoro sta ancora scrivendo li' dentro, riprovo
+                    try:
+                        shutil.rmtree(p)
+                        break
+                    except OSError:
+                        if prova == 5:
+                            raise
+                        time.sleep(1)
             else:
                 Path(p).unlink()
         return
