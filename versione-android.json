@@ -1,9 +1,9 @@
 {
- "versione": "0.10.1",
+ "versione": "0.10.2",
  "codice": 10,
- "novita": "Impostazioni › Dove trascrivo: con «Sul PC» (o «Sul telefono») si vedono velocità, «Trascrizione più precisa» e i limiti; le voci del server compaiono solo con «Sul server». «Altre opzioni» più visibile.",
- "novita_en": "Settings › Where I transcribe: with «On the PC» (or «On the phone») you see speed, «More accurate transcript» and the limits; server fields appear only with «On the server». «More options» easier to see.",
- "contenuto": 32,
+ "novita": "Schede delle lezioni più pulite: su ogni lezione solo «Apri appunti», «Ripassa» e «⋯ Altro»; Chiedi, Capitoli, Condividi, Trascrizione e il resto sono nel menu «⋯ Altro». Il formato è un'etichetta accanto al nome.",
+ "novita_en": "Cleaner lecture cards: each lecture shows only «Open notes», «Review» and «⋯ More»; Ask, Chapters, Share, Transcript and the rest are in the «⋯ More» menu. The format is a tag next to the name.",
+ "contenuto": 33,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
 }
