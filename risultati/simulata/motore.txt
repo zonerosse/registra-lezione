@@ -1,0 +1,62 @@
+SCARICA https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
+PORTA 44947
+SVEGLIO True
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+[0;93m2026-10-17 14:19:18.599771957 [W:onnxruntime:Default, device_discovery.cc:95 GetPciBusId] Skipping pci_bus_id for PCI path at "/sys/devices/LNXSYSTM:00/LNXSYBUS:00/ACPI0004:00/MSFT1000:00/5620e0c7-8062-4dce-aeb7-520c7ef76171" because filename "5620e0c7-8062-4dce-aeb7-520c7ef76171" did not match expected pattern of [0-9a-f]+:[0-9a-f]+:[0-9a-f]+[.][0-9a-f]+[m
+PAROLE []
+CLAUDE cornell it it
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+PAROLE []
+CLAUDE cornell it it
+PAROLE []
+CLAUDE cornell it it
+NOTIFICA Lezione pronta «Analisi 1 – Derivate» è pronta: trascrizione e appunti (se attivi) ti aspettano nell'app.
+SVEGLIO False
+SVEGLIO True
+SVEGLIO False
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+SVEGLIO True
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+NOTIFICA Lezione pronta «Fisica 1 – Cinematica» è pronta: trascrizione e appunti (se attivi) ti aspettano nell'app.
+SVEGLIO False
+PAROLE []
+CLAUDE cornell it it
+PAROLE []
+CLAUDE cornell it it
+PAROLE []
+CLAUDE cornell it it
+SVEGLIO True
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+PAROLE []
+CLAUDE cornell it it
+PAROLE []
+CLAUDE cornell it it
+SVEGLIO False
+NOTIFICA Lezione pronta «Chimica – audio» è pronta: trascrizione e appunti (se attivi) ti aspettano nell'app.
+SVEGLIO True
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+CLAUDE verbale ['Marco Rossi', 'Giulia Bianchi'] NOTE [{'sec': 10.3, 'ora': '00:10', 'tipo': '', 'testo': 'Chiedere lo sconto per 3 anni'}, {'sec': 12.4, 'ora': '00:12', 'tipo': 'importante', 'testo': ''}]
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+CHIEDI 518 caratteri; Cosa ha detto sui prezzi?
+WHISPER pezzo_139661062174400.wav - it '' 2 1
+WHISPER pezzo_139661062174400.wav - it '' 3 1
+CLAUDE verbale ['Marco Rossi', 'Giulia Bianchi'] NOTE []
+CLAUDE verbale ['Marco Rossi', 'Giulia Bianchi'] NOTE []
+SVEGLIO False
+NOTIFICA Lezione pronta «Riunione commerciale – listino 2027» è pronta: trascrizione e appunti (se attivi) ti aspettano nell'app.
+EMAIL ['m.rossi@esempio.it'] Verbale – Riunione commerciale – listino 2027 (17/10) ['/tmp/tmp.BsTCftwtSo/dati/Documents/Pacchetti per Claude/Verbale – Riunione commerciale – listino 2027 – 17-10 ore 14.20 – registrazione completa.pdf', '/tmp/tmp.BsTCftwtSo/dati/Documents/Lezioni registrate/2026-10-17 1420 - Riunione commerciale – listino 2027/condividi/Calendario – Riunione commerciale – listino 2027.ics']
+EVENTO Riunione: Riunione commerciale – listino 2027
+EVENTO Da fare: Bozza del listino 2027 (Marco Rossi)
+EVENTO Da fare: Numeri sui costi di consegna (Giulia Bianchi)
+CONDIVIDI /tmp/tmp.BsTCftwtSo/dati/Documents/Pacchetti per Claude/Verbale – Riunione commerciale – listino 2027 – 17-10 ore 14.20 – registrazione completa.pdf
+EMAIL [] Riunione commerciale – listino 2027 – 00.02-00.09 ['/tmp/tmp.BsTCftwtSo/dati/Documents/Pacchetti per Claude/Spezzoni/Riunione commerciale – listino 2027 – 00.02-00.09.m4a']
+SVEGLIA 935302388 1792249080000 Sta iniziando: Fisica 1
+LINK https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk
+SCARICA https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip
+RIAVVIA

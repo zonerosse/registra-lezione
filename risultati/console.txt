@@ -1,0 +1,94 @@
++ adb wait-for-device
++ sleep 40
++ adb install -r -g android/app/build/outputs/apk/debug/app-debug.apk
+Performing Streamed Install
+Success
++ adb logcat -c
++ adb logcat -v time
++ set +x
++ adb shell getprop ro.product.cpu.abi
++ adb shell dumpsys battery set ac 1
++ adb shell wm size 720x1560
++ adb shell wm density 300
++ adb shell mkdir -p /sdcard/Android/data/it.puntowebferrara.registralezione/files
++ adb push /home/runner/modello/ggml-small-q5_1.bin /sdcard/Android/data/it.puntowebferrara.registralezione/files/ggml-small-q5_1.bin
+/home/runner/modello/ggml-small-q5_1.bin: 1 file pushed, 0 skipped. 97.6 MB/s (190085487 bytes in 1.857s)
++ '[' -s /home/runner/modello/voci_resnet34.onnx ']'
++ adb push /home/runner/modello/voci_resnet34.onnx /sdcard/Android/data/it.puntowebferrara.registralezione/files/voci_resnet34.onnx
+/home/runner/modello/voci_resnet34.onnx: 1 file pushed, 0 skipped. 260.9 MB/s (26530550 bytes in 0.097s)
++ adb shell am start -n it.puntowebferrara.registralezione/.Principale
+Starting: Intent { cmp=it.puntowebferrara.registralezione/.Principale }
++ sleep 30
++ adb exec-out screencap -p
+++ seq 1 30
++ for i in $(seq 1 30)
+++ adb shell cat /sdcard/Android/data/it.puntowebferrara.registralezione/files/porta.txt
+++ tr -d '\r'
++ PORTA=45029
++ '[' -n 45029 ']'
++ break
++ echo 'porta del motore: 45029'
+porta del motore: 45029
++ '[' -z 45029 ']'
++ adb forward tcp:45029 tcp:45029
+45029
++ timeout 4800 python3 tools/prova_android/prova_api.py /home/runner/work/registra-lezione/registra-lezione/prova_android_out 45029 tools/prova_android/lezione_it.wav
+ok  - il motore risponde (versione 0.10.0, lingua en)
+ok  - registrazione partita ({'ok': True, 'mini': True})
+ok  - registra (servizio Android) (secondi 20, batteria 100, avviso '')
+  … {"finale": 0.0, "modello": "", "occupato": true, "parti": [{"stato": "lav", "orario": "00:00 – 00:00", "perc": 0.0, "k": 1}]}
+  … {"finale": 0.0, "modello": "", "occupato": true, "parti": [{"stato": "lav", "orario": "00:00 – 00:00", "perc": 0.0, "k": 1}]}
+  … {"finale": 0.0, "modello": "", "occupato": true, "parti": [{"stato": "lav", "orario": "00:00 – 00:00", "perc": 0.0, "k": 1}]}
+  … {"finale": 0.0, "modello": "", "occupato": true, "parti": [{"stato": "lav", "orario": "00:00 – 00:00", "perc": 0.0, "k": 1}]}
+  … {"finale": 0.0, "modello": "", "occupato": true, "parti": [{"stato": "lav", "orario": "00:00 – 00:00", "perc": 0.74, "k": 1}]}
+ok  - «Durante»: lezione pronta (281 s; parti [{'stato': 'ok', 'orario': '00:00 – 00:00', 'perc': 1.0, 'file': '/storage/emulated/0/Android/data/it.puntowebferrara.registralezione/files/Documents/Pacchetti per Claude/Prova – Durante – 17-10 ore 14.28 – parte 1 (00h-00h).zip', 'k': 1}])
+NO  - errore nella prova (RemoteDisconnected('Remote end closed connection without response'))
++ timeout 30 adb exec-out screencap -p
+error: device offline
++ timeout 60 adb shell ls -laR '"/sdcard/Android/data/it.puntowebferrara.registralezione/files/Documents"'
+adb: device offline
++ timeout 120 adb pull /sdcard/Android/data/it.puntowebferrara.registralezione/files/Documents /home/runner/work/registra-lezione/registra-lezione/prova_android_out/documenti
+adb: error: failed to get feature set: device offline
++ grep -iE 'registralezione|whisper|python|AndroidRuntime|chaquopy|lowmemory|killing|crash|FATAL' /home/runner/work/registra-lezione/registra-lezione/prova_android_out/logcat_tutto.txt
++ tail -600
++ tail -300 /home/runner/work/registra-lezione/registra-lezione/prova_android_out/logcat_tutto.txt
++ pkill -f 'adb logcat'
++ true
++ cat /home/runner/work/registra-lezione/registra-lezione/prova_android_out/esito_app.json
+{
+ "passi": [
+  {
+   "n": "il motore risponde",
+   "ok": true,
+   "d": "versione 0.10.0, lingua en",
+   "ora": "14:28:17"
+  },
+  {
+   "n": "registrazione partita",
+   "ok": true,
+   "d": "{'ok': True, 'mini': True}",
+   "ora": "14:28:20"
+  },
+  {
+   "n": "registra (servizio Android)",
+   "ok": true,
+   "d": "secondi 20, batteria 100, avviso ''",
+   "ora": "14:28:41"
+  },
+  {
+   "n": "«Durante»: lezione pronta",
+   "ok": true,
+   "d": "281 s; parti [{'stato': 'ok', 'orario': '00:00 – 00:00', 'perc': 1.0, 'file': '/storage/emulated/0/Android/data/it.puntowebferrara.registralezione/files/Documents/Pacchetti per Claude/Prova – Durante – 17-10 ore 14.28 – parte 1 (00h-00h).zip', 'k': 1}]",
+   "ora": "14:33:48"
+  },
+  {
+   "n": "errore nella prova",
+   "ok": false,
+   "d": "RemoteDisconnected('Remote end closed connection without response')",
+   "ora": "14:34:58"
+  }
+ ],
+ "errori": []
+}+ '[' -f /home/runner/work/registra-lezione/registra-lezione/prova_android_out/esito_app.json ']'
++ grep -q 'il motore risponde' /home/runner/work/registra-lezione/registra-lezione/prova_android_out/esito_app.json
++ true

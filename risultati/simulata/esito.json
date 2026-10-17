@@ -1,0 +1,305 @@
+{
+ "passi": [
+  {
+   "n": "la pagina si apre",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Prima di iniziare»: «Inizia» spento senza spunta, dice «telefono»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Prima di iniziare»: spunta salvata",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "aspetto da telefono",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "chiave di Claude (protetta dal telefono)",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "registra",
+   "ok": true,
+   "d": "secondi 26"
+  },
+  {
+   "n": "«Pronta subito»: trascrive a pezzi mentre registra",
+   "ok": true,
+   "d": "parte 1 in corso: trascritta fino a 6 s; parte 1 in corso: trascritta fino a 11 s"
+  },
+  {
+   "n": "«Durante»: lezione pronta",
+   "ok": true,
+   "d": "[\"ok\",\"ok\",\"ok\"]"
+  },
+  {
+   "n": "online: avviso «Metti il vivavoce»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Dopo»: salvata senza trascrivere",
+   "ok": true,
+   "d": "[\"dopo\",\"dopo\"]"
+  },
+  {
+   "n": "«Trascrivi ora» c'è",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Trascrivi ora» finito",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Crea appunti» c'è",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Crea appunti»: resta in Le mie lezioni con la barra",
+   "ok": true,
+   "d": "arch"
+  },
+  {
+   "n": "«Crea appunti»: finito, c'è «Apri appunti»",
+   "ok": true,
+   "d": "2"
+  },
+  {
+   "n": "riquadro «Hai già la trascrizione?»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "importa testo: pagina con file e parole",
+   "ok": true,
+   "d": "circa 366 parole"
+  },
+  {
+   "n": "importa testo: resta in Le mie lezioni con la barra",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "importa testo: appunti fatti",
+   "ok": true,
+   "d": "{\"n\":1,\"s\":\"pronta\"}"
+  },
+  {
+   "n": "riquadro «Hai già un audio?»",
+   "ok": true,
+   "d": "Hai già un audio della lezione?"
+  },
+  {
+   "n": "importa audio: pagina con durata",
+   "ok": true,
+   "d": "1 min · 1 MB · del 17/10/2026 14.16 · solo audio"
+  },
+  {
+   "n": "importa audio: trascritto con gli appunti",
+   "ok": true,
+   "d": "{\"s\":\"pronta\",\"t\":true,\"n\":1,\"d\":\"0 min\"}"
+  },
+  {
+   "n": "Le mie lezioni",
+   "ok": true,
+   "d": "Fisica 1 – Cinematica:pronta, Analisi 1 – Derivate:pronta"
+  },
+  {
+   "n": "nome vuoto: REGISTRA spento",
+   "ok": true,
+   "d": "Scrivi il nome della lezione"
+  },
+  {
+   "n": "nome già usato: REGISTRA spento e nomi proposti",
+   "ok": true,
+   "d": "C'è già una lezione «Analisi 1 – Derivate» (17/10). Cambia il nome, oppure tocca uno di questi:Analisi 1 – 17/10Analisi 1 – Derivate – 2"
+  },
+  {
+   "n": "nome proposto: REGISTRA acceso",
+   "ok": true,
+   "d": "Analisi 1 – 17/10"
+  },
+  {
+   "n": "riunione: modelli di riunione",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "durante: «Le tue note» e «Chiedi adesso»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "le note si salvano col minuto",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Chiedi adesso» risponde",
+   "ok": true,
+   "d": "Cosa ha detto sui prezzi?Il docente lo spiega con il teorema del confronto: per x vicino a 0, in radianti, vale cos x ≤ "
+  },
+  {
+   "n": "riunione pronta",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "verbale fatto",
+   "ok": true,
+   "d": "pronta"
+  },
+  {
+   "n": "chi parla: voci riconosciute sul telefono",
+   "ok": true,
+   "d": "[\"\",\"\"]"
+  },
+  {
+   "n": "bottone Condividi",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "condividi: «WhatsApp e altre app», niente Google Docs",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "email: Gmail con indirizzo e PDF allegato",
+   "ok": true,
+   "d": "{\"dest\": [\"m.rossi@esempio.it\"], \"oggetto\": \"Verbale – Riunione commerciale – listino 2027 (17/10)\", \"testo\": \"Ciao,\\n\\necco il verbale della riunione del 17/10.\\n\\nIN BREVE\\nListino 2027 con aumento "
+  },
+  {
+   "n": "nel calendario del telefono",
+   "ok": true,
+   "d": "{\"titolo\": \"Riunione: Riunione commerciale – listino 2027\", \"inizio\": 1793287800000, \"fine\": 1793291400000, \"tutto\": false}\n{\"titolo\": \"Da fare: Bozza del listino 2027 (Marco Rossi)\", \"inizio\": 179305"
+  },
+  {
+   "n": "cerca nelle parole dette",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "statistiche",
+   "ok": true,
+   "d": "0 min"
+  },
+  {
+   "n": "spezzone audio",
+   "ok": true,
+   "d": "Riunione commerciale – listino 2027 – 00.02-00.09.m4a"
+  },
+  {
+   "n": "spezzone per email",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "scheda «Da fare» in basso",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "da fare: le cose del verbale",
+   "ok": true,
+   "d": "2"
+  },
+  {
+   "n": "da fare: spunta",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "bottone «Preparati all'esame»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "preparazione all'esame: le domande del corso",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "calendario: sveglia per la notifica",
+   "ok": true,
+   "d": "{\"id\": 935302388, \"quando\": 1792249080000, \"titolo\": \"Sta iniziando: Fisica 1\", \"testo\": \"Tocca per registrare. Nome e partecipanti sono già pronti.\"}\n"
+  },
+  {
+   "n": "impostazioni: collegamenti, chi parla, niente «registra da solo»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Dove trascrivo»: spiegazione e tendina, codice nascosto",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Sul server»: collegato dal telefono",
+   "ok": true,
+   "d": "✓ Collegato: prova fatta in 3 secondi, costo circa 0,04 centesimi"
+  },
+  {
+   "n": "inviti: riquadro per chi ha le chiavi",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "inviti: messaggio pronto senza chiavi in chiaro",
+   "ok": true,
+   "d": "Ciao Sara! Ecco il tuo invito per Verba Manent IA 🎓\nApri l'app → Impostazioni → «Ho un in"
+  },
+  {
+   "n": "inviti: senza chiavi compare «Ho un invito»",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "inviti: attivato (Claude e server), e non può invitare altri",
+   "ok": true,
+   "d": "✓ Invito attivato: chiave di Claude e server per trascrivere pronti"
+  },
+  {
+   "n": "«Scollega» chiede conferma",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "impostazioni del telefono",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "«Scarica» apre l'app nuova nel browser",
+   "ok": true,
+   "d": "https://github.com/zonerosse/registra-lezione/raw/android-app/RegistraLezione.apk"
+  },
+  {
+   "n": "aggiornamento leggero: scaricato e app riaperta",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "guida del telefono",
+   "ok": true,
+   "d": ""
+  },
+  {
+   "n": "tasto Indietro",
+   "ok": true,
+   "d": ""
+  }
+ ],
+ "errori": []
+}

@@ -1,0 +1,52 @@
+--- 14:28:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          775696 kB
+MemAvailable:    2483892 kB
+ 14:28:44 up 2 min,  0 users,  load average: 1.13, 0.66, 0.26
+--- 14:29:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          292184 kB
+MemAvailable:    2002292 kB
+ 14:29:44 up 3 min,  0 users,  load average: 3.25, 1.30, 0.51
+--- 14:30:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          193280 kB
+MemAvailable:    1888064 kB
+ 14:30:45 up 4 min,  0 users,  load average: 4.78, 2.08, 0.83
+--- 14:31:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          218020 kB
+MemAvailable:    1912008 kB
+ 14:31:45 up 5 min,  0 users,  load average: 4.88, 2.63, 1.10
+--- 14:32:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          214100 kB
+MemAvailable:    1908136 kB
+ 14:32:45 up 6 min,  0 users,  load average: 5.66, 3.26, 1.41
+--- 14:33:45
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          201120 kB
+MemAvailable:    1796580 kB
+ 14:33:45 up 7 min,  0 users,  load average: 5.04, 3.56, 1.63
+--- 14:34:45
+List of devices attached
+emulator-5554	device
+

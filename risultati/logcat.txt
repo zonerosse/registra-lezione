@@ -1,0 +1,49 @@
+10-17 14:27:44.813 D/CarrierSvcBindHelper( 1078): onPackageModified: it.puntowebferrara.registralezione
+10-17 14:27:44.814 D/ImsResolver( 1078): maybeAddedImsService, packageName: it.puntowebferrara.registralezione
+10-17 14:27:45.353 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}
+10-17 14:27:47.046 I/ActivityTaskManager(  589): START u0 {flg=0x10000000 cmp=it.puntowebferrara.registralezione/.Principale} from uid 2000
+10-17 14:27:47.063 D/CoreBackPreview(  589): Window{c667fb4 u0 Splash Screen it.puntowebferrara.registralezione}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@aa0bf52, mPriority=0}
+10-17 14:27:47.071 I/ActivityManager(  589): Start proc 2467:it.puntowebferrara.registralezione/u0a126 for next-top-activity {it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}
+10-17 14:27:47.082 I/registralezione( 2467): Late-enabling -Xcheck:jni
+10-17 14:27:47.107 W/registralezione( 2467): Unexpected CPU variant for x86: x86_64.
+10-17 14:27:47.107 W/registralezione( 2467): Known variants: atom, sandybridge, silvermont, kabylake, default
+10-17 14:27:47.125 W/ziparchive( 2467): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.125 W/ziparchive( 2467): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.144 V/GraphicsEnvironment( 2467): ANGLE Developer option for 'it.puntowebferrara.registralezione' set to: 'default'
+10-17 14:27:47.144 V/GraphicsEnvironment( 2467): ANGLE GameManagerService for it.puntowebferrara.registralezione: false
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->isTagEnabled(J)Z (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->traceBegin(JLjava/lang/String;)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->traceEnd(J)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->asyncTraceBegin(JLjava/lang/String;I)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->asyncTraceEnd(JLjava/lang/String;I)V (unsupported, reflection, allowed)
+10-17 14:27:47.207 I/cr_VariationsUtils( 2467): Failed reading seed file "/data/user/0/it.puntowebferrara.registralezione/app_webview/variations_seed_new"
+10-17 14:27:47.207 I/cr_VariationsUtils( 2467): Failed reading seed file "/data/user/0/it.puntowebferrara.registralezione/app_webview/variations_seed"
+10-17 14:27:47.220 I/ActivityManager(  589): Start proc 2502:com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {it.puntowebferrara.registralezione/org.chromium.content.app.SandboxedProcessService0:0}
+10-17 14:27:47.257 D/CoreBackPreview(  589): Window{cda4ae9 u0 it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@3e6fa0f, mPriority=0}
+10-17 14:27:47.480 W/Thread-4( 2467): type=1400 audit(0.0:19): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/zlib.cpython-312.so" dev="dm-32" ino=131180 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.512 W/Thread-4( 2467): type=1400 audit(0.0:20): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/java/chaquopy.so" dev="dm-32" ino=131189 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.516 W/Thread-4( 2467): type=1400 audit(0.0:21): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/_ctypes.cpython-312.so" dev="dm-32" ino=131179 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.663 W/ziparchive(  589): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.663 I/ActivityTaskManager(  589): Displayed it.puntowebferrara.registralezione/.Principale: +611ms
+10-17 14:27:47.676 D/CoreBackPreview(  589): Window{c667fb4 u0 Splash Screen it.puntowebferrara.registralezione EXITING}: Setting back callback null
+10-17 14:27:47.676 W/InputManager-JNI(  589): Input channel object 'c667fb4 Splash Screen it.puntowebferrara.registralezione (client)' was disposed without first being removed with the input manager!
+10-17 14:27:47.952 W/Thread-4( 2467): type=1400 audit(0.0:38): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libgfortran.so.3" dev="dm-32" ino=131202 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.952 W/Thread-4( 2467): type=1400 audit(0.0:39): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libopenblas.so" dev="dm-32" ino=131204 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.956 W/Thread-4( 2467): type=1400 audit(0.0:40): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libc++_shared.so" dev="dm-32" ino=131200 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.956 W/Thread-4( 2467): type=1400 audit(0.0:41): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/numpy/core/_multiarray_umath.so" dev="dm-32" ino=131358 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.968 W/Thread-4( 2467): type=1400 audit(0.0:42): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_pickle.cpython-312.so" dev="dm-32" ino=131726 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:48.211 W/registralezione( 2467): Accessing hidden method Landroid/media/AudioManager;->getOutputLatency(I)I (unsupported, reflection, allowed)
+10-17 14:27:51.208 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:27:52.929 D/ProfileInstaller( 2467): Installing profile for it.puntowebferrara.registralezione
+10-17 14:27:56.287 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:28:05.494 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:28:22.921 I/registralezione( 2467): Compiler allocated 4533KB to compile void android.view.ViewRootImpl.performTraversals()
+10-17 14:29:01.185 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:29:10.520 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:30:15.553 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:31:20.595 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:32:30.644 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:33:39.212 W/Thread-16( 2467): type=1400 audit(0.0:65): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_decimal.cpython-312.so" dev="dm-32" ino=131781 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.476 W/Thread-16( 2467): type=1400 audit(0.0:66): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/cmath.cpython-312.so" dev="dm-32" ino=131789 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.508 W/Thread-16( 2467): type=1400 audit(0.0:67): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_asyncio.cpython-312.so" dev="dm-32" ino=131790 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.576 W/Thread-16( 2467): type=1400 audit(0.0:68): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_csv.cpython-312.so" dev="dm-32" ino=131791 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione

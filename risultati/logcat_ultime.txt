@@ -1,0 +1,300 @@
+10-17 14:31:44.075 D/EGL_emulation( 2467): app_time_stats: avg=16.12ms min=9.08ms max=22.41ms count=56
+10-17 14:31:45.079 D/EGL_emulation( 2467): app_time_stats: avg=16.88ms min=10.49ms max=34.93ms count=54
+10-17 14:31:46.084 D/EGL_emulation( 2467): app_time_stats: avg=16.90ms min=9.09ms max=26.50ms count=54
+10-17 14:31:46.595 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:31:47.104 D/EGL_emulation( 2467): app_time_stats: avg=16.76ms min=10.18ms max=24.07ms count=54
+10-17 14:31:48.120 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=8.92ms max=34.07ms count=55
+10-17 14:31:49.120 D/EGL_emulation( 2467): app_time_stats: avg=15.06ms min=7.73ms max=24.49ms count=56
+10-17 14:31:50.125 D/EGL_emulation( 2467): app_time_stats: avg=16.51ms min=10.01ms max=27.15ms count=55
+10-17 14:31:51.130 D/EGL_emulation( 2467): app_time_stats: avg=16.07ms min=8.94ms max=26.24ms count=54
+10-17 14:31:52.136 D/EGL_emulation( 2467): app_time_stats: avg=16.35ms min=7.94ms max=29.80ms count=56
+10-17 14:31:53.154 D/EGL_emulation( 2467): app_time_stats: avg=17.64ms min=9.86ms max=32.84ms count=51
+10-17 14:31:54.161 D/EGL_emulation( 2467): app_time_stats: avg=17.18ms min=8.04ms max=27.92ms count=53
+10-17 14:31:55.168 D/EGL_emulation( 2467): app_time_stats: avg=16.78ms min=10.37ms max=24.42ms count=54
+10-17 14:31:56.178 D/EGL_emulation( 2467): app_time_stats: avg=17.81ms min=9.38ms max=30.02ms count=51
+10-17 14:31:57.182 D/EGL_emulation( 2467): app_time_stats: avg=16.41ms min=8.80ms max=28.16ms count=53
+10-17 14:31:58.193 D/EGL_emulation( 2467): app_time_stats: avg=16.49ms min=8.60ms max=30.73ms count=52
+10-17 14:31:59.148 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.148 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.149 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.149 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.199 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=9.46ms max=29.63ms count=52
+10-17 14:32:00.021 D/EGL_emulation(  868): app_time_stats: avg=59971.82ms min=59971.82ms max=59971.82ms count=1
+10-17 14:32:00.221 D/EGL_emulation( 2467): app_time_stats: avg=17.47ms min=10.57ms max=27.46ms count=54
+10-17 14:32:01.234 D/EGL_emulation( 2467): app_time_stats: avg=16.95ms min=10.78ms max=25.80ms count=54
+10-17 14:32:02.245 D/EGL_emulation( 2467): app_time_stats: avg=16.32ms min=10.00ms max=25.35ms count=55
+10-17 14:32:03.246 D/EGL_emulation( 2467): app_time_stats: avg=18.70ms min=8.44ms max=28.51ms count=51
+10-17 14:32:04.266 D/EGL_emulation( 2467): app_time_stats: avg=17.47ms min=8.79ms max=27.75ms count=51
+10-17 14:32:05.276 D/EGL_emulation( 2467): app_time_stats: avg=15.80ms min=8.09ms max=25.61ms count=56
+10-17 14:32:06.276 D/EGL_emulation( 2467): app_time_stats: avg=15.69ms min=8.25ms max=23.96ms count=58
+10-17 14:32:07.276 D/EGL_emulation( 2467): app_time_stats: avg=17.33ms min=9.90ms max=27.60ms count=52
+10-17 14:32:08.290 D/EGL_emulation( 2467): app_time_stats: avg=18.27ms min=8.91ms max=33.36ms count=49
+10-17 14:32:09.292 D/EGL_emulation( 2467): app_time_stats: avg=18.06ms min=8.29ms max=33.81ms count=49
+10-17 14:32:10.304 D/EGL_emulation( 2467): app_time_stats: avg=16.47ms min=10.31ms max=30.24ms count=54
+10-17 14:32:11.321 D/EGL_emulation( 2467): app_time_stats: avg=16.27ms min=7.74ms max=25.61ms count=55
+10-17 14:32:12.336 D/EGL_emulation( 2467): app_time_stats: avg=15.96ms min=7.40ms max=27.35ms count=55
+10-17 14:32:13.343 D/EGL_emulation( 2467): app_time_stats: avg=16.83ms min=10.66ms max=26.50ms count=55
+10-17 14:32:14.354 D/EGL_emulation( 2467): app_time_stats: avg=17.36ms min=8.12ms max=29.08ms count=52
+10-17 14:32:15.367 D/EGL_emulation( 2467): app_time_stats: avg=16.12ms min=8.28ms max=23.60ms count=55
+10-17 14:32:16.379 D/EGL_emulation( 2467): app_time_stats: avg=16.38ms min=7.97ms max=24.76ms count=56
+10-17 14:32:17.384 D/EGL_emulation( 2467): app_time_stats: avg=14.95ms min=8.39ms max=23.04ms count=56
+10-17 14:32:18.389 D/EGL_emulation( 2467): app_time_stats: avg=16.39ms min=7.55ms max=27.49ms count=51
+10-17 14:32:19.400 D/EGL_emulation( 2467): app_time_stats: avg=19.99ms min=10.19ms max=34.82ms count=47
+10-17 14:32:19.984 D/EGL_emulation(  868): app_time_stats: avg=19963.29ms min=19963.29ms max=19963.29ms count=1
+10-17 14:32:20.403 D/EGL_emulation( 2467): app_time_stats: avg=16.42ms min=10.31ms max=26.69ms count=55
+10-17 14:32:21.304 D/WifiNl80211Manager(  589): Scan result ready event
+10-17 14:32:21.304 D/WifiNative(  589): Scan result ready event
+10-17 14:32:21.405 D/EGL_emulation( 2467): app_time_stats: avg=18.41ms min=10.50ms max=29.08ms count=48
+10-17 14:32:22.406 D/EGL_emulation( 2467): app_time_stats: avg=15.97ms min=8.86ms max=24.37ms count=52
+10-17 14:32:23.413 D/EGL_emulation( 2467): app_time_stats: avg=17.12ms min=9.51ms max=25.70ms count=53
+10-17 14:32:24.424 D/EGL_emulation( 2467): app_time_stats: avg=18.51ms min=10.79ms max=28.92ms count=51
+10-17 14:32:25.425 D/EGL_emulation( 2467): app_time_stats: avg=19.42ms min=11.66ms max=26.28ms count=49
+10-17 14:32:25.624 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:32:25.625 I/Dialer  ( 1379): RetryPolicy - Retry limit for com.android.voicemail.impl.ActivationTask@5ddb80e reached
+10-17 14:32:25.625 I/Dialer  ( 1379): RetryPolicy - committing deferred status: configuration_state=4
+10-17 14:32:25.642 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:32:25.642 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:32:26.429 D/EGL_emulation( 2467): app_time_stats: avg=18.58ms min=10.37ms max=33.57ms count=47
+10-17 14:32:27.451 D/EGL_emulation( 2467): app_time_stats: avg=18.08ms min=9.66ms max=28.16ms count=50
+10-17 14:32:28.460 D/EGL_emulation( 2467): app_time_stats: avg=18.98ms min=9.70ms max=29.76ms count=49
+10-17 14:32:29.474 D/EGL_emulation( 2467): app_time_stats: avg=18.15ms min=10.13ms max=36.20ms count=50
+10-17 14:32:30.483 D/EGL_emulation( 2467): app_time_stats: avg=20.10ms min=9.77ms max=36.40ms count=45
+10-17 14:32:30.644 I/Dialer  ( 1379): VvmTaskExecutor - Stopping service
+10-17 14:32:30.644 I/Dialer  ( 1379): VvmTaskExecutor - finishing Job
+10-17 14:32:30.644 I/Dialer  ( 1379): TaskSchedulerJobService - finishing job
+10-17 14:32:30.644 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:32:30.646 I/Dialer  ( 1379): JobFinishedPoller.run - Job finished
+10-17 14:32:30.646 I/Dialer  ( 1379): VvmTaskExecutor - terminated
+10-17 14:32:31.486 D/EGL_emulation( 2467): app_time_stats: avg=19.06ms min=9.68ms max=38.07ms count=48
+10-17 14:32:32.500 D/EGL_emulation( 2467): app_time_stats: avg=17.28ms min=10.01ms max=32.41ms count=50
+10-17 14:32:33.518 D/EGL_emulation( 2467): app_time_stats: avg=17.31ms min=10.04ms max=26.31ms count=51
+10-17 14:32:34.527 D/EGL_emulation( 2467): app_time_stats: avg=18.18ms min=11.22ms max=25.62ms count=51
+10-17 14:32:35.529 D/EGL_emulation( 2467): app_time_stats: avg=17.66ms min=9.65ms max=25.57ms count=51
+10-17 14:32:36.545 D/EGL_emulation( 2467): app_time_stats: avg=19.90ms min=11.12ms max=28.84ms count=48
+10-17 14:32:37.564 D/EGL_emulation( 2467): app_time_stats: avg=18.22ms min=10.39ms max=28.69ms count=51
+10-17 14:32:38.579 D/EGL_emulation( 2467): app_time_stats: avg=17.38ms min=9.46ms max=26.58ms count=52
+10-17 14:32:39.579 D/EGL_emulation( 2467): app_time_stats: avg=19.11ms min=10.18ms max=31.24ms count=50
+10-17 14:32:40.585 D/EGL_emulation( 2467): app_time_stats: avg=18.12ms min=9.42ms max=30.89ms count=50
+10-17 14:32:41.600 D/EGL_emulation( 2467): app_time_stats: avg=19.85ms min=10.69ms max=30.04ms count=46
+10-17 14:32:42.602 D/EGL_emulation( 2467): app_time_stats: avg=16.94ms min=9.31ms max=30.40ms count=51
+10-17 14:32:43.607 D/EGL_emulation( 2467): app_time_stats: avg=17.84ms min=9.18ms max=27.21ms count=50
+10-17 14:32:44.620 D/EGL_emulation( 2467): app_time_stats: avg=17.80ms min=9.67ms max=28.73ms count=51
+10-17 14:32:45.632 D/EGL_emulation( 2467): app_time_stats: avg=21.31ms min=11.95ms max=32.54ms count=45
+10-17 14:32:46.594 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:32:46.659 D/EGL_emulation( 2467): app_time_stats: avg=18.26ms min=8.12ms max=29.79ms count=51
+10-17 14:32:47.678 D/EGL_emulation( 2467): app_time_stats: avg=18.54ms min=9.93ms max=26.70ms count=51
+10-17 14:32:48.683 D/EGL_emulation( 2467): app_time_stats: avg=17.46ms min=11.12ms max=26.21ms count=52
+10-17 14:32:49.695 D/EGL_emulation( 2467): app_time_stats: avg=15.92ms min=6.12ms max=24.50ms count=56
+10-17 14:32:49.972 D/EGL_emulation(  868): app_time_stats: avg=29987.92ms min=29987.92ms max=29987.92ms count=1
+10-17 14:32:50.699 D/EGL_emulation( 2467): app_time_stats: avg=18.54ms min=11.33ms max=30.73ms count=50
+10-17 14:32:51.702 D/EGL_emulation( 2467): app_time_stats: avg=18.18ms min=10.76ms max=25.47ms count=51
+10-17 14:32:52.716 D/EGL_emulation( 2467): app_time_stats: avg=18.42ms min=9.48ms max=28.77ms count=51
+10-17 14:32:53.732 D/EGL_emulation( 2467): app_time_stats: avg=16.64ms min=9.76ms max=27.88ms count=56
+10-17 14:32:54.737 D/EGL_emulation( 2467): app_time_stats: avg=16.53ms min=9.28ms max=26.22ms count=53
+10-17 14:32:55.752 D/EGL_emulation( 2467): app_time_stats: avg=19.39ms min=10.62ms max=35.22ms count=48
+10-17 14:32:56.753 D/EGL_emulation( 2467): app_time_stats: avg=16.99ms min=10.21ms max=24.72ms count=53
+10-17 14:32:57.755 D/EGL_emulation( 2467): app_time_stats: avg=18.70ms min=10.10ms max=27.64ms count=50
+10-17 14:32:58.770 D/EGL_emulation( 2467): app_time_stats: avg=17.86ms min=10.54ms max=26.58ms count=52
+10-17 14:32:59.780 D/EGL_emulation( 2467): app_time_stats: avg=18.84ms min=11.01ms max=27.31ms count=51
+10-17 14:33:00.041 D/EGL_emulation(  868): app_time_stats: avg=10068.45ms min=10068.45ms max=10068.45ms count=1
+10-17 14:33:00.781 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=7.03ms max=31.93ms count=53
+10-17 14:33:01.222 E/android.hardware.power.stats@1.0-service-mock(  410): Failed to getEnergyData
+10-17 14:33:01.794 D/EGL_emulation( 2467): app_time_stats: avg=17.77ms min=9.51ms max=28.76ms count=52
+10-17 14:33:02.795 D/EGL_emulation( 2467): app_time_stats: avg=17.58ms min=9.26ms max=24.56ms count=51
+10-17 14:33:03.810 D/EGL_emulation( 2467): app_time_stats: avg=17.60ms min=9.17ms max=28.01ms count=54
+10-17 14:33:04.830 D/EGL_emulation( 2467): app_time_stats: avg=17.93ms min=10.14ms max=27.52ms count=51
+10-17 14:33:05.836 D/EGL_emulation( 2467): app_time_stats: avg=17.27ms min=10.03ms max=29.50ms count=51
+10-17 14:33:06.847 D/EGL_emulation( 2467): app_time_stats: avg=18.94ms min=8.94ms max=31.35ms count=50
+10-17 14:33:07.874 D/EGL_emulation( 2467): app_time_stats: avg=17.69ms min=10.80ms max=27.43ms count=53
+10-17 14:33:08.886 D/EGL_emulation( 2467): app_time_stats: avg=18.38ms min=8.27ms max=27.11ms count=52
+10-17 14:33:09.894 D/EGL_emulation( 2467): app_time_stats: avg=16.46ms min=9.07ms max=26.30ms count=52
+10-17 14:33:10.914 D/EGL_emulation( 2467): app_time_stats: avg=17.80ms min=9.39ms max=28.59ms count=52
+10-17 14:33:11.917 D/EGL_emulation( 2467): app_time_stats: avg=17.14ms min=11.01ms max=27.53ms count=53
+10-17 14:33:12.918 D/EGL_emulation( 2467): app_time_stats: avg=19.26ms min=12.64ms max=30.68ms count=48
+10-17 14:33:13.922 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=10.20ms max=26.74ms count=55
+10-17 14:33:14.938 D/EGL_emulation( 2467): app_time_stats: avg=17.39ms min=9.60ms max=28.13ms count=55
+10-17 14:33:15.947 D/EGL_emulation( 2467): app_time_stats: avg=17.51ms min=9.54ms max=25.00ms count=51
+10-17 14:33:16.963 D/EGL_emulation( 2467): app_time_stats: avg=17.09ms min=9.58ms max=24.61ms count=53
+10-17 14:33:17.978 D/EGL_emulation( 2467): app_time_stats: avg=18.64ms min=10.57ms max=27.69ms count=48
+10-17 14:33:18.995 D/EGL_emulation( 2467): app_time_stats: avg=16.85ms min=10.41ms max=36.55ms count=51
+10-17 14:33:20.011 D/EGL_emulation( 2467): app_time_stats: avg=17.67ms min=10.69ms max=28.73ms count=51
+10-17 14:33:21.019 D/EGL_emulation( 2467): app_time_stats: avg=17.59ms min=10.06ms max=28.59ms count=51
+10-17 14:33:22.043 D/EGL_emulation( 2467): app_time_stats: avg=16.78ms min=7.62ms max=30.91ms count=52
+10-17 14:33:23.052 D/EGL_emulation( 2467): app_time_stats: avg=18.67ms min=9.95ms max=32.25ms count=47
+10-17 14:33:24.061 D/EGL_emulation( 2467): app_time_stats: avg=15.82ms min=8.32ms max=24.28ms count=54
+10-17 14:33:25.078 D/EGL_emulation( 2467): app_time_stats: avg=17.34ms min=9.41ms max=26.54ms count=51
+10-17 14:33:26.088 D/EGL_emulation( 2467): app_time_stats: avg=18.12ms min=9.89ms max=30.90ms count=50
+10-17 14:33:27.093 D/EGL_emulation( 2467): app_time_stats: avg=19.23ms min=10.20ms max=33.52ms count=48
+10-17 14:33:28.103 D/EGL_emulation( 2467): app_time_stats: avg=17.39ms min=9.64ms max=30.10ms count=53
+10-17 14:33:29.105 D/EGL_emulation( 2467): app_time_stats: avg=16.53ms min=9.13ms max=28.97ms count=52
+10-17 14:33:30.117 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=9.64ms max=23.87ms count=52
+10-17 14:33:31.131 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=8.13ms max=25.22ms count=55
+10-17 14:33:32.142 D/EGL_emulation( 2467): app_time_stats: avg=16.50ms min=9.48ms max=24.35ms count=55
+10-17 14:33:33.153 D/EGL_emulation( 2467): app_time_stats: avg=17.37ms min=10.09ms max=26.03ms count=52
+10-17 14:33:34.156 D/EGL_emulation( 2467): app_time_stats: avg=18.05ms min=10.74ms max=26.00ms count=53
+10-17 14:33:35.161 D/EGL_emulation( 2467): app_time_stats: avg=17.27ms min=10.89ms max=23.74ms count=54
+10-17 14:33:36.180 D/EGL_emulation( 2467): app_time_stats: avg=16.85ms min=9.61ms max=24.05ms count=55
+10-17 14:33:37.186 D/EGL_emulation( 2467): app_time_stats: avg=15.92ms min=6.91ms max=24.22ms count=56
+10-17 14:33:38.191 D/EGL_emulation( 2467): app_time_stats: avg=15.06ms min=7.28ms max=39.42ms count=55
+10-17 14:33:39.205 D/EGL_emulation( 2467): app_time_stats: avg=14.33ms min=8.99ms max=26.44ms count=57
+10-17 14:33:39.212 W/Thread-16( 2467): type=1400 audit(0.0:65): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_decimal.cpython-312.so" dev="dm-32" ino=131781 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.476 W/Thread-16( 2467): type=1400 audit(0.0:66): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/cmath.cpython-312.so" dev="dm-32" ino=131789 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.508 W/Thread-16( 2467): type=1400 audit(0.0:67): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_asyncio.cpython-312.so" dev="dm-32" ino=131790 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.576 W/Thread-16( 2467): type=1400 audit(0.0:68): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_csv.cpython-312.so" dev="dm-32" ino=131791 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.750 D/MediaCodecList( 2467): codecHandlesFormat: no format, so no extra checks
+10-17 14:33:39.752 D/CCodec  ( 2467): allocate(c2.android.aac.encoder)
+10-17 14:33:39.753 I/Codec2Client( 2467): Available Codec2 services: "default" "software"
+10-17 14:33:39.754 I/CCodec  ( 2467): setting up 'default' as default (vendor) store
+10-17 14:33:39.759 V/C2Store (  508): in init
+10-17 14:33:39.759 V/C2Store (  508): loading dll
+10-17 14:33:39.760 I/CCodec  ( 2467): Created component [c2.android.aac.encoder]
+10-17 14:33:39.760 D/CCodecConfig( 2467): read media type: audio/mp4a-latm
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.max-count.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.subscribed-indices.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: input.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.buffers.pool-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.pool-ids.values
+10-17 14:33:39.761 I/CCodecConfig( 2467): query failed after returning 9 values (BAD_INDEX)
+10-17 14:33:39.761 D/CCodecConfig( 2467): c2 config diff is Dict {
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.bitrate.value = 64000
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.pl.level = 0
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.pl.profile = 8192
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coding.aac-sbr-mode.value = 3
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 input.buffers.max-size.value = 2048
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 input.delay.value = 0
+10-17 14:33:39.761 D/CCodecConfig( 2467):   string input.media-type.value = "audio/raw"
+10-17 14:33:39.761 D/CCodecConfig( 2467):   string output.media-type.value = "audio/mp4a-latm"
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 raw.channel-count.value = 1
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 raw.sample-rate.value = 44100
+10-17 14:33:39.761 D/CCodecConfig( 2467): }
+10-17 14:33:39.780 D/CodecSeeding( 2467): Seed: codec c2.android.aac.encoder, mediatype audio/mp4a-latm, overrideable 1
+10-17 14:33:39.780 D/CodecProperties( 2467): setFeatureValue(_vq_eligible.device,1)
+10-17 14:33:39.780 D/CodecProperties( 2467): setFeatureValue(_quality.target,1)
+10-17 14:33:39.780 D/CodecSeeding( 2467): Seed: codec c2.android.aac.encoder, mediatype audio/mp4a-latm, overrideable 0
+10-17 14:33:39.780 D/MediaCodec( 2467): shapeMediaFormat: deltas(0): AMessage(what = 0x00000000) = {
+10-17 14:33:39.780 D/MediaCodec( 2467):   }
+10-17 14:33:39.780 D/CCodec  ( 2467): [c2.android.aac.encoder] buffers are bound to CCodec for this session
+10-17 14:33:39.781 D/CCodecConfig( 2467): no c2 equivalents for flags
+10-17 14:33:39.781 D/CCodecConfig( 2467): no c2 equivalents for encoder
+10-17 14:33:39.781 D/CCodecConfig( 2467): c2 config diff is   c2::u32 coded.bitrate.value = 48000
+10-17 14:33:39.781 D/CCodecConfig( 2467):   c2::u32 raw.sample-rate.value = 16000
+10-17 14:33:39.781 W/Codec2Client( 2467): query -- param skipped: index = 1107298332.
+10-17 14:33:39.782 D/CCodec  ( 2467): encoding statistics level = 0
+10-17 14:33:39.782 D/CCodec  ( 2467): setup formats input: AMessage(what = 0x00000000) = {
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t sample-rate = 16000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t channel-count = 1
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t max-input-size = 16384
+10-17 14:33:39.782 D/CCodec  ( 2467):   string mime = "audio/raw"
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t android._config-pcm-encoding = 2
+10-17 14:33:39.782 D/CCodec  ( 2467): }
+10-17 14:33:39.782 D/CCodec  ( 2467): setup formats output: AMessage(what = 0x00000000) = {
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t sample-rate = 16000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t bitrate = 48000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t channel-count = 1
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t level = 0
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t max-bitrate = 48000
+10-17 14:33:39.782 D/CCodec  ( 2467):   string mime = "audio/mp4a-latm"
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t profile = 2
+10-17 14:33:39.782 D/CCodec  ( 2467): }
+10-17 14:33:39.782 I/CCodecConfig( 2467): query failed after returning 9 values (BAD_INDEX)
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 1342179345.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 2415921170.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 3254792206.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 3254792194.
+10-17 14:33:39.788 D/C2Store ( 2467): Using DMABUF Heaps
+10-17 14:33:39.789 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Created input block pool with allocatorID 16 => poolID 17 - OK (0)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b328558 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 6/24 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b328558 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 75% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32aca8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/18 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32aca8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 18, 72% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32cab8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/26 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32cab8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 26, 81% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32fd98 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/34 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32fd98 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 34, 82% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32aef8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/34 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32aef8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 34, 85% unfetched
+10-17 14:33:39.789 I/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Created output block pool with allocatorID 16 => poolID 26 - OK
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32d3f8 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32d3f8 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 24, 75% unfetched
+10-17 14:33:39.789 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Configured output block pool ids 26 => OK
+10-17 14:33:39.790 I/DMABUFHEAPS( 2467): Using DMA-BUF heap named: system
+10-17 14:33:39.790 D/SimpleC2Component(  508): Using output block pool with poolID 26 => got 26 - 0
+10-17 14:33:39.790 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b30afe8 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/36 (fetch/transfer)
+10-17 14:33:39.790 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b30afe8 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 36, 83% unfetched
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b30c268 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/38 (fetch/transfer)
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b30c268 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 38, 84% unfetched
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b3158b8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/18 (fetch/transfer)
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b3158b8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 18, 72% unfetched
+10-17 14:33:39.793 D/MPEG4Writer( 2467): PreAllocation enabled
+10-17 14:33:39.796 D/MPEG4Writer( 2467): fpathconf _PC_FILESIZEBITS:64
+10-17 14:33:39.796 D/MPEG4Writer( 2467): File size limit set to 4503599627370495 bytes implicitly
+10-17 14:33:39.796 D/MPEG4Writer( 2467): MP4WtrCtrlHlpLooper Started
+10-17 14:33:39.796 I/MPEG4Writer( 2467): limits: 4503599627370495/0 bytes/us, bit rate: -1 bps and the estimated moov size 3192 bytes
+10-17 14:33:39.801 I/MPEG4Writer( 2467): setStartTimestampUs: 0
+10-17 14:33:39.801 I/MPEG4Writer( 2467): Earliest track starting time: 0
+10-17 14:33:40.213 D/EGL_emulation( 2467): app_time_stats: avg=9.54ms min=5.73ms max=19.82ms count=61
+10-17 14:33:41.213 D/EGL_emulation( 2467): app_time_stats: avg=9.99ms min=5.80ms max=100.46ms count=55
+10-17 14:33:42.213 D/EGL_emulation( 2467): app_time_stats: avg=7.85ms min=6.01ms max=11.93ms count=60
+10-17 14:33:43.229 D/EGL_emulation( 2467): app_time_stats: avg=7.55ms min=5.54ms max=12.02ms count=61
+10-17 14:33:44.230 D/EGL_emulation( 2467): app_time_stats: avg=7.44ms min=5.55ms max=11.73ms count=60
+10-17 14:33:44.791 D/BufferPoolAccessor2.0(  868): evictor expired: 3, evicted: 0
+10-17 14:33:44.801 D/BufferPoolAccessor2.0(  589): evictor expired: 6, evicted: 0
+10-17 14:33:45.235 D/EGL_emulation( 2467): app_time_stats: avg=7.91ms min=5.71ms max=11.82ms count=60
+10-17 14:33:45.320 D/BufferPoolAccessor2.0( 2467): bufferpool2 0x787d3b446818 : 5(81920 size) total buffers - 1(16384 size) used buffers - 142/147 (recycle/alloc) - 5/290 (fetch/transfer)
+10-17 14:33:45.321 D/BufferPoolAccessor2.0(  508): bufferpool2 0x72968078c848 : 16(98304 size) total buffers - 1(6144 size) used buffers - 565/581 (recycle/alloc) - 16/580 (fetch/transfer)
+10-17 14:33:45.796 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] MediaCodec discarded an unknown buffer
+10-17 14:33:45.796 V/MediaWriter( 2467): Track event err/info msg:101, trackId:1, type:1000,val:-1011
+10-17 14:33:45.797 I/hw-BpHwBinder( 2467): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.797 I/hw-BpHwBinder(  508): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.797 I/hw-BpHwBinder(  508): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.799 V/C2Store (  508): in ~ComponentModule
+10-17 14:33:45.799 V/C2Store (  508): unloading dll
+10-17 14:33:45.800 D/MPEG4Writer( 2467): reset()
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track stopping. Stop source
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track source stopping
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track source stopped
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Received total/0-length (632/0) buffers and encoded 632 frames. - Audio
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Audio track drift time: 0 us
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track stopped. Status:0. Stop source
+10-17 14:33:45.800 D/MPEG4Writer( 2467): 0 chunks are written in the last batch
+10-17 14:33:45.800 D/MPEG4Writer( 2467): WriterThread stopped. Status:0
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Adjust the moov start time from 0 us -> 0 us
+10-17 14:33:45.800 I/MPEG4Writer( 2467): The mp4 file will not be streamable.
+10-17 14:33:45.800 I/MPEG4Writer( 2467): MOOV atom was written to the file
+10-17 14:33:45.800 D/MPEG4Writer( 2467): release()
+10-17 14:33:45.800 D/MPEG4Writer( 2467): ftruncate mPreAllocateFileEndOffset:249944 mOffset:249193 mMdatEndOffset:245992 diff:751
+10-17 14:33:45.802 D/MPEG4Writer( 2467): final fsync() takes 1 ms, file size 249193
+10-17 14:33:45.802 D/MPEG4Writer( 2467): MP4WtrCtrlHlpLooper stopped
+10-17 14:33:45.802 D/MPEG4Writer( 2467): Top 5 write durations(microseconds): #1:29 #2:38 #3:55 #4:60 #5:75
+10-17 14:33:45.802 D/MPEG4Writer( 2467): reset()
+10-17 14:33:45.802 D/MPEG4Writer( 2467): Audio track stopping. Stop source
+10-17 14:33:45.802 E/MPEG4Writer( 2467): Stop() called but track is not started or stopped
+10-17 14:33:46.247 D/EGL_emulation( 2467): app_time_stats: avg=8.29ms min=5.55ms max=16.50ms count=61
+10-17 14:33:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:33:46.425 D/EGL_emulation(  868): app_time_stats: avg=46384.55ms min=46384.55ms max=46384.55ms count=1
+10-17 14:33:46.610 W/NotificationHistory(  589): Attempted to add notif for locked/gone/disabled user 0
+10-17 14:33:46.639 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:33:46.640 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:33:46.641 D/EGL_emulation(  868): eglCreateContext: 0x787ceb36e950: maj 3 min 0 rcv 3
+10-17 14:33:46.642 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb36e950: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:33:47.145 W/ProcessState( 4443): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:33:47.860 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:33:47.860 I/Gralloc4( 4443): mapper 4.x is not supported
+10-17 14:33:48.076 D/HostConnection( 4443): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:33:48.913 I/AudioFlinger(  431): AudioFlinger's thread 0x795672e10bb0 tid=4450 ready to run
+10-17 14:33:48.918 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.921 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneDirection:428 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.921 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneFieldDimension:433 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.955 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:33:49.141 D/EGL_emulation(  868): app_time_stats: avg=662.74ms min=2.02ms max=2318.37ms count=4
+10-17 14:33:49.148 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.515 I/AudioFlinger(  431): AudioFlinger's thread 0x795672e10bb0 tid=4455 ready to run
+10-17 14:33:49.519 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.520 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneDirection:428 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.521 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneFieldDimension:433 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.556 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:33:49.636 D/EGL_emulation( 2467): app_time_stats: avg=108.51ms min=5.38ms max=2707.13ms count=29
+10-17 14:33:49.642 I/Choreographer( 2467): Skipped 48 frames!  The application may be doing too much work on its main thread.
+10-17 14:33:49.693 I/OpenGLRenderer( 2467): Davey! duration=2724ms; Flags=0, FrameTimelineVsyncId=140817, IntendedVsync=435423977567, Vsync=435423977567, InputEventId=0, HandleInputStart=435436734254, AnimationStart=435436734875, PerformTraversalsStart=435437761106, DrawStart=435437796969, FrameDeadline=435490644231, FrameInterval=435436731911, FrameStartTime=16666666, SyncQueued=435437903207, SyncStart=435449171763, IssueDrawCommandsStart=435449207706, SwapBuffers=438155313838, FrameCompleted=438159298588, DequeueBufferDuration=3025, QueueBufferDuration=286776, GpuCompleted=438159298588, SwapBuffersCompleted=438156312232, DisplayPresentTime=433275990509, CommandSubmissionCompleted=438155313838, 

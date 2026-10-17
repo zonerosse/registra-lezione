@@ -1,0 +1,1205 @@
+--------- beginning of main
+10-17 14:27:44.812 W/Role    (  871): Cannot get ApplicationInfo for default holder: com.google.android.contacts
+10-17 14:27:44.813 D/CarrierSvcBindHelper( 1078): onPackageModified: it.puntowebferrara.registralezione
+10-17 14:27:44.813 D/CarrierSvcBindHelper( 1078): No carrier app for: 0
+10-17 14:27:44.814 D/ImsResolver( 1078): maybeAddedImsService, packageName: it.puntowebferrara.registralezione
+--------- beginning of system
+10-17 14:27:44.820 W/VoiceInteractionManager(  589): no available voice recognition services found for user 0
+10-17 14:27:44.831 D/EGL_emulation( 1131): app_time_stats: avg=2960.25ms min=2.99ms max=35276.42ms count=12
+10-17 14:27:44.842 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+--------- beginning of kernel
+10-17 14:27:45.024 I/logd    (    0): logdr: UID=2000 GID=2000 PID=2423 b tail=0 logMask=99 pid=0 start=0ns deadline=0ns
+10-17 14:27:44.888 I/WindowManager(  589): Using new display size: 720x1560
+10-17 14:27:44.904 D/PermissionCache(  434): checking android.permission.READ_FRAME_BUFFER for uid=1000 => granted (173 us)
+10-17 14:27:44.948 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:27:44.949 I/Gralloc4(  589): mapper 4.x is not supported
+10-17 14:27:44.956 D/HostConnection(  589): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:44.959 W/ImageReader_JNI(  589): Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+10-17 14:27:44.965 I/ActivityTaskManager(  589): Config changes=20000d00 {1.0 310mcc260mnc [en_US] ldltr sw720dp w720dp h1536dp 160dpi xlrg long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.33 fontWeightAdjustment=0}
+10-17 14:27:44.967 W/ActivityTaskManager(  589): Current config: {1.0 310mcc260mnc [en_US] ldltr sw320dp w320dp h640dp 160dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 320, 640) mAppBounds=Rect(0, 0 - 320, 640) mMaxBounds=Rect(0, 0 - 320, 640) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.33 fontWeightAdjustment=0} unchanged for IME proc com.android.inputmethod.latin
+10-17 14:27:44.969 I/WindowManager(  589): Override config changes=20000d00 {1.0 310mcc260mnc [en_US] ldltr sw720dp w720dp h1536dp 160dpi xlrg long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.33 fontWeightAdjustment=0} for displayId=0
+10-17 14:27:44.969 V/ActivityTaskManager(  589): Sending to IME proc com.android.inputmethod.latin new config {1.0 310mcc260mnc [en_US] ldltr sw720dp w720dp h1536dp 160dpi xlrg long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.76 fontWeightAdjustment=0}
+10-17 14:27:44.977 I/InputManager-JNI(  589): Viewport [0] to add: local:4619827259835644672, isActive: true
+10-17 14:27:44.978 I/InputReader(  589): Reconfiguring input devices, changes=DISPLAY_INFO | 
+10-17 14:27:44.978 I/InputReader(  589): Touch device 'virtio_input_multi_touch_5' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.979 D/NavigationModeController(  868): getCurrentInteractionMode: mode=0 contextUser=0
+10-17 14:27:44.979 D/NavigationModeController(  868): getCurrentUserContext: contextUser=0 currentUser=0
+10-17 14:27:44.979 E/DisplayController( 1131): Unexpected normalizedDisplayInfo found, invalidating cache
+10-17 14:27:44.980 I/InputReader(  589): Touch device 'virtio_input_multi_touch_2' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.980 I/InputReader(  589): Touch device 'virtio_input_multi_touch_7' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.980 I/InputReader(  589): Touch device 'virtio_input_multi_touch_8' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.980 I/InputReader(  589): Touch device 'virtio_input_multi_touch_9' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.980 I/InputReader(  589): Touch device 'virtio_input_multi_touch_3' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.981 I/InputReader(  589): Touch device 'virtio_input_multi_touch_10' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.982 I/InputReader(  589): Touch device 'virtio_input_multi_touch_4' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.983 I/InputReader(  589): Device reconfigured: id=3, name='virtio_input_multi_touch_1', size 320x640, orientation 0, mode 1, display id 0
+10-17 14:27:44.983 I/InputReader(  589): Touch device 'virtio_input_multi_touch_6' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.983 I/InputReader(  589): Touch device 'virtio_input_multi_touch_11' could not query the properties of its associated display.  The device will be inoperable until the display size becomes available.
+10-17 14:27:44.988 E/FrameEvents( 1131): updateAcquireFence: Did not find frame.
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): No service published for: ethernet
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.ServiceManager.getServiceOrThrow(ServiceManager.java:166)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry$137.createService(SystemServiceRegistry.java:1825)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry$CachedServiceFetcher.getService(SystemServiceRegistry.java:1924)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry.getSystemService(SystemServiceRegistry.java:1601)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.ContextImpl.getSystemService(ContextImpl.java:2120)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.content.ContextWrapper.getSystemService(ContextWrapper.java:900)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.isEthernetSupported(Tethering.java:1550)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.makeSupportedDownstreams(Tethering.java:2509)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.updateSupportedDownstreams(Tethering.java:2483)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.updateConfiguration(Tethering.java:504)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.-$$Nest$mupdateConfiguration(Unknown Source:0)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering$StateReceiver.onReceive(Tethering.java:1141)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.LoadedApk$ReceiverDispatcher$Args.lambda$getRunnable$0$android-app-LoadedApk$ReceiverDispatcher$Args(LoadedApk.java:1790)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0.run(Unknown Source:2)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.Handler.handleCallback(Handler.java:942)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.Looper.loopOnce(Looper.java:201)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.Looper.loop(Looper.java:288)
+10-17 14:27:44.992 E/SystemServiceRegistry( 1016): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589):  Hit PackageManager exception
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): android.content.pm.PackageManager$NameNotFoundException: No module info for package: com.android.wifi
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.app.ApplicationPackageManager.getModuleInfo(ApplicationPackageManager.java:1187)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor.getWifiStackVersion(WifiHealthMonitor.java:366)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor.extractCurrentSoftwareBuildInfo(WifiHealthMonitor.java:587)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor.postBootSwBuildCheck(WifiHealthMonitor.java:522)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor.postBootDetectionHandler(WifiHealthMonitor.java:513)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor.-$$Nest$mpostBootDetectionHandler(Unknown Source:0)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at com.android.server.wifi.WifiHealthMonitor$2.onAlarm(WifiHealthMonitor.java:190)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.app.AlarmManager$ListenerWrapper.run(AlarmManager.java:347)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.os.Handler.handleCallback(Handler.java:942)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.os.Looper.loopOnce(Looper.java:201)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.os.Looper.loop(Looper.java:288)
+10-17 14:27:44.993 E/WifiHealthMonitor(  589): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+10-17 14:27:44.997 E/FrameEvents( 1131): updateAcquireFence: Did not find frame.
+10-17 14:27:45.004 E/KeyguardClockSwitch(  868): No clock being shown
+10-17 14:27:45.007 I/ClockRegistry(  868): Current clock (DEFAULT) was connected
+10-17 14:27:45.011 I/ActivityTaskManager(  589): Config changes=1d00 {1.0 310mcc260mnc [en_US] ldltr sw384dp w384dp h819dp 300dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.78 fontWeightAdjustment=0}
+10-17 14:27:45.013 W/ActivityTaskManager(  589): Current config: {1.0 310mcc260mnc [en_US] ldltr sw720dp w720dp h1536dp 160dpi xlrg long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.78 fontWeightAdjustment=0} unchanged for IME proc com.android.inputmethod.latin
+10-17 14:27:45.013 I/WindowManager(  589): Override config changes=1d00 {1.0 310mcc260mnc [en_US] ldltr sw384dp w384dp h819dp 300dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.78 fontWeightAdjustment=0} for displayId=0
+10-17 14:27:45.013 V/ActivityTaskManager(  589): Sending to IME proc com.android.inputmethod.latin new config {1.0 310mcc260mnc [en_US] ldltr sw384dp w384dp h819dp 300dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.121 fontWeightAdjustment=0}
+10-17 14:27:45.016 I/GridSizeMigrationTaskV2( 1131): Migration is needed. destDeviceState: DeviceGridState{mGridSizeString='6,5', mNumHotseat=6, mDeviceType=2, mDbFile=launcher_6_by_5.db}, srcDeviceState: DeviceGridState{mGridSizeString='4,4', mNumHotseat=4, mDeviceType=0, mDbFile=launcher_4_by_4.db}
+10-17 14:27:45.019 V/WindowManagerShell(  868): Display changed: 0
+10-17 14:27:45.029 D/EglHelper(  868): createEglContext start
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): No service published for: ethernet
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): android.os.ServiceManager$ServiceNotFoundException: No service published for: ethernet
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.ServiceManager.getServiceOrThrow(ServiceManager.java:166)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry$137.createService(SystemServiceRegistry.java:1825)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry$CachedServiceFetcher.getService(SystemServiceRegistry.java:1924)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.SystemServiceRegistry.getSystemService(SystemServiceRegistry.java:1601)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.ContextImpl.getSystemService(ContextImpl.java:2120)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.content.ContextWrapper.getSystemService(ContextWrapper.java:900)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.isEthernetSupported(Tethering.java:1550)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.makeSupportedDownstreams(Tethering.java:2509)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.updateSupportedDownstreams(Tethering.java:2483)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.updateConfiguration(Tethering.java:504)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering.-$$Nest$mupdateConfiguration(Unknown Source:0)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at com.android.networkstack.tethering.Tethering$StateReceiver.onReceive(Tethering.java:1141)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.LoadedApk$ReceiverDispatcher$Args.lambda$getRunnable$0$android-app-LoadedApk$ReceiverDispatcher$Args(LoadedApk.java:1790)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.app.LoadedApk$ReceiverDispatcher$Args$$ExternalSyntheticLambda0.run(Unknown Source:2)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.Handler.handleCallback(Handler.java:942)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.Handler.dispatchMessage(Handler.java:99)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.Looper.loopOnce(Looper.java:201)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.Looper.loop(Looper.java:288)
+10-17 14:27:45.040 E/SystemServiceRegistry( 1016): 	at android.os.HandlerThread.run(HandlerThread.java:67)
+10-17 14:27:45.043 D/CentralSurfaces(  868): Received new disable state: enaihbcrso.qingr (unchanged)
+10-17 14:27:45.044 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{3de0b74 V.E...... ......ID 3,0-18,22 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.044 W/View    (  868): requestLayout() improperly called by StatusBarIconView(slot=mobile icon=null notification=null) during layout: running second layout pass
+10-17 14:27:45.050 V/GridSizeMigrationTaskV2( 1131): Workspace migration completed in 11
+10-17 14:27:45.050 D/LoaderTask( 1131): loadWorkspace: loading default favorites
+10-17 14:27:45.052 W//apex/com.android.adbd/bin/adbd(  469): type=1400 audit(0.0:15): avc: denied { search } for comm=73796E6320737663203733 name="oem" dev="dm-4" ino=43 scontext=u:r:adbd:s0 tcontext=u:object_r:oemfs:s0 tclass=dir permissive=0
+10-17 14:27:45.078 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.messaging/com.android.messaging.ui.conversationlist.ConversationListActivity}
+10-17 14:27:45.052 W//apex/com.android.adbd/bin/adbd(  469): type=1400 audit(0.0:16): avc: denied { relabelfrom } for comm=73796E6320737663203733 name="ggml-small-q5_1.bin" dev="dm-32" ino=303142 scontext=u:r:adbd:s0 tcontext=u:object_r:media_rw_data_file:s0 tclass=file permissive=0
+10-17 14:27:45.099 D/EGL_emulation(  868): eglCreateContext: 0x787ceb364690: maj 3 min 0 rcv 3
+10-17 14:27:45.099 D/EglHelper(  868): createEglContext done
+10-17 14:27:45.100 D/EglHelper(  868): createEglSurface start
+10-17 14:27:45.104 I/WindowManager(  589): finishDrawing of relaunch: Window{143625c u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher} 90ms
+10-17 14:27:45.113 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{org.chromium.webview_shell/org.chromium.webview_shell.WebViewBrowserActivity}
+10-17 14:27:45.114 D/EglHelper(  868): createEglSurface done
+10-17 14:27:45.121 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.dialer/com.android.dialer.main.impl.MainActivity}
+10-17 14:27:45.125 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.camera2/com.android.camera.CameraLauncher}
+10-17 14:27:45.127 E/FrameEvents( 1131): updateAcquireFence: Did not find frame.
+10-17 14:27:45.129 D/NoBackGesture(  868): Config changed: newConfig={1.0 310mcc260mnc [en_US] ldltr sw384dp w384dp h819dp 300dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 720, 1560) mAppBounds=Rect(0, 0 - 720, 1560) mMaxBounds=Rect(0, 0 - 720, 1560) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} as.2 s.78 fontWeightAdjustment=0} lastReportedConfig={1.0 ?mcc?mnc [en_US] ldltr sw320dp w320dp h640dp 160dpi nrml long port finger qwerty/v/v -nav/h winConfig={ mBounds=Rect(0, 0 - 320, 640) mAppBounds=Rect(0, 0 - 320, 640) mMaxBounds=Rect(0, 0 - 320, 640) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mDisplayWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.8 fontWeightAdjustment=0}
+10-17 14:27:45.130 V/WindowManagerShell(  868): Display changed: 0
+10-17 14:27:45.132 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.gallery3d/com.android.gallery3d.app.GalleryActivity}
+10-17 14:27:45.151 D/LoaderTask( 1131): loadWorkspace
+10-17 14:27:45.152 D/LoaderTask( 1131): Cancelled
+10-17 14:27:45.165 D/CoreBackPreview(  589): Window{143625c u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}: Setting back callback null
+10-17 14:27:45.177 E/KeyguardClockSwitch(  868): No clock being shown
+10-17 14:27:45.179 W/InputManager-JNI(  589): Input channel object '143625c com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher (client)' was disposed without first being removed with the input manager!
+10-17 14:27:45.185 W/OnBackInvokedCallback( 1131): OnBackInvokedCallback is not enabled for the application.
+10-17 14:27:45.185 W/OnBackInvokedCallback( 1131): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+10-17 14:27:45.189 V/WindowManager(  589): Unknown focus tokens, dropping reportFocusChanged
+10-17 14:27:45.190 W/TransactionTracing(  434): Could not find layer handle 0x765189b57250
+10-17 14:27:45.190 W/TransactionTracing(  434): Could not find layer handle 0x765189b56b30
+10-17 14:27:45.191 W/NotificationHistory(  589): Attempted to add notif for locked/gone/disabled user 0
+10-17 14:27:45.206 D/AutofillManager( 1131): Fill dialog is enabled:false, hints=[]
+10-17 14:27:45.208 I/ClockRegistry(  868): Current clock (DEFAULT) was connected
+10-17 14:27:45.225 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{d168c44 V.E...... ......ID 5,0-33,22 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.227 D/CompatibilityChangeReporter(  589): Compat change id reported: 168419799; UID 10095; state: DISABLED
+10-17 14:27:45.230 I/GridSizeMigrationTaskV2( 1131): Migration is needed. destDeviceState: DeviceGridState{mGridSizeString='4,4', mNumHotseat=4, mDeviceType=0, mDbFile=launcher_4_by_4.db}, srcDeviceState: DeviceGridState{mGridSizeString='6,5', mNumHotseat=6, mDeviceType=2, mDbFile=launcher_6_by_5.db}
+10-17 14:27:45.234 D/CoreBackPreview(  589): Window{27fae7f u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@209e338, mPriority=0}
+10-17 14:27:45.245 D/TISBindHelper( 1131): TIS service connected
+10-17 14:27:45.252 D/CentralSurfaces(  868): Received new disable state: enaihbcrso.qingr (unchanged)
+10-17 14:27:45.252 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{5ac2c4f V.E...... ......ID 5,0-33,22 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.252 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{3e91fdc V.E...... ......ID 5,0-33,22 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.257 W/TransactionTracing(  434): Could not find layer handle 0x765189b57eb0
+10-17 14:27:45.260 V/GridSizeMigrationTaskV2( 1131): Workspace migration completed in 10
+10-17 14:27:45.261 D/LoaderTask( 1131): loadWorkspace: loading default favorites
+10-17 14:27:45.271 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.messaging/com.android.messaging.ui.conversationlist.ConversationListActivity}
+10-17 14:27:45.272 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{org.chromium.webview_shell/org.chromium.webview_shell.WebViewBrowserActivity}
+10-17 14:27:45.274 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.dialer/com.android.dialer.main.impl.MainActivity}
+10-17 14:27:45.275 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.camera2/com.android.camera.CameraLauncher}
+10-17 14:27:45.276 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.gallery3d/com.android.gallery3d.app.GalleryActivity}
+10-17 14:27:45.279 D/LoaderTask( 1131): loadWorkspace
+10-17 14:27:45.280 D/LoaderTask( 1131): sanitizeData
+10-17 14:27:45.280 D/LoaderTask( 1131): bindWorkspace
+10-17 14:27:45.281 D/LoaderTask( 1131): sendFirstScreenActiveInstallsBroadcast
+10-17 14:27:45.283 D/QSPanel (  868): setUsingHorizontalLayout: false, true
+10-17 14:27:45.283 D/QSPanel (  868): Reattaching media host: false, current com.android.systemui.qs.QSPanel{aadaf52 IFE...... ......ID 0,90-260,1147 #7f0a0501 app:id/quick_settings_panel}, new com.android.systemui.qs.QSPanel{ef06dc4 VFE...... ......I. 0,0-0,0 #7f0a0501 app:id/quick_settings_panel}
+10-17 14:27:45.283 D/QSPanel (  868): setUsingHorizontalLayout: false, true
+10-17 14:27:45.283 D/QSPanel (  868): Reattaching media host: false, current com.android.systemui.qs.QSPanel{ef06dc4 VFE...... ......I. 0,0-0,0 #7f0a0501 app:id/quick_settings_panel}, new com.android.systemui.qs.QSPanel{ef06dc4 VFE...... ......I. 0,0-0,0 #7f0a0501 app:id/quick_settings_panel}
+10-17 14:27:45.285 D/QuickQSPanel(  868): setUsingHorizontalLayout: false, true
+10-17 14:27:45.285 D/QuickQSPanel(  868): Reattaching media host: false, current com.android.systemui.qs.QuickQSPanel{6745320 VFE...... ......ID 0,64-260,216 #7f0a04fe app:id/quick_qs_panel}, new com.android.systemui.qs.QuickQSPanel{51b373 VFE...... ......I. 0,0-0,0 #7f0a04fe app:id/quick_qs_panel}
+10-17 14:27:45.293 I/ThemeOverlayController(  868): Wallpaper changed from background app, keep deferring color events. Accepting: true
+10-17 14:27:45.296 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{376d096 V.E...... ......ID 5,0-33,41 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.311 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{a2a40ef V.E...... ......ID 5,0-33,41 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.320 W/Parcel  ( 1131): Expecting binder but got null!
+10-17 14:27:45.327 D/LocalImageResolver(  868): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+10-17 14:27:45.330 D/LocalImageResolver(  868): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+10-17 14:27:45.338 D/LoaderTask( 1131): step 1 complete
+10-17 14:27:45.339 I/WindowManager(  589): Screen frozen for +449ms due to Window{27fae7f u0 com.android.launcher3/com.android.launcher3.uioverrides.QuickstepLauncher}
+10-17 14:27:45.346 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.messaging/com.android.messaging.ui.conversationlist.ConversationListActivity}
+10-17 14:27:45.348 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{org.chromium.webview_shell/org.chromium.webview_shell.WebViewBrowserActivity}
+10-17 14:27:45.349 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.documentsui/com.android.documentsui.LauncherActivity}
+10-17 14:27:45.352 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.deskclock/com.android.deskclock.DeskClock}
+10-17 14:27:45.353 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}
+10-17 14:27:45.356 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.calendar/com.android.calendar.AllInOneActivity}
+10-17 14:27:45.360 W/View    (  868): requestLayout() improperly called by com.android.keyguard.AlphaOptimizedLinearLayout{19479f1 V.E...... ......ID 5,0-33,41 #7f0a0742 app:id/wifi_group} during layout: running second layout pass
+10-17 14:27:45.361 W/ImageReader_JNI(  589): Unable to acquire a buffer item, very likely client tried to acquire more than maxImages buffers
+10-17 14:27:45.395 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.dialer/com.android.dialer.main.impl.MainActivity}
+10-17 14:27:45.397 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.camera2/com.android.camera.CameraLauncher}
+10-17 14:27:45.406 I/LatencyTracker(  589): ACTION_ROTATE_SCREEN latency=516
+10-17 14:27:45.413 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.contacts/com.android.contacts.activities.PeopleActivity}
+10-17 14:27:45.417 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.stk/com.android.stk.StkMain}
+10-17 14:27:45.425 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.settings/com.android.settings.Settings}
+10-17 14:27:45.444 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.gallery3d/com.android.gallery3d.app.GalleryActivity}
+10-17 14:27:45.470 I/Launcher.IconCache( 1131): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.android.quicksearchbox/com.android.quicksearchbox.SearchActivity}
+10-17 14:27:45.479 D/LoaderTask( 1131): loadAllApps
+10-17 14:27:45.479 D/LoaderTask( 1131): bindAllApps
+10-17 14:27:45.501 D/LoaderTask( 1131): update icon cache
+10-17 14:27:45.501 D/LoaderTask( 1131): save shortcuts in icon cache
+10-17 14:27:45.578 D/LoaderTask( 1131): step 2 complete
+10-17 14:27:45.580 D/LoaderTask( 1131): loadDeepShortcuts
+10-17 14:27:45.580 D/LoaderTask( 1131): bindDeepShortcuts
+10-17 14:27:45.580 D/LoaderTask( 1131): save deep shortcuts in icon cache
+10-17 14:27:45.580 D/LoaderTask( 1131): step 3 complete
+10-17 14:27:45.584 W/TransactionTracing(  434): Could not find layer handle 0x765189b57eb0
+10-17 14:27:45.584 W/TransactionTracing(  434): Could not find layer handle 0x765189b570d0
+10-17 14:27:45.584 W/TransactionTracing(  434): Could not find layer handle 0x765189b5a3d0
+10-17 14:27:45.584 W/TransactionTracing(  434): Could not find layer handle 0x765189b58510
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b55e10
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b570d0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b570d0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b57eb0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b55e10
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b57eb0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b5a3d0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b56d70
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b5a3d0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b57eb0
+10-17 14:27:45.585 W/TransactionTracing(  434): Could not find layer handle 0x765189b570d0
+10-17 14:27:45.625 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:45.625 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:27:45.627 D/EGL_emulation(  868): eglCreateContext: 0x787ceb32f050: maj 3 min 0 rcv 3
+10-17 14:27:45.630 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb32f050: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:27:45.647 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:45.677 D/LocalImageResolver(  868): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+10-17 14:27:45.680 D/LocalImageResolver(  868): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+10-17 14:27:45.692 D/LocalImageResolver(  868): Couldn't use ImageDecoder for drawable, falling back to non-resized load.
+10-17 14:27:45.699 D/LoaderTask( 1131): load widgets
+10-17 14:27:45.701 D/LoaderTask( 1131): bindWidgets
+10-17 14:27:45.701 D/LoaderTask( 1131): save widgets in icon cache
+10-17 14:27:45.701 D/LoaderTask( 1131): finish icon update
+10-17 14:27:45.701 D/QuickstepModelDelegate( 1131): Successfully registered for launcher snapshot logging!
+10-17 14:27:45.701 W/Binder  (  589): Caught a RuntimeException from the binder stub implementation.
+10-17 14:27:45.701 W/Binder  (  589): java.lang.SecurityException: Need REGISTER_STATS_PULL_ATOM permission.: Neither user 10107 nor current process has android.permission.REGISTER_STATS_PULL_ATOM.
+10-17 14:27:45.701 W/Binder  (  589): 	at android.app.ContextImpl.enforce(ContextImpl.java:2240)
+10-17 14:27:45.701 W/Binder  (  589): 	at android.app.ContextImpl.enforceCallingOrSelfPermission(ContextImpl.java:2268)
+10-17 14:27:45.701 W/Binder  (  589): 	at com.android.server.stats.StatsManagerService.enforceRegisterStatsPullAtomPermission(StatsManagerService.java:520)
+10-17 14:27:45.701 W/Binder  (  589): 	at com.android.server.stats.StatsManagerService.registerPullAtomCallback(StatsManagerService.java:175)
+10-17 14:27:45.701 W/Binder  (  589): 	at android.os.IStatsManagerService$Stub.onTransact(IStatsManagerService.java:313)
+10-17 14:27:45.701 W/Binder  (  589): 	at android.os.Binder.execTransactInternal(Binder.java:1285)
+10-17 14:27:45.701 W/Binder  (  589): 	at android.os.Binder.execTransact(Binder.java:1244)
+10-17 14:27:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:27:46.924 W//apex/com.android.adbd/bin/adbd(  469): type=1400 audit(0.0:17): avc: denied { search } for comm=73796E6320737663203733 name="oem" dev="dm-4" ino=43 scontext=u:r:adbd:s0 tcontext=u:object_r:oemfs:s0 tclass=dir permissive=0
+10-17 14:27:46.924 W//apex/com.android.adbd/bin/adbd(  469): type=1400 audit(0.0:18): avc: denied { relabelfrom } for comm=73796E6320737663203733 name="voci_resnet34.onnx" dev="dm-32" ino=303143 scontext=u:r:adbd:s0 tcontext=u:object_r:media_rw_data_file:s0 tclass=file permissive=0
+10-17 14:27:47.045 D/CompatibilityChangeReporter(  589): Compat change id reported: 161252188; UID 10126; state: ENABLED
+10-17 14:27:47.046 I/ActivityTaskManager(  589): START u0 {flg=0x10000000 cmp=it.puntowebferrara.registralezione/.Principale} from uid 2000
+10-17 14:27:47.046 D/CompatibilityChangeReporter(  589): Compat change id reported: 194480991; UID 10126; state: ENABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 174042980; UID 10126; state: DISABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 184838306; UID 10126; state: DISABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 185004937; UID 10126; state: DISABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 181136395; UID 10126; state: DISABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 174042936; UID 10126; state: DISABLED
+10-17 14:27:47.048 D/CompatibilityChangeReporter(  589): Compat change id reported: 197654537; UID 10126; state: ENABLED
+10-17 14:27:47.049 D/CompatibilityChangeReporter(  589): Compat change id reported: 205907456; UID 10126; state: ENABLED
+10-17 14:27:47.050 D/CompatibilityChangeReporter(  589): Compat change id reported: 135634846; UID 10126; state: DISABLED
+10-17 14:27:47.051 D/CompatibilityChangeReporter(  589): Compat change id reported: 143937733; UID 10126; state: ENABLED
+10-17 14:27:47.063 D/CoreBackPreview(  589): Window{c667fb4 u0 Splash Screen it.puntowebferrara.registralezione}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@aa0bf52, mPriority=0}
+10-17 14:27:47.067 D/SplashScreenView(  868): Build android.window.SplashScreenView{bc996b1 V.E...... ......ID 0,0-0,0}
+10-17 14:27:47.067 D/SplashScreenView(  868): Icon: view: android.widget.ImageView{ea54796 V.ED..... ......I. 0,0-0,0 #10204dc android:id/splashscreen_icon_view} drawable: com.android.wm.shell.startingsurface.SplashscreenIconDrawableFactory$ImmobileIconDrawable@c335f17 size: 300
+10-17 14:27:47.067 D/SplashScreenView(  868): Branding: view: android.view.View{ba2af04 G.ED..... ......I. 0,0-0,0 #10204db android:id/splashscreen_branding_view} drawable: null size w: 0 h: 0
+10-17 14:27:47.070 D/Zygote  (  385): Forked child process 2467
+10-17 14:27:47.071 I/ActivityManager(  589): Start proc 2467:it.puntowebferrara.registralezione/u0a126 for next-top-activity {it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}
+10-17 14:27:47.082 I/registralezione( 2467): Late-enabling -Xcheck:jni
+10-17 14:27:47.093 W/Parcel  (  868): Expecting binder but got null!
+10-17 14:27:47.098 D/EGL_emulation( 1131): app_time_stats: avg=444.10ms min=17.95ms max=1500.66ms count=4
+10-17 14:27:47.107 W/registralezione( 2467): Unexpected CPU variant for x86: x86_64.
+10-17 14:27:47.107 W/registralezione( 2467): Known variants: atom, sandybridge, silvermont, kabylake, default
+10-17 14:27:47.112 I/adbd    (  469): jdwp connection from 2467
+10-17 14:27:47.119 D/CompatibilityChangeReporter( 2467): Compat change id reported: 171979766; UID 10126; state: ENABLED
+10-17 14:27:47.121 W/TransactionTracing(  434): Could not find layer handle 0x765189b56b90
+10-17 14:27:47.121 W/TransactionTracing(  434): Could not find layer handle 0x765189b56890
+10-17 14:27:47.121 W/TransactionTracing(  434): Could not find layer handle 0x765189b56890
+10-17 14:27:47.121 W/TransactionTracing(  434): Could not find layer handle 0x765189b56b90
+10-17 14:27:47.125 W/ziparchive( 2467): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.125 W/ziparchive( 2467): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.144 V/GraphicsEnvironment( 2467): ANGLE Developer option for 'it.puntowebferrara.registralezione' set to: 'default'
+10-17 14:27:47.144 V/GraphicsEnvironment( 2467): ANGLE GameManagerService for it.puntowebferrara.registralezione: false
+10-17 14:27:47.144 V/GraphicsEnvironment( 2467): Neither updatable production driver nor prerelease driver is supported.
+10-17 14:27:47.145 D/NetworkSecurityConfig( 2467): Using Network Security Config from resource rete debugBuild: true
+10-17 14:27:47.146 D/NetworkSecurityConfig( 2467): Using Network Security Config from resource rete debugBuild: true
+10-17 14:27:47.176 D/libEGL  ( 2467): loaded /vendor/lib64/egl/libEGL_emulation.so
+10-17 14:27:47.177 D/libEGL  ( 2467): loaded /vendor/lib64/egl/libGLESv1_CM_emulation.so
+10-17 14:27:47.178 D/libEGL  ( 2467): loaded /vendor/lib64/egl/libGLESv2_emulation.so
+10-17 14:27:47.185 D/CompatibilityChangeReporter( 2467): Compat change id reported: 210923482; UID 10126; state: ENABLED
+10-17 14:27:47.193 I/WebViewFactory( 2467): Loading com.android.webview version 101.0.4951.61 (code 495156106)
+10-17 14:27:47.196 D/nativeloader( 2467): classloader namespace configured for unbundled product apk. library_path=/product/app/webview/lib/x86_64:/product/app/webview/webview.apk!/lib/x86_64:/product/lib64:/system/product/lib64
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->isTagEnabled(J)Z (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->traceBegin(JLjava/lang/String;)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->traceEnd(J)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->asyncTraceBegin(JLjava/lang/String;I)V (unsupported, reflection, allowed)
+10-17 14:27:47.201 W/registralezione( 2467): Accessing hidden method Landroid/os/Trace;->asyncTraceEnd(JLjava/lang/String;I)V (unsupported, reflection, allowed)
+10-17 14:27:47.203 I/cr_WVCFactoryProvider( 2467): Loaded version=101.0.4951.61 minSdkVersion=23 isBundle=false multiprocess=true packageId=2
+10-17 14:27:47.207 I/cr_VariationsUtils( 2467): Failed reading seed file "/data/user/0/it.puntowebferrara.registralezione/app_webview/variations_seed_new"
+10-17 14:27:47.207 I/cr_VariationsUtils( 2467): Failed reading seed file "/data/user/0/it.puntowebferrara.registralezione/app_webview/variations_seed"
+10-17 14:27:47.207 I/cr_VariationsUtils( 2467): Requesting new seed from IVariationsSeedServer
+10-17 14:27:47.208 D/CompatibilityChangeReporter(  589): Compat change id reported: 161252188; UID 10090; state: ENABLED
+10-17 14:27:47.209 I/cr_LibraryLoader( 2467): Successfully loaded native library
+10-17 14:27:47.209 D/CompatibilityChangeReporter(  589): Compat change id reported: 143937733; UID 10090; state: ENABLED
+10-17 14:27:47.209 I/cr_CachingUmaRecorder( 2467): Flushed 9 samples from 9 histograms.
+10-17 14:27:47.211 D/CompatibilityChangeReporter(  589): Compat change id reported: 161145287; UID 10126; state: DISABLED
+10-17 14:27:47.213 D/CompatibilityChangeReporter(  589): Compat change id reported: 135634846; UID 99000; state: DISABLED
+10-17 14:27:47.214 D/Zygote  (  385): Forked child process 2494
+10-17 14:27:47.215 I/ActivityManager(  589): Start proc 2494:com.android.webview:webview_service/u0a90 for service {com.android.webview/org.chromium.android_webview.services.VariationsSeedServer}
+10-17 14:27:47.215 D/CompatibilityChangeReporter(  589): Compat change id reported: 143937733; UID 10126; state: ENABLED
+10-17 14:27:47.216 I/Zygote  (  997): Entering forkRepeatedly native zygote loop
+10-17 14:27:47.218 D/CompatibilityChangeReporter( 2467): Compat change id reported: 183155436; UID 10126; state: ENABLED
+10-17 14:27:47.219 W/webview_service( 2494): Unexpected CPU variant for x86: x86_64.
+10-17 14:27:47.219 W/webview_service( 2494): Known variants: atom, sandybridge, silvermont, kabylake, default
+10-17 14:27:47.220 D/Zygote  (  997): Forked child process 2502
+10-17 14:27:47.220 I/ActivityManager(  589): Start proc 2502:com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0/u0ai9000 for  {it.puntowebferrara.registralezione/org.chromium.content.app.SandboxedProcessService0:0}
+10-17 14:27:47.222 I/adbd    (  469): jdwp connection from 2494
+10-17 14:27:47.224 W/ocessService0:0( 2502): Unexpected CPU variant for x86: x86_64.
+10-17 14:27:47.224 W/ocessService0:0( 2502): Known variants: atom, sandybridge, silvermont, kabylake, default
+10-17 14:27:47.225 D/CompatibilityChangeReporter(  589): Compat change id reported: 168419799; UID 10090; state: DISABLED
+10-17 14:27:47.227 I/adbd    (  469): jdwp connection from 2502
+10-17 14:27:47.227 D/CompatibilityChangeReporter( 2494): Compat change id reported: 171979766; UID 10090; state: ENABLED
+10-17 14:27:47.230 W/chromium( 2467): [WARNING:dns_config_service_android.cc(115)] Failed to read DnsConfig.
+10-17 14:27:47.230 D/nativeloader( 2494): classloader namespace configured for unbundled product apk. library_path=/product/app/webview/lib/x86_64:/product/app/webview/webview.apk!/lib/x86_64:/product/lib64:/system/product/lib64
+10-17 14:27:47.231 D/CompatibilityChangeReporter( 2502): Compat change id reported: 171979766; UID 99000; state: ENABLED
+10-17 14:27:47.233 V/GraphicsEnvironment( 2494): ANGLE Developer option for 'com.android.webview' set to: 'default'
+10-17 14:27:47.234 V/GraphicsEnvironment( 2494): ANGLE GameManagerService for com.android.webview: false
+10-17 14:27:47.234 V/GraphicsEnvironment( 2494): Neither updatable production driver nor prerelease driver is supported.
+10-17 14:27:47.236 D/NetworkSecurityConfig( 2494): No Network Security Config specified, using platform default
+10-17 14:27:47.236 D/NetworkSecurityConfig( 2494): No Network Security Config specified, using platform default
+10-17 14:27:47.236 I/cr_WebViewApkApp( 2494): Launched version=101.0.4951.61 minSdkVersion=23 isBundle=false processName=com.android.webview:webview_service
+10-17 14:27:47.241 D/NetworkSecurityConfig( 2502): No Network Security Config specified, using platform default
+10-17 14:27:47.241 D/NetworkSecurityConfig( 2502): No Network Security Config specified, using platform default
+10-17 14:27:47.241 I/cr_WebViewApkApp( 2502): Launched version=101.0.4951.61 minSdkVersion=23 isBundle=false processName=com.android.webview:sandboxed_process0:org.chromium.content.app.SandboxedProcessService0:0
+10-17 14:27:47.241 I/cr_ChildProcessService( 2502): Creating new ChildProcessService pid=2502
+10-17 14:27:47.242 D/CompatibilityChangeReporter(  589): Compat change id reported: 161252188; UID 10090; state: ENABLED
+10-17 14:27:47.242 E/SELinux (  231): avc:  denied  { find } for pid=2502 uid=99000 name=content_capture scontext=u:r:isolated_app:s0:c512,c768 tcontext=u:object_r:content_capture_service:s0 tclass=service_manager permissive=0
+10-17 14:27:47.248 D/CompatibilityChangeReporter( 2494): Compat change id reported: 194532703; UID 10090; state: ENABLED
+10-17 14:27:47.248 D/CompatibilityChangeReporter(  589): Compat change id reported: 194532703; UID 10090; state: ENABLED
+10-17 14:27:47.248 D/ConnectivityService(  589): requestNetwork for uid/pid:1000/589 asUid: 10090 activeRequest: null callbackRequest: 46 [NetworkRequest [ REQUEST id=47, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10090 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]] callback flags: 0 order: 2147483647
+10-17 14:27:47.249 D/ConnectivityService(  589): NetReassign [47 : null → 100]
+10-17 14:27:47.250 D/WifiNetworkFactory(  589): got request NetworkRequest [ REQUEST id=47, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10090 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+10-17 14:27:47.250 D/UntrustedWifiNetworkFactory(  589): got request NetworkRequest [ REQUEST id=47, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10090 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+10-17 14:27:47.250 D/OemPaidWifiNetworkFactory(  589): got request NetworkRequest [ REQUEST id=47, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10090 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+10-17 14:27:47.250 D/MultiInternetWifiNetworkFactory(  589): got request NetworkRequest [ REQUEST id=47, [ Capabilities: INTERNET&NOT_RESTRICTED&TRUSTED&NOT_VCN_MANAGED Uid: 10090 RequestorUid: 1000 RequestorPkg: android UnderlyingNetworks: Null] ]
+10-17 14:27:47.250 D/CompatibilityChangeReporter(  589): Compat change id reported: 135634846; UID 10090; state: DISABLED
+10-17 14:27:47.252 D/CompatibilityChangeReporter(  589): Compat change id reported: 143937733; UID 10090; state: ENABLED
+10-17 14:27:47.257 D/CoreBackPreview(  589): Window{cda4ae9 u0 it.puntowebferrara.registralezione/it.puntowebferrara.registralezione.Principale}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@3e6fa0f, mPriority=0}
+10-17 14:27:47.257 D/Zygote  (  385): Forked child process 2549
+10-17 14:27:47.260 I/ActivityManager(  589): Start proc 2549:com.android.webview:webview_apk/u0a90 for service {com.android.webview/org.chromium.android_webview.nonembedded.AwComponentUpdateService}
+10-17 14:27:47.262 W/iew:webview_apk( 2549): Unexpected CPU variant for x86: x86_64.
+10-17 14:27:47.262 W/iew:webview_apk( 2549): Known variants: atom, sandybridge, silvermont, kabylake, default
+10-17 14:27:47.264 I/adbd    (  469): jdwp connection from 2549
+10-17 14:27:47.270 W/ServiceManager(  434): Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10126 pid=2467
+10-17 14:27:47.270 D/PermissionCache(  434): checking android.permission.ACCESS_SURFACE_FLINGER for uid=10126 => denied (282 us)
+10-17 14:27:47.270 W/ServiceManager(  434): Permission failure: android.permission.ACCESS_SURFACE_FLINGER from uid=10126 pid=0
+10-17 14:27:47.270 D/PermissionCache(  434): checking android.permission.ACCESS_SURFACE_FLINGER for uid=10126 => denied (515 us)
+10-17 14:27:47.271 W/ServiceManager(  434): Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10126 pid=2467
+10-17 14:27:47.271 D/PermissionCache(  434): checking android.permission.ROTATE_SURFACE_FLINGER for uid=10126 => denied (271 us)
+10-17 14:27:47.271 W/ServiceManager(  434): Permission failure: android.permission.ROTATE_SURFACE_FLINGER from uid=10126 pid=0
+10-17 14:27:47.271 D/PermissionCache(  434): checking android.permission.ROTATE_SURFACE_FLINGER for uid=10126 => denied (646 us)
+10-17 14:27:47.272 D/CompatibilityChangeReporter( 2549): Compat change id reported: 171979766; UID 10090; state: ENABLED
+10-17 14:27:47.272 W/ServiceManager(  434): Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10126 pid=0
+10-17 14:27:47.272 D/PermissionCache(  434): checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10126 => denied (1222 us)
+10-17 14:27:47.276 D/nativeloader( 2549): classloader namespace configured for unbundled product apk. library_path=/product/app/webview/lib/x86_64:/product/app/webview/webview.apk!/lib/x86_64:/product/lib64:/system/product/lib64
+10-17 14:27:47.277 W/ServiceManager(  434): Permission failure: android.permission.INTERNAL_SYSTEM_WINDOW from uid=10126 pid=2467
+10-17 14:27:47.277 D/PermissionCache(  434): checking android.permission.INTERNAL_SYSTEM_WINDOW for uid=10126 => denied (6661 us)
+10-17 14:27:47.282 V/GraphicsEnvironment( 2549): ANGLE Developer option for 'com.android.webview' set to: 'default'
+10-17 14:27:47.282 V/GraphicsEnvironment( 2549): ANGLE GameManagerService for com.android.webview: false
+10-17 14:27:47.282 V/GraphicsEnvironment( 2549): Neither updatable production driver nor prerelease driver is supported.
+10-17 14:27:47.283 D/NetworkSecurityConfig( 2549): No Network Security Config specified, using platform default
+10-17 14:27:47.284 D/NetworkSecurityConfig( 2549): No Network Security Config specified, using platform default
+10-17 14:27:47.284 I/cr_WebViewApkApp( 2549): Launched version=101.0.4951.61 minSdkVersion=23 isBundle=false processName=com.android.webview:webview_apk
+10-17 14:27:47.284 D/HostConnection( 2467): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:47.292 W/TransactionTracing(  434): Could not find layer handle 0x765189b56b30
+10-17 14:27:47.377 D/EGL_emulation(  868): app_time_stats: avg=232.56ms min=1.01ms max=1653.32ms count=9
+10-17 14:27:47.379 W/OpenGLRenderer( 2467): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:27:47.382 D/EGL_emulation( 2467): eglCreateContext: 0x787ceb2f34d0: maj 3 min 0 rcv 3
+10-17 14:27:47.384 D/EGL_emulation( 2467): eglMakeCurrent: 0x787ceb2f34d0: ver 3 0 (tinfo 0x787f0bcf5080) (first time)
+10-17 14:27:47.392 I/cr_LibraryLoader( 2549): Successfully loaded native library
+10-17 14:27:47.394 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:27:47.394 I/Gralloc4( 2467): mapper 4.x is not supported
+10-17 14:27:47.399 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.allocator@4.0::IAllocator/default in either framework or device VINTF manifest.
+10-17 14:27:47.400 I/servicemanager(  231): Could not find android.hardware.graphics.allocator.IAllocator/default in the VINTF manifest.
+10-17 14:27:47.400 W/Gralloc4( 2467): allocator 4.x is not supported
+10-17 14:27:47.408 D/TrafficStats( 2549): tagSocket(76) with statsTag=0xffffffff, statsUid=-1
+10-17 14:27:47.410 D/HostConnection( 2467): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:47.414 I/DropBoxManagerService(  589): add tag=system_app_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:47.439 I/system_server(  589): Explicit concurrent copying GC freed 157253(9073KB) AllocSpace objects, 13(260KB) LOS objects, 49% free, 11MB/23MB, paused 44us,45us total 31.845ms
+10-17 14:27:47.439 W/JavaBinder(  589): BinderProxy is being destroyed but the application did not call unlinkToDeath to unlink all of its death recipients beforehand.  Releasing leaked death recipient: com.android.server.wm.ActivityRecord$$ExternalSyntheticLambda0
+10-17 14:27:47.439 I/BpBinder(  589): onLastStrongRef automatically unlinking death recipients: <uncached descriptor>
+10-17 14:27:47.441 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:47.442 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:47.480 W/Thread-4( 2467): type=1400 audit(0.0:19): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/zlib.cpython-312.so" dev="dm-32" ino=131180 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.666 I/logd    (    0): start watching /data/system/packages.list ...
+10-17 14:27:47.687 I/logd    (    0): ReadPackageList, total packages: 134
+10-17 14:27:47.512 W/Thread-4( 2467): type=1400 audit(0.0:20): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/java/chaquopy.so" dev="dm-32" ino=131189 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.703 W/audit   (    0): audit_lost=1 audit_rate_limit=5 audit_backlog_limit=64
+10-17 14:27:47.711 E/audit   (    0): rate limit exceeded
+10-17 14:27:47.516 W/Thread-4( 2467): type=1400 audit(0.0:21): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/bootstrap-native/x86_64/_ctypes.cpython-312.so" dev="dm-32" ino=131179 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.651 W/Parcel  ( 2467): Expecting binder but got null!
+10-17 14:27:47.663 W/ziparchive(  589): Unable to open '/data/app/~~_VbAkw1XmCH2y4H9_KLKOA==/it.puntowebferrara.registralezione-b6a4quYZ4kvF__uGBnWB8g==/base.dm': No such file or directory
+10-17 14:27:47.663 I/ActivityTaskManager(  589): Displayed it.puntowebferrara.registralezione/.Principale: +611ms
+10-17 14:27:47.665 I/cr_VariationsUtils( 2494): Scheduling seed download job
+10-17 14:27:47.667 D/CompatibilityChangeReporter(  589): Compat change id reported: 214016041; UID 10126; state: ENABLED
+10-17 14:27:47.675 I/cr_VariationsUtils( 2494): Downloading new seed
+10-17 14:27:47.676 D/CoreBackPreview(  589): Window{c667fb4 u0 Splash Screen it.puntowebferrara.registralezione EXITING}: Setting back callback null
+10-17 14:27:47.676 W/InputManager-JNI(  589): Input channel object 'c667fb4 Splash Screen it.puntowebferrara.registralezione (client)' was disposed without first being removed with the input manager!
+10-17 14:27:47.704 W/TransactionTracing(  434): Could not find layer handle 0x765189b56650
+10-17 14:27:47.704 W/TransactionTracing(  434): Could not find layer handle 0x765189b582d0
+10-17 14:27:47.704 W/TransactionTracing(  434): Could not find layer handle 0x765189b56cb0
+10-17 14:27:47.704 W/TransactionTracing(  434): Could not find layer handle 0x765189b58b10
+10-17 14:27:47.705 W/TransactionTracing(  434): Could not find layer handle 0x765189b56cb0
+10-17 14:27:47.713 D/TrafficStats( 2494): tagSocket(65) with statsTag=0xffffffff, statsUid=-1
+10-17 14:27:47.716 I/DropBoxManagerService(  589): add tag=system_app_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): IOException during downloadToFile.
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): java.io.IOException: Cleartext HTTP traffic to edgedl.me.gvt1.com not permitted
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.HttpHandler$CleartextURLFilter.checkURLPermitted(HttpHandler.java:127)
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:462)
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+10-17 14:27:47.723 W/cr_AWNetworkFetcherTask( 2549): 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-SystemWebView.apk-default-495156106:82)
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): IOException during downloadToFile.
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): java.io.IOException: Cleartext HTTP traffic to redirector.gvt1.com not permitted
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.HttpHandler$CleartextURLFilter.checkURLPermitted(HttpHandler.java:127)
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:462)
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+10-17 14:27:47.725 W/cr_AWNetworkFetcherTask( 2549): 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-SystemWebView.apk-default-495156106:82)
+10-17 14:27:47.740 D/TrafficStats( 2549): tagSocket(81) with statsTag=0xffffffff, statsUid=-1
+10-17 14:27:47.741 I/DropBoxManagerService(  589): add tag=system_app_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:47.757 I/cr_VariationsSeedFetch( 2494): Fetched first run seed in 82 ms
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): IOException during downloadToFile.
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): java.io.IOException: Cleartext HTTP traffic to edgedl.me.gvt1.com not permitted
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.HttpHandler$CleartextURLFilter.checkURLPermitted(HttpHandler.java:127)
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:462)
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): 	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+10-17 14:27:47.797 W/cr_AWNetworkFetcherTask( 2549): 	at org.chromium.android_webview.nonembedded.NetworkFetcherTask.download(chromium-SystemWebView.apk-default-495156106:82)
+10-17 14:27:47.952 W/Thread-4( 2467): type=1400 audit(0.0:38): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libgfortran.so.3" dev="dm-32" ino=131202 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.952 W/Thread-4( 2467): type=1400 audit(0.0:39): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libopenblas.so" dev="dm-32" ino=131204 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.956 W/Thread-4( 2467): type=1400 audit(0.0:40): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/chaquopy/lib/libc++_shared.so" dev="dm-32" ino=131200 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.956 W/Thread-4( 2467): type=1400 audit(0.0:41): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/requirements/numpy/core/_multiarray_umath.so" dev="dm-32" ino=131358 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:47.968 W/Thread-4( 2467): type=1400 audit(0.0:42): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_pickle.cpython-312.so" dev="dm-32" ino=131726 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:27:48.199 D/CompatibilityChangeReporter( 2467): Compat change id reported: 171228096; UID 10126; state: ENABLED
+10-17 14:27:48.206 D/AutofillManagerServiceImpl(  589): Reset component for user 0:
+10-17 14:27:48.206 D/AutofillUI(  589): destroySaveUiUiThread(): already destroyed
+10-17 14:27:48.211 W/registralezione( 2467): Accessing hidden method Landroid/media/AudioManager;->getOutputLatency(I)I (unsupported, reflection, allowed)
+10-17 14:27:48.213 W/cr_media( 2467): Requires BLUETOOTH permission
+10-17 14:27:48.216 I/cr_LibraryLoader( 2502): Successfully loaded native library
+10-17 14:27:48.216 I/cr_CachingUmaRecorder( 2502): Flushed 3 samples from 3 histograms.
+10-17 14:27:48.217 D/HostConnection( 2467): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:27:48.218 W/SystemServiceRegistry( 2502): No service published for: uimode
+10-17 14:27:48.223 D/CompatibilityChangeReporter( 2467): Compat change id reported: 193247900; UID 10126; state: ENABLED
+10-17 14:27:48.224 D/EGL_emulation( 2467): eglCreateContext: 0x787ceb2f7c10: maj 3 min 0 rcv 3
+10-17 14:27:48.224 D/EGL_emulation( 2467): eglMakeCurrent: 0x787ceb2f7c10: ver 3 0 (tinfo 0x787f0bcf5100) (first time)
+10-17 14:27:48.224 D/CompatibilityChangeReporter(  589): Compat change id reported: 161252188; UID 10090; state: ENABLED
+10-17 14:27:48.238 D/EGL_emulation( 2467): eglCreateContext: 0x787ceb2f2750: maj 3 min 0 rcv 3
+10-17 14:27:48.284 D/EGL_emulation( 2467): eglCreateContext: 0x787ceb2f9a10: maj 3 min 0 rcv 3
+10-17 14:27:50.051 E/TaskPersister(  589): File error accessing recents directory (directory doesn't exist?).
+10-17 14:27:50.421 D/EGL_emulation( 2467): app_time_stats: avg=919.83ms min=9.89ms max=2146.81ms count=3
+10-17 14:27:50.442 I/Choreographer( 2467): Skipped 124 frames!  The application may be doing too much work on its main thread.
+10-17 14:27:50.454 I/OpenGLRenderer( 2467): Davey! duration=2099ms; Flags=0, FrameTimelineVsyncId=3172, IntendedVsync=76857325243, Vsync=76857325243, InputEventId=0, HandleInputStart=76857722205, AnimationStart=76857723667, PerformTraversalsStart=76858191267, DrawStart=76858300039, FrameDeadline=76873991909, FrameInterval=76857716126, FrameStartTime=16666666, SyncQueued=76860378925, SyncStart=76861036082, IssueDrawCommandsStart=76861070053, SwapBuffers=78883236774, FrameCompleted=78957468972, DequeueBufferDuration=3925, QueueBufferDuration=3258195, GpuCompleted=78957468972, SwapBuffersCompleted=78941146491, DisplayPresentTime=300179559354624, CommandSubmissionCompleted=78883236774, 
+10-17 14:27:51.208 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:27:51.727 D/EGL_emulation( 2467): app_time_stats: avg=325.43ms min=28.13ms max=482.44ms count=4
+10-17 14:27:51.751 I/OpenGLRenderer( 2467): Davey! duration=767ms; Flags=0, FrameTimelineVsyncId=3209, IntendedVsync=79007325157, Vsync=79340658477, InputEventId=0, HandleInputStart=79351121237, AnimationStart=79351125604, PerformTraversalsStart=79355191029, DrawStart=79355337827, FrameDeadline=79873991789, FrameInterval=79351105684, FrameStartTime=16666666, SyncQueued=79355766254, SyncStart=79828678959, IssueDrawCommandsStart=79828728052, SwapBuffers=80241333074, FrameCompleted=80247370902, DequeueBufferDuration=2754, QueueBufferDuration=315930, GpuCompleted=80247274779, SwapBuffersCompleted=80247370902, DisplayPresentTime=36369783070986, CommandSubmissionCompleted=80241333074, 
+10-17 14:27:52.276 I/DropBoxManagerService(  589): add tag=system_app_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:52.276 I/DropBoxManagerService(  589): add tag=system_app_strictmode isTagEnabled=true flags=0x2
+10-17 14:27:52.929 D/ProfileInstaller( 2467): Installing profile for it.puntowebferrara.registralezione
+10-17 14:27:54.948 I/logd    (    0): start watching /data/system/packages.list ...
+10-17 14:27:54.950 I/logd    (    0): ReadPackageList, total packages: 134
+10-17 14:27:55.224 D/EGL_emulation(  868): app_time_stats: avg=3923.16ms min=315.80ms max=7530.52ms count=2
+10-17 14:27:55.279 I/keystore2(  252): keystore2::watchdog: Watchdog thread idle -> terminating. Have a great day.
+10-17 14:27:55.398 D/CompatibilityChangeReporter(  589): Compat change id reported: 161145287; UID 10126; state: DISABLED
+10-17 14:27:56.286 D/CompatibilityChangeReporter(  589): Compat change id reported: 168419799; UID 10110; state: DISABLED
+10-17 14:27:56.287 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:27:59.051 I/PermissionControllerServiceImpl(  871): Updating user sensitive for user 0
+10-17 14:27:59.956 D/EGL_emulation(  868): app_time_stats: avg=4731.78ms min=4731.78ms max=4731.78ms count=1
+10-17 14:28:01.296 W/BatteryExternalStatsWorker(  589): error reading Bluetooth stats: 11
+10-17 14:28:05.494 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:28:05.494 I/Dialer  ( 1379): RetryPolicy - discarding deferred status: configuration_state=4
+10-17 14:28:05.494 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:28:05.494 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:28:05.495 I/Dialer  ( 1379): VvmTaskReceiver - task received
+10-17 14:28:05.495 I/Dialer  ( 1379): VvmTaskReceiver - TaskExecutor already running
+10-17 14:28:05.495 I/Dialer  ( 1379): Task.createTask - create task:com.android.voicemail.impl.ActivationTask
+10-17 14:28:05.495 I/Dialer  ( 1379): RetryPolicy - retry #1 for com.android.voicemail.impl.ActivationTask@d55d7f3 queued, executing in 5000
+10-17 14:28:05.495 I/Dialer  ( 1379): VvmTaskExecutor - com.android.voicemail.impl.ActivationTask@d55d7f3 added
+10-17 14:28:05.495 I/Dialer  ( 1379): VvmTaskExecutor - minimal wait time:5000
+10-17 14:28:05.495 I/Dialer  ( 1379): VvmTaskExecutor - sleep for 5000 millis
+10-17 14:28:06.300 I/ProvidersCache( 1534): Updating roots due to change on user 0at content://com.android.externalstorage.documents/
+10-17 14:28:10.501 I/Dialer  ( 1379): VvmTaskExecutor - executing task com.android.voicemail.impl.ActivationTask@d55d7f3
+10-17 14:28:10.501 I/Dialer  ( 1379): PreOMigrationHandler - ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} already migrated
+10-17 14:28:10.507 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:28:10.508 I/Dialer  ( 1379): VvmActivationTask - VVM content provider configured - vvm_type_cvvm
+10-17 14:28:10.508 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_ACTIVATING
+10-17 14:28:10.509 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:28:10.513 D/SmsNumberUtils( 1078): enter filterDestAddr. destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:28:10.513 D/SmsNumberUtils( 1078): destAddr is not formatted.
+10-17 14:28:10.513 D/SmsNumberUtils( 1078): leave filterDestAddr, new destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:28:10.517 W/BroadcastQueue(  589): Permission Denial: broadcasting Intent { act=com.android.voicemailomtp.sms.REQUEST_SENT flg=0x10 pkg=com.android.dialer } from com.android.dialer (pid=-1, uid=10086) requires com.android.dialer.permission.DIALER_ORIGIN due to registered receiver BroadcastFilter{9556801 10086/u0 ReceiverList{85b99e8 1379 com.android.dialer/10086/u0 remote:78b570b}}
+10-17 14:28:17.132 W/ProcessState( 2649): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:28:17.136 W/ServiceManager(  434): Permission failure: android.permission.CAPTURE_BLACKOUT_CONTENT from uid=2000 pid=2649
+10-17 14:28:17.136 D/PermissionCache(  434): checking android.permission.CAPTURE_BLACKOUT_CONTENT for uid=2000 => denied (611 us)
+10-17 14:28:17.186 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:28:17.186 I/Gralloc4( 2649): mapper 4.x is not supported
+10-17 14:28:17.196 D/HostConnection( 2649): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:17.405 D/AutofillManagerService(  589): onBackKeyPressed()
+10-17 14:28:17.448 D/EGL_emulation( 2467): app_time_stats: avg=12860.03ms min=23.24ms max=25696.81ms count=2
+10-17 14:28:18.496 W/resolv  (  384): SSL_connect ssl error =5, mark 0xf0064: Connection refused
+10-17 14:28:18.496 W/resolv  (  384): TLS Handshake failed
+10-17 14:28:18.496 W/resolv  (  384): query failed
+10-17 14:28:18.496 W/resolv  (  384): validateDnsTlsServer returned 0 for 10.0.2.3
+10-17 14:28:18.497 W/resolv  (  384): Validation failed
+10-17 14:28:20.467 W/ProcessState( 2666): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:28:20.478 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:28:20.478 I/Gralloc4( 2666): mapper 4.x is not supported
+10-17 14:28:20.493 D/HostConnection( 2666): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:20.592 D/CompatibilityChangeReporter(  589): Compat change id reported: 168419799; UID 10126; state: DISABLED
+10-17 14:28:20.594 D/CompatibilityChangeReporter(  589): Compat change id reported: 197654537; UID 10126; state: ENABLED
+10-17 14:28:20.595 D/CompatibilityChangeReporter( 2467): Compat change id reported: 160794467; UID 10126; state: ENABLED
+10-17 14:28:20.603 W/ServiceManager(  431): Permission failure: android.permission.CALL_AUDIO_INTERCEPTION from uid=10126 pid=2467
+10-17 14:28:20.603 D/PermissionCache(  431): checking android.permission.CALL_AUDIO_INTERCEPTION for uid=10126 => denied (265 us)
+10-17 14:28:20.605 I/AudioFlinger(  431): AudioFlinger's thread 0x795672e10bb0 tid=2674 ready to run
+10-17 14:28:20.608 D/EGL_emulation(  868): app_time_stats: avg=10325.98ms min=51.87ms max=20600.08ms count=2
+10-17 14:28:20.612 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:28:20.614 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneDirection:428 failure: Result::NOT_SUPPORTED
+10-17 14:28:20.614 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneFieldDimension:433 failure: Result::NOT_SUPPORTED
+10-17 14:28:20.738 W/TransactionTracing(  434): Could not find layer handle 0x765189b5a0d0
+10-17 14:28:20.786 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:20.801 W/NotificationHistory(  589): Attempted to add notif for locked/gone/disabled user 0
+10-17 14:28:20.824 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:20.825 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:28:20.825 D/EGL_emulation(  868): eglCreateContext: 0x787ceb320410: maj 3 min 0 rcv 3
+10-17 14:28:20.831 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb320410: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:28:21.304 D/WifiNl80211Manager(  589): Scan result ready event
+10-17 14:28:21.304 D/WifiNative(  589): Scan result ready event
+10-17 14:28:21.475 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:21.734 D/EGL_emulation(  868): app_time_stats: avg=160.85ms min=17.35ms max=484.43ms count=7
+10-17 14:28:21.738 W/TransactionTracing(  434): Could not find layer handle 0x765189b59e90
+10-17 14:28:21.919 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:21.961 D/EGL_emulation( 2467): app_time_stats: avg=4513.01ms min=4513.01ms max=4513.01ms count=1
+10-17 14:28:21.966 I/Choreographer( 2467): Skipped 67 frames!  The application may be doing too much work on its main thread.
+10-17 14:28:21.970 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:21.973 W/Parcel  (  868): Expecting binder but got null!
+10-17 14:28:22.017 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.033 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.045 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.060 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.075 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.090 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.108 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.120 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.135 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.150 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.200 I/OpenGLRenderer( 2467): Davey! duration=1166ms; Flags=0, FrameTimelineVsyncId=3382, IntendedVsync=109323990611, Vsync=109323990611, InputEventId=0, HandleInputStart=109324319973, AnimationStart=109324322006, PerformTraversalsStart=109325182696, DrawStart=109325292319, FrameDeadline=109340657277, FrameInterval=109324312903, FrameStartTime=16666666, SyncQueued=109325547248, SyncStart=109325609681, IssueDrawCommandsStart=109325889807, SwapBuffers=110480507970, FrameCompleted=110490791752, DequeueBufferDuration=5749, QueueBufferDuration=155081, GpuCompleted=110490791752, SwapBuffersCompleted=110483408919, DisplayPresentTime=186354336049504, CommandSubmissionCompleted=110480507970, 
+10-17 14:28:22.250 I/OpenGLRenderer( 2467): Davey! duration=1159ms; Flags=0, FrameTimelineVsyncId=3404, IntendedVsync=109357323943, Vsync=110473990565, InputEventId=0, HandleInputStart=110485756435, AnimationStart=110485757396, PerformTraversalsStart=110488860260, DrawStart=110488959457, FrameDeadline=110757323887, FrameInterval=110485691498, FrameStartTime=16666666, SyncQueued=110489150792, SyncStart=110730013576, IssueDrawCommandsStart=110731020383, SwapBuffers=110734751431, FrameCompleted=110757456036, DequeueBufferDuration=9637344, QueueBufferDuration=150263, GpuCompleted=110757456036, SwapBuffersCompleted=110756235190, DisplayPresentTime=281234458607554, CommandSubmissionCompleted=110734751431, 
+10-17 14:28:22.757 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.772 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.780 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.795 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.810 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:22.921 I/registralezione( 2467): Compiler allocated 4533KB to compile void android.view.ViewRootImpl.performTraversals()
+10-17 14:28:22.971 D/EGL_emulation( 2467): app_time_stats: avg=25.10ms min=9.51ms max=246.53ms count=36
+10-17 14:28:23.987 D/EGL_emulation( 2467): app_time_stats: avg=13.35ms min=9.41ms max=19.56ms count=59
+10-17 14:28:24.991 D/EGL_emulation( 2467): app_time_stats: avg=14.25ms min=9.45ms max=20.61ms count=57
+10-17 14:28:25.997 D/EGL_emulation( 2467): app_time_stats: avg=14.71ms min=10.93ms max=21.99ms count=57
+10-17 14:28:27.010 D/EGL_emulation( 2467): app_time_stats: avg=14.47ms min=10.51ms max=20.48ms count=58
+10-17 14:28:28.021 D/EGL_emulation( 2467): app_time_stats: avg=14.40ms min=9.89ms max=27.22ms count=58
+10-17 14:28:29.042 D/EGL_emulation( 2467): app_time_stats: avg=13.98ms min=9.21ms max=19.56ms count=58
+10-17 14:28:29.979 D/EGL_emulation(  868): app_time_stats: avg=8243.81ms min=8243.81ms max=8243.81ms count=1
+10-17 14:28:30.043 D/EGL_emulation( 2467): app_time_stats: avg=13.34ms min=9.70ms max=21.48ms count=58
+10-17 14:28:30.967 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:30.968 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:28:30.968 D/EGL_emulation(  868): eglCreateContext: 0x787ceb320410: maj 3 min 0 rcv 3
+10-17 14:28:30.969 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb320410: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:28:31.030 D/EGL_emulation(  868): app_time_stats: avg=525.47ms min=80.38ms max=970.57ms count=2
+10-17 14:28:31.060 D/EGL_emulation( 2467): app_time_stats: avg=13.63ms min=9.23ms max=21.26ms count=60
+10-17 14:28:32.063 D/EGL_emulation( 2467): app_time_stats: avg=13.06ms min=8.93ms max=24.39ms count=58
+10-17 14:28:33.075 D/EGL_emulation( 2467): app_time_stats: avg=15.08ms min=10.77ms max=20.03ms count=58
+10-17 14:28:34.086 D/EGL_emulation( 2467): app_time_stats: avg=13.51ms min=9.44ms max=18.41ms count=59
+10-17 14:28:35.092 D/EGL_emulation( 2467): app_time_stats: avg=12.41ms min=8.54ms max=17.77ms count=60
+10-17 14:28:36.103 D/EGL_emulation( 2467): app_time_stats: avg=11.78ms min=8.85ms max=17.70ms count=61
+10-17 14:28:37.122 D/EGL_emulation( 2467): app_time_stats: avg=11.85ms min=9.25ms max=19.68ms count=61
+10-17 14:28:38.130 D/EGL_emulation( 2467): app_time_stats: avg=12.58ms min=8.78ms max=19.17ms count=60
+10-17 14:28:39.137 D/EGL_emulation( 2467): app_time_stats: avg=13.10ms min=9.97ms max=17.73ms count=61
+10-17 14:28:40.138 D/EGL_emulation( 2467): app_time_stats: avg=11.86ms min=8.53ms max=19.28ms count=60
+10-17 14:28:40.683 W/ProcessState( 2682): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:28:40.707 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:28:40.708 I/Gralloc4( 2682): mapper 4.x is not supported
+10-17 14:28:40.738 D/HostConnection( 2682): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:41.007 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:28:41.052 D/EGL_emulation(  868): app_time_stats: avg=10022.67ms min=10022.67ms max=10022.67ms count=1
+10-17 14:28:41.073 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:41.074 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:28:41.075 D/EGL_emulation(  868): eglCreateContext: 0x787ceb320410: maj 3 min 0 rcv 3
+10-17 14:28:41.076 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb320410: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:28:41.144 D/EGL_emulation( 2467): app_time_stats: avg=15.20ms min=9.78ms max=30.47ms count=55
+10-17 14:28:42.153 D/EGL_emulation( 2467): app_time_stats: avg=12.70ms min=8.93ms max=19.15ms count=60
+10-17 14:28:43.168 D/EGL_emulation( 2467): app_time_stats: avg=11.92ms min=8.88ms max=17.17ms count=61
+10-17 14:28:44.170 D/EGL_emulation( 2467): app_time_stats: avg=11.63ms min=8.75ms max=17.99ms count=60
+10-17 14:28:45.184 D/EGL_emulation( 2467): app_time_stats: avg=12.91ms min=9.49ms max=20.56ms count=61
+10-17 14:28:46.186 D/EGL_emulation( 2467): app_time_stats: avg=13.53ms min=8.39ms max=21.71ms count=58
+10-17 14:28:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:28:47.200 D/EGL_emulation( 2467): app_time_stats: avg=12.78ms min=8.34ms max=21.77ms count=61
+10-17 14:28:48.208 D/EGL_emulation( 2467): app_time_stats: avg=11.76ms min=9.04ms max=18.84ms count=60
+10-17 14:28:49.224 D/EGL_emulation( 2467): app_time_stats: avg=12.83ms min=9.09ms max=25.73ms count=60
+10-17 14:28:50.227 D/EGL_emulation( 2467): app_time_stats: avg=13.17ms min=9.07ms max=17.98ms count=59
+10-17 14:28:51.061 D/EGL_emulation(  868): app_time_stats: avg=5004.11ms min=95.22ms max=9913.00ms count=2
+10-17 14:28:51.073 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:28:51.075 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:28:51.077 D/EGL_emulation(  868): eglCreateContext: 0x787ceb320410: maj 3 min 0 rcv 3
+10-17 14:28:51.100 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb320410: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:28:51.227 D/EGL_emulation( 2467): app_time_stats: avg=13.24ms min=9.81ms max=23.85ms count=59
+10-17 14:28:52.238 D/EGL_emulation( 2467): app_time_stats: avg=13.44ms min=8.93ms max=19.31ms count=59
+10-17 14:28:53.252 D/EGL_emulation( 2467): app_time_stats: avg=12.96ms min=8.79ms max=19.01ms count=60
+10-17 14:28:54.257 D/EGL_emulation( 2467): app_time_stats: avg=12.14ms min=8.81ms max=16.70ms count=60
+10-17 14:28:55.257 D/EGL_emulation( 2467): app_time_stats: avg=13.74ms min=9.49ms max=19.36ms count=59
+10-17 14:28:56.270 D/EGL_emulation( 2467): app_time_stats: avg=12.88ms min=8.26ms max=19.48ms count=60
+10-17 14:28:57.285 D/EGL_emulation( 2467): app_time_stats: avg=12.97ms min=9.15ms max=21.64ms count=60
+10-17 14:28:58.287 D/EGL_emulation( 2467): app_time_stats: avg=13.13ms min=9.06ms max=20.12ms count=59
+10-17 14:28:59.294 D/EGL_emulation( 2467): app_time_stats: avg=13.56ms min=9.55ms max=19.67ms count=58
+10-17 14:29:00.032 D/EGL_emulation(  868): app_time_stats: avg=4485.68ms min=85.58ms max=8885.77ms count=2
+10-17 14:29:00.303 D/EGL_emulation( 2467): app_time_stats: avg=13.36ms min=9.44ms max=19.28ms count=59
+10-17 14:29:01.136 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:29:01.151 D/EGL_emulation(  868): app_time_stats: avg=1119.04ms min=1119.04ms max=1119.04ms count=1
+10-17 14:29:01.185 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:29:01.194 D/CompatibilityChangeReporter(  589): Compat change id reported: 175319604; UID 1000; state: ENABLED
+10-17 14:29:01.194 D/CompatibilityChangeReporter(  589): Compat change id reported: 195579280; UID 1000; state: ENABLED
+10-17 14:29:01.208 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:29:01.208 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:29:01.209 D/EGL_emulation(  868): eglCreateContext: 0x787ceb398050: maj 3 min 0 rcv 3
+10-17 14:29:01.210 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb398050: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:29:01.222 E/android.hardware.power.stats@1.0-service-mock(  410): Failed to getEnergyData
+10-17 14:29:01.354 W/TransactionTracing(  434): Could not find layer handle 0x765189b56e30
+10-17 14:29:01.520 D/EGL_emulation( 2467): app_time_stats: avg=19.93ms min=8.44ms max=376.72ms count=50
+10-17 14:29:02.526 D/EGL_emulation( 2467): app_time_stats: avg=22.44ms min=9.92ms max=190.50ms count=41
+10-17 14:29:03.549 D/EGL_emulation( 2467): app_time_stats: avg=16.67ms min=9.00ms max=33.30ms count=50
+10-17 14:29:04.567 D/EGL_emulation( 2467): app_time_stats: avg=16.48ms min=9.12ms max=29.82ms count=52
+10-17 14:29:05.245 W/ProcessState( 2710): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:29:05.267 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:29:05.267 I/Gralloc4( 2710): mapper 4.x is not supported
+10-17 14:29:05.299 D/HostConnection( 2710): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:29:05.579 D/EGL_emulation( 2467): app_time_stats: avg=18.97ms min=9.98ms max=44.75ms count=47
+10-17 14:29:06.585 D/EGL_emulation( 2467): app_time_stats: avg=18.33ms min=8.32ms max=27.72ms count=50
+10-17 14:29:07.594 D/EGL_emulation( 2467): app_time_stats: avg=18.03ms min=8.86ms max=27.29ms count=49
+10-17 14:29:07.879 D/NetworkStatsObservers(  589): Unregistering RequestInfo from pid/uid:589/1000(android) for DataUsageRequest [ requestId=6, networkTemplate=NetworkTemplate: matchRule=MOBILE, subscriberId=310260..., matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, subscriberIdMatchRule=EXACT_MATCH, thresholdInBytes=3457270 ] accessLevel:3
+10-17 14:29:07.880 D/NetworkStatsObservers(  589): Registering observer for RequestInfo from pid/uid:589/1000(android) for DataUsageRequest [ requestId=7, networkTemplate=NetworkTemplate: matchRule=MOBILE, subscriberId=310260..., matchSubscriberIds=[310260...], matchWifiNetworkKeys=[], metered=YES, defaultNetwork=NO, subscriberIdMatchRule=EXACT_MATCH, thresholdInBytes=3425537 ] accessLevel:3
+10-17 14:29:08.616 D/EGL_emulation( 2467): app_time_stats: avg=17.83ms min=9.59ms max=28.96ms count=51
+10-17 14:29:09.642 D/EGL_emulation( 2467): app_time_stats: avg=17.74ms min=10.43ms max=27.37ms count=53
+10-17 14:29:10.519 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:29:10.519 I/Dialer  ( 1379): RetryPolicy - discarding deferred status: configuration_state=4
+10-17 14:29:10.520 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:29:10.520 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:29:10.521 I/Dialer  ( 1379): VvmTaskReceiver - task received
+10-17 14:29:10.521 I/Dialer  ( 1379): VvmTaskReceiver - TaskExecutor already running
+10-17 14:29:10.521 I/Dialer  ( 1379): Task.createTask - create task:com.android.voicemail.impl.ActivationTask
+10-17 14:29:10.521 I/Dialer  ( 1379): RetryPolicy - retry #2 for com.android.voicemail.impl.ActivationTask@d01aa47 queued, executing in 5000
+10-17 14:29:10.521 I/Dialer  ( 1379): VvmTaskExecutor - com.android.voicemail.impl.ActivationTask@d01aa47 added
+10-17 14:29:10.521 I/Dialer  ( 1379): VvmTaskExecutor - minimal wait time:5000
+10-17 14:29:10.521 I/Dialer  ( 1379): VvmTaskExecutor - sleep for 5000 millis
+10-17 14:29:10.646 D/EGL_emulation( 2467): app_time_stats: avg=18.16ms min=11.99ms max=30.48ms count=48
+10-17 14:29:11.646 D/EGL_emulation( 2467): app_time_stats: avg=19.99ms min=12.84ms max=29.44ms count=48
+10-17 14:29:12.648 D/EGL_emulation( 2467): app_time_stats: avg=16.95ms min=9.26ms max=32.14ms count=52
+10-17 14:29:13.651 D/EGL_emulation( 2467): app_time_stats: avg=17.02ms min=9.22ms max=25.62ms count=52
+10-17 14:29:14.662 D/EGL_emulation( 2467): app_time_stats: avg=15.71ms min=9.27ms max=24.87ms count=53
+10-17 14:29:15.524 I/Dialer  ( 1379): VvmTaskExecutor - executing task com.android.voicemail.impl.ActivationTask@d01aa47
+10-17 14:29:15.524 I/Dialer  ( 1379): PreOMigrationHandler - ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} already migrated
+10-17 14:29:15.535 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:29:15.538 I/Dialer  ( 1379): VvmActivationTask - VVM content provider configured - vvm_type_cvvm
+10-17 14:29:15.538 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_ACTIVATING
+10-17 14:29:15.540 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:29:15.545 D/SmsNumberUtils( 1078): enter filterDestAddr. destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:29:15.545 D/SmsNumberUtils( 1078): destAddr is not formatted.
+10-17 14:29:15.545 D/SmsNumberUtils( 1078): leave filterDestAddr, new destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:29:15.564 W/BroadcastQueue(  589): Permission Denial: broadcasting Intent { act=com.android.voicemailomtp.sms.REQUEST_SENT flg=0x10 pkg=com.android.dialer } from com.android.dialer (pid=-1, uid=10086) requires com.android.dialer.permission.DIALER_ORIGIN due to registered receiver BroadcastFilter{b1e3384 10086/u0 ReceiverList{b102597 1379 com.android.dialer/10086/u0 remote:8771816}}
+10-17 14:29:15.670 D/EGL_emulation( 2467): app_time_stats: avg=17.85ms min=9.77ms max=37.81ms count=51
+10-17 14:29:16.681 D/EGL_emulation( 2467): app_time_stats: avg=19.14ms min=9.51ms max=32.21ms count=49
+10-17 14:29:17.694 D/EGL_emulation( 2467): app_time_stats: avg=17.33ms min=9.89ms max=27.04ms count=53
+10-17 14:29:18.701 D/EGL_emulation( 2467): app_time_stats: avg=18.67ms min=9.73ms max=31.51ms count=49
+10-17 14:29:19.702 D/EGL_emulation( 2467): app_time_stats: avg=19.99ms min=10.24ms max=34.51ms count=45
+10-17 14:29:20.718 D/EGL_emulation( 2467): app_time_stats: avg=17.89ms min=11.82ms max=29.03ms count=50
+10-17 14:29:21.722 D/EGL_emulation( 2467): app_time_stats: avg=18.21ms min=11.14ms max=29.17ms count=48
+10-17 14:29:22.723 D/EGL_emulation( 2467): app_time_stats: avg=17.87ms min=9.33ms max=30.40ms count=51
+10-17 14:29:23.731 D/EGL_emulation( 2467): app_time_stats: avg=18.02ms min=10.55ms max=28.63ms count=51
+10-17 14:29:24.733 D/EGL_emulation( 2467): app_time_stats: avg=17.88ms min=11.29ms max=30.40ms count=50
+10-17 14:29:25.743 D/EGL_emulation( 2467): app_time_stats: avg=17.69ms min=9.80ms max=31.14ms count=51
+10-17 14:29:26.763 D/EGL_emulation( 2467): app_time_stats: avg=19.39ms min=11.50ms max=32.56ms count=48
+10-17 14:29:27.766 D/EGL_emulation( 2467): app_time_stats: avg=19.27ms min=11.20ms max=29.27ms count=48
+10-17 14:29:28.772 D/EGL_emulation( 2467): app_time_stats: avg=19.60ms min=10.79ms max=28.82ms count=46
+10-17 14:29:29.791 D/EGL_emulation( 2467): app_time_stats: avg=16.99ms min=8.99ms max=27.42ms count=52
+10-17 14:29:30.806 D/EGL_emulation( 2467): app_time_stats: avg=18.06ms min=9.14ms max=29.08ms count=50
+10-17 14:29:31.824 D/EGL_emulation( 2467): app_time_stats: avg=18.01ms min=10.13ms max=23.52ms count=52
+10-17 14:29:32.828 D/EGL_emulation( 2467): app_time_stats: avg=16.54ms min=9.19ms max=27.84ms count=52
+10-17 14:29:33.833 D/EGL_emulation( 2467): app_time_stats: avg=17.26ms min=7.96ms max=24.47ms count=52
+10-17 14:29:34.837 D/EGL_emulation( 2467): app_time_stats: avg=18.38ms min=8.78ms max=34.27ms count=49
+10-17 14:29:35.837 D/EGL_emulation( 2467): app_time_stats: avg=17.50ms min=9.23ms max=30.26ms count=49
+10-17 14:29:36.849 D/EGL_emulation( 2467): app_time_stats: avg=18.38ms min=8.89ms max=28.46ms count=49
+10-17 14:29:37.874 D/EGL_emulation( 2467): app_time_stats: avg=17.24ms min=8.54ms max=35.74ms count=52
+10-17 14:29:38.885 D/EGL_emulation( 2467): app_time_stats: avg=18.91ms min=9.77ms max=26.41ms count=49
+10-17 14:29:39.891 D/EGL_emulation( 2467): app_time_stats: avg=17.41ms min=9.16ms max=25.80ms count=52
+10-17 14:29:40.899 D/EGL_emulation( 2467): app_time_stats: avg=17.80ms min=10.01ms max=29.94ms count=49
+10-17 14:29:41.309 D/WifiNl80211Manager(  589): Scan result ready event
+10-17 14:29:41.309 D/WifiNative(  589): Scan result ready event
+10-17 14:29:41.910 D/EGL_emulation( 2467): app_time_stats: avg=19.61ms min=11.41ms max=30.43ms count=48
+10-17 14:29:42.936 D/EGL_emulation( 2467): app_time_stats: avg=19.37ms min=10.70ms max=36.56ms count=49
+10-17 14:29:43.949 D/EGL_emulation( 2467): app_time_stats: avg=18.72ms min=8.64ms max=35.47ms count=50
+10-17 14:29:44.955 D/EGL_emulation( 2467): app_time_stats: avg=16.63ms min=8.58ms max=27.05ms count=53
+10-17 14:29:45.974 D/EGL_emulation( 2467): app_time_stats: avg=17.26ms min=10.21ms max=25.33ms count=55
+10-17 14:29:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:29:46.975 D/EGL_emulation( 2467): app_time_stats: avg=18.75ms min=10.13ms max=31.22ms count=49
+10-17 14:29:47.988 D/EGL_emulation( 2467): app_time_stats: avg=18.49ms min=9.44ms max=32.13ms count=49
+10-17 14:29:48.991 D/EGL_emulation( 2467): app_time_stats: avg=16.49ms min=9.09ms max=30.86ms count=50
+10-17 14:29:49.995 D/EGL_emulation( 2467): app_time_stats: avg=17.14ms min=9.50ms max=29.35ms count=50
+10-17 14:29:51.013 D/EGL_emulation( 2467): app_time_stats: avg=18.03ms min=9.68ms max=28.74ms count=49
+10-17 14:29:52.016 D/EGL_emulation( 2467): app_time_stats: avg=19.08ms min=11.66ms max=28.66ms count=49
+10-17 14:29:53.022 D/EGL_emulation( 2467): app_time_stats: avg=18.65ms min=13.20ms max=26.40ms count=51
+10-17 14:29:54.030 D/EGL_emulation( 2467): app_time_stats: avg=17.05ms min=8.57ms max=26.71ms count=53
+10-17 14:29:55.052 D/EGL_emulation( 2467): app_time_stats: avg=17.30ms min=10.41ms max=29.57ms count=51
+10-17 14:29:56.067 D/EGL_emulation( 2467): app_time_stats: avg=17.45ms min=10.79ms max=26.45ms count=54
+10-17 14:29:57.085 D/EGL_emulation( 2467): app_time_stats: avg=18.84ms min=9.52ms max=33.94ms count=50
+10-17 14:29:58.093 D/EGL_emulation( 2467): app_time_stats: avg=17.48ms min=10.18ms max=27.97ms count=49
+10-17 14:29:59.109 D/EGL_emulation( 2467): app_time_stats: avg=17.94ms min=11.42ms max=25.87ms count=52
+10-17 14:30:00.059 D/EGL_emulation(  868): app_time_stats: avg=19634.81ms min=64.37ms max=58775.21ms count=3
+10-17 14:30:00.124 D/EGL_emulation( 2467): app_time_stats: avg=17.48ms min=7.28ms max=25.79ms count=52
+10-17 14:30:00.292 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:00.292 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:00.292 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:00.471 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:01.146 D/EGL_emulation( 2467): app_time_stats: avg=19.26ms min=11.31ms max=32.66ms count=49
+10-17 14:30:01.788 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:01.788 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:02.022 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:02.149 D/EGL_emulation( 2467): app_time_stats: avg=18.75ms min=10.89ms max=29.86ms count=49
+10-17 14:30:02.338 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:03.153 D/EGL_emulation( 2467): app_time_stats: avg=19.11ms min=10.34ms max=28.56ms count=49
+10-17 14:30:03.173 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:03.173 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:03.988 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:03.988 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:04.056 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:04.056 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:04.159 D/EGL_emulation( 2467): app_time_stats: avg=18.14ms min=11.08ms max=34.22ms count=50
+10-17 14:30:05.169 D/EGL_emulation( 2467): app_time_stats: avg=18.37ms min=11.41ms max=27.45ms count=51
+10-17 14:30:05.255 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.255 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.437 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:05.904 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:06.174 D/EGL_emulation( 2467): app_time_stats: avg=16.29ms min=8.28ms max=26.94ms count=53
+10-17 14:30:06.789 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:06.789 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:06.789 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:06.789 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.075 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.182 D/EGL_emulation( 2467): app_time_stats: avg=17.94ms min=8.58ms max=25.02ms count=52
+10-17 14:30:07.504 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.504 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.504 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.504 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.504 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:07.871 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:08.004 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:08.193 D/EGL_emulation( 2467): app_time_stats: avg=17.52ms min=9.00ms max=24.97ms count=54
+10-17 14:30:09.203 D/EGL_emulation( 2467): app_time_stats: avg=17.62ms min=9.35ms max=26.07ms count=53
+10-17 14:30:09.975 D/EGL_emulation(  868): app_time_stats: avg=9914.95ms min=9914.95ms max=9914.95ms count=1
+10-17 14:30:10.215 D/EGL_emulation( 2467): app_time_stats: avg=16.32ms min=8.38ms max=27.17ms count=53
+10-17 14:30:11.219 D/EGL_emulation( 2467): app_time_stats: avg=16.68ms min=8.68ms max=25.94ms count=55
+10-17 14:30:12.235 D/EGL_emulation( 2467): app_time_stats: avg=18.16ms min=9.07ms max=27.96ms count=50
+10-17 14:30:13.248 D/EGL_emulation( 2467): app_time_stats: avg=16.05ms min=8.71ms max=25.24ms count=55
+10-17 14:30:14.249 D/EGL_emulation( 2467): app_time_stats: avg=17.03ms min=7.51ms max=41.12ms count=52
+10-17 14:30:15.249 D/EGL_emulation( 2467): app_time_stats: avg=16.74ms min=8.66ms max=24.74ms count=51
+10-17 14:30:15.549 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:30:15.549 I/Dialer  ( 1379): RetryPolicy - discarding deferred status: configuration_state=4
+10-17 14:30:15.553 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskReceiver - task received
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskReceiver - TaskExecutor already running
+10-17 14:30:15.553 I/Dialer  ( 1379): Task.createTask - create task:com.android.voicemail.impl.ActivationTask
+10-17 14:30:15.553 I/Dialer  ( 1379): RetryPolicy - retry #3 for com.android.voicemail.impl.ActivationTask@62f6a queued, executing in 5000
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskExecutor - com.android.voicemail.impl.ActivationTask@62f6a added
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskExecutor - minimal wait time:5000
+10-17 14:30:15.553 I/Dialer  ( 1379): VvmTaskExecutor - sleep for 5000 millis
+10-17 14:30:16.269 D/EGL_emulation( 2467): app_time_stats: avg=17.56ms min=10.27ms max=27.30ms count=54
+10-17 14:30:17.285 D/EGL_emulation( 2467): app_time_stats: avg=14.91ms min=8.73ms max=25.82ms count=58
+10-17 14:30:18.293 D/EGL_emulation( 2467): app_time_stats: avg=16.27ms min=9.74ms max=25.71ms count=56
+10-17 14:30:19.311 D/EGL_emulation( 2467): app_time_stats: avg=16.63ms min=8.45ms max=23.90ms count=55
+10-17 14:30:20.321 D/EGL_emulation( 2467): app_time_stats: avg=15.51ms min=7.23ms max=25.36ms count=57
+10-17 14:30:20.556 I/Dialer  ( 1379): VvmTaskExecutor - executing task com.android.voicemail.impl.ActivationTask@62f6a
+10-17 14:30:20.556 I/Dialer  ( 1379): PreOMigrationHandler - ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} already migrated
+10-17 14:30:20.561 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:30:20.567 I/Dialer  ( 1379): VvmActivationTask - VVM content provider configured - vvm_type_cvvm
+10-17 14:30:20.567 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_ACTIVATING
+10-17 14:30:20.568 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:30:20.585 D/SmsNumberUtils( 1078): enter filterDestAddr. destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:30:20.587 D/SmsNumberUtils( 1078): destAddr is not formatted.
+10-17 14:30:20.587 D/SmsNumberUtils( 1078): leave filterDestAddr, new destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:30:20.590 W/BroadcastQueue(  589): Permission Denial: broadcasting Intent { act=com.android.voicemailomtp.sms.REQUEST_SENT flg=0x10 pkg=com.android.dialer } from com.android.dialer (pid=-1, uid=10086) requires com.android.dialer.permission.DIALER_ORIGIN due to registered receiver BroadcastFilter{45dfd69 10086/u0 ReceiverList{c0d03f0 1379 com.android.dialer/10086/u0 remote:8a78433}}
+10-17 14:30:21.325 D/EGL_emulation( 2467): app_time_stats: avg=14.22ms min=7.90ms max=25.42ms count=55
+10-17 14:30:22.337 D/EGL_emulation( 2467): app_time_stats: avg=15.24ms min=8.34ms max=25.23ms count=56
+10-17 14:30:23.346 D/EGL_emulation( 2467): app_time_stats: avg=15.94ms min=8.17ms max=30.63ms count=54
+10-17 14:30:24.350 D/EGL_emulation( 2467): app_time_stats: avg=15.77ms min=7.68ms max=29.90ms count=56
+10-17 14:30:25.373 D/EGL_emulation( 2467): app_time_stats: avg=16.31ms min=8.46ms max=32.64ms count=55
+10-17 14:30:26.380 D/EGL_emulation( 2467): app_time_stats: avg=15.60ms min=8.60ms max=22.72ms count=55
+10-17 14:30:27.384 D/EGL_emulation( 2467): app_time_stats: avg=18.92ms min=11.09ms max=43.20ms count=49
+10-17 14:30:28.387 D/EGL_emulation( 2467): app_time_stats: avg=16.91ms min=10.27ms max=26.27ms count=55
+10-17 14:30:29.414 D/EGL_emulation( 2467): app_time_stats: avg=17.22ms min=9.14ms max=26.18ms count=54
+10-17 14:30:30.417 D/EGL_emulation( 2467): app_time_stats: avg=17.27ms min=10.90ms max=27.56ms count=53
+10-17 14:30:31.428 D/EGL_emulation( 2467): app_time_stats: avg=15.54ms min=8.05ms max=23.50ms count=55
+10-17 14:30:32.441 D/EGL_emulation( 2467): app_time_stats: avg=17.46ms min=9.23ms max=27.30ms count=53
+10-17 14:30:33.464 D/EGL_emulation( 2467): app_time_stats: avg=16.24ms min=9.91ms max=22.78ms count=56
+10-17 14:30:34.468 D/EGL_emulation( 2467): app_time_stats: avg=17.15ms min=7.50ms max=29.70ms count=52
+10-17 14:30:35.470 D/EGL_emulation( 2467): app_time_stats: avg=16.13ms min=8.51ms max=23.58ms count=55
+10-17 14:30:36.471 D/EGL_emulation( 2467): app_time_stats: avg=16.48ms min=8.03ms max=28.47ms count=54
+10-17 14:30:37.474 D/EGL_emulation( 2467): app_time_stats: avg=15.53ms min=9.43ms max=27.22ms count=55
+10-17 14:30:38.481 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=9.29ms max=28.33ms count=52
+10-17 14:30:39.482 D/EGL_emulation( 2467): app_time_stats: avg=17.32ms min=9.01ms max=27.79ms count=53
+10-17 14:30:39.976 D/EGL_emulation(  868): app_time_stats: avg=30001.04ms min=30001.04ms max=30001.04ms count=1
+10-17 14:30:40.494 D/EGL_emulation( 2467): app_time_stats: avg=16.46ms min=7.25ms max=25.98ms count=53
+10-17 14:30:41.510 D/EGL_emulation( 2467): app_time_stats: avg=15.63ms min=7.88ms max=27.90ms count=55
+10-17 14:30:42.511 D/EGL_emulation( 2467): app_time_stats: avg=15.65ms min=8.99ms max=24.98ms count=54
+10-17 14:30:43.519 D/EGL_emulation( 2467): app_time_stats: avg=17.03ms min=7.61ms max=25.84ms count=54
+10-17 14:30:44.533 D/EGL_emulation( 2467): app_time_stats: avg=17.45ms min=9.50ms max=28.20ms count=53
+10-17 14:30:45.197 I/        (    0): sh (3114) used greatest stack depth: 11336 bytes left
+10-17 14:30:45.545 D/EGL_emulation( 2467): app_time_stats: avg=15.69ms min=9.23ms max=26.52ms count=55
+10-17 14:30:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:30:46.553 D/EGL_emulation( 2467): app_time_stats: avg=15.97ms min=7.98ms max=27.35ms count=54
+10-17 14:30:47.554 D/EGL_emulation( 2467): app_time_stats: avg=16.15ms min=8.26ms max=25.66ms count=54
+10-17 14:30:48.565 D/EGL_emulation( 2467): app_time_stats: avg=17.29ms min=10.21ms max=28.99ms count=52
+10-17 14:30:49.570 D/EGL_emulation( 2467): app_time_stats: avg=16.41ms min=8.62ms max=29.09ms count=54
+10-17 14:30:50.271 W/TransactionTracing(  434): Could not find layer id -1
+10-17 14:30:50.575 D/EGL_emulation( 2467): app_time_stats: avg=18.18ms min=9.63ms max=27.99ms count=52
+10-17 14:30:51.587 D/EGL_emulation( 2467): app_time_stats: avg=16.30ms min=7.74ms max=28.90ms count=54
+10-17 14:30:52.591 D/EGL_emulation( 2467): app_time_stats: avg=16.94ms min=9.35ms max=27.90ms count=54
+10-17 14:30:53.597 D/EGL_emulation( 2467): app_time_stats: avg=17.29ms min=8.78ms max=28.37ms count=52
+10-17 14:30:54.601 D/EGL_emulation( 2467): app_time_stats: avg=16.59ms min=9.94ms max=23.82ms count=55
+10-17 14:30:55.602 D/EGL_emulation( 2467): app_time_stats: avg=17.05ms min=11.25ms max=27.94ms count=51
+10-17 14:30:56.603 D/EGL_emulation( 2467): app_time_stats: avg=17.02ms min=9.36ms max=25.62ms count=54
+10-17 14:30:57.614 D/EGL_emulation( 2467): app_time_stats: avg=16.45ms min=9.37ms max=24.31ms count=55
+10-17 14:30:58.620 D/EGL_emulation( 2467): app_time_stats: avg=18.56ms min=10.52ms max=29.61ms count=50
+10-17 14:30:59.630 D/EGL_emulation( 2467): app_time_stats: avg=18.15ms min=7.43ms max=28.39ms count=51
+10-17 14:31:00.049 D/EGL_emulation(  868): app_time_stats: avg=20073.05ms min=20073.05ms max=20073.05ms count=1
+10-17 14:31:00.644 D/EGL_emulation( 2467): app_time_stats: avg=16.74ms min=8.11ms max=45.64ms count=52
+10-17 14:31:01.221 E/android.hardware.power.stats@1.0-service-mock(  410): Failed to getEnergyData
+10-17 14:31:01.646 D/EGL_emulation( 2467): app_time_stats: avg=16.49ms min=9.28ms max=28.32ms count=55
+10-17 14:31:02.663 D/EGL_emulation( 2467): app_time_stats: avg=17.62ms min=10.65ms max=24.52ms count=52
+10-17 14:31:03.663 D/EGL_emulation( 2467): app_time_stats: avg=16.52ms min=9.48ms max=25.50ms count=54
+10-17 14:31:04.665 D/EGL_emulation( 2467): app_time_stats: avg=16.47ms min=8.76ms max=25.20ms count=53
+10-17 14:31:05.676 D/EGL_emulation( 2467): app_time_stats: avg=17.63ms min=9.25ms max=26.60ms count=52
+10-17 14:31:06.695 D/EGL_emulation( 2467): app_time_stats: avg=15.88ms min=9.06ms max=26.80ms count=56
+10-17 14:31:07.706 D/EGL_emulation( 2467): app_time_stats: avg=15.03ms min=8.33ms max=24.42ms count=55
+10-17 14:31:08.711 D/EGL_emulation( 2467): app_time_stats: avg=15.36ms min=9.83ms max=26.38ms count=58
+10-17 14:31:09.720 D/EGL_emulation( 2467): app_time_stats: avg=17.12ms min=9.95ms max=25.21ms count=56
+10-17 14:31:10.727 D/EGL_emulation( 2467): app_time_stats: avg=18.59ms min=9.32ms max=32.41ms count=50
+10-17 14:31:11.735 D/EGL_emulation( 2467): app_time_stats: avg=17.29ms min=10.17ms max=31.53ms count=52
+10-17 14:31:12.738 D/EGL_emulation( 2467): app_time_stats: avg=17.45ms min=9.09ms max=35.10ms count=53
+10-17 14:31:13.747 D/EGL_emulation( 2467): app_time_stats: avg=16.97ms min=9.48ms max=24.55ms count=52
+10-17 14:31:14.760 D/EGL_emulation( 2467): app_time_stats: avg=16.15ms min=8.32ms max=22.28ms count=55
+10-17 14:31:15.766 D/EGL_emulation( 2467): app_time_stats: avg=16.86ms min=8.06ms max=29.28ms count=55
+10-17 14:31:16.775 D/EGL_emulation( 2467): app_time_stats: avg=17.39ms min=10.15ms max=25.36ms count=55
+10-17 14:31:17.779 D/EGL_emulation( 2467): app_time_stats: avg=15.52ms min=8.67ms max=26.94ms count=53
+10-17 14:31:18.790 D/EGL_emulation( 2467): app_time_stats: avg=16.26ms min=8.10ms max=26.28ms count=52
+10-17 14:31:19.800 D/EGL_emulation( 2467): app_time_stats: avg=15.90ms min=9.00ms max=25.92ms count=56
+10-17 14:31:20.594 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:31:20.594 I/Dialer  ( 1379): RetryPolicy - discarding deferred status: configuration_state=4
+10-17 14:31:20.595 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskReceiver - task received
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskReceiver - TaskExecutor already running
+10-17 14:31:20.596 I/Dialer  ( 1379): Task.createTask - create task:com.android.voicemail.impl.ActivationTask
+10-17 14:31:20.596 I/Dialer  ( 1379): RetryPolicy - retry #4 for com.android.voicemail.impl.ActivationTask@5ddb80e queued, executing in 5000
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskExecutor - com.android.voicemail.impl.ActivationTask@5ddb80e added
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskExecutor - minimal wait time:4999
+10-17 14:31:20.596 I/Dialer  ( 1379): VvmTaskExecutor - sleep for 4999 millis
+10-17 14:31:20.800 D/EGL_emulation( 2467): app_time_stats: avg=16.64ms min=10.14ms max=25.14ms count=53
+10-17 14:31:21.808 D/EGL_emulation( 2467): app_time_stats: avg=17.33ms min=9.50ms max=28.84ms count=52
+10-17 14:31:22.809 D/EGL_emulation( 2467): app_time_stats: avg=15.37ms min=8.27ms max=25.58ms count=57
+10-17 14:31:23.824 D/EGL_emulation( 2467): app_time_stats: avg=16.63ms min=8.77ms max=26.49ms count=55
+10-17 14:31:24.828 D/EGL_emulation( 2467): app_time_stats: avg=16.58ms min=9.33ms max=25.14ms count=54
+10-17 14:31:25.600 I/Dialer  ( 1379): VvmTaskExecutor - executing task com.android.voicemail.impl.ActivationTask@5ddb80e
+10-17 14:31:25.600 I/Dialer  ( 1379): PreOMigrationHandler - ComponentInfo{com.android.phone/com.android.services.telephony.TelephonyConnectionService}, 1, UserHandle{0} already migrated
+10-17 14:31:25.608 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:31:25.609 I/Dialer  ( 1379): VvmActivationTask - VVM content provider configured - vvm_type_cvvm
+10-17 14:31:25.609 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_ACTIVATING
+10-17 14:31:25.610 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:31:25.618 D/SmsNumberUtils( 1078): enter filterDestAddr. destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:31:25.619 D/SmsNumberUtils( 1078): destAddr is not formatted.
+10-17 14:31:25.619 D/SmsNumberUtils( 1078): leave filterDestAddr, new destAddr="[BajqU4K5_YhSYbs-7QUn0dOwcmI]"
+10-17 14:31:25.629 W/BroadcastQueue(  589): Permission Denial: broadcasting Intent { act=com.android.voicemailomtp.sms.REQUEST_SENT flg=0x10 pkg=com.android.dialer } from com.android.dialer (pid=-1, uid=10086) requires com.android.dialer.permission.DIALER_ORIGIN due to registered receiver BroadcastFilter{fd00725 10086/u0 ReceiverList{fd66f1c 1379 com.android.dialer/10086/u0 remote:74c308f}}
+10-17 14:31:25.842 D/EGL_emulation( 2467): app_time_stats: avg=16.28ms min=9.58ms max=26.98ms count=56
+10-17 14:31:26.855 D/EGL_emulation( 2467): app_time_stats: avg=17.13ms min=8.27ms max=27.49ms count=53
+10-17 14:31:27.860 D/EGL_emulation( 2467): app_time_stats: avg=16.21ms min=8.71ms max=26.60ms count=56
+10-17 14:31:28.875 D/EGL_emulation( 2467): app_time_stats: avg=16.37ms min=8.38ms max=29.48ms count=54
+10-17 14:31:29.877 D/EGL_emulation( 2467): app_time_stats: avg=15.33ms min=9.15ms max=24.52ms count=55
+10-17 14:31:30.880 D/EGL_emulation( 2467): app_time_stats: avg=16.26ms min=8.43ms max=26.06ms count=54
+10-17 14:31:31.901 D/EGL_emulation( 2467): app_time_stats: avg=15.79ms min=7.67ms max=28.49ms count=56
+10-17 14:31:32.919 D/EGL_emulation( 2467): app_time_stats: avg=17.20ms min=9.67ms max=29.76ms count=52
+10-17 14:31:33.921 D/EGL_emulation( 2467): app_time_stats: avg=16.35ms min=8.09ms max=23.05ms count=54
+10-17 14:31:34.941 D/EGL_emulation( 2467): app_time_stats: avg=16.51ms min=9.83ms max=26.20ms count=54
+10-17 14:31:35.963 D/EGL_emulation( 2467): app_time_stats: avg=16.30ms min=8.34ms max=25.19ms count=55
+10-17 14:31:36.964 D/EGL_emulation( 2467): app_time_stats: avg=15.85ms min=9.74ms max=25.09ms count=55
+10-17 14:31:37.983 D/EGL_emulation( 2467): app_time_stats: avg=16.09ms min=7.39ms max=24.92ms count=55
+10-17 14:31:38.997 D/EGL_emulation( 2467): app_time_stats: avg=18.28ms min=10.27ms max=26.84ms count=51
+10-17 14:31:40.016 D/EGL_emulation( 2467): app_time_stats: avg=17.56ms min=7.08ms max=27.69ms count=52
+10-17 14:31:41.035 D/EGL_emulation( 2467): app_time_stats: avg=17.46ms min=8.68ms max=28.87ms count=53
+10-17 14:31:42.054 D/EGL_emulation( 2467): app_time_stats: avg=15.95ms min=7.82ms max=30.56ms count=54
+10-17 14:31:43.068 D/EGL_emulation( 2467): app_time_stats: avg=16.57ms min=9.12ms max=26.40ms count=54
+10-17 14:31:44.075 D/EGL_emulation( 2467): app_time_stats: avg=16.12ms min=9.08ms max=22.41ms count=56
+10-17 14:31:45.079 D/EGL_emulation( 2467): app_time_stats: avg=16.88ms min=10.49ms max=34.93ms count=54
+10-17 14:31:46.084 D/EGL_emulation( 2467): app_time_stats: avg=16.90ms min=9.09ms max=26.50ms count=54
+10-17 14:31:46.595 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:31:47.104 D/EGL_emulation( 2467): app_time_stats: avg=16.76ms min=10.18ms max=24.07ms count=54
+10-17 14:31:48.120 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=8.92ms max=34.07ms count=55
+10-17 14:31:49.120 D/EGL_emulation( 2467): app_time_stats: avg=15.06ms min=7.73ms max=24.49ms count=56
+10-17 14:31:50.125 D/EGL_emulation( 2467): app_time_stats: avg=16.51ms min=10.01ms max=27.15ms count=55
+10-17 14:31:51.130 D/EGL_emulation( 2467): app_time_stats: avg=16.07ms min=8.94ms max=26.24ms count=54
+10-17 14:31:52.136 D/EGL_emulation( 2467): app_time_stats: avg=16.35ms min=7.94ms max=29.80ms count=56
+10-17 14:31:53.154 D/EGL_emulation( 2467): app_time_stats: avg=17.64ms min=9.86ms max=32.84ms count=51
+10-17 14:31:54.161 D/EGL_emulation( 2467): app_time_stats: avg=17.18ms min=8.04ms max=27.92ms count=53
+10-17 14:31:55.168 D/EGL_emulation( 2467): app_time_stats: avg=16.78ms min=10.37ms max=24.42ms count=54
+10-17 14:31:56.178 D/EGL_emulation( 2467): app_time_stats: avg=17.81ms min=9.38ms max=30.02ms count=51
+10-17 14:31:57.182 D/EGL_emulation( 2467): app_time_stats: avg=16.41ms min=8.80ms max=28.16ms count=53
+10-17 14:31:58.193 D/EGL_emulation( 2467): app_time_stats: avg=16.49ms min=8.60ms max=30.73ms count=52
+10-17 14:31:59.148 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.148 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.149 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.149 I/DropBoxManagerService(  589): add tag=system_server_strictmode isTagEnabled=true flags=0x2
+10-17 14:31:59.199 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=9.46ms max=29.63ms count=52
+10-17 14:32:00.021 D/EGL_emulation(  868): app_time_stats: avg=59971.82ms min=59971.82ms max=59971.82ms count=1
+10-17 14:32:00.221 D/EGL_emulation( 2467): app_time_stats: avg=17.47ms min=10.57ms max=27.46ms count=54
+10-17 14:32:01.234 D/EGL_emulation( 2467): app_time_stats: avg=16.95ms min=10.78ms max=25.80ms count=54
+10-17 14:32:02.245 D/EGL_emulation( 2467): app_time_stats: avg=16.32ms min=10.00ms max=25.35ms count=55
+10-17 14:32:03.246 D/EGL_emulation( 2467): app_time_stats: avg=18.70ms min=8.44ms max=28.51ms count=51
+10-17 14:32:04.266 D/EGL_emulation( 2467): app_time_stats: avg=17.47ms min=8.79ms max=27.75ms count=51
+10-17 14:32:05.276 D/EGL_emulation( 2467): app_time_stats: avg=15.80ms min=8.09ms max=25.61ms count=56
+10-17 14:32:06.276 D/EGL_emulation( 2467): app_time_stats: avg=15.69ms min=8.25ms max=23.96ms count=58
+10-17 14:32:07.276 D/EGL_emulation( 2467): app_time_stats: avg=17.33ms min=9.90ms max=27.60ms count=52
+10-17 14:32:08.290 D/EGL_emulation( 2467): app_time_stats: avg=18.27ms min=8.91ms max=33.36ms count=49
+10-17 14:32:09.292 D/EGL_emulation( 2467): app_time_stats: avg=18.06ms min=8.29ms max=33.81ms count=49
+10-17 14:32:10.304 D/EGL_emulation( 2467): app_time_stats: avg=16.47ms min=10.31ms max=30.24ms count=54
+10-17 14:32:11.321 D/EGL_emulation( 2467): app_time_stats: avg=16.27ms min=7.74ms max=25.61ms count=55
+10-17 14:32:12.336 D/EGL_emulation( 2467): app_time_stats: avg=15.96ms min=7.40ms max=27.35ms count=55
+10-17 14:32:13.343 D/EGL_emulation( 2467): app_time_stats: avg=16.83ms min=10.66ms max=26.50ms count=55
+10-17 14:32:14.354 D/EGL_emulation( 2467): app_time_stats: avg=17.36ms min=8.12ms max=29.08ms count=52
+10-17 14:32:15.367 D/EGL_emulation( 2467): app_time_stats: avg=16.12ms min=8.28ms max=23.60ms count=55
+10-17 14:32:16.379 D/EGL_emulation( 2467): app_time_stats: avg=16.38ms min=7.97ms max=24.76ms count=56
+10-17 14:32:17.384 D/EGL_emulation( 2467): app_time_stats: avg=14.95ms min=8.39ms max=23.04ms count=56
+10-17 14:32:18.389 D/EGL_emulation( 2467): app_time_stats: avg=16.39ms min=7.55ms max=27.49ms count=51
+10-17 14:32:19.400 D/EGL_emulation( 2467): app_time_stats: avg=19.99ms min=10.19ms max=34.82ms count=47
+10-17 14:32:19.984 D/EGL_emulation(  868): app_time_stats: avg=19963.29ms min=19963.29ms max=19963.29ms count=1
+10-17 14:32:20.403 D/EGL_emulation( 2467): app_time_stats: avg=16.42ms min=10.31ms max=26.69ms count=55
+10-17 14:32:21.304 D/WifiNl80211Manager(  589): Scan result ready event
+10-17 14:32:21.304 D/WifiNative(  589): Scan result ready event
+10-17 14:32:21.405 D/EGL_emulation( 2467): app_time_stats: avg=18.41ms min=10.50ms max=29.08ms count=48
+10-17 14:32:22.406 D/EGL_emulation( 2467): app_time_stats: avg=15.97ms min=8.86ms max=24.37ms count=52
+10-17 14:32:23.413 D/EGL_emulation( 2467): app_time_stats: avg=17.12ms min=9.51ms max=25.70ms count=53
+10-17 14:32:24.424 D/EGL_emulation( 2467): app_time_stats: avg=18.51ms min=10.79ms max=28.92ms count=51
+10-17 14:32:25.425 D/EGL_emulation( 2467): app_time_stats: avg=19.42ms min=11.66ms max=26.28ms count=49
+10-17 14:32:25.624 I/Dialer  ( 1379): OmtpVvmCarrierCfgHlpr - OmtpEvent:CONFIG_STATUS_SMS_TIME_OUT
+10-17 14:32:25.625 I/Dialer  ( 1379): RetryPolicy - Retry limit for com.android.voicemail.impl.ActivationTask@5ddb80e reached
+10-17 14:32:25.625 I/Dialer  ( 1379): RetryPolicy - committing deferred status: configuration_state=4
+10-17 14:32:25.642 I/VoicemailNotifier( 1566): receivers for android.intent.action.PROVIDER_CHANGED :[]
+10-17 14:32:25.642 I/Dialer  ( 1379): VvmTaskExecutor - no more tasks, stopping service if no task are added in 5000 millis
+10-17 14:32:26.429 D/EGL_emulation( 2467): app_time_stats: avg=18.58ms min=10.37ms max=33.57ms count=47
+10-17 14:32:27.451 D/EGL_emulation( 2467): app_time_stats: avg=18.08ms min=9.66ms max=28.16ms count=50
+10-17 14:32:28.460 D/EGL_emulation( 2467): app_time_stats: avg=18.98ms min=9.70ms max=29.76ms count=49
+10-17 14:32:29.474 D/EGL_emulation( 2467): app_time_stats: avg=18.15ms min=10.13ms max=36.20ms count=50
+10-17 14:32:30.483 D/EGL_emulation( 2467): app_time_stats: avg=20.10ms min=9.77ms max=36.40ms count=45
+10-17 14:32:30.644 I/Dialer  ( 1379): VvmTaskExecutor - Stopping service
+10-17 14:32:30.644 I/Dialer  ( 1379): VvmTaskExecutor - finishing Job
+10-17 14:32:30.644 I/Dialer  ( 1379): TaskSchedulerJobService - finishing job
+10-17 14:32:30.644 D/OomAdjuster(  589): Not killing cached processes
+10-17 14:32:30.646 I/Dialer  ( 1379): JobFinishedPoller.run - Job finished
+10-17 14:32:30.646 I/Dialer  ( 1379): VvmTaskExecutor - terminated
+10-17 14:32:31.486 D/EGL_emulation( 2467): app_time_stats: avg=19.06ms min=9.68ms max=38.07ms count=48
+10-17 14:32:32.500 D/EGL_emulation( 2467): app_time_stats: avg=17.28ms min=10.01ms max=32.41ms count=50
+10-17 14:32:33.518 D/EGL_emulation( 2467): app_time_stats: avg=17.31ms min=10.04ms max=26.31ms count=51
+10-17 14:32:34.527 D/EGL_emulation( 2467): app_time_stats: avg=18.18ms min=11.22ms max=25.62ms count=51
+10-17 14:32:35.529 D/EGL_emulation( 2467): app_time_stats: avg=17.66ms min=9.65ms max=25.57ms count=51
+10-17 14:32:36.545 D/EGL_emulation( 2467): app_time_stats: avg=19.90ms min=11.12ms max=28.84ms count=48
+10-17 14:32:37.564 D/EGL_emulation( 2467): app_time_stats: avg=18.22ms min=10.39ms max=28.69ms count=51
+10-17 14:32:38.579 D/EGL_emulation( 2467): app_time_stats: avg=17.38ms min=9.46ms max=26.58ms count=52
+10-17 14:32:39.579 D/EGL_emulation( 2467): app_time_stats: avg=19.11ms min=10.18ms max=31.24ms count=50
+10-17 14:32:40.585 D/EGL_emulation( 2467): app_time_stats: avg=18.12ms min=9.42ms max=30.89ms count=50
+10-17 14:32:41.600 D/EGL_emulation( 2467): app_time_stats: avg=19.85ms min=10.69ms max=30.04ms count=46
+10-17 14:32:42.602 D/EGL_emulation( 2467): app_time_stats: avg=16.94ms min=9.31ms max=30.40ms count=51
+10-17 14:32:43.607 D/EGL_emulation( 2467): app_time_stats: avg=17.84ms min=9.18ms max=27.21ms count=50
+10-17 14:32:44.620 D/EGL_emulation( 2467): app_time_stats: avg=17.80ms min=9.67ms max=28.73ms count=51
+10-17 14:32:45.632 D/EGL_emulation( 2467): app_time_stats: avg=21.31ms min=11.95ms max=32.54ms count=45
+10-17 14:32:46.594 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:32:46.659 D/EGL_emulation( 2467): app_time_stats: avg=18.26ms min=8.12ms max=29.79ms count=51
+10-17 14:32:47.678 D/EGL_emulation( 2467): app_time_stats: avg=18.54ms min=9.93ms max=26.70ms count=51
+10-17 14:32:48.683 D/EGL_emulation( 2467): app_time_stats: avg=17.46ms min=11.12ms max=26.21ms count=52
+10-17 14:32:49.695 D/EGL_emulation( 2467): app_time_stats: avg=15.92ms min=6.12ms max=24.50ms count=56
+10-17 14:32:49.972 D/EGL_emulation(  868): app_time_stats: avg=29987.92ms min=29987.92ms max=29987.92ms count=1
+10-17 14:32:50.699 D/EGL_emulation( 2467): app_time_stats: avg=18.54ms min=11.33ms max=30.73ms count=50
+10-17 14:32:51.702 D/EGL_emulation( 2467): app_time_stats: avg=18.18ms min=10.76ms max=25.47ms count=51
+10-17 14:32:52.716 D/EGL_emulation( 2467): app_time_stats: avg=18.42ms min=9.48ms max=28.77ms count=51
+10-17 14:32:53.732 D/EGL_emulation( 2467): app_time_stats: avg=16.64ms min=9.76ms max=27.88ms count=56
+10-17 14:32:54.737 D/EGL_emulation( 2467): app_time_stats: avg=16.53ms min=9.28ms max=26.22ms count=53
+10-17 14:32:55.752 D/EGL_emulation( 2467): app_time_stats: avg=19.39ms min=10.62ms max=35.22ms count=48
+10-17 14:32:56.753 D/EGL_emulation( 2467): app_time_stats: avg=16.99ms min=10.21ms max=24.72ms count=53
+10-17 14:32:57.755 D/EGL_emulation( 2467): app_time_stats: avg=18.70ms min=10.10ms max=27.64ms count=50
+10-17 14:32:58.770 D/EGL_emulation( 2467): app_time_stats: avg=17.86ms min=10.54ms max=26.58ms count=52
+10-17 14:32:59.780 D/EGL_emulation( 2467): app_time_stats: avg=18.84ms min=11.01ms max=27.31ms count=51
+10-17 14:33:00.041 D/EGL_emulation(  868): app_time_stats: avg=10068.45ms min=10068.45ms max=10068.45ms count=1
+10-17 14:33:00.781 D/EGL_emulation( 2467): app_time_stats: avg=17.04ms min=7.03ms max=31.93ms count=53
+10-17 14:33:01.222 E/android.hardware.power.stats@1.0-service-mock(  410): Failed to getEnergyData
+10-17 14:33:01.794 D/EGL_emulation( 2467): app_time_stats: avg=17.77ms min=9.51ms max=28.76ms count=52
+10-17 14:33:02.795 D/EGL_emulation( 2467): app_time_stats: avg=17.58ms min=9.26ms max=24.56ms count=51
+10-17 14:33:03.810 D/EGL_emulation( 2467): app_time_stats: avg=17.60ms min=9.17ms max=28.01ms count=54
+10-17 14:33:04.830 D/EGL_emulation( 2467): app_time_stats: avg=17.93ms min=10.14ms max=27.52ms count=51
+10-17 14:33:05.836 D/EGL_emulation( 2467): app_time_stats: avg=17.27ms min=10.03ms max=29.50ms count=51
+10-17 14:33:06.847 D/EGL_emulation( 2467): app_time_stats: avg=18.94ms min=8.94ms max=31.35ms count=50
+10-17 14:33:07.874 D/EGL_emulation( 2467): app_time_stats: avg=17.69ms min=10.80ms max=27.43ms count=53
+10-17 14:33:08.886 D/EGL_emulation( 2467): app_time_stats: avg=18.38ms min=8.27ms max=27.11ms count=52
+10-17 14:33:09.894 D/EGL_emulation( 2467): app_time_stats: avg=16.46ms min=9.07ms max=26.30ms count=52
+10-17 14:33:10.914 D/EGL_emulation( 2467): app_time_stats: avg=17.80ms min=9.39ms max=28.59ms count=52
+10-17 14:33:11.917 D/EGL_emulation( 2467): app_time_stats: avg=17.14ms min=11.01ms max=27.53ms count=53
+10-17 14:33:12.918 D/EGL_emulation( 2467): app_time_stats: avg=19.26ms min=12.64ms max=30.68ms count=48
+10-17 14:33:13.922 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=10.20ms max=26.74ms count=55
+10-17 14:33:14.938 D/EGL_emulation( 2467): app_time_stats: avg=17.39ms min=9.60ms max=28.13ms count=55
+10-17 14:33:15.947 D/EGL_emulation( 2467): app_time_stats: avg=17.51ms min=9.54ms max=25.00ms count=51
+10-17 14:33:16.963 D/EGL_emulation( 2467): app_time_stats: avg=17.09ms min=9.58ms max=24.61ms count=53
+10-17 14:33:17.978 D/EGL_emulation( 2467): app_time_stats: avg=18.64ms min=10.57ms max=27.69ms count=48
+10-17 14:33:18.995 D/EGL_emulation( 2467): app_time_stats: avg=16.85ms min=10.41ms max=36.55ms count=51
+10-17 14:33:20.011 D/EGL_emulation( 2467): app_time_stats: avg=17.67ms min=10.69ms max=28.73ms count=51
+10-17 14:33:21.019 D/EGL_emulation( 2467): app_time_stats: avg=17.59ms min=10.06ms max=28.59ms count=51
+10-17 14:33:22.043 D/EGL_emulation( 2467): app_time_stats: avg=16.78ms min=7.62ms max=30.91ms count=52
+10-17 14:33:23.052 D/EGL_emulation( 2467): app_time_stats: avg=18.67ms min=9.95ms max=32.25ms count=47
+10-17 14:33:24.061 D/EGL_emulation( 2467): app_time_stats: avg=15.82ms min=8.32ms max=24.28ms count=54
+10-17 14:33:25.078 D/EGL_emulation( 2467): app_time_stats: avg=17.34ms min=9.41ms max=26.54ms count=51
+10-17 14:33:26.088 D/EGL_emulation( 2467): app_time_stats: avg=18.12ms min=9.89ms max=30.90ms count=50
+10-17 14:33:27.093 D/EGL_emulation( 2467): app_time_stats: avg=19.23ms min=10.20ms max=33.52ms count=48
+10-17 14:33:28.103 D/EGL_emulation( 2467): app_time_stats: avg=17.39ms min=9.64ms max=30.10ms count=53
+10-17 14:33:29.105 D/EGL_emulation( 2467): app_time_stats: avg=16.53ms min=9.13ms max=28.97ms count=52
+10-17 14:33:30.117 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=9.64ms max=23.87ms count=52
+10-17 14:33:31.131 D/EGL_emulation( 2467): app_time_stats: avg=16.93ms min=8.13ms max=25.22ms count=55
+10-17 14:33:32.142 D/EGL_emulation( 2467): app_time_stats: avg=16.50ms min=9.48ms max=24.35ms count=55
+10-17 14:33:33.153 D/EGL_emulation( 2467): app_time_stats: avg=17.37ms min=10.09ms max=26.03ms count=52
+10-17 14:33:34.156 D/EGL_emulation( 2467): app_time_stats: avg=18.05ms min=10.74ms max=26.00ms count=53
+10-17 14:33:35.161 D/EGL_emulation( 2467): app_time_stats: avg=17.27ms min=10.89ms max=23.74ms count=54
+10-17 14:33:36.180 D/EGL_emulation( 2467): app_time_stats: avg=16.85ms min=9.61ms max=24.05ms count=55
+10-17 14:33:37.186 D/EGL_emulation( 2467): app_time_stats: avg=15.92ms min=6.91ms max=24.22ms count=56
+10-17 14:33:38.191 D/EGL_emulation( 2467): app_time_stats: avg=15.06ms min=7.28ms max=39.42ms count=55
+10-17 14:33:39.205 D/EGL_emulation( 2467): app_time_stats: avg=14.33ms min=8.99ms max=26.44ms count=57
+10-17 14:33:39.212 W/Thread-16( 2467): type=1400 audit(0.0:65): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_decimal.cpython-312.so" dev="dm-32" ino=131781 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.476 W/Thread-16( 2467): type=1400 audit(0.0:66): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/cmath.cpython-312.so" dev="dm-32" ino=131789 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.508 W/Thread-16( 2467): type=1400 audit(0.0:67): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_asyncio.cpython-312.so" dev="dm-32" ino=131790 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.576 W/Thread-16( 2467): type=1400 audit(0.0:68): avc: granted { execute } for path="/data/data/it.puntowebferrara.registralezione/files/chaquopy/AssetFinder/stdlib-x86_64/_csv.cpython-312.so" dev="dm-32" ino=131791 scontext=u:r:untrusted_app:s0:c126,c256,c512,c768 tcontext=u:object_r:app_data_file:s0:c126,c256,c512,c768 tclass=file app=it.puntowebferrara.registralezione
+10-17 14:33:39.750 D/MediaCodecList( 2467): codecHandlesFormat: no format, so no extra checks
+10-17 14:33:39.752 D/CCodec  ( 2467): allocate(c2.android.aac.encoder)
+10-17 14:33:39.753 I/Codec2Client( 2467): Available Codec2 services: "default" "software"
+10-17 14:33:39.754 I/CCodec  ( 2467): setting up 'default' as default (vendor) store
+10-17 14:33:39.759 V/C2Store (  508): in init
+10-17 14:33:39.759 V/C2Store (  508): loading dll
+10-17 14:33:39.760 I/CCodec  ( 2467): Created component [c2.android.aac.encoder]
+10-17 14:33:39.760 D/CCodecConfig( 2467): read media type: audio/mp4a-latm
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.max-count.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.subscribed-indices.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: input.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.allocator-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: output.buffers.pool-ids.values
+10-17 14:33:39.760 D/ReflectedParamUpdater( 2467): extent() != 1 for single value type: algo.buffers.pool-ids.values
+10-17 14:33:39.761 I/CCodecConfig( 2467): query failed after returning 9 values (BAD_INDEX)
+10-17 14:33:39.761 D/CCodecConfig( 2467): c2 config diff is Dict {
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.bitrate.value = 64000
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.pl.level = 0
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coded.pl.profile = 8192
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 coding.aac-sbr-mode.value = 3
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 input.buffers.max-size.value = 2048
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 input.delay.value = 0
+10-17 14:33:39.761 D/CCodecConfig( 2467):   string input.media-type.value = "audio/raw"
+10-17 14:33:39.761 D/CCodecConfig( 2467):   string output.media-type.value = "audio/mp4a-latm"
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 raw.channel-count.value = 1
+10-17 14:33:39.761 D/CCodecConfig( 2467):   c2::u32 raw.sample-rate.value = 44100
+10-17 14:33:39.761 D/CCodecConfig( 2467): }
+10-17 14:33:39.780 D/CodecSeeding( 2467): Seed: codec c2.android.aac.encoder, mediatype audio/mp4a-latm, overrideable 1
+10-17 14:33:39.780 D/CodecProperties( 2467): setFeatureValue(_vq_eligible.device,1)
+10-17 14:33:39.780 D/CodecProperties( 2467): setFeatureValue(_quality.target,1)
+10-17 14:33:39.780 D/CodecSeeding( 2467): Seed: codec c2.android.aac.encoder, mediatype audio/mp4a-latm, overrideable 0
+10-17 14:33:39.780 D/MediaCodec( 2467): shapeMediaFormat: deltas(0): AMessage(what = 0x00000000) = {
+10-17 14:33:39.780 D/MediaCodec( 2467):   }
+10-17 14:33:39.780 D/CCodec  ( 2467): [c2.android.aac.encoder] buffers are bound to CCodec for this session
+10-17 14:33:39.781 D/CCodecConfig( 2467): no c2 equivalents for flags
+10-17 14:33:39.781 D/CCodecConfig( 2467): no c2 equivalents for encoder
+10-17 14:33:39.781 D/CCodecConfig( 2467): c2 config diff is   c2::u32 coded.bitrate.value = 48000
+10-17 14:33:39.781 D/CCodecConfig( 2467):   c2::u32 raw.sample-rate.value = 16000
+10-17 14:33:39.781 W/Codec2Client( 2467): query -- param skipped: index = 1107298332.
+10-17 14:33:39.782 D/CCodec  ( 2467): encoding statistics level = 0
+10-17 14:33:39.782 D/CCodec  ( 2467): setup formats input: AMessage(what = 0x00000000) = {
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t sample-rate = 16000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t channel-count = 1
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t max-input-size = 16384
+10-17 14:33:39.782 D/CCodec  ( 2467):   string mime = "audio/raw"
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t android._config-pcm-encoding = 2
+10-17 14:33:39.782 D/CCodec  ( 2467): }
+10-17 14:33:39.782 D/CCodec  ( 2467): setup formats output: AMessage(what = 0x00000000) = {
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t sample-rate = 16000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t bitrate = 48000
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t channel-count = 1
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t level = 0
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t max-bitrate = 48000
+10-17 14:33:39.782 D/CCodec  ( 2467):   string mime = "audio/mp4a-latm"
+10-17 14:33:39.782 D/CCodec  ( 2467):   int32_t profile = 2
+10-17 14:33:39.782 D/CCodec  ( 2467): }
+10-17 14:33:39.782 I/CCodecConfig( 2467): query failed after returning 9 values (BAD_INDEX)
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 1342179345.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 2415921170.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 3254792206.
+10-17 14:33:39.788 W/Codec2Client( 2467): query -- param skipped: index = 3254792194.
+10-17 14:33:39.788 D/C2Store ( 2467): Using DMABUF Heaps
+10-17 14:33:39.789 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Created input block pool with allocatorID 16 => poolID 17 - OK (0)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b328558 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 6/24 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b328558 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 24, 75% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32aca8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/18 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32aca8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 18, 72% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32cab8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/26 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32cab8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 26, 81% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32fd98 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/34 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32fd98 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 34, 82% unfetched
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32aef8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/34 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32aef8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 34, 85% unfetched
+10-17 14:33:39.789 I/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Created output block pool with allocatorID 16 => poolID 26 - OK
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): bufferpool2 0x787d3b32d3f8 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/24 (fetch/transfer)
+10-17 14:33:39.789 D/BufferPoolAccessor2.0(  589): Destruction - bufferpool2 0x787d3b32d3f8 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 24, 75% unfetched
+10-17 14:33:39.789 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] Configured output block pool ids 26 => OK
+10-17 14:33:39.790 I/DMABUFHEAPS( 2467): Using DMA-BUF heap named: system
+10-17 14:33:39.790 D/SimpleC2Component(  508): Using output block pool with poolID 26 => got 26 - 0
+10-17 14:33:39.790 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b30afe8 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/36 (fetch/transfer)
+10-17 14:33:39.790 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b30afe8 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 36, 83% unfetched
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b30c268 : 0(0 size) total buffers - 0(0 size) used buffers - 1/7 (recycle/alloc) - 6/38 (fetch/transfer)
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b30c268 cached: 0/0M, 0/0% in use; allocs: 7, 14% recycled; transfers: 38, 84% unfetched
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): bufferpool2 0x787d3b3158b8 : 0(0 size) total buffers - 0(0 size) used buffers - 2/7 (recycle/alloc) - 5/18 (fetch/transfer)
+10-17 14:33:39.791 D/BufferPoolAccessor2.0(  868): Destruction - bufferpool2 0x787d3b3158b8 cached: 0/0M, 0/0% in use; allocs: 7, 29% recycled; transfers: 18, 72% unfetched
+10-17 14:33:39.793 D/MPEG4Writer( 2467): PreAllocation enabled
+10-17 14:33:39.796 D/MPEG4Writer( 2467): fpathconf _PC_FILESIZEBITS:64
+10-17 14:33:39.796 D/MPEG4Writer( 2467): File size limit set to 4503599627370495 bytes implicitly
+10-17 14:33:39.796 D/MPEG4Writer( 2467): MP4WtrCtrlHlpLooper Started
+10-17 14:33:39.796 I/MPEG4Writer( 2467): limits: 4503599627370495/0 bytes/us, bit rate: -1 bps and the estimated moov size 3192 bytes
+10-17 14:33:39.801 I/MPEG4Writer( 2467): setStartTimestampUs: 0
+10-17 14:33:39.801 I/MPEG4Writer( 2467): Earliest track starting time: 0
+10-17 14:33:40.213 D/EGL_emulation( 2467): app_time_stats: avg=9.54ms min=5.73ms max=19.82ms count=61
+10-17 14:33:41.213 D/EGL_emulation( 2467): app_time_stats: avg=9.99ms min=5.80ms max=100.46ms count=55
+10-17 14:33:42.213 D/EGL_emulation( 2467): app_time_stats: avg=7.85ms min=6.01ms max=11.93ms count=60
+10-17 14:33:43.229 D/EGL_emulation( 2467): app_time_stats: avg=7.55ms min=5.54ms max=12.02ms count=61
+10-17 14:33:44.230 D/EGL_emulation( 2467): app_time_stats: avg=7.44ms min=5.55ms max=11.73ms count=60
+10-17 14:33:44.791 D/BufferPoolAccessor2.0(  868): evictor expired: 3, evicted: 0
+10-17 14:33:44.801 D/BufferPoolAccessor2.0(  589): evictor expired: 6, evicted: 0
+10-17 14:33:45.235 D/EGL_emulation( 2467): app_time_stats: avg=7.91ms min=5.71ms max=11.82ms count=60
+10-17 14:33:45.320 D/BufferPoolAccessor2.0( 2467): bufferpool2 0x787d3b446818 : 5(81920 size) total buffers - 1(16384 size) used buffers - 142/147 (recycle/alloc) - 5/290 (fetch/transfer)
+10-17 14:33:45.321 D/BufferPoolAccessor2.0(  508): bufferpool2 0x72968078c848 : 16(98304 size) total buffers - 1(6144 size) used buffers - 565/581 (recycle/alloc) - 16/580 (fetch/transfer)
+10-17 14:33:45.796 D/CCodecBufferChannel( 2467): [c2.android.aac.encoder#386] MediaCodec discarded an unknown buffer
+10-17 14:33:45.796 V/MediaWriter( 2467): Track event err/info msg:101, trackId:1, type:1000,val:-1011
+10-17 14:33:45.797 I/hw-BpHwBinder( 2467): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.797 I/hw-BpHwBinder(  508): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.797 I/hw-BpHwBinder(  508): onLastStrongRef automatically unlinking death recipients
+10-17 14:33:45.799 V/C2Store (  508): in ~ComponentModule
+10-17 14:33:45.799 V/C2Store (  508): unloading dll
+10-17 14:33:45.800 D/MPEG4Writer( 2467): reset()
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track stopping. Stop source
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track source stopping
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track source stopped
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Received total/0-length (632/0) buffers and encoded 632 frames. - Audio
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Audio track drift time: 0 us
+10-17 14:33:45.800 D/MPEG4Writer( 2467): Audio track stopped. Status:0. Stop source
+10-17 14:33:45.800 D/MPEG4Writer( 2467): 0 chunks are written in the last batch
+10-17 14:33:45.800 D/MPEG4Writer( 2467): WriterThread stopped. Status:0
+10-17 14:33:45.800 I/MPEG4Writer( 2467): Adjust the moov start time from 0 us -> 0 us
+10-17 14:33:45.800 I/MPEG4Writer( 2467): The mp4 file will not be streamable.
+10-17 14:33:45.800 I/MPEG4Writer( 2467): MOOV atom was written to the file
+10-17 14:33:45.800 D/MPEG4Writer( 2467): release()
+10-17 14:33:45.800 D/MPEG4Writer( 2467): ftruncate mPreAllocateFileEndOffset:249944 mOffset:249193 mMdatEndOffset:245992 diff:751
+10-17 14:33:45.802 D/MPEG4Writer( 2467): final fsync() takes 1 ms, file size 249193
+10-17 14:33:45.802 D/MPEG4Writer( 2467): MP4WtrCtrlHlpLooper stopped
+10-17 14:33:45.802 D/MPEG4Writer( 2467): Top 5 write durations(microseconds): #1:29 #2:38 #3:55 #4:60 #5:75
+10-17 14:33:45.802 D/MPEG4Writer( 2467): reset()
+10-17 14:33:45.802 D/MPEG4Writer( 2467): Audio track stopping. Stop source
+10-17 14:33:45.802 E/MPEG4Writer( 2467): Stop() called but track is not started or stopped
+10-17 14:33:46.247 D/EGL_emulation( 2467): app_time_stats: avg=8.29ms min=5.55ms max=16.50ms count=61
+10-17 14:33:46.591 W/healthd (    0): battery l=100 v=5000 t=25.0 h=2 st=2 c=900000 fc=3000000 cc=10 chg=a
+10-17 14:33:46.425 D/EGL_emulation(  868): app_time_stats: avg=46384.55ms min=46384.55ms max=46384.55ms count=1
+10-17 14:33:46.610 W/NotificationHistory(  589): Attempted to add notif for locked/gone/disabled user 0
+10-17 14:33:46.639 D/HostConnection(  868): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:33:46.640 W/OpenGLRenderer(  868): Failed to initialize 101010-2 format, error = EGL_SUCCESS
+10-17 14:33:46.641 D/EGL_emulation(  868): eglCreateContext: 0x787ceb36e950: maj 3 min 0 rcv 3
+10-17 14:33:46.642 D/EGL_emulation(  868): eglMakeCurrent: 0x787ceb36e950: ver 3 0 (tinfo 0x787f0bc00200) (first time)
+10-17 14:33:47.145 W/ProcessState( 4443): Extra binder thread started, but 0 threads requested. Do not use *startThreadPool when zero threads are requested.
+10-17 14:33:47.860 I/hwservicemanager(  232): getTransport: Cannot find entry android.hardware.graphics.mapper@4.0::IMapper/default in either framework or device VINTF manifest.
+10-17 14:33:47.860 I/Gralloc4( 4443): mapper 4.x is not supported
+10-17 14:33:48.076 D/HostConnection( 4443): HostComposition ext ANDROID_EMU_CHECKSUM_HELPER_v1 ANDROID_EMU_native_sync_v2 ANDROID_EMU_dma_v1 ANDROID_EMU_direct_mem ANDROID_EMU_host_composition_v1 ANDROID_EMU_host_composition_v2 ANDROID_EMU_vulkan ANDROID_EMU_deferred_vulkan_commands ANDROID_EMU_vulkan_null_optional_strings ANDROID_EMU_vulkan_create_resources_with_requirements ANDROID_EMU_YUV_Cache ANDROID_EMU_vulkan_ignored_handles ANDROID_EMU_has_shared_slots_host_memory_allocator ANDROID_EMU_vulkan_free_memory_sync ANDROID_EMU_vulkan_shader_float16_int8 ANDROID_EMU_vulkan_async_queue_submit ANDROID_EMU_vulkan_queue_submit_with_commands ANDROID_EMU_sync_buffer_data ANDROID_EMU_vulkan_async_qsri ANDROID_EMU_read_color_buffer_dma ANDROID_EMU_hwc_multi_configs ANDROID_EMU_hwc_color_transform GL_OES_EGL_image_external_essl3 GL_OES_vertex_array_object GL_KHR_texture_compression_astc_ldr ANDROID_EMU_host_side_tracing ANDROID_EMU_gles_max_version_3_0 
+10-17 14:33:48.913 I/AudioFlinger(  431): AudioFlinger's thread 0x795672e10bb0 tid=4450 ready to run
+10-17 14:33:48.918 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.921 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneDirection:428 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.921 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneFieldDimension:433 failure: Result::NOT_SUPPORTED
+10-17 14:33:48.955 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:33:49.141 D/EGL_emulation(  868): app_time_stats: avg=662.74ms min=2.02ms max=2318.37ms count=4
+10-17 14:33:49.148 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.515 I/AudioFlinger(  431): AudioFlinger's thread 0x795672e10bb0 tid=4455 ready to run
+10-17 14:33:49.519 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:updateSinkMetadata:364 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.520 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneDirection:428 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.521 E/android.hardware.audio@7.1-impl.ranchu(  387): device/generic/goldfish/audio/stream_in.cpp:setMicrophoneFieldDimension:433 failure: Result::NOT_SUPPORTED
+10-17 14:33:49.556 W/android.hardware.audio@7.1-impl.ranchu(  387): TinyalsaSource::read:143 pcm_read was late delivering frames, inserting 15000 us of silence
+10-17 14:33:49.636 D/EGL_emulation( 2467): app_time_stats: avg=108.51ms min=5.38ms max=2707.13ms count=29
+10-17 14:33:49.642 I/Choreographer( 2467): Skipped 48 frames!  The application may be doing too much work on its main thread.
+10-17 14:33:49.693 I/OpenGLRenderer( 2467): Davey! duration=2724ms; Flags=0, FrameTimelineVsyncId=140817, IntendedVsync=435423977567, Vsync=435423977567, InputEventId=0, HandleInputStart=435436734254, AnimationStart=435436734875, PerformTraversalsStart=435437761106, DrawStart=435437796969, FrameDeadline=435490644231, FrameInterval=435436731911, FrameStartTime=16666666, SyncQueued=435437903207, SyncStart=435449171763, IssueDrawCommandsStart=435449207706, SwapBuffers=438155313838, FrameCompleted=438159298588, DequeueBufferDuration=3025, QueueBufferDuration=286776, GpuCompleted=438159298588, SwapBuffersCompleted=438156312232, DisplayPresentTime=433275990509, CommandSubmissionCompleted=438155313838, 
