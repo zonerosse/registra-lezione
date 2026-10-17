@@ -593,3 +593,10 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .cfpasso .n{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
 @media(max-width:700px){.cfpassi{grid-template-columns:1fr}}
 html.android .cfpassi{grid-template-columns:1fr}
+
+/* Impostazioni: Essenziali / Avanzate */
+.imsez{font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--navy);text-transform:uppercase;margin:4px 2px 8px}
+#imAvanzate .imsez{margin-top:16px}
+.imavz{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-family:inherit;background:#fff;border:2px solid #9fc0e0;border-radius:16px;padding:14px 16px;cursor:pointer;margin-top:18px}
+.imavz:hover{background:#f5faff}.imavz .ic{font-size:22px}.imavz b{color:var(--navy);font-size:15px;display:block}.imavz small{color:var(--mut);font-size:12.5px}
+.imavz .fr{font-size:18px;color:var(--navy);transition:transform .2s}.imavz.aperto .fr{transform:rotate(180deg)}

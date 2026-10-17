@@ -192,7 +192,9 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     let sv = '';
     for (let i = 0; i < 75 && !sv.includes('Fisica 1'); i++) { await p.waitForTimeout(1000); sv = leggi('sveglie.txt'); }
     passo('calendario: sveglia per la notifica', sv.includes('Fisica 1'), sv.slice(-200));
-    await p.click('#nav [data-p="imp"]'); await p.waitForTimeout(800);
+    await p.click('#nav [data-p="imp"]'); await p.waitForTimeout(800); await foto('16b-impostazioni-essenziali');
+    passo('impostazioni: essenziali in vista, avanzate chiuse', await p.isVisible('#dvCard') && await p.isVisible('#imAvz') && !(await p.isVisible('#cgCard')));
+    await p.click('#imAvz'); await p.waitForTimeout(400);
     passo('impostazioni: collegamenti, chi parla, niente «registra da solo»', await p.isVisible('#cgCard') && await p.isVisible('#swVoci') && !(await p.isVisible('#segCal [data-v="solo"]')));
     await p.evaluate(() => document.getElementById('calCard').scrollIntoView()); await foto('17-calendario-imp');
     // «Dove trascrivo: sul server» (RunPod finto)

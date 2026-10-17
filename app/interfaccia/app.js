@@ -122,7 +122,7 @@ function vai(p) {
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'fare') apriCose();
-  if (p === 'imp') { disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
+  if (p === 'imp') { avanzate(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
@@ -177,6 +177,7 @@ function inizializza() {
   $('ivCambia').onclick = scegliVideo;
   $('ivAnnulla').onclick = () => { IV = null; vai('reg'); };
   $('btnImportaTesto').onclick = scegliTesto;
+  $('imAvz').onclick = () => avanzate($('imAvanzate').classList.contains('hidden'));
   $('itCambia').onclick = scegliTesto;
   $('itAnnulla').onclick = () => { IT = null; vai('reg'); };
   $('itVai').onclick = importaTesto;
@@ -519,7 +520,7 @@ async function inizia() {
     if (aula && MICS && !MICS.length) { await dialogo({titolo: t('src.mic.no'), testo: t('in.mic')}); return; }
     if (!aula && !v.audio_ok && !await conferma(t('in.audio.t'), t('in.audio'), t('in.audio.si'), t('annulla'))) return;
     if (v.liberi != null && v.liberi < 3 && !await conferma(t('in.spazio.t'), t('in.spazio', {g: num(v.liberi.toFixed(1))}), t('continua'))) return;
-    if (!v.cartella_ok) { await dialogo({titolo: t('in.cart.t'), testo: t('in.cart')}); vai('imp'); return; }
+    if (!v.cartella_ok) { await dialogo({titolo: t('in.cart.t'), testo: t('in.cart')}); vai('imp'); avanzate(true); return; }
     if (ANDROID && !aula && !await conferma(t('and.viva.t'), t('and.viva'), t('and.viva.si'), t('annulla'), 'b-rec')) return;
     if (v.dnd && !ANDROID) {
       const r = await dialogo({
@@ -1017,6 +1018,13 @@ async function eliminaTuttiVideo() {
 /* ------------------------------------------------------------------ impostazioni */
 /* «Dove trascrivo»: sul PC/telefono o sul server (RunPod) */
 const DV = {scelto: null};
+function avanzate(apri) {
+  // «Impostazioni avanzate»: chiuse di serie; il programma si ricorda se le avevi aperte
+  let a = apri;
+  if (a === undefined) { try { a = localStorage.getItem('vm_avanzate') === '1'; } catch (e) { a = false; } }
+  $('imAvanzate').classList.toggle('hidden', !a); $('imAvz').classList.toggle('aperto', !!a);
+  try { localStorage.setItem('vm_avanzate', a ? '1' : '0'); } catch (e) {}
+}
 function disegnaInviti() {
   $('invCard').classList.toggle('hidden', !R.puo_invitare);
   $('hoCard').classList.toggle('hidden', !!R.puo_invitare);

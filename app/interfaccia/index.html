@@ -362,13 +362,12 @@
     <!-- IMPOSTAZIONI -->
     <section class="pg hidden" id="v-imp">
       <div class="hd"><div><h2 data-t="im.h">Impostazioni</h2><p data-t="im.p">Si salvano da sole.</p></div></div>
-      <div class="card" style="margin-bottom:14px">
+      <div class="imsez" data-t="im.ess">Essenziali</div>
+      <div class="card">
         <div class="lbl" data-t="im.lingua">Lingua</div>
         <div class="set"><div class="t"><b data-t="im.lingua.t">Lingua del programma e degli appunti</b><span data-t="im.lingua.s">Menu, pulsanti, appunti Cornell e PDF.</span></div><div class="seg" id="segLingua"><span data-l="it">Italiano</span><span data-l="en">English</span></div></div>
-        <div class="set"><div class="t"><b data-t="im.pv.t">Privacy</b><span data-t="im.pv.s"></span></div><button class="btn b-ghost b-sm" id="btnPrivacy" data-t="im.pv.b">Rileggi</button></div>
-        <div class="set"><div class="t"><b data-t="im.rap.t">Rapporti sugli errori</b><span data-t="im.rap.s"></span></div><div class="sw" id="swRap"></div></div>
       </div>
-      <div class="card">
+      <div class="card mt">
         <div class="lbl" data-t="im.ai">Intelligenza artificiale</div>
         <div class="ai">
           <div class="aiopt" id="aiA"><span class="rd"></span><span class="ico i-org"><svg><use href="#i-spark"/></svg></span><b data-t="im.a.t">Appunti automatici con Claude</b>
@@ -377,21 +376,6 @@
           </div>
           <div class="aiopt" id="aiB"><span class="rd"></span><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><b data-t="im.b.t">Cartella per l'AI che vuoi</b>
             <small data-t="im.b">Nessuna chiave: preparo i pacchetti (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
-        </div>
-      </div>
-      <div class="card mt hidden" id="invCard">
-        <div class="lbl" data-t="inv.h">Inviti</div>
-        <div class="hint" style="margin-bottom:10px" data-t="inv.s">Per dare il programma già pronto a qualcuno di cui ti fidi (Sara, Lorenzo…): riceve le tue chiavi senza vederle. Quello che usa lo paghi tu.</div>
-        <div class="lbl" data-t="inv.per">Per chi è?</div><input class="in" id="invPer" maxlength="40" autocomplete="off">
-        <div class="lbl" style="margin-top:12px" data-t="inv.cosa">Cosa gli dai</div>
-        <label class="invck"><input type="checkbox" id="invCl" checked><span><b data-t="inv.cl">La chiave di Claude</b><small data-t="inv.cl.s">per appunti, Chiedi, mappe…</small></span></label>
-        <label class="invck"><input type="checkbox" id="invSrv" checked><span><b data-t="inv.srv">Il server per trascrivere</b><small data-t="inv.srv.s">trascrizione veloce sul tuo RunPod</small></span></label>
-        <div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn b-main b-sm" id="invVai" data-t="inv.vai">Prepara l'invito</button></div>
-        <div id="invRis" class="hidden" style="margin-top:14px;border-top:1px dashed #dbe5f0;padding-top:12px">
-          <div class="invok" id="invOk"></div>
-          <div class="hint" style="margin:6px 0" data-t="inv.copia.s">Copia questo messaggio e mandalo su WhatsApp:</div>
-          <textarea class="in" id="invMsg" rows="5" readonly style="width:100%;font-size:12.5px"></textarea>
-          <div class="row" style="margin-top:8px"><span class="hint sp" id="invCopiato"></span><button class="btn b-main b-sm" id="invCopia" data-t="inv.copia">Copia il messaggio</button></div>
         </div>
       </div>
       <div class="card mt hidden" id="hoCard">
@@ -450,6 +434,30 @@
         <div class="hint" style="margin-top:6px" data-t="im.fmt.tipi">Per le riunioni gli appunti sono il verbale, per i webinar i punti chiave.</div>
         <div class="hint" style="margin-top:10px" data-t="im.fmt.s">Vale per le prossime registrazioni. Su una lezione già fatta: «⋯» → «Rifai appunti» nel formato scelto.</div>
       </div>
+      <div class="card mt">
+        <div class="lbl" data-t="im.dati">I tuoi dati</div>
+        <div class="hint" data-t="im.dati.s">Compaiono in testa agli appunti e aiutano Claude a scriverli adatti al tuo corso.</div>
+        <div class="dati">
+          <div><label for="dNome" data-t="im.d.nome">Nome e cognome</label><input class="in sm" id="dNome" data-k="nome"></div>
+          <div><label for="dUni" data-t="im.d.uni">Università</label><input class="in sm" id="dUni" data-k="universita"></div>
+          <div><label for="dCorso" data-t="im.d.corso">Corso di laurea</label><input class="in sm" id="dCorso" data-k="corso"></div>
+          <div><label for="dAnno" data-t="im.d.anno">Anno</label><input class="in sm" id="dAnno" data-k="anno"></div>
+        </div>
+      </div>
+      <div class="card mt">
+        <div class="row"><span class="ico i-blue"><svg><use href="#i-abc"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:15px" data-t="pw.t">Parole difficili</b><div class="hint" data-t="pw.s">Nomi, termini tecnici, il nome del docente: la trascrizione li sbaglia molto meno e Claude li scrive giusti. Una materia alla volta.</div></div></div>
+        <div class="chips" id="pwMat"></div>
+        <div class="tags" id="pwTags"></div>
+        <div class="row" style="margin-top:10px;gap:8px"><input class="in sp" id="pwIn" data-tp="pw.ph" placeholder="Aggiungi una parola e premi Invio…" maxlength="60" autocomplete="off"><button class="btn b-ghost b-sm" id="pwAgg" data-t="pw.agg">Aggiungi</button></div>
+        <div id="pwProp"></div>
+      </div>
+      <div class="card mt solo-and">
+        <div class="lbl" data-t="and.imp">Telefono</div>
+        <div class="set" id="andAgg" style="cursor:pointer"><div class="t"><b data-t="and.agg.t"></b><span id="andVer"></span></div><span style="font-size:22px;color:var(--mut)">›</span></div>
+      </div>
+      <button class="imavz" id="imAvz"><span class="ic">⚙</span><span class="sp"><b data-t="im.avz.t">Impostazioni avanzate</b><small data-t="im.avz.s">Collegamenti, calendario, privacy, inviti, cartelle e altro</small></span><span class="fr">▾</span></button>
+      <div id="imAvanzate" class="hidden">
+      <div class="imsez" data-t="im.avz">Avanzate</div>
       <div class="card mt" id="cgCard">
         <div class="lbl" data-t="cg.h">Condividi e collega</div>
         <div class="hint" data-t="cg.s">Email, Word, Google Docs e calendario funzionano subito, dal pulsante «Condividi» di ogni registrazione. Questi si collegano una volta sola:</div>
@@ -478,26 +486,26 @@
         <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo i pacchetti</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.base">Le registrazioni sono in</b><span id="impBase"></span></div><button class="btn b-ghost b-sm" id="btnBase" data-t="im.apri">Apri</button></div>
       </div>
-      <div class="card mt solo-and">
-        <div class="lbl" data-t="and.imp">Telefono</div>
-        <div class="set" id="andAgg" style="cursor:pointer"><div class="t"><b data-t="and.agg.t"></b><span id="andVer"></span></div><span style="font-size:22px;color:var(--mut)">›</span></div>
-      </div>
       <div class="card mt">
-        <div class="row"><span class="ico i-blue"><svg><use href="#i-abc"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:15px" data-t="pw.t">Parole difficili</b><div class="hint" data-t="pw.s">Nomi, termini tecnici, il nome del docente: la trascrizione li sbaglia molto meno e Claude li scrive giusti. Una materia alla volta.</div></div></div>
-        <div class="chips" id="pwMat"></div>
-        <div class="tags" id="pwTags"></div>
-        <div class="row" style="margin-top:10px;gap:8px"><input class="in sp" id="pwIn" data-tp="pw.ph" placeholder="Aggiungi una parola e premi Invio…" maxlength="60" autocomplete="off"><button class="btn b-ghost b-sm" id="pwAgg" data-t="pw.agg">Aggiungi</button></div>
-        <div id="pwProp"></div>
+        <div class="lbl" data-t="im.pv.h">Privacy</div>
+        <div class="set"><div class="t"><b data-t="im.pv.t">Privacy</b><span data-t="im.pv.s"></span></div><button class="btn b-ghost b-sm" id="btnPrivacy" data-t="im.pv.b">Rileggi</button></div>
+        <div class="set"><div class="t"><b data-t="im.rap.t">Rapporti sugli errori</b><span data-t="im.rap.s"></span></div><div class="sw" id="swRap"></div></div>
       </div>
-      <div class="card mt">
-        <div class="lbl" data-t="im.dati">I tuoi dati</div>
-        <div class="hint" data-t="im.dati.s">Compaiono in testa agli appunti e aiutano Claude a scriverli adatti al tuo corso.</div>
-        <div class="dati">
-          <div><label for="dNome" data-t="im.d.nome">Nome e cognome</label><input class="in sm" id="dNome" data-k="nome"></div>
-          <div><label for="dUni" data-t="im.d.uni">Università</label><input class="in sm" id="dUni" data-k="universita"></div>
-          <div><label for="dCorso" data-t="im.d.corso">Corso di laurea</label><input class="in sm" id="dCorso" data-k="corso"></div>
-          <div><label for="dAnno" data-t="im.d.anno">Anno</label><input class="in sm" id="dAnno" data-k="anno"></div>
+      <div class="card mt hidden" id="invCard">
+        <div class="lbl" data-t="inv.h">Inviti</div>
+        <div class="hint" style="margin-bottom:10px" data-t="inv.s">Per dare il programma già pronto a qualcuno di cui ti fidi (Sara, Lorenzo…): riceve le tue chiavi senza vederle. Quello che usa lo paghi tu.</div>
+        <div class="lbl" data-t="inv.per">Per chi è?</div><input class="in" id="invPer" maxlength="40" autocomplete="off">
+        <div class="lbl" style="margin-top:12px" data-t="inv.cosa">Cosa gli dai</div>
+        <label class="invck"><input type="checkbox" id="invCl" checked><span><b data-t="inv.cl">La chiave di Claude</b><small data-t="inv.cl.s">per appunti, Chiedi, mappe…</small></span></label>
+        <label class="invck"><input type="checkbox" id="invSrv" checked><span><b data-t="inv.srv">Il server per trascrivere</b><small data-t="inv.srv.s">trascrizione veloce sul tuo RunPod</small></span></label>
+        <div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn b-main b-sm" id="invVai" data-t="inv.vai">Prepara l'invito</button></div>
+        <div id="invRis" class="hidden" style="margin-top:14px;border-top:1px dashed #dbe5f0;padding-top:12px">
+          <div class="invok" id="invOk"></div>
+          <div class="hint" style="margin:6px 0" data-t="inv.copia.s">Copia questo messaggio e mandalo su WhatsApp:</div>
+          <textarea class="in" id="invMsg" rows="5" readonly style="width:100%;font-size:12.5px"></textarea>
+          <div class="row" style="margin-top:8px"><span class="hint sp" id="invCopiato"></span><button class="btn b-main b-sm" id="invCopia" data-t="inv.copia">Copia il messaggio</button></div>
         </div>
+      </div>
       </div>
     </section>
 
