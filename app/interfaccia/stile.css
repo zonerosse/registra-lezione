@@ -647,3 +647,12 @@ html.android .cfpassi{grid-template-columns:1fr}
 #v-arch .b-rip:hover{background:#f0f7ff;filter:none}
 #v-arch .lez .ftag,#v-arch .lez .ftag.esame,#v-arch .lez .ftag.verbale,#v-arch .lez .ftag.mio{color:#475569;background:#f1f5f9}
 #v-arch .lez .b-cor{background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;border:0}
+
+/* «Ripassa» su una riga; scritta in alto in Registra grigio-blu */
+.banda.corta{padding:8px 12px;gap:10px;flex-wrap:wrap}
+.banda.corta .bt{display:inline-flex;align-items:center;gap:6px;color:var(--ink);font-size:14px}
+.banda.corta .bt svg{width:16px;height:16px;color:var(--navy)}
+.banda.corta .sel{width:auto;max-width:440px;padding:6px 8px;font-size:13px}
+html.android .banda.corta .sp{display:none}html.android .banda.corta .sel,html.android .banda.corta .hint{flex:1 1 55%;min-width:0;max-width:none}
+html.android .banda.corta .btn{flex:1 1 40%;justify-content:center;order:3}
+.p-calma{background:#f1f5f9;color:var(--navy);border:1px solid #d6e4f3}

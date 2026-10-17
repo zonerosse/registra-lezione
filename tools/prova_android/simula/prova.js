@@ -180,6 +180,8 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('da fare: spunta', (await p.evaluate(() => A.cose_da_fare())).aperte === nFare - 1);
     // preparazione all'esame
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1200);
+    await foto('15b-ripassa-riga');
+    passo('«Ripassa» su una riga', await p.$('#ripBanda .banda.corta #bandaVai'));
     const be = await p.$('#bandaEsame');
     passo('bottone «Preparati all\'esame»', be);
     if (be) { await be.click(); await p.waitForSelector('.esq', {timeout: 30000}).catch(() => {}); await foto('16-esame'); passo('preparazione all\'esame: le domande del corso', await p.$('.esq')); }

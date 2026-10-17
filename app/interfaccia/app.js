@@ -411,8 +411,8 @@ function anteprimaNome() {
 }
 function disegnaPronto() {
   if (ANDROID && (R.app_codice || 0) >= 10) { const h = $('btnImportaTesto').querySelector('.hint'); if (h) h.textContent = t('it.b10'); }
-  $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-cor">${ico('spark', 13)}${t(R.formato === 'esame' ? 'pr.pill.ai.e' : 'pr.pill.ai')}</span>`
-    : `<span class="pill p-blue">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
+  $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-calma">${ico('spark', 13)}${t(R.formato === 'esame' ? 'pr.pill.ai.e' : 'pr.pill.ai')}</span>`
+    : `<span class="pill p-calma">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
   $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('pr.recenti')}</span>` +
     R.recenti.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('') : '';
   $('recenti').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = $('nome'); i.value = c.dataset.m + ' – '; i.focus(); i.setSelectionRange(i.value.length, i.value.length); anteprimaNome(); controllaNomeRec(); });
@@ -2024,16 +2024,16 @@ function disegnaBanda() {
   if (M.length) {
     const m = M.find(x => x.m === materiaRip) || M[0];
     materiaRip = m.m;
-    const det = [m.cartelle.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: m.cartelle.length}), t('rp.dom', {n: m.n})];
-    if (m.no) det.push(t('rp.dariv', {n: m.no}));
-    h = `<div class="banda"><span class="ico">${ico('cards')}</span><div class="sp"><b style="color:var(--ink);font-size:15px">${t('rp.banda.t')}</b><div class="hint">${esc(m.m)}: ${esc(det.join(' · '))}</div>
-      ${M.length > 1 ? `<div class="chips">${M.slice(0, 6).map(x => `<span class="chip${x.m === m.m ? ' on' : ''}" data-m="${esc(x.m)}">${esc(x.m)}</span>`).join('')}</div>` : ''}</div>
-      <div class="col2">${m.lezioni ? `<button class="btn b-cor" id="bandaEsame">${esc(t('es.banda'))}</button>` : ''}<button class="btn b-rip" id="bandaVai">${ico('cards')}${esc(t('rp.vai', {m: m.m}))}</button></div></div>`;
+    const opz = x => [x.m, t('rp.dom', {n: x.n})].concat(x.no ? [t('rp.dariv', {n: x.no})] : []).join(' · ');
+    const scelta = M.length > 1 ? `<select class="sel" id="bandaMat">${M.map(x => `<option value="${esc(x.m)}"${x.m === m.m ? ' selected' : ''}>${esc(opz(x))}</option>`).join('')}</select>`
+      : `<span class="hint">${esc(opz(m))}</span>`;
+    h = `<div class="banda corta"><b class="bt">${ico('cards')}${esc(t('rp.corto'))}</b>${scelta}<span class="sp"></span>
+      ${m.lezioni ? `<button class="btn b-cor b-sm" id="bandaEsame">${esc(t('es.banda'))}</button>` : ''}<button class="btn b-rip b-sm" id="bandaVai">${ico('cards')}${esc(t('rp.corto'))}</button></div>`;
   }
   const b = $('ripBanda');
   if (b.dataset.h === h) return;
   b.dataset.h = h; b.innerHTML = h;
-  b.querySelectorAll('.chip').forEach(c => c.onclick = () => { materiaRip = c.dataset.m; disegnaBanda(); });
+  if ($('bandaMat')) $('bandaMat').onchange = () => { materiaRip = $('bandaMat').value; disegnaBanda(); };
   if ($('bandaVai')) $('bandaVai').onclick = () => sceltaRipasso(M.find(x => x.m === materiaRip) || M[0]);
   if ($('bandaEsame')) $('bandaEsame').onclick = () => apriEsame(M.find(x => x.m === materiaRip) || M[0]);
 }

@@ -1,6 +1,6 @@
 {
- "versione": "3.55",
+ "versione": "3.56",
  "librerie": 2,
- "novita": "Parole più semplici: niente più «pacchetti». Ora si legge «parte» (il pezzo da 30 minuti), «file per l'AI» e «cartella delle lezioni».",
- "novita_en": "Simpler words: no more «packages». Now it says «part» (the 30-minute piece), «file for AI» and «lectures folder»."
+ "novita": "«Ripassa la materia» su una riga sola: scegli la materia dal menu e tocca «Ripassa» o «Preparati all'esame». In Registra la scritta in alto a destra è grigio-blu.",
+ "novita_en": "«Review the subject» on a single line: choose the subject from the menu and tap «Review» or «Prepare for the exam». In Record the label at the top right is grey-blue."
 }
