@@ -1,7 +1,7 @@
 {
- "versione": "0.10.19",
+ "versione": "0.10.20",
  "codice": 10,
- "novita": "Guida aggiornata e divisa per argomento, con i capitoli nuovi: chiave o invito, nome della registrazione, importare audio e trascrizione, slide del docente, dove trascrivo, parole difficili, inviti.",
- "novita_en": "Guide updated and divided by topic, with new chapters: key or invitation, recording name, importing audio and transcript, lecturer's slides, where I transcribe, difficult words, invitations.",
- "contenuto": 50
+ "novita": "Video della Guida rifatti con le schermate nuove, video anche per i capitoli nuovi, e il capitolo «Il menu ⋯ Altro, voce per voce».",
+ "novita_en": "Guide videos remade with the new screens, videos for the new chapters too, and the chapter «The ⋯ More menu, item by item».",
+ "contenuto": 51
 }
