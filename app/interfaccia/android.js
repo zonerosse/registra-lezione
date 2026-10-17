@@ -106,6 +106,11 @@ if (ANDROID) {
       'fn.pac': 'Each part is a package (slides + the lecturer\'s words): tap «Share» to send it to the AI you use (or add your Claude key in Settings for automatic notes).',
     },
   };
+  // messaggio «Avvisa»: sul telefono la registrazione resta sul telefono, non sul computer
+  ['riu', 'lez', 'aula', 'web'].forEach(k => {
+    AND.it['av.m.' + k] = TESTI.it['av.m.' + k].replace('sul mio computer', 'sul mio telefono');
+    AND.en['av.m.' + k] = TESTI.en['av.m.' + k].replace('on my computer', 'on my phone');
+  });
   Object.assign(TESTI.it, AND.it);
   Object.assign(TESTI.en, AND.en);
 
