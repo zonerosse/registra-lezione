@@ -122,7 +122,7 @@ function vai(p) {
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'fare') apriCose();
-  if (p === 'imp') { avanzate(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
+  if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
@@ -886,6 +886,7 @@ function disegnaLezioni() {
   const h = L.map((l, i) => {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
     const meta = [l.tipo === 'riunione' ? t('tp.b.riu') : l.tipo === 'webinar' ? t('tp.b.web') : '', l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
+      (l.cloud === true ? ` · <span style="color:#0284c7">${t('ar.cloud')}</span>` : l.cloud === false ? ` · <span style="color:#ea580c">${t('ar.cloud.no')}</span>` : '') +
       (!l.video_testo || (ANDROID && /^0 MB/.test(l.video_testo)) ? '' : ANDROID ? ` · <span style="color:var(--mut)">🎧 ${l.video_testo}</span>` : ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>`);
     const errL = l.errore ? `<div class="hint" style="color:#be123c">⚠ ${esc(l.errore)}</div>` : '';
     let pill, prim = '';
@@ -1018,6 +1019,32 @@ async function eliminaTuttiVideo() {
 /* ------------------------------------------------------------------ impostazioni */
 /* «Dove trascrivo»: sul PC/telefono o sul server (RunPod) */
 const DV = {scelto: null};
+async function disegnaCloud(c) {
+  if (ANDROID) return;
+  c = c || await A.cloud_stato();
+  $('clOpts').querySelectorAll('.clopt').forEach(o => {
+    o.classList.toggle('on', o.dataset.d === c.dove);
+    o.onclick = async () => {
+      if (o.dataset.d === 'altro') disegnaCloud(await A.cloud_scegli());
+      else disegnaCloud(await A.cloud_imposta(o.dataset.d, null, null));
+    };
+  });
+  $('clBox').classList.toggle('hidden', c.dove === 'no');
+  const trovato = c.dove === 'gdrive' ? c.gdrive : c.dove === 'onedrive' ? c.onedrive : c.cartella;
+  const k = c.dove === 'gdrive' ? 'cl.gd' : c.dove === 'onedrive' ? 'cl.od' : 'cl.al';
+  $('clTrov').className = 'cltrov' + (trovato ? '' : ' no');
+  $('clTrov').textContent = t(k + (trovato || c.dove === 'altro' ? '.ok' : '.no'));
+  $('clPath').textContent = c.radice || '';
+  $('clPath').parentElement.classList.toggle('hidden', !c.radice);
+  $('clApri').onclick = () => A.apri_cloud();
+  const ck = {clAp: 'appunti', clTr: 'tras', clAu: 'audio'};
+  Object.keys(ck).forEach(id => { $(id).checked = !!c.cosa[ck[id]]; $(id).onchange = async () => disegnaCloud(await A.cloud_imposta(null, null, {[ck[id]]: $(id).checked})); });
+  $('clTutte').textContent = t('cl.tutte', {n: c.da_copiare});
+  $('clTutte').classList.toggle('hidden', !c.radice || !c.da_copiare);
+  $('clTutte').onclick = async () => { const r = await A.cloud_tutte(); $('clStato').className = 'dvstato'; $('clStato').textContent = t('cl.tutte.ok', {n: r.n}); };
+  $('clStato').className = 'dvstato';
+  $('clStato').textContent = c.dove !== 'no' && c.ultima ? t('cl.ultima', {n: c.ultima.nome, q: c.ultima.quando.replace('T', ' ')}) : '';
+}
 function avanzate(apri) {
   // «Impostazioni avanzate»: chiuse di serie; il programma si ricorda se le avevi aperte
   let a = apri;

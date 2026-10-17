@@ -1,6 +1,6 @@
 {
- "versione": "3.47",
+ "versione": "3.48",
  "librerie": 2,
- "novita": "Impostazioni in due parti: in alto le Essenziali (lingua, Claude, dove trascrivo, formato, i tuoi dati, parole difficili); il resto dentro «Impostazioni avanzate», che si apre con un tocco.",
- "novita_en": "Settings in two parts: Essentials at the top (language, Claude, where I transcribe, format, your details, difficult words); the rest inside «Advanced settings», opened with a tap."
+ "novita": "Nuovo (PC): «Copia nel cloud» in Impostazioni. Le registrazioni restano sul PC; appena una lezione è pronta, appunti, trascrizione e audio compresso vengono copiati in Google Drive, OneDrive o un'altra cartella. Nell'elenco la nuvola ☁ dice che è copiata.",
+ "novita_en": "New (PC): «Copy to the cloud» in Settings. Recordings stay on the PC; as soon as a lecture is ready, notes, transcript and compressed audio are copied to Google Drive, OneDrive or another folder. In the list the ☁ cloud shows it is copied."
 }

@@ -385,6 +385,35 @@ class Api:
             return {"ok": False}
         return self._m.info_testo(scelta[0] if isinstance(scelta, (list, tuple)) else scelta)
 
+    def cloud_stato(self):
+        return self._m.cloud_stato()
+
+    def cloud_imposta(self, dove=None, cartella=None, cosa=None):
+        return self._m.cloud_imposta(dove, cartella, cosa)
+
+    def cloud_tutte(self):
+        return self._m.cloud_tutte()
+
+    def cloud_scegli(self):
+        """«Altra cartella…»: la cartella di un cloud qualsiasi (Dropbox, iCloud, una chiavetta…)."""
+        try:
+            scelta = self._win.create_file_dialog(webview.FileDialog.FOLDER, directory=str(Path.home()))
+        except Exception:
+            log.exception("scegli cartella cloud")
+            return self._m.cloud_stato()
+        if not scelta:
+            return self._m.cloud_stato()
+        c = scelta[0] if isinstance(scelta, (list, tuple)) else scelta
+        return self._m.cloud_imposta("altro", c)
+
+    def apri_cloud(self):
+        import cloud
+        r = cloud.radice(self._m.cfg)
+        if r:
+            r.mkdir(parents=True, exist_ok=True)
+            return self.apri(str(r))
+        return False
+
     def invito_prepara(self, per, claude=True, server=True):
         return self._m.invito_prepara(per, claude, server)
 

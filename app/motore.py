@@ -299,6 +299,7 @@ def _hhmm(sec):
 class Motore:
     def __init__(self):
         self.cfg = leggi_config()
+        self._blocco_cloud = threading.Lock()
         try:
             rapporti.installa(agg.versione_locale().get("versione", "?"))
             rapporti.attivo = bool(self.cfg.get("rapporti_errori"))
@@ -350,7 +351,7 @@ class Motore:
         self.on_avvio_auto = None      # registrazione partita da sola: la finestra apre la mini finestra
         threading.Thread(target=self._calendario, daemon=True).start()
         threading.Thread(target=rinomina_collegamenti, daemon=True).start()
-        for f in (self._lavoratore, self._lavoratore_appunti, self._prepara_modello, self._ciclo):
+        for f in (self._lavoratore, self._lavoratore_appunti, self._prepara_modello, self._ciclo, self._riprova_cloud):
             threading.Thread(target=f, daemon=True).start()
         threading.Thread(target=self.controlli, daemon=True).start()
 
@@ -623,6 +624,94 @@ class Motore:
         self.cfg["appunti_attivi"] = True
         salva_config(self.cfg)
         return {"ok": True, "msg": tr("chiave_ok")}
+
+    # ------------------------------------------------------------------ copia nel cloud (solo PC)
+
+    def copia_cloud(self, cart, aspetta=False):
+        """Copia la lezione nel cloud scelto (se acceso), in un thread a parte: non rallenta niente."""
+        if (self.cfg.get("cloud") or {}).get("dove", "no") == "no":
+            return
+
+        def lavoro():
+            import cloud
+            try:
+                with self._blocco_cloud:
+                    n = cloud.copia(cart, self.cfg)
+                if n:
+                    log.info("cloud: %s file di %s", n, Path(cart).name)
+            except Exception as e:
+                log.warning("cloud: %s non copiata (%s)", Path(cart).name, e)
+                try:
+                    el.aggiorna_info(cart, cloud={"ok": False, "quando": datetime.datetime.now().isoformat(timespec="minutes")})
+                except Exception:
+                    pass
+        if aspetta:
+            lavoro()
+        else:
+            threading.Thread(target=lavoro, daemon=True).start()
+
+    def _riprova_cloud(self):
+        """Le copie nel cloud non riuscite (Drive chiuso, disco pieno…) si riprovano ogni 10 minuti."""
+        while True:
+            time.sleep(600)
+            try:
+                if (self.cfg.get("cloud") or {}).get("dove", "no") == "no":
+                    continue
+                for p, i in self._lezioni_pronte():
+                    if (i.get("cloud") or {}).get("ok") is False:
+                        self.copia_cloud(p, aspetta=True)
+            except Exception:
+                log.exception("riprova cloud")
+
+    def _lezioni_pronte(self):
+        out = []
+        try:
+            for p in BASE.iterdir():
+                i = el.leggi_json(p / "info.json") if (p / "info.json").exists() else None
+                if isinstance(i, dict) and i.get("stato") == "pronta":
+                    out.append((p, i))
+        except OSError:
+            pass
+        return out
+
+    def cloud_stato(self):
+        import cloud
+        c = self.cfg.get("cloud") or {}
+        gd, od, rad = cloud.google_drive(), cloud.onedrive(), cloud.radice(self.cfg)
+        ultima, n = None, 0
+        for p, i in self._lezioni_pronte():
+            q = i.get("cloud") or {}
+            if q.get("ok"):
+                if ultima is None or q.get("quando", "") > ultima["quando"]:
+                    ultima = {"nome": i.get("nome", p.name), "quando": q.get("quando", "")}
+            else:
+                n += 1
+        return {"dove": c.get("dove") or "no", "cartella": c.get("cartella") or "", "gdrive": str(gd) if gd else "",
+                "onedrive": str(od) if od else "", "radice": str(rad) if rad else "",
+                "cosa": {"appunti": True, "tras": True, "audio": True, **(c.get("cosa") or {})},
+                "ultima": ultima, "da_copiare": n}
+
+    def cloud_imposta(self, dove=None, cartella=None, cosa=None):
+        c = dict(self.cfg.get("cloud") or {})
+        if dove in ("no", "gdrive", "onedrive", "altro"):
+            c["dove"] = dove
+        if cartella:
+            c["cartella"] = str(cartella)
+        if isinstance(cosa, dict):
+            c["cosa"] = {**(c.get("cosa") or {}), **{k: bool(v) for k, v in cosa.items() if k in ("appunti", "tras", "audio")}}
+        self.cfg["cloud"] = c
+        salva_config(self.cfg)
+        return self.cloud_stato()
+
+    def cloud_tutte(self):
+        """«Copia anche le lezioni già fatte»: tutte quelle pronte, una dopo l'altra, in un thread."""
+        cartelle = [p for p, _ in self._lezioni_pronte()]
+
+        def tutte():
+            for c in cartelle:
+                self.copia_cloud(c, aspetta=True)
+        threading.Thread(target=tutte, daemon=True).start()
+        return {"ok": True, "n": len(cartelle)}
 
     # ------------------------------------------------------------------ inviti
 
@@ -1503,6 +1592,8 @@ class Motore:
                 "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
                 "formato": info.get("formato_appunti") or "cornell",
                 "importata": bool(info.get("importata")),
+                "cloud": (None if (self.cfg.get("cloud") or {}).get("dove", "no") == "no" or stato != "pronta"
+                          else bool((info.get("cloud") or {}).get("ok"))),
                 "dopo": stato == "da_completare" and info.get("quando") == "dopo" and not in_corso,
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
@@ -2526,6 +2617,9 @@ class Motore:
             fatti = ap.appunti_lezione_completa(cart, self.cfg["cartella_pacchetti"], chiave=self.chiave() or None)
         except Exception:
             log.exception("appunti della lezione completa")
+            fatti = None
+        self.copia_cloud(cart)
+        if fatti is None:
             return
         try:
             if any(fatti or []):

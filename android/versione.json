@@ -1,7 +1,7 @@
 {
- "versione": "0.10.5",
+ "versione": "0.10.6",
  "codice": 10,
- "novita": "Impostazioni in due parti: in alto le Essenziali (lingua, Claude, dove trascrivo, formato, i tuoi dati, parole difficili); il resto dentro «Impostazioni avanzate», che si apre con un tocco.",
- "novita_en": "Settings in two parts: Essentials at the top (language, Claude, where I transcribe, format, your details, difficult words); the rest inside «Advanced settings», opened with a tap.",
- "contenuto": 36
+ "novita": "Piccole sistemazioni (in vista della copia nel cloud, per ora solo sul PC).",
+ "novita_en": "Small tidy-ups (ahead of the cloud copy, PC only for now).",
+ "contenuto": 37
 }

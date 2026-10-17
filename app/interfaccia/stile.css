@@ -600,3 +600,14 @@ html.android .cfpassi{grid-template-columns:1fr}
 .imavz{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font-family:inherit;background:#fff;border:2px solid #9fc0e0;border-radius:16px;padding:14px 16px;cursor:pointer;margin-top:18px}
 .imavz:hover{background:#f5faff}.imavz .ic{font-size:22px}.imavz b{color:var(--navy);font-size:15px;display:block}.imavz small{color:var(--mut);font-size:12.5px}
 .imavz .fr{font-size:18px;color:var(--navy);transition:transform .2s}.imavz.aperto .fr{transform:rotate(180deg)}
+
+/* Copia nel cloud */
+.clopts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.clopt{border:2px solid #e2e8f0;border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;background:#fff}
+.clopt i{display:block;font-style:normal;font-size:22px}.clopt b{display:block;color:var(--ink);font-size:12.5px;margin-top:3px}
+.clopt.on{border-color:var(--sky);background:#f0f9ff}.clopt:hover{background:#f8fbff}
+.clbox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px}
+.clpath{display:flex;align-items:center;gap:8px;font-family:Consolas,monospace;font-size:12.5px;color:var(--ink);background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:6px 9px;margin:6px 0 10px}
+.clpath span{flex:1;word-break:break-all}
+.cltrov{color:#059669;font-weight:600;font-size:13.5px}.cltrov.no{color:#c2410c}
+.clpath .btn{font-family:"Segoe UI",Roboto,system-ui,sans-serif}

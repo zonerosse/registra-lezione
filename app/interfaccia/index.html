@@ -434,6 +434,25 @@
         <div class="hint" style="margin-top:6px" data-t="im.fmt.tipi">Per le riunioni gli appunti sono il verbale, per i webinar i punti chiave.</div>
         <div class="hint" style="margin-top:10px" data-t="im.fmt.s">Vale per le prossime registrazioni. Su una lezione già fatta: «⋯» → «Rifai appunti» nel formato scelto.</div>
       </div>
+      <div class="card mt solo-pc" id="clCard">
+        <div class="lbl" data-t="cl.h">☁ Copia nel cloud</div>
+        <div class="hint" data-t="cl.s">Le registrazioni restano su questo PC. Appena una lezione è pronta, ne copio una copia nel tuo cloud: la ritrovi anche dal telefono o da un altro computer.</div>
+        <div class="clopts" id="clOpts">
+          <div class="clopt" data-d="no"><i>🚫</i><b data-t="cl.no">No</b></div>
+          <div class="clopt" data-d="gdrive"><i>🟢</i><b>Google Drive</b></div>
+          <div class="clopt" data-d="onedrive"><i>🔵</i><b>OneDrive</b></div>
+          <div class="clopt" data-d="altro"><i>📁</i><b data-t="cl.altro">Altra cartella…</b></div>
+        </div>
+        <div class="clbox hidden" id="clBox">
+          <div id="clTrov"></div>
+          <div class="clpath"><span id="clPath"></span><button class="btn b-ghost b-sm" id="clApri" data-t="im.apri">Apri</button></div>
+          <label class="invck"><input type="checkbox" id="clAp"><span><b data-t="cl.ap">Appunti (PDF)</b><small data-t="cl.ap.s">Cornell, Formato Esame, verbali…</small></span></label>
+          <label class="invck"><input type="checkbox" id="clTr"><span><b data-t="cl.tr">Trascrizione</b><small data-t="cl.tr.s">il testo di tutta la lezione (PDF)</small></span></label>
+          <label class="invck"><input type="checkbox" id="clAu"><span><b data-t="cl.au">Audio compresso</b><small data-t="cl.au.s">circa 30 MB per ora di lezione</small></span></label>
+          <div style="margin-top:10px"><button class="btn b-ghost b-sm" id="clTutte"></button></div>
+        </div>
+        <div class="dvstato" id="clStato"></div>
+      </div>
       <div class="card mt">
         <div class="lbl" data-t="im.dati">I tuoi dati</div>
         <div class="hint" data-t="im.dati.s">Compaiono in testa agli appunti e aiutano Claude a scriverli adatti al tuo corso.</div>
