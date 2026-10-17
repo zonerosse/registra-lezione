@@ -1,6 +1,6 @@
 {
- "versione": "3.57",
+ "versione": "3.58",
  "librerie": 2,
- "novita": "Quando apri il programma e c'è una versione nuova, compare un avviso: «Aggiorna adesso» oppure «Più tardi».",
- "novita_en": "When you open the program and a new version is out, a notice appears: «Update now» or «Later»."
+ "novita": "Simulazione d'esame sistemata: a volte non partiva e mostrava solo «Errore da evitare:». Ora riprova da sola e, se proprio non va, dice cosa è successo.",
+ "novita_en": "Exam simulation fixed: sometimes it did not start and only showed «Mistake to avoid:». Now it retries by itself and, if it really fails, says what happened."
 }

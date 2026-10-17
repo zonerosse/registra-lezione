@@ -20,6 +20,31 @@ import elaborazione as el
 import testi
 from testi import tr
 
+
+def _strumento(chiave, corpo, campo):
+    """Chiama Claude con lo strumento e torna (input, usage). Se la lista `campo` arriva vuota, scritta come testo
+    o tagliata (risposta troppo lunga), riprova una volta con piu' spazio. Se non va: ErroreAppunti con il messaggio giusto."""
+    usage = {}
+    for prova in range(2):
+        r = ch._chiama(chiave, corpo)
+        for k, v in (r.get("usage") or {}).items():
+            if isinstance(v, (int, float)):
+                usage[k] = usage.get(k, 0) + v
+        blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+        dati = (blocco or {}).get("input") or {}
+        v = dati.get(campo)
+        if isinstance(v, str):                 # a volte la lista arriva come testo JSON
+            try:
+                v = json.loads(v)
+            except ValueError:
+                v = None
+            dati[campo] = v
+        if isinstance(v, list) and v:
+            return dati, usage
+        log.warning("esame: %s vuoto (prova %s, stop=%s)", campo, prova + 1, r.get("stop_reason"))
+        corpo = dict(corpo, max_tokens=int(corpo.get("max_tokens", 2000) * 2))
+    raise ap.ErroreAppunti(tr("es_err"))
+
 log = logging.getLogger("registra_lezione")
 
 
@@ -93,11 +118,8 @@ def classifica(base, materia, cartelle, chiave, rifai=False):
              "tools": [{"name": "salva_classifica", "description": "Salva la classifica.", "input_schema": SCHEMA_CLASSIFICA}],
              "tool_choice": {"type": "tool", "name": "salva_classifica"},
              "messages": [{"role": "user", "content": f"Materia: {materia}\n\n" + "\n\n".join(blocchi)[:250_000]}]}
-    r = ch._chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dati = (blocco or {}).get("input") or {}
-    if not dati.get("domande"):
-        raise ap.ErroreAppunti(tr("es_err"))
+    dati, usage = _strumento(chiave, corpo, "domande")
+    r = {"usage": usage}
     d["classifica"] = {"domande": [{"domanda": str(x.get("domanda", ""))[:300], "stelle": max(1, min(3, int(x.get("stelle") or 1))),
                                     "lezioni": [str(y)[:10] for y in x.get("lezioni") or []][:8], "perche": str(x.get("perche") or "")[:200],
                                     "schema": [str(y)[:160] for y in x.get("schema") or []][:6]} for x in dati["domande"][:15]],
@@ -174,7 +196,7 @@ def simulazione(base, materia, chiave, L="it"):
     if not d.get("classifica"):
         raise ap.ErroreAppunti(tr("es_vuoto"))
     gia = [q["domanda"] for s in d.get("simulazioni") or [] for q in s.get("domande") or []][-30:]
-    corpo = {"model": ch.MODELLO, "max_tokens": 1800,
+    corpo = {"model": ch.MODELLO, "max_tokens": 3000,
              "system": "Prepara una SIMULAZIONE D'ESAME scritta per questa materia: 6 domande come le farebbe il docente "
                        "(mescola le piu' probabili con 1-2 meno ovvie, anche un esercizio breve se la materia lo prevede), "
                        "\"deve_contenere\" = cosa deve toccare una risposta completa (o il risultato), \"punti\" = quanto vale "
@@ -185,9 +207,9 @@ def simulazione(base, materia, chiave, L="it"):
              "messages": [{"role": "user", "content": json.dumps({"materia": materia, "classifica": d["classifica"]["domande"],
                                                                   "argomenti": d["classifica"]["argomenti"], "gia_fatte": gia},
                                                                  ensure_ascii=False)}]}
-    r = ch._chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dom = ((blocco or {}).get("input") or {}).get("domande") or []
+    dati, usage = _strumento(chiave, corpo, "domande")
+    r = {"usage": usage}
+    dom = [q for q in dati["domande"] if isinstance(q, dict)]
     if not dom:
         raise ap.ErroreAppunti(tr("es_err"))
     sim = {"quando": datetime.datetime.now().isoformat(timespec="seconds"),
@@ -217,11 +239,9 @@ def correggi(base, materia, risposte, chiave, L="it"):
                                                                    "deve_contenere": q["deve_contenere"],
                                                                    "risposta": sim["risposte"][i] if i < len(sim["risposte"]) else ""}
                                                                   for i, q in enumerate(sim["domande"])], ensure_ascii=False)}]}
-    r = ch._chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    v = (blocco or {}).get("input") or {}
-    if not v.get("risposte"):
-        raise ap.ErroreAppunti(tr("es_err"))
+    v, usage = _strumento(chiave, corpo, "risposte")
+    r = {"usage": usage}
+    v["risposte"] = [x for x in v["risposte"] if isinstance(x, dict)]
     sim["correzione"] = v.get("risposte")
     sim["voto"] = max(0, min(31, int(v.get("voto") or 0)))
     sim["consiglio"] = str(v.get("consiglio") or "")

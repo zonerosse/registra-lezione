@@ -1393,7 +1393,7 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
             pdf.set_x(x0 + 4)
             pdf.set_font(font, "", 9)
             pdf.set_text_color(190, 18, 60)
-            pdf.multi_cell(wtxt, 4.4, t(tr("es_err", L) + errore), new_x="LEFT", new_y="NEXT")
+            pdf.multi_cell(wtxt, 4.4, t(tr("es_errore_pdf", L) + errore), new_x="LEFT", new_y="NEXT")
         if dove or perche:
             pdf.set_x(x0 + 4)
             pdf.set_font(font, "", 8)

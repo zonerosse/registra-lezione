@@ -1,7 +1,7 @@
 {
- "versione": "0.10.14",
+ "versione": "0.10.15",
  "codice": 10,
- "novita": "Quando apri l'app e c'è una versione nuova, compare un avviso: «Aggiorna adesso» oppure «Più tardi».",
- "novita_en": "When you open the app and a new version is out, a notice appears: «Update now» or «Later».",
- "contenuto": 45
+ "novita": "Simulazione d'esame sistemata: a volte non partiva e mostrava solo «Errore da evitare:». Ora riprova da sola.",
+ "novita_en": "Exam simulation fixed: sometimes it did not start and only showed «Mistake to avoid:». Now it retries by itself.",
+ "contenuto": 46
 }
