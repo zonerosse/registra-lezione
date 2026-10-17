@@ -88,7 +88,7 @@ def documento(cartella, formato=None):
     if not formato:
         raise ErroreCondividi(tr("cd_niente"))
     L = testi.lingua_di(info)
-    parti = [d for d in (el.leggi_json(ap.file_json(cartella, k, formato)) for k in _parti(info, formato)) if d]
+    parti = [ap.ripara(d) for d in (el.leggi_json(ap.file_json(cartella, k, formato)) for k in _parti(info, formato)) if d]
     if not parti:
         raise ErroreCondividi(tr("cd_niente"))
     quando = _data_reg(info)

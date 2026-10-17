@@ -39,6 +39,10 @@ class ErroreAppunti(Exception):
     """Errore con un messaggio gia' comprensibile da mostrare nella finestra."""
 
 
+class ParteVuota(Exception):
+    """La parte non ha parole (es. l'ultimo secondo dopo lo scoccare della mezz'ora): niente appunti."""
+
+
 # --------------------------------------------------------------------------- chiave cifrata
 
 if sys.platform == "win32":
@@ -420,8 +424,21 @@ def e_esame(dati):
     return dati.get("formato") == "esame" or "domande_probabili" in dati
 
 
+def ripara(dati):
+    """Appunti scritti male (una riga di testo al posto di una domanda o di una sezione): diventano voci vere."""
+    if not isinstance(dati, dict):
+        return dati
+    for chiave, campo, testo in (("blocchi", "domanda", "appunti"), ("domande_probabili", "domanda", "schema"),
+                                 ("sezioni", "titolo", "punti")):
+        v = dati.get(chiave)
+        if isinstance(v, list) and any(not isinstance(b, dict) for b in v):
+            dati[chiave] = [b if isinstance(b, dict) else {campo: "", testo: [str(b)]} for b in v]
+    return dati
+
+
 def normalizza(dati):
     """Gli appunti fatti prima del formato Cornell (concetti/legenda/domande) diventano blocchi."""
+    dati = ripara(dati)
     if "blocchi" in dati or e_esame(dati):
         return dati
     blocchi = [{"domanda": c.get("titolo", ""), "parole_chiave": [],
@@ -618,6 +635,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
     """Uno o piu' blocchi di appunti nello stesso PDF: parti = [(dati, etichetta, slide), ...].
     Con piu' parti diventa "Appunti della lezione completa"."""
     from fpdf import FPDF
+    parti = [(ripara(d), e, sl) for d, e, sl in parti]
 
     class PDF(FPDF):
         def footer(self):
@@ -1025,6 +1043,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
                   webinar=False):
     """Una parte di appunti nel formato Cornell: domande a sinistra, appunti a destra,
     riassunto in fondo; poi formulario, esercizi svolti, punti da controllare."""
+    dati = ripara(dati)
     from fpdf.enums import MethodReturnValue
     dati = normalizza(dati)
     L = testi.lingua_di(info)
@@ -1076,7 +1095,9 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
 
     pdf.ln(3)
     intestazione_colonne()
-    for b in dati.get("blocchi", []):
+    for b in dati.get("blocchi") or []:
+        if not isinstance(b, dict):          # appunti scritti male: una riga di testo invece del blocco
+            b = {"domanda": "", "appunti": [str(b)]}
         domanda = b.get("domanda", "")
         chiavi = " · ".join(b.get("parole_chiave") or [])
         punti = "\n".join(f"• {p}" for p in (b.get("appunti") or []) if p)
@@ -1497,6 +1518,80 @@ def sistema_vecchi(cartella):
                      appunti_completi_esame=info.get("appunti_completi"), appunti_completi=None)
 
 
+PAROLE_MINIME = 15      # sotto: la parte e' vuota (silenzio, o pochi secondi dopo il cambio di parte)
+
+
+def parte_vuota(cartella, k):
+    """True se la parte k e' stata trascritta e non ha (quasi) parole."""
+    segs = el.leggi_json(Path(cartella) / f"trascrizione_{int(k):03d}.json")
+    if not isinstance(segs, list):
+        return False
+    parole = sum(len(str(s.get("testo") or "").split()) for s in segs if isinstance(s, dict))
+    return parole < PAROLE_MINIME
+
+
+def parti_utili(cartella, pac):
+    """I numeri (stringhe) delle parti con qualcosa da riassumere."""
+    vuote = {str(x) for x in (el.leggi_json(Path(cartella) / "info.json", {}) or {}).get("parti_vuote") or []}
+    return [k for k in sorted(pac, key=int) if str(k) not in vuote]
+
+
+def _segna_vuota(cartella, k):
+    info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
+    vuote = sorted({int(x) for x in info.get("parti_vuote") or []} | {int(k)})
+    el.aggiorna_info(cartella, parti_vuote=vuote)
+
+
+def sistema_vuote(cartella, cartella_pacchetti):
+    """Lezioni fatte fino alla 3.32: una parte vuota aveva comunque i suoi appunti («Tratto vuoto…»).
+    Li tolgo e rifaccio il PDF unico con le parti vere. Ritorna True se ha cambiato qualcosa."""
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    pac = info.get("pacchetti") or {}
+    if len(pac) < 2 or info.get("vuote_controllate") or info.get("stato") != "pronta":
+        return False
+    el.aggiorna_info(cartella, vuote_controllate=True)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    cambiato = False
+    for k in list(pac):
+        if str(k) in {str(x) for x in info.get("parti_vuote") or []} or not parte_vuota(cartella, k):
+            continue
+        _segna_vuota(cartella, k)
+        cambiato = True
+        for f in FORMATI:
+            fatti = dict(info.get(chiave_info(f)) or {})
+            if str(k) in fatti:
+                try:
+                    Path(fatti.pop(str(k))).unlink()
+                except OSError:
+                    pass
+                try:
+                    file_json(cartella, k, f).unlink()
+                except OSError:
+                    pass
+                try:
+                    vecchio = info.get(chiave_completi(f))
+                    if vecchio and vecchio not in fatti.values():
+                        Path(vecchio).unlink()
+                except OSError:
+                    pass
+                el.aggiorna_info(cartella, **{chiave_info(f): fatti, chiave_completi(f): None})
+                info = el.leggi_json(cartella / "info.json", {}) or {}
+    if cambiato:
+        try:
+            p = file_classifica(cartella)
+            if p.exists():
+                p.unlink()
+        except Exception:
+            pass
+        for f in FORMATI:
+            try:
+                appunti_lezione_completa(cartella, cartella_pacchetti, f)
+            except Exception:
+                log.exception("PDF unico dopo aver tolto la parte vuota")
+    return cambiato
+
+
 def appunti_fatti(info, formato):
     """{k: pdf} degli appunti di quel formato che esistono ancora."""
     return {k: v for k, v in (info.get(chiave_info(formato)) or {}).items() if v and Path(v).exists()}
@@ -1608,13 +1703,14 @@ def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None, chiave=
     info = el.leggi_json(cartella / "info.json", {}) or {}
     pac = info.get("pacchetti") or {}
     fatti = info.get(chiave_info(formato)) or {}
-    if info.get("stato") != "pronta" or not pac or any(k not in fatti for k in pac):
+    utili = parti_utili(cartella, pac)
+    if info.get("stato") != "pronta" or not utili or any(k not in fatti for k in utili):
         return None
-    if len(pac) == 1:
-        dest = fatti[next(iter(pac))]
+    if len(utili) == 1:
+        dest = fatti[utili[0]]
     else:
         parti = []
-        for k in sorted(pac, key=int):
+        for k in utili:
             dati = el.leggi_json(file_json(cartella, k, formato))
             if dati is None:
                 return None
@@ -1629,10 +1725,10 @@ def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None, chiave=
             unite = el.leggi_json(file_classifica(cartella))
             if unite is None and chiave:
                 try:
-                    unite = unisci_esame(chiave, cartella, info, pac)
+                    unite = unisci_esame(chiave, cartella, info, {k: pac[k] for k in utili})
                 except Exception:
                     log.exception("classifica della lezione")
-        primo = Path(pac[sorted(pac, key=int)[0]]).stem
+        primo = Path(pac[utili[0]]).stem
         base = primo.rsplit(" – ", 1)[0] if " – " in primo else el.nome_sicuro(info.get("nome"))
         L = testi.lingua_di(info)
         compl = tr("lezione_completa", L) if (info.get("tipo") or "lezione") == "lezione" else tr("reg_completa", L)
@@ -1650,8 +1746,11 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
     info0 = el.leggi_json(cartella / "info.json", {}) or {}
     if formato not in FORMATI:
         formato = info0.get("formato_appunti") if info0.get("formato_appunti") in FORMATI else "cornell"
-    zp, pdf_bytes = _pdf_del_pacchetto(cartella, k)
     gia = el.leggi_json(file_json(cartella, k, formato))
+    if gia is None and parte_vuota(cartella, k):
+        _segna_vuota(cartella, k)
+        raise ParteVuota(k)
+    zp, pdf_bytes = _pdf_del_pacchetto(cartella, k)
     spesa = 0.0
     if gia is None:
         dati, spesa = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
@@ -1662,6 +1761,7 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                                       note=note_della_parte(cartella, k),
                                       aperte=info0.get("aperte_prima") or None,
                                       modello=info0.get("modello"), modello_mio=info0.get("modello_mio"))
+        dati = ripara(dati)
         if formato == "mio" and info0.get("mio"):
             dati["mio_nome"] = info0["mio"].get("nome", "")
         dati["formato"] = formato

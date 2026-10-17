@@ -1,7 +1,7 @@
 {
- "versione": "0.9.6",
+ "versione": "0.9.7",
  "codice": 9,
- "novita": "Corretto: la lezione con l'errore in «Le mie lezioni» ora si vede normalmente.",
- "novita_en": "Fixed: the lecture with the error in «My lectures» now shows normally.",
- "contenuto": 17
+ "novita": "Corretto: gli appunti della lezione non mostrano più il «Tratto vuoto» dell'ultimo pezzo senza parole. Le lezioni già fatte si sistemano da sole.",
+ "novita_en": "Fixed: lecture notes no longer show the «Empty stretch» of a last piece with no words. Existing lectures fix themselves.",
+ "contenuto": 18
 }

@@ -966,7 +966,7 @@ class Motore:
             self.formati_extra = []
             self.cartella_corrente = cart
             self.parti = {}
-            for k in sorted(pac, key=int):
+            for k in ap.parti_utili(cart, pac):
                 p = {"stato": "ok", "file": pac[k], "orario": ""}
                 if k in fatti and Path(fatti[k]).exists():
                     p.update(ap="ok", ap_file=fatti[k])
@@ -1188,11 +1188,17 @@ class Motore:
                 pass
             ap.sistema_vecchi(cart)
             el.sistema_in_corso(cart)
+            try:
+                ap.sistema_vuote(cart, self.cfg["cartella_pacchetti"])
+            except Exception:
+                log.exception("parti vuote")
             info = el.leggi_json(cart / "info.json", {}) or {}
             pac = info.get("pacchetti") or {}
+            utili = set(ap.parti_utili(cart, pac))
             fatti = {f: ap.appunti_fatti(info, f) for f in ap.FORMATI}
             appunti = {k: v for f in ap.FORMATI for k, v in fatti[f].items()}
-            mancano = {f: [k for k, z in pac.items() if Path(z).exists() and k not in fatti[f]] for f in ap.FORMATI}
+            mancano = {f: [k for k, z in pac.items() if k in utili and Path(z).exists() and k not in fatti[f]]
+                       for f in ap.FORMATI}
             puo = stato == "pronta" and ha_chiave and not self.occupato and bool(pac)
             tipo = info.get("tipo") if info.get("tipo") in ap.FORMATI_TIPO else "lezione"
             # i formati che hanno senso per questo tipo («Il mio formato» solo se e' stato descritto)
@@ -2228,6 +2234,10 @@ class Motore:
                 log.info("appunti parte %s: %s (%.3f $)", k, dest, spesa)
                 self.coda.put(("ap_ok", (k, str(dest))))
                 self._unisci_appunti(cart)
+            except ap.ParteVuota:
+                log.info("appunti parte %s: parte vuota, niente appunti", k)
+                self.coda.put(("ap_vuota", k))
+                self._unisci_appunti(cart)
             except ap.ErroreAppunti as e:
                 self.coda.put(("ap_err", (k, str(e))))
             except Exception:
@@ -2653,6 +2663,8 @@ class Motore:
             k, f = dato
             if k in self.parti:
                 self.parti[k].update(ap="ok", ap_file=f)
+        elif tipo == "ap_vuota":
+            self.parti.pop(dato, None)        # niente da riassumere: la parte non compare tra gli appunti
         elif tipo == "ap_err":
             k, msg = dato
             if k in self.parti:

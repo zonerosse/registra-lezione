@@ -1,6 +1,6 @@
 {
- "versione": "3.32",
+ "versione": "3.33",
  "librerie": 2,
- "novita": "Nuova pagina «Licenze» in Informazioni: di chi è il programma e tutti i componenti liberi che usa, con il testo completo delle loro licenze. Il programma di installazione ora mostra il contratto di licenza.",
- "novita_en": "New «Licenses» page under About: who owns the program and all the free components it uses, with the full text of their licenses. The installer now shows the license agreement."
+ "novita": "Corretto: se la registrazione finisce proprio allo scoccare della mezz'ora, l'ultimo pezzo vuoto non crea più appunti sbagliati («Tratto vuoto»). Le lezioni già fatte si sistemano da sole.",
+ "novita_en": "Fixed: if a recording ends right on the half hour, the empty last piece no longer creates wrong notes («Empty stretch»). Existing lectures fix themselves."
 }
