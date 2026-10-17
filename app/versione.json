@@ -1,6 +1,6 @@
 {
- "versione": "3.35",
+ "versione": "3.36",
  "librerie": 2,
- "novita": "Corretto: «Crea appunti» non dice più «non ci sono parole» quando la trascrizione c'è: rifà il pezzo che mancava e crea gli appunti. Una parte lunga ha sempre i suoi appunti.",
- "novita_en": "Fixed: «Create notes» no longer says «no words» when there is a transcript: it rebuilds the missing piece and creates the notes. A long part always gets its notes."
+ "novita": "Rapporti sugli errori, solo se dici di sì: se il programma si blocca può mandare un rapporto tecnico anonimo (mai registrazioni, trascrizioni o appunti), così l'errore si corregge prima. La domanda compare una volta; poi si cambia in Impostazioni › Privacy.",
+ "novita_en": "Error reports, only if you say yes: if the program crashes it can send an anonymous technical report (never recordings, transcripts or notes) so the error gets fixed sooner. You're asked once; change it anytime in Settings › Privacy."
 }

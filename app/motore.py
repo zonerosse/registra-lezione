@@ -74,6 +74,7 @@ log = logging.getLogger("registra_lezione")
 logging.getLogger("fontTools").setLevel(logging.WARNING)
 
 import aggiorna as agg               # noqa: E402
+import rapporti                      # noqa: E402  rapporti sugli errori, solo col consenso
 import appunti as ap
 import ripasso as rp                 # noqa: E402
 import chiedi as ch                  # noqa: E402
@@ -298,6 +299,11 @@ def _hhmm(sec):
 class Motore:
     def __init__(self):
         self.cfg = leggi_config()
+        try:
+            rapporti.installa(agg.versione_locale().get("versione", "?"))
+            rapporti.attivo = bool(self.cfg.get("rapporti_errori"))
+        except Exception:
+            log.exception("rapporti")
         self.reg = None
         self.occupato = False          # registrazione o preparazione in corso
         self.coda = queue.Queue()      # messaggi dai thread al ciclo
@@ -509,6 +515,7 @@ class Motore:
         ha_chiave = bool(self.chiave())
         return {"lingua": testi.LINGUA, "lingua_scelta": self.cfg.get("lingua") in testi.T,
                 "privacy_ok": bool(self.cfg.get("privacy_ok")),
+                "rapporti": bool(self.cfg.get("rapporti_errori")), "rapporti_chiesto": "rapporti_errori" in self.cfg,
                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                 "formato": self._formato("lezione"), "tipo": self._tipo(), "mio": self.cfg.get("mio") or None,
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
@@ -537,6 +544,10 @@ class Motore:
         if campo == "privacy_ok":
             # «Prima di iniziare»: spunta sul permesso di registrare, con data e ora
             self.cfg["privacy_ok"] = datetime.datetime.now().isoformat(timespec="seconds")
+        elif campo == "rapporti_errori":
+            # consenso ai rapporti sugli errori (si', no, cambiato in Impostazioni), con data e ora
+            self.cfg["rapporti_errori"] = rapporti.attivo = bool(valore)
+            self.cfg["rapporti_quando"] = datetime.datetime.now().isoformat(timespec="seconds")
         elif campo == "lingua":
             if valore not in testi.T:
                 return {"ok": False, "msg": "?"}

@@ -1,7 +1,7 @@
 {
- "versione": "0.9.11",
+ "versione": "0.9.12",
  "codice": 9,
- "novita": "Corretto: «Crea appunti» diceva «non ci sono parole» anche con la trascrizione piena. Ora rifà il pezzo che mancava e crea gli appunti.",
- "novita_en": "Fixed: «Create notes» said «no words» even with a full transcript. It now rebuilds the missing piece and creates the notes.",
- "contenuto": 22
+ "novita": "Rapporti sugli errori, solo se dici di sì: se l'app si blocca può mandare un rapporto tecnico anonimo (mai registrazioni, trascrizioni o appunti). La domanda compare una volta; poi si cambia in Impostazioni › Privacy.",
+ "novita_en": "Error reports, only if you say yes: if the app crashes it can send an anonymous technical report (never recordings, transcripts or notes). You're asked once; change it anytime in Settings › Privacy.",
+ "contenuto": 23
 }

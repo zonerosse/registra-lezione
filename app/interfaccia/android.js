@@ -6,7 +6,7 @@ if (ANDROID) {
   document.documentElement.classList.add('android');
   const AND = {
     it: {
-      'pv.1.t': 'Le registrazioni restano sul tuo telefono', 'im.pv.s': 'Cosa resta sul tuo telefono, cosa esce e verso chi',
+      'pv.1.t': 'Le registrazioni restano sul tuo telefono', 'im.pv.s': 'Cosa resta sul tuo telefono, cosa esce e verso chi', 'rq.si': "Il punto del programma in cui è successo l'errore, la versione e il tipo di telefono.",
       'pr.p': 'Microfono del telefono: penso a tutto io.',
       'pr.online': 'Meet, Teams, Zoom sul telefono: registro dal microfono (metti il vivavoce).',
       'pr.aula': 'Il docente è lì davanti: registro dal microfono del telefono.',
@@ -54,7 +54,7 @@ if (ANDROID) {
       'fn.pac': "Ogni parte è un pacchetto (slide + parole del docente): toccando «Condividi» lo mandi all'AI che usi (o metti la chiave di Claude in Impostazioni per gli appunti automatici).",
     },
     en: {
-      'pv.1.t': 'Recordings stay on your phone', 'im.pv.s': 'What stays on your phone, what leaves and where it goes',
+      'pv.1.t': 'Recordings stay on your phone', 'im.pv.s': 'What stays on your phone, what leaves and where it goes', 'rq.si': 'Where in the program the error happened, the version and the type of phone.',
       'pr.p': 'Phone microphone: I take care of everything.',
       'pr.online': 'Meet, Teams, Zoom on the phone: I record from the microphone (use the speaker).',
       'pr.aula': 'The lecturer is right there: I record from the phone microphone.',

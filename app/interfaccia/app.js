@@ -51,6 +51,7 @@ async function avvio() {
   setTimeout(() => $('splash').remove(), 500);
   if (!R.lingua_scelta) benvenuto();
   else if (!R.privacy_ok) primaDiIniziare();
+  else if (!R.rapporti_chiesto) chiediRapporti();
   contaFare();
   ciclo();
 }
@@ -246,6 +247,7 @@ function primaDiIniziare(rileggi) {
     <div class="pv-p">${punto('🔒', 'pv.1')}${punto('🚫', 'pv.2')}${punto('🤖', 'pv.3')}${punto('📝', 'pv.4', ' az')}</div>
     <div class="pv-r"><b>${esc(t('pv.r.t'))}</b><p>${esc(t('pv.r'))}</p>
       ${rileggi ? '' : `<label><input type="checkbox" id="pvCk"> ${esc(t('pv.ck'))}</label>`}</div>
+    ${rileggi ? '' : `<div class="pv-rap"><label><input type="checkbox" id="pvRap"> <span>🛠️ ${esc(t('pv.rap'))}<span class="hint">${esc(t('pv.rap.s'))}</span></span></label></div>`}
     <div class="pv-bt"><a id="pvLink">${esc(t('pv.link'))}</a>
       <button class="btn b-main" id="pvOk"${rileggi ? '' : ' disabled'}>${esc(t(rileggi ? 'pv.chiudi' : 'pv.inizia'))}</button></div></div>`;
   document.body.appendChild(v);
@@ -253,11 +255,33 @@ function primaDiIniziare(rileggi) {
   const ck = v.querySelector('#pvCk');
   if (ck) ck.onchange = () => { v.querySelector('#pvOk').disabled = !ck.checked; };
   v.querySelector('#pvOk').onclick = async () => {
-    if (!rileggi) { await A.imposta('privacy_ok', true); R.privacy_ok = true; }
+    if (!rileggi) {
+      await A.imposta('privacy_ok', true); R.privacy_ok = true;
+      const si = v.querySelector('#pvRap').checked;
+      await A.imposta('rapporti_errori', si); R.rapporti = si; R.rapporti_chiesto = true;
+    }
     v.remove();
   };
   if (rileggi) v.onclick = e => { if (e.target === v) v.remove(); };
 }
+
+// chi aveva già spuntato «Prima di iniziare» prima dei rapporti: la domanda una volta sola
+function chiediRapporti() {
+  const v = document.createElement('div');
+  v.className = 'velo';
+  const punto = (ic, k, cl) => `<div class="pv-i${cl || ''}"><span class="ic">${ic}</span><div><b>${esc(t(k + '.t'))}</b><span>${esc(t(k))}</span></div></div>`;
+  v.innerHTML = `<div class="dlg" style="max-width:480px"><h3>${esc(t('rq.t'))}</h3><div class="tx">${esc(t('rq'))}</div>
+    <div class="pv-p">${punto('✅', 'rq.si')}${punto('🚫', 'rq.no', ' no')}</div><div class="hint">${esc(t('rq.dove'))}</div>
+    <div class="pv-bt"><button class="btn b-ghost" data-r="0">${esc(t('rq.b.no'))}</button><button class="btn b-main" data-r="1">${esc(t('rq.b.si'))}</button></div></div>`;
+  v.querySelectorAll('[data-r]').forEach(b => b.onclick = async () => {
+    const si = b.dataset.r === '1';
+    await A.imposta('rapporti_errori', si); R.rapporti = si; R.rapporti_chiesto = true;
+    v.remove(); disegnaImpostazioni();
+  });
+  document.body.appendChild(v);
+}
+// errori dell'interfaccia: solo se l'utente ha detto sì (il testo lo ripulisce il programma)
+window.addEventListener('error', e => { try { if (R && R.rapporti && A.errore_js) A.errore_js(String(e.message || ''), e.lineno || 0); } catch (x) {} });
 
 /* ------------------------------------------------------------------ ciclo */
 async function ciclo() {
@@ -963,6 +987,7 @@ function disegnaImpostazioni() {
   $('swDir').classList.toggle('on', !!R.diretta);
   $('swPrec').classList.toggle('on', !!R.precisa);
   $('swVoci').classList.toggle('on', !!R.chi_parla);
+  $('swRap').classList.toggle('on', !!R.rapporti);
   disegnaDove();
   if (ANDROID) {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
@@ -1771,6 +1796,7 @@ function collegaNovita() {
   $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
   $('swVoci').onclick = async () => { await A.imposta('chi_parla', !R.chi_parla); await rileggi(); };
+  $('swRap').onclick = async () => { await A.imposta('rapporti_errori', !R.rapporti); await rileggi(); };
   $('vcNomi').onclick = () => nomiVoci();
   $('vcRifai').onclick = () => VC.lez && apriVoci(VC.lez, true);
   $('vcStat').onclick = () => VC.lez && apriStatistiche(VC.lez);

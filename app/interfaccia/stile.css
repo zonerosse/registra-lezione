@@ -204,6 +204,11 @@ h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 .pv-r b{color:var(--ink)}.pv-r p{margin:4px 0 10px;font-size:13px;line-height:1.5}
 .pv-r label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink);cursor:pointer;font-weight:600}
 .pv-r input{width:18px;height:18px;margin-top:1px;flex:none;accent-color:var(--blue)}
+.pv-rap{border:1.5px solid #bae6fd;background:#f0f9ff;border-radius:12px;padding:12px;margin-top:10px}
+.pv-rap label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink);cursor:pointer;font-weight:600}
+.pv-rap input{width:18px;height:18px;margin-top:1px;flex:none;accent-color:var(--blue)}
+.pv-rap .hint{display:block;font-weight:400;margin-top:2px}
+.pv-i.no{background:#fef2f2}
 .pv-bt{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:18px;flex-wrap:wrap}
 .pv-bt a{color:var(--blue);font-weight:600;text-decoration:none;cursor:pointer}
 .dlg label.ck{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mut);margin-top:12px;cursor:pointer}
