@@ -437,21 +437,27 @@
       <div class="card mt solo-pc" id="clCard">
         <div class="lbl" data-t="cl.h">☁ Copia nel cloud</div>
         <div class="hint" data-t="cl.s">Le registrazioni restano su questo PC. Appena una lezione è pronta, ne copio una copia nel tuo cloud: la ritrovi anche dal telefono o da un altro computer.</div>
+        <div class="clcome"><b data-t="cl.come">Come si imposta:</b><ol><li data-t="cl.come1">Scegli dove copiare (consigliato: OneDrive, c'è già su Windows).</li><li data-t="cl.come2">Spunta cosa copiare.</li><li data-t="cl.come3">Tocca «Copia anche le lezioni già fatte». Da lì in poi le nuove si copiano da sole.</li></ol></div>
         <div class="clopts" id="clOpts">
-          <div class="clopt" data-d="no"><i>🚫</i><b data-t="cl.no">No</b></div>
-          <div class="clopt" data-d="gdrive"><i>🟢</i><b>Google Drive</b></div>
-          <div class="clopt" data-d="onedrive"><i>🔵</i><b>OneDrive</b></div>
-          <div class="clopt" data-d="altro"><i>📁</i><b data-t="cl.altro">Altra cartella…</b></div>
+          <div class="clopt" data-d="no"><i>🚫</i><b data-t="cl.no">No</b><small data-t="cl.no.s">Non copio niente. Tutto resta solo sul PC.</small></div>
+          <div class="clopt" data-d="gdrive"><i>🟢</i><b>Google Drive</b><small data-t="cl.gd.s">Serve «Google Drive per desktop» installato. 15 GB gratis.</small></div>
+          <div class="clopt" data-d="onedrive"><i>🔵</i><b>OneDrive</b><small data-t="cl.od.s">C'è già su Windows. 5 GB gratis.</small></div>
+          <div class="clopt" data-d="altro"><i>📁</i><b data-t="cl.altro">Altra cartella…</b><small data-t="cl.al.s">Dropbox, una chiavetta, un disco esterno…</small></div>
         </div>
         <div class="clbox hidden" id="clBox">
           <div id="clTrov"></div>
+          <div class="clsub" data-t="cl.qui">Qui trovi le copie: una cartella per ogni lezione</div>
           <div class="clpath"><span id="clPath"></span><button class="btn b-ghost b-sm" id="clApri" data-t="im.apri">Apri</button></div>
-          <label class="invck"><input type="checkbox" id="clAp"><span><b data-t="cl.ap">Appunti (PDF)</b><small data-t="cl.ap.s">Cornell, Formato Esame, verbali…</small></span></label>
-          <label class="invck"><input type="checkbox" id="clTr"><span><b data-t="cl.tr">Trascrizione</b><small data-t="cl.tr.s">il testo di tutta la lezione (PDF)</small></span></label>
-          <label class="invck"><input type="checkbox" id="clAu"><span><b data-t="cl.au">Audio compresso</b><small data-t="cl.au.s">circa 30 MB per ora di lezione</small></span></label>
+          <div class="hint" id="clTel"></div>
+          <div class="clsub" data-t="cl.cosa">Cosa copio</div>
+          <label class="invck"><input type="checkbox" id="clAp"><span><b data-t="cl.ap">Appunti (PDF)</b><small data-t="cl.ap.s">Cornell, Formato Esame, verbali… Da leggere o stampare dal telefono. Pochissimo spazio.</small></span></label>
+          <label class="invck"><input type="checkbox" id="clTr"><span><b data-t="cl.tr">Trascrizione</b><small data-t="cl.tr.s">Il PDF «Per Claude – …» con tutto quello che è stato detto. Ti serve per rifare gli appunti con «Importa testo» o per darlo a Claude. Pochissimo spazio.</small></span></label>
+          <label class="invck"><input type="checkbox" id="clAu"><span><b data-t="cl.au">Audio compresso</b><small data-t="cl.au.s">Per riascoltare la lezione. Circa 30 MB per ora: è la parte che occupa di più (5 GB ≈ 160 ore). Il video non lo copio.</small></span></label>
           <div style="margin-top:10px"><button class="btn b-ghost b-sm" id="clTutte"></button></div>
+          <div class="hint" id="clTutteS" data-t="cl.tutte.s" style="margin-top:6px">Copia le lezioni registrate prima di accendere la copia. Basta toccarlo una volta.</div>
         </div>
         <div class="dvstato" id="clStato"></div>
+        <div class="hint" id="clRiprova" data-t="cl.riprova" style="margin-top:8px">Se il PC è senza internet, riprovo da solo ogni 10 minuti. In «Le mie registrazioni» vedi ☁ sulle lezioni già copiate.</div>
       </div>
       <div class="card mt">
         <div class="lbl" data-t="im.dati">I tuoi dati</div>

@@ -1042,6 +1042,9 @@ async function disegnaCloud(c) {
   Object.keys(ck).forEach(id => { $(id).checked = !!c.cosa[ck[id]]; $(id).onchange = async () => disegnaCloud(await A.cloud_imposta(null, null, {[ck[id]]: $(id).checked})); });
   $('clTutte').textContent = t('cl.tutte', {n: c.da_copiare});
   $('clTutte').classList.toggle('hidden', !c.radice || !c.da_copiare);
+  $('clTutteS').classList.toggle('hidden', !c.radice || !c.da_copiare);
+  $('clTel').textContent = c.radice ? t(c.dove === 'gdrive' ? 'cl.tel.gd' : c.dove === 'onedrive' ? 'cl.tel.od' : 'cl.tel.al') : '';
+  $('clRiprova').classList.toggle('hidden', c.dove === 'no');
   $('clTutte').onclick = async () => { const r = await A.cloud_tutte(); $('clStato').className = 'dvstato'; $('clStato').textContent = t('cl.tutte.ok', {n: r.n}); };
   $('clStato').className = 'dvstato';
   $('clStato').textContent = c.dove !== 'no' && c.ultima ? t('cl.ultima', {n: c.ultima.nome, q: c.ultima.quando.replace('T', ' ')}) : '';
