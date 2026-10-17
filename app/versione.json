@@ -1,6 +1,6 @@
 {
- "versione": "3.56",
+ "versione": "3.57",
  "librerie": 2,
- "novita": "«Ripassa la materia» su una riga sola: scegli la materia dal menu e tocca «Ripassa» o «Preparati all'esame». In Registra la scritta in alto a destra è grigio-blu.",
- "novita_en": "«Review the subject» on a single line: choose the subject from the menu and tap «Review» or «Prepare for the exam». In Record the label at the top right is grey-blue."
+ "novita": "Quando apri il programma e c'è una versione nuova, compare un avviso: «Aggiorna adesso» oppure «Più tardi».",
+ "novita_en": "When you open the program and a new version is out, a notice appears: «Update now» or «Later»."
 }

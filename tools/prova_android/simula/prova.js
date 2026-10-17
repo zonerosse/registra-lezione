@@ -27,6 +27,13 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.evaluate(() => A.imposta('appunti_attivi', true)); await rileggiPagina();
     await p.click('#nav [data-p="fare"]'); await p.waitForTimeout(800); await foto('00b-fare-vuota');
     passo('«Da fare» vuota: spiega cos\'è e porta a registrare una riunione', await p.isVisible('.cfvuoto') && await p.isVisible('#cfRiu'));
+    // all'apertura: avviso della versione nuova (qui l'aggiornamento è finto)
+    await p.waitForSelector('.velo', {timeout: 12000}).catch(() => {});
+    const av = await p.$('.velo') ? await p.textContent('.velo') : '';
+    await foto('00c-avviso-aggiornamento');
+    passo('all\'apertura: avviso «È pronta la versione…»', av.includes('99.0'), av.slice(0, 80));
+    if (await p.$('.velo')) { await p.click('.velo button >> nth=0'); await p.waitForTimeout(800); }
+    passo('«Più tardi» chiude l\'avviso', !(await p.$('.velo')));
     await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(500);
     await p.click('#doveBox [data-m="aula"]'); await foto('01-pronto');
     // «Durante»

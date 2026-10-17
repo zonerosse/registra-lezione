@@ -54,6 +54,7 @@ async function avvio() {
   else if (!R.rapporti_chiesto) chiediRapporti();
   contaFare();
   ciclo();
+  setTimeout(() => { try { if (!S || !S.registro) A.cerca_aggiornamenti(true); } catch (e) {} }, 4000);   // avviso all'apertura, se c'e' una versione nuova
 }
 const pausa = ms => new Promise(r => setTimeout(r, ms));
 // telefono, tasto «Indietro»: chiude dialogo o menu, altrimenti torna a Registra. false = l'app va dietro
@@ -354,7 +355,19 @@ async function aggiorna() {
   if (APLAV) { if (pagina === 'arch') apSegui(); }
   else if (pagina === 'arch' && ++contaLz % 8 === 0) caricaLezioni();
   avvisiCalendario();
+  avvisoAgg();
   for (const m of S.messaggi || []) { A.letto(m.id); await dialogo({titolo: m.titolo, testo: m.testo}); }
+}
+let AGG_VISTO = false;
+async function avvisoAgg() {
+  const g = S.agg || {};
+  if (AGG_VISTO || g.tipo !== 'trovato' || !g.avviso || S.registro || document.querySelector('.velo')) return;
+  AGG_VISTO = true;
+  const d = g.dato || {};
+  const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
+  const v = await dialogo({titolo: t('ag.pronta', {v: d.versione}), testo: nov + (d.completo ? '\n\n' + t('ag.completo') : ''),
+    bottoni: [{t: t('ag.tardi'), v: false}, {t: d.completo ? t('ag.pagina') : t('ag.adesso'), cls: 'b-main', v: true}]});
+  if (v) { A.installa_aggiornamento(); vai('info'); }
 }
 
 function disegnaStato() {

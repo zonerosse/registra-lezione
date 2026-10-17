@@ -2510,25 +2510,31 @@ class Motore:
 
     # ------------------------------------------------------------------ Aggiorna
 
-    def cerca_aggiornamenti(self):
+    def cerca_aggiornamenti(self, silenzioso=False):
+        """silenzioso: il controllo all'apertura. Non dice niente se e' tutto aggiornato o se manca la rete;
+        se c'e' una versione nuova l'interfaccia mostra l'avviso (agg["avviso"])."""
         if self.occupato:
-            self.agg = {"tipo": "msg", "testo": tr("agg_occupato")}
+            if not silenzioso:
+                self.agg = {"tipo": "msg", "testo": tr("agg_occupato")}
             return
-        self.agg = {"tipo": "cerco", "testo": tr("agg_cerco")}
+        if not silenzioso:
+            self.agg = {"tipo": "cerco", "testo": tr("agg_cerco")}
 
         def lavoro():
             try:
                 t = agg.cerca()
                 if t is None:
-                    self.agg = {"tipo": "ok", "testo": tr("agg_ultima")}
+                    self.agg = {"tipo": None} if silenzioso else {"tipo": "ok", "testo": tr("agg_ultima")}
                 else:
-                    self.agg = {"tipo": "trovato", "dato": t}
+                    self.agg = {"tipo": "trovato", "dato": t, "avviso": bool(silenzioso)}
             except agg.NonTrovato:
                 log.exception("aggiorna")
-                self.agg = {"tipo": "msg", "testo": tr("agg_404")}
+                self.agg = {"tipo": None} if silenzioso else {"tipo": "msg", "testo": tr("agg_404")}
             except Exception:
-                log.exception("aggiorna")
-                self.agg = {"tipo": "msg", "testo": tr("agg_rete")}
+                log.warning("aggiorna: %s", "controllo all'apertura non riuscito" if silenzioso else "errore")
+                if not silenzioso:
+                    log.exception("aggiorna")
+                self.agg = {"tipo": None} if silenzioso else {"tipo": "msg", "testo": tr("agg_rete")}
         threading.Thread(target=lavoro, daemon=True).start()
 
     def installa_aggiornamento(self):

@@ -1,7 +1,7 @@
 {
- "versione": "0.10.13",
+ "versione": "0.10.14",
  "codice": 10,
- "novita": "«Ripassa la materia» su una riga sola: scegli la materia dal menu e tocca «Ripassa» o «Preparati all'esame».",
- "novita_en": "«Review the subject» on a single line: choose the subject from the menu and tap «Review» or «Prepare for the exam».",
- "contenuto": 44
+ "novita": "Quando apri l'app e c'è una versione nuova, compare un avviso: «Aggiorna adesso» oppure «Più tardi».",
+ "novita_en": "When you open the app and a new version is out, a notice appears: «Update now» or «Later».",
+ "contenuto": 45
 }

@@ -601,8 +601,8 @@ class Api:
         webbrowser.open(self._mt.sito_privacy())
 
     # ------------------------------------------------------------------ Aggiorna
-    def cerca_aggiornamenti(self):
-        self._m.cerca_aggiornamenti()
+    def cerca_aggiornamenti(self, silenzioso=False):
+        self._m.cerca_aggiornamenti(bool(silenzioso))
 
     def installa_aggiornamento(self):
         self._m.installa_aggiornamento()
