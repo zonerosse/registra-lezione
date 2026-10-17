@@ -18,6 +18,10 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.waitForSelector('#splash', {state: 'detached', timeout: 60000});
     passo('la pagina si apre', true);
     await p.click('.dlg [data-l="it"]');
+    await p.waitForSelector('#pvOk', {timeout: 10000}); await foto('00-prima-di-iniziare');
+    passo('«Prima di iniziare»: «Inizia» spento senza spunta, dice «telefono»', await p.isDisabled('#pvOk') && (await p.innerText('.velo')).includes('telefono'));
+    await p.check('#pvCk'); await p.click('#pvOk'); await p.waitForTimeout(500);
+    passo('«Prima di iniziare»: spunta salvata', (await p.evaluate(() => A.riepilogo())).privacy_ok === true);
     passo('aspetto da telefono', await p.evaluate(() => document.documentElement.classList.contains('android') && getComputedStyle(document.querySelector('.side .brand')).display === 'none'));
     passo('chiave di Claude (protetta dal telefono)', (await p.evaluate(() => A.prova_chiave('sk-ant-prova'))).ok);
     await p.evaluate(() => A.imposta('appunti_attivi', true)); await rileggiPagina();
