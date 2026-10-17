@@ -379,6 +379,28 @@
             <small data-t="im.b">Nessuna chiave: preparo i pacchetti (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
         </div>
       </div>
+      <div class="card mt hidden" id="invCard">
+        <div class="lbl" data-t="inv.h">Inviti</div>
+        <div class="hint" style="margin-bottom:10px" data-t="inv.s">Per dare il programma già pronto a qualcuno di cui ti fidi (Sara, Lorenzo…): riceve le tue chiavi senza vederle. Quello che usa lo paghi tu.</div>
+        <div class="lbl" data-t="inv.per">Per chi è?</div><input class="in" id="invPer" maxlength="40" autocomplete="off">
+        <div class="lbl" style="margin-top:12px" data-t="inv.cosa">Cosa gli dai</div>
+        <label class="invck"><input type="checkbox" id="invCl" checked><span><b data-t="inv.cl">La chiave di Claude</b><small data-t="inv.cl.s">per appunti, Chiedi, mappe…</small></span></label>
+        <label class="invck"><input type="checkbox" id="invSrv" checked><span><b data-t="inv.srv">Il server per trascrivere</b><small data-t="inv.srv.s">trascrizione veloce sul tuo RunPod</small></span></label>
+        <div class="row" style="margin-top:10px"><span class="sp"></span><button class="btn b-main b-sm" id="invVai" data-t="inv.vai">Prepara l'invito</button></div>
+        <div id="invRis" class="hidden" style="margin-top:14px;border-top:1px dashed #dbe5f0;padding-top:12px">
+          <div class="invok" id="invOk"></div>
+          <div class="hint" style="margin:6px 0" data-t="inv.copia.s">Copia questo messaggio e mandalo su WhatsApp:</div>
+          <textarea class="in" id="invMsg" rows="5" readonly style="width:100%;font-size:12.5px"></textarea>
+          <div class="row" style="margin-top:8px"><span class="hint sp" id="invCopiato"></span><button class="btn b-main b-sm" id="invCopia" data-t="inv.copia">Copia il messaggio</button></div>
+        </div>
+      </div>
+      <div class="card mt hidden" id="hoCard">
+        <div class="lbl" data-t="ho.h">Ho un invito</div>
+        <div class="invok hidden" id="hoGia"></div>
+        <div class="hint" style="margin-bottom:8px" data-t="ho.s">Incolla qui il messaggio dell'invito che ti hanno mandato:</div>
+        <textarea class="in" id="hoTxt" rows="4" style="width:100%;font-size:12.5px"></textarea>
+        <div class="row" style="margin-top:8px"><span class="hint sp" id="hoEsito"></span><button class="btn b-main b-sm" id="hoVai" data-t="ho.vai">Attiva</button></div>
+      </div>
       <div class="card mt" id="dvCard">
         <div class="lbl" data-t="dv.h">Dove trascrivo</div>
         <div class="dvcosa" data-t="dv.cosa">Cos'è il server? Un computer molto potente a noleggio (RunPod, in Europa) che trascrive al posto del PC: un'ora di lezione in circa un minuto. Si paga solo il tempo che lavora, pochi centesimi per un'ora di lezione. L'audio viene cancellato appena finito.</div>

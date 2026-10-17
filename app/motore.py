@@ -521,6 +521,8 @@ class Motore:
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
+                "da_invito": self.cfg.get("da_invito") or "",
+                "puo_invitare": bool(ha_chiave or self._server_dati()) and not self.cfg.get("da_invito"),
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
                 "studente": self.cfg.get("studente") or {}, "recenti": self.cfg.get("materie_recenti") or [],
                 "schermo": schermo_risoluzione(), "versione": agg.versione_locale().get("versione", "?"),
@@ -620,6 +622,69 @@ class Motore:
         self.cfg["appunti_attivi"] = True
         salva_config(self.cfg)
         return {"ok": True, "msg": tr("chiave_ok")}
+
+    # ------------------------------------------------------------------ inviti
+
+    _SALE_INVITO = b"VerbaManentIA-invito-1"
+
+    def _mescola(self, dati):
+        """Nasconde il contenuto dell'invito (non e' una cassaforte: chi ha il messaggio lo puo' usare)."""
+        import hashlib
+        flusso = b""
+        i = 0
+        while len(flusso) < len(dati):
+            flusso += hashlib.sha256(self._SALE_INVITO + i.to_bytes(4, "big")).digest()
+            i += 1
+        return bytes(a ^ b for a, b in zip(dati, flusso))
+
+    def invito_prepara(self, per, claude=True, server=True):
+        """Il messaggio da mandare su WhatsApp con le chiavi (solo chi le ha messe a mano)."""
+        import base64
+        import zlib
+        if self.cfg.get("da_invito"):
+            return {"ok": False, "msg": tr("inv_no")}
+        per = re.sub(r"\s+", " ", str(per or "")).strip()[:40]
+        dati = {"v": 1, "da": ((self.cfg.get("studente") or {}).get("nome") or "").strip()[:40], "per": per,
+                "quando": datetime.date.today().isoformat()}
+        if claude and self.chiave():
+            dati["claude"] = self.chiave()
+        srv = self._server_dati() if server else None
+        if srv and srv.get("endpoint") and srv.get("chiave"):
+            dati["srv"] = {"endpoint": srv["endpoint"], "chiave": srv["chiave"]}
+        if "claude" not in dati and "srv" not in dati:
+            return {"ok": False, "msg": tr("inv_niente")}
+        codice = base64.urlsafe_b64encode(self._mescola(zlib.compress(json.dumps(dati).encode("utf-8")))).decode("ascii").rstrip("=")
+        msg = tr("inv_msg", n=per or "", c="VMIA-INVITO-1:" + codice).replace("  ", " ")
+        return {"ok": True, "messaggio": msg, "claude": "claude" in dati, "server": "srv" in dati}
+
+    def invito_attiva(self, testo):
+        """Incolla del messaggio d'invito: mette la chiave di Claude e il server."""
+        import base64
+        import zlib
+        m = re.search(r"VMIA-INVITO-1:([A-Za-z0-9_\-]+)", str(testo or ""))
+        if not m:
+            return {"ok": False, "msg": tr("inv_err")}
+        c = m.group(1)
+        try:
+            dati = json.loads(zlib.decompress(self._mescola(base64.urlsafe_b64decode(c + "=" * (-len(c) % 4)))).decode("utf-8"))
+        except Exception:
+            return {"ok": False, "msg": tr("inv_err")}
+        fatto = []
+        if dati.get("claude"):
+            self.cfg["chiave"] = ap.nascondi_chiave(dati["claude"])
+            self.cfg["appunti_attivi"] = True
+            fatto.append("claude")
+        srv = dati.get("srv") or {}
+        if srv.get("endpoint") and srv.get("chiave"):
+            self.cfg["server_trascrizione"] = ap.nascondi_chiave(json.dumps({"endpoint": srv["endpoint"], "chiave": srv["chiave"]}))
+            self.cfg["trascrivi_dove"] = "server"
+            fatto.append("server")
+        if not fatto:
+            return {"ok": False, "msg": tr("inv_err")}
+        self.cfg["da_invito"] = dati.get("da") or "?"
+        salva_config(self.cfg)
+        log.info("invito attivato (%s)", ", ".join(fatto))
+        return {"ok": True, "da": dati.get("da") or "", "claude": "claude" in fatto, "server": "server" in fatto}
 
     def togli_chiave(self):
         self.cfg["chiave"] = ""

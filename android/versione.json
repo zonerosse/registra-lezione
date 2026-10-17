@@ -1,7 +1,7 @@
 {
- "versione": "0.9.18",
+ "versione": "0.9.19",
  "codice": 9,
- "novita": "Impostazioni › Dove trascrivo: menu a tendina, spiegazione di cos'è il server, codice e chiave dentro «Altre opzioni». «Scollega» ora chiede conferma.",
- "novita_en": "Settings › Where I transcribe: drop-down menu, explanation of what the server is, code and key inside «More options». «Disconnect» now asks for confirmation.",
- "contenuto": 29
+ "novita": "Nuovo: Inviti. In Impostazioni prepari un messaggio da mandare su WhatsApp: chi lo incolla in «Ho un invito» ha subito la chiave di Claude e il server, senza vederli.",
+ "novita_en": "New: Invitations. In Settings you prepare a message to send on WhatsApp: whoever pastes it into «I have an invitation» instantly gets the Claude key and the server, without seeing them.",
+ "contenuto": 30
 }

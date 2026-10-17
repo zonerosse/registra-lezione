@@ -385,6 +385,12 @@ class Api:
             return {"ok": False}
         return self._m.info_testo(scelta[0] if isinstance(scelta, (list, tuple)) else scelta)
 
+    def invito_prepara(self, per, claude=True, server=True):
+        return self._m.invito_prepara(per, claude, server)
+
+    def invito_attiva(self, testo):
+        return self._m.invito_attiva(testo)
+
     def nome_libero(self, nome, escludi=None):
         return self._m.nome_libero(nome, escludi)
 

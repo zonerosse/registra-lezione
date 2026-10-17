@@ -122,7 +122,7 @@ function vai(p) {
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'fare') apriCose();
-  if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
+  if (p === 'imp') { disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
@@ -213,7 +213,7 @@ function inizializza() {
   controllaNomeRec();
   vai('reg');
 }
-async function rileggi() { R = await A.riepilogo(); disegnaImpostazioni(); disegnaPronto(); }
+async function rileggi() { R = await A.riepilogo(); disegnaImpostazioni(); disegnaInviti(); disegnaPronto(); }
 function scriviVersione() {
   $('footVer').textContent = t('ver', {v: R.versione});
   $('infoVer').textContent = t('ver', {v: R.versione});
@@ -1006,6 +1006,32 @@ async function eliminaTuttiVideo() {
 /* ------------------------------------------------------------------ impostazioni */
 /* «Dove trascrivo»: sul PC/telefono o sul server (RunPod) */
 const DV = {scelto: null};
+function disegnaInviti() {
+  $('invCard').classList.toggle('hidden', !R.puo_invitare);
+  $('hoCard').classList.toggle('hidden', !!R.puo_invitare);
+  $('hoGia').classList.toggle('hidden', !R.da_invito);
+  $('hoGia').textContent = R.da_invito ? t('ho.gia') : '';
+  $('invVai').onclick = async () => {
+    const r = await A.invito_prepara($('invPer').value, $('invCl').checked, $('invSrv').checked);
+    if (!r.ok) { dialogo({titolo: t('inv.h'), testo: r.msg || ''}); return; }
+    $('invRis').classList.remove('hidden');
+    $('invOk').textContent = t('inv.ok', {n: $('invPer').value.trim() || '…'});
+    $('invMsg').value = r.messaggio; $('invCopiato').textContent = '';
+  };
+  $('invCopia').onclick = () => {
+    const x = $('invMsg'), fatto = () => { $('invCopiato').textContent = t('inv.copiato'); };
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(x.value).then(fatto, () => { x.focus(); x.select(); document.execCommand('copy'); fatto(); }); return; } } catch (e) {}
+    x.focus(); x.select(); try { document.execCommand('copy'); } catch (e) {} fatto();
+  };
+  $('hoVai').onclick = async () => {
+    const r = await A.invito_attiva($('hoTxt').value);
+    if (!r.ok) { $('hoEsito').style.color = '#be123c'; $('hoEsito').textContent = '⚠ ' + (r.msg || ''); return; }
+    $('hoTxt').value = '';
+    $('hoEsito').style.color = '#059669';
+    $('hoEsito').textContent = t('ho.ok', {c: [r.claude ? t('ho.ok.cl') : '', r.server ? t('ho.ok.srv') : ''].filter(Boolean).join(' ' + t('ho.e') + ' ')});
+    await rileggi();
+  };
+}
 function disegnaDove() {
   const dove = DV.scelto || R.dove || 'qui';
   const opt = $('dvBox').querySelector(`[data-d="${dove}"]`);

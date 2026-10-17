@@ -565,3 +565,8 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .dvstato{margin-top:10px;font-size:13px;font-weight:600;color:#059669}.dvstato:empty{display:none}.dvstato.grigio{color:var(--mut);font-weight:500}
 .dvaltre{margin-top:10px}.dvaltre summary{cursor:pointer;color:var(--blue);font-size:13px;font-weight:600}
 .dvvia{color:#be123c;border:1px solid #fecdd3;background:#fff1f2}
+
+/* inviti */
+.invck{display:flex;gap:10px;align-items:flex-start;margin:8px 0;cursor:pointer}.invck input{width:18px;height:18px;margin-top:2px;accent-color:var(--blue)}
+.invck b{display:block;color:var(--ink);font-size:13.5px}.invck small{color:var(--mut);font-size:12px}
+.invok{color:#059669;font-weight:700;font-size:13.5px;margin-bottom:6px}

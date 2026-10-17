@@ -196,6 +196,23 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.waitForFunction(() => /✓|⚠/.test(document.getElementById('srvEsito').textContent), null, {timeout: 40000}).catch(() => {});
     await p.evaluate(() => document.getElementById('dvCard').scrollIntoView()); await foto('18-server');
     passo('«Sul server»: collegato dal telefono', (await p.textContent('#srvEsito')).includes('✓'), await p.textContent('#srvEsito'));
+    // inviti: chi ha le chiavi prepara l'invito; un telefono «nuovo» lo incolla e ha tutto pronto
+    await p.click('#nav [data-p="imp"]'); await p.waitForTimeout(600);
+    passo('inviti: riquadro per chi ha le chiavi', await p.isVisible('#invCard') && !(await p.isVisible('#hoCard')));
+    await p.fill('#invPer', 'Sara'); await p.click('#invVai'); await p.waitForSelector('#invRis:not(.hidden)', {timeout: 5000}).catch(() => {});
+    await p.evaluate(() => document.getElementById('invCard').scrollIntoView()); await foto('18c-invito');
+    const msgInv = await p.inputValue('#invMsg');
+    passo('inviti: messaggio pronto senza chiavi in chiaro', /VMIA-INVITO-1:/.test(msgInv) && !msgInv.includes('sk-ant') && !msgInv.includes('rpa_'), msgInv.slice(0, 90));
+    await p.evaluate(async () => { await A.togli_chiave(); await A.server_scollega(); await rileggi(); });
+    await p.waitForTimeout(400);
+    passo('inviti: senza chiavi compare «Ho un invito»', await p.isVisible('#hoCard') && !(await p.isVisible('#invCard')));
+    await p.fill('#hoTxt', msgInv); await p.click('#hoVai'); await p.waitForTimeout(1200);
+    await p.evaluate(() => document.getElementById('hoCard').scrollIntoView()); await foto('18d-ho-invito');
+    const rr = await p.evaluate(() => A.riepilogo());
+    passo('inviti: attivato (Claude e server), e non può invitare altri', rr.chiave && rr.server_endpoint === 'prova123' && rr.da_invito && !rr.puo_invitare && !(await p.isVisible('#invCard')),
+          await p.textContent('#hoEsito'));
+    await p.evaluate(() => document.getElementById('dvCard').scrollIntoView()); await p.waitForTimeout(300);
+    if (!(await p.isVisible('#srvVia'))) { await p.evaluate(() => { document.getElementById('dvAltre').open = true; }); await p.waitForTimeout(200); }
     await p.click('#srvVia'); await p.waitForSelector('.velo .b-rec', {timeout: 5000}).catch(() => {}); await foto('18b-scollega');
     passo('«Scollega» chiede conferma', !!(await p.$('.velo .b-rec')));
     if (await p.$('.velo .b-rec')) await p.click('.velo .b-rec'); else await p.evaluate(() => A.server_scollega());
