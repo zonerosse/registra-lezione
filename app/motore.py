@@ -200,6 +200,12 @@ def al_cestino(percorsi):
         raise OSError("eliminazione non riuscita")
 
 
+def _dove_errore(e):
+    """«motore.py:1150 > appunti.py:382»: gli ultimi punti del programma dove e' successo un errore."""
+    import traceback
+    return " > ".join(f"{Path(f.filename).name}:{f.lineno}" for f in traceback.extract_tb(e.__traceback__)[-3:])
+
+
 def video_di(cart):
     for nome in ("video.mp4", "audio.m4a"):
         p = Path(cart) / nome
@@ -1149,7 +1155,7 @@ class Motore:
                             "voci": 0, "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
                             "docente": False, "mappa": False, "aula": False, "trascritta": False,
                             "ripasso": {"n": 0, "no": 0, "tre": 0}, "formato": "cornell", "importata": False, "dopo": False,
-                            "lingua_lezione": None, "errore": f"{type(e).__name__}: {e}"[:200]})
+                            "lingua_lezione": None, "errore": f"{type(e).__name__}: {e} [{_dove_errore(e)}]"[:300]})
         try:
             liberi = shutil.disk_usage(BASE).free
         except OSError:

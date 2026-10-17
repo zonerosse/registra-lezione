@@ -1,7 +1,7 @@
 {
- "versione": "0.9.4",
+ "versione": "0.9.5",
  "codice": 9,
- "novita": "Le mie lezioni: se una lezione ha qualcosa che non va, le altre si vedono lo stesso (e quella mostra il motivo).",
- "novita_en": "My lectures: if one lecture has a problem, the others are still shown (and that one shows why).",
- "contenuto": 15
+ "novita": "Le mie lezioni: più dettagli quando una lezione ha un problema.",
+ "novita_en": "My lectures: more details when a lecture has a problem.",
+ "contenuto": 16
 }
