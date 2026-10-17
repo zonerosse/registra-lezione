@@ -1,9 +1,9 @@
 {
- "versione": "0.10.4",
+ "versione": "0.10.5",
  "codice": 10,
- "novita": "«Cose da fare» ora spiega cos'è: quando è vuota mostra in tre passi come si riempie (dalle riunioni di lavoro) e un bottone per registrare una riunione.",
- "novita_en": "«To-dos» now explains what it is: when empty it shows in three steps how it fills up (from work meetings) and a button to record a meeting.",
- "contenuto": 35,
+ "novita": "Impostazioni in due parti: in alto le Essenziali (lingua, Claude, dove trascrivo, formato, i tuoi dati, parole difficili); il resto dentro «Impostazioni avanzate», che si apre con un tocco.",
+ "novita_en": "Settings in two parts: Essentials at the top (language, Claude, where I transcribe, format, your details, difficult words); the rest inside «Advanced settings», opened with a tap.",
+ "contenuto": 36,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
 }
