@@ -1,6 +1,6 @@
 {
- "versione": "3.58",
+ "versione": "3.59",
  "librerie": 2,
- "novita": "Simulazione d'esame sistemata: a volte non partiva e mostrava solo «Errore da evitare:». Ora riprova da sola e, se proprio non va, dice cosa è successo.",
- "novita_en": "Exam simulation fixed: sometimes it did not start and only showed «Mistake to avoid:». Now it retries by itself and, if it really fails, says what happened."
+ "novita": "Nella preparazione all'esame il bottone «Simulazione d'esame completa» è blu come gli altri.",
+ "novita_en": "In exam preparation the «Full exam simulation» button is blue like the others."
 }
