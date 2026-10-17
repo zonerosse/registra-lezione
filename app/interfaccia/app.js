@@ -1008,17 +1008,26 @@ async function eliminaTuttiVideo() {
 const DV = {scelto: null};
 function disegnaDove() {
   const dove = DV.scelto || R.dove || 'qui';
-  $('dvBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.d === dove));
-  $('srvBox').classList.toggle('hidden', dove !== 'server');
+  const opt = $('dvBox').querySelector(`[data-d="${dove}"]`);
+  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.classList.toggle('on', o === opt));
+  $('dvIco').textContent = dove === 'server' ? '⚡' : (ANDROID ? '📱' : '💻');
+  $('dvT').textContent = t(dove === 'server' ? 'dv.srv.t' : 'dv.qui.t');
+  $('dvS').textContent = t(dove === 'server' ? 'dv.srv.b' : 'dv.qui.b');
   if (document.activeElement !== $('srvCod')) $('srvCod').value = R.server_endpoint || $('srvCod').value || '';
   $('srvKey').placeholder = R.server_endpoint ? t('dv.chiave.gia') : '';
   $('srvVia').classList.toggle('hidden', !R.server_endpoint);
-  if (!DV.esito) { $('srvEsito').textContent = R.server_endpoint && R.dove === 'server' ? t('dv.attivo') : ''; $('srvEsito').style.color = ''; }
-  $('dvBox').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => {
-    DV.esito = '';
+  const st = $('dvStato');
+  st.className = 'dvstato';
+  if (R.server_endpoint && R.dove === 'server') st.textContent = t('dv.attivo');
+  else if (R.server_endpoint) { st.textContent = t('dv.quistato'); st.className = 'dvstato grigio'; }
+  else st.textContent = '';
+  if (!DV.esito) { $('srvEsito').textContent = ''; $('srvEsito').style.color = ''; }
+  $('dvSel').onclick = () => { const h = $('dvBox').classList.toggle('hidden'); $('dvSel').classList.toggle('aperto', !h); };
+  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.onclick = async () => {
+    DV.esito = ''; $('dvBox').classList.add('hidden'); $('dvSel').classList.remove('aperto');
     if (o.dataset.d === 'qui') { DV.scelto = null; await A.server_scegli('qui'); await rileggi(); return; }
     if (R.server_endpoint) { DV.scelto = null; await A.server_scegli('server'); await rileggi(); return; }
-    DV.scelto = 'server'; disegnaDove(); $('srvCod').focus();
+    DV.scelto = 'server'; disegnaDove(); $('dvAltre').open = true; $('srvCod').focus();
   });
   $('srvVai').onclick = async () => {
     const b = $('srvVai'); b.disabled = true; DV.esito = 'lav';
@@ -1032,7 +1041,7 @@ function disegnaDove() {
     $('srvEsito').textContent = t('dv.ok', {s: r.secondi, c: num((r.dollari * 100).toFixed(2))});
   };
   $('srvVia').onclick = async () => {
-    if (!await conferma(t('dv.via.t'), t('dv.via.s'), t('dv.via'), t('annulla'))) return;
+    if (!await conferma(t('dv.via.t'), t('dv.via.s'), t('dv.via.si'), t('annulla'), 'b-rec')) return;
     DV.esito = ''; DV.scelto = null; $('srvCod').value = ''; await A.server_scollega(); await rileggi();
   };
 }

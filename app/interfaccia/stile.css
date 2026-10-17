@@ -553,3 +553,15 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .nmsg .chip{margin:6px 6px 0 0;border-color:#bfdbfe;background:#eff6ff;color:var(--blue);font-weight:600;cursor:pointer}
 .in.n-err{border-color:#be123c;box-shadow:0 0 0 3px #fde2e8}.in.n-ok{border-color:#059669}
 .recbtn:disabled{filter:grayscale(1);opacity:.5;cursor:not-allowed}.recbtn:disabled::before{animation:none;border-color:#cbd5e1}
+
+/* Dove trascrivo: tendina */
+.dvcosa{background:#f0f9ff;border:1px solid #cfe7f8;border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.5;color:#0c4a6e;margin-bottom:12px}
+.dvsel{display:flex;align-items:center;gap:10px;border:2px solid #cbd8e6;border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;user-select:none}
+.dvsel b,.dvlista b{color:var(--ink);display:block}.dvsel small,.dvlista small{color:var(--mut);font-size:12px;line-height:1.4;display:block}
+.dvico{font-size:20px;flex:none}.dvfr{color:var(--mut);transition:transform .2s}.dvsel.aperto .dvfr{transform:rotate(180deg)}
+.dvlista{border:1px solid #dbe5f0;border-radius:12px;margin-top:6px;overflow:hidden;background:#fff;box-shadow:0 14px 30px -18px rgba(13,66,117,.4)}
+.dvlista>div{display:flex;gap:10px;padding:11px 12px;cursor:pointer;border-bottom:1px solid #eef2f7}.dvlista>div:last-child{border-bottom:0}
+.dvlista>div:hover{background:#f5f9fd}.dvlista>div.on{background:#eff6ff}
+.dvstato{margin-top:10px;font-size:13px;font-weight:600;color:#059669}.dvstato:empty{display:none}.dvstato.grigio{color:var(--mut);font-weight:500}
+.dvaltre{margin-top:10px}.dvaltre summary{cursor:pointer;color:var(--blue);font-size:13px;font-weight:600}
+.dvvia{color:#be123c;border:1px solid #fecdd3;background:#fff1f2}

@@ -1,6 +1,6 @@
 {
- "versione": "3.40",
+ "versione": "3.41",
  "librerie": 2,
- "novita": "Nomi unici: non si può più registrare o importare con un nome vuoto o uguale a una lezione che c'è già. Il programma lo dice subito sotto il nome e propone nomi liberi da toccare.",
- "novita_en": "Unique names: you can no longer record or import with an empty name or one that matches an existing lecture. The program tells you right under the name and suggests free names to tap."
+ "novita": "Impostazioni › Dove trascrivo: menu a tendina, spiegazione di cos'è il server, codice e chiave dentro «Altre opzioni». «Scollega» ora chiede conferma.",
+ "novita_en": "Settings › Where I transcribe: drop-down menu, explanation of what the server is, code and key inside «More options». «Disconnect» now asks for confirmation."
 }

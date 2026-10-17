@@ -1,7 +1,7 @@
 {
- "versione": "0.9.17",
+ "versione": "0.9.18",
  "codice": 9,
- "novita": "Corretto: il messaggio «Avvisa i partecipanti» ora dice che la registrazione resta sul telefono (prima diceva «computer»).",
- "novita_en": "Fixed: the «Notify participants» message now says the recording stays on the phone (it used to say «computer»).",
- "contenuto": 28
+ "novita": "Impostazioni › Dove trascrivo: menu a tendina, spiegazione di cos'è il server, codice e chiave dentro «Altre opzioni». «Scollega» ora chiede conferma.",
+ "novita_en": "Settings › Where I transcribe: drop-down menu, explanation of what the server is, code and key inside «More options». «Disconnect» now asks for confirmation.",
+ "contenuto": 29
 }
