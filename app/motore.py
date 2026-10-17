@@ -1222,7 +1222,7 @@ class Motore:
                 "n_appunti": len(appunti), "n_pacchetti": len(pac),
                 "formati": [f for f in ap.FORMATI if fatti[f]],
                 # nessun appunto: si creano nel formato scelto; altrimenti si puo' creare anche l'altro formato
-                "crea_appunti": bool(puo and not appunti),
+                "crea_appunti": bool(puo and not appunti and utili),
                 "crea_anche": [f for f in possibili if puo and appunti and not fatti[f]],
                 "completa_appunti": [f for f in ap.FORMATI if puo and fatti[f] and mancano[f]],
                 "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],

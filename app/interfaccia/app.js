@@ -280,16 +280,24 @@ function apSegui() {
   const lav = P.some(p => p.ap === 'lav' || p.ap === 'attesa');
   if (lav) apVisti = true;
   if (err || (!lav && (apVisti || !P.length))) {
+    const c = APLAV;
     APLAV = null; apVisti = false;
-    if (err) toast(t('pt.ap.err', {m: err.ap_err || ''}));
-    caricaLezioni(); return;
+    apFine(c, err ? (err.ap_err || '') : null);
+    return;
   }
   disegnaLezioni();
 }
+async function apFine(c, err) {
+  await caricaLezioni();
+  const l = LZ && LZ.lezioni.find(x => x.cartella === c);
+  if (err !== null) dialogo({titolo: t('ar.aperr.t'), testo: err});
+  else if (l && !l.n_appunti) dialogo({titolo: t('ar.aperr.t'), testo: t('ar.apnulla')});
+}
 async function creaQui(c, f) {
   APLAV = c; apVisti = false;
-  const r = await A.appunti_mancanti(c, f);
-  if (!r.ok) { APLAV = null; if (r.msg) toast(r.msg); return; }
+  let r;
+  try { r = await A.appunti_mancanti(c, f); } catch (e) { r = {ok: false, msg: String(e && e.message || e)}; }
+  if (!r || !r.ok) { APLAV = null; dialogo({titolo: t('ar.aperr.t'), testo: (r && r.msg) || ''}); return; }
   S = await A.stato(); vistaPrima = S.vista;
   disegnaLezioni();
 }

@@ -1523,8 +1523,13 @@ PAROLE_MINIME = int(os.environ.get("RL_PAROLE_MINIME") or 15)      # sotto: la p
 
 
 def parte_vuota(cartella, k):
-    """True se la parte k e' stata trascritta e non ha (quasi) parole."""
-    segs = el.leggi_json(Path(cartella) / f"trascrizione_{int(k):03d}.json")
+    """True se la parte k e' un pezzetto (meno di un minuto, es. la fine proprio allo scoccare della
+    mezz'ora) e non ha (quasi) parole. Una parte lunga non e' mai vuota: i suoi appunti si fanno sempre."""
+    cartella = Path(cartella)
+    durata = float((el.leggi_json(cartella / "info.json", {}) or {}).get("durata") or 0)
+    if durata and durata - (int(k) - 1) * el.parte_secondi(cartella) >= 60:
+        return False
+    segs = el.leggi_json(cartella / f"trascrizione_{int(k):03d}.json")
     if not isinstance(segs, list):
         return False
     parole = sum(len(str(s.get("testo") or "").split()) for s in segs if isinstance(s, dict))
@@ -1533,8 +1538,7 @@ def parte_vuota(cartella, k):
 
 def parti_utili(cartella, pac):
     """I numeri (stringhe) delle parti con qualcosa da riassumere."""
-    vuote = {str(x) for x in (el.leggi_json(Path(cartella) / "info.json", {}) or {}).get("parti_vuote") or []}
-    return [k for k in sorted(pac, key=int) if str(k) not in vuote]
+    return [k for k in sorted(pac, key=int) if not parte_vuota(cartella, k)]
 
 
 def _segna_vuota(cartella, k):
@@ -1555,7 +1559,7 @@ def sistema_vuote(cartella, cartella_pacchetti):
     info = el.leggi_json(cartella / "info.json", {}) or {}
     cambiato = False
     for k in list(pac):
-        if str(k) in {str(x) for x in info.get("parti_vuote") or []} or not parte_vuota(cartella, k):
+        if not parte_vuota(cartella, k):
             continue
         _segna_vuota(cartella, k)
         cambiato = True

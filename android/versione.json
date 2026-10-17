@@ -1,7 +1,7 @@
 {
- "versione": "0.9.9",
+ "versione": "0.9.10",
  "codice": 9,
- "novita": "Privacy: al primo avvio un riquadro spiega in breve cosa resta sul telefono e cosa esce, e chiede di confermare che hai il permesso di registrare le altre persone. Si rilegge in Impostazioni › Privacy. Nuova pagina «Licenze» in Informazioni.",
- "novita_en": "Privacy: on first start a box briefly explains what stays on your phone and what leaves, and asks you to confirm you have permission to record other people. Read it again in Settings › Privacy. New «Licenses» page under About.",
- "contenuto": 20
+ "novita": "Corretto: «Crea appunti» non restava fermo senza fare niente. Una parte lunga ora ha sempre i suoi appunti, e se qualcosa non va compare un messaggio con il motivo. Inoltre: riquadro «Prima di iniziare», Impostazioni › Privacy e pagina «Licenze».",
+ "novita_en": "Fixed: «Create notes» no longer sits still doing nothing. A long part now always gets its notes, and if something goes wrong a message explains why. Also: «Before you start» box, Settings › Privacy and «Licenses» page.",
+ "contenuto": 21
 }
