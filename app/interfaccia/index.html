@@ -466,9 +466,13 @@
       </div>
       <div class="card mt">
         <div class="row"><span class="ico i-blue"><svg><use href="#i-abc"/></svg></span><div class="sp"><b style="color:var(--ink);font-size:15px" data-t="pw.t">Parole difficili</b><div class="hint" data-t="pw.s">Nomi, termini tecnici, il nome del docente: la trascrizione li sbaglia molto meno e Claude li scrive giusti. Una materia alla volta.</div></div></div>
+        <div class="pwes" data-t="pw.es">💡 Esempio: il docente dice «ciclo di Krebs» e la trascrizione scrive «ciclo di crebs». Se aggiungi «ciclo di Krebs» a Biochimica, dalla prossima lezione di Biochimica lo scrive giusto, anche negli appunti.</div>
+        <div class="lbl" style="margin-top:12px" data-t="pw.mat">Materia</div>
         <div class="chips" id="pwMat"></div>
+        <div class="lbl" style="margin-top:12px" id="pwTit"></div>
         <div class="tags" id="pwTags"></div>
         <div class="row" style="margin-top:10px;gap:8px"><input class="in sp" id="pwIn" data-tp="pw.ph" placeholder="Aggiungi una parola e premi Invio…" maxlength="60" autocomplete="off"><button class="btn b-ghost b-sm" id="pwAgg" data-t="pw.agg">Aggiungi</button></div>
+        <div class="pwok" id="pwOk"></div>
         <div id="pwProp"></div>
       </div>
       <div class="card mt solo-and">

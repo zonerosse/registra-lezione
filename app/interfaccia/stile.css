@@ -621,3 +621,9 @@ html.android .cfpassi{grid-template-columns:1fr}
 .imavz b{color:var(--ink)}.imavz small{color:var(--mut)}
 .imavz-apri{margin-left:auto;pointer-events:none}
 .imavz .fr{color:inherit;display:inline-block;transition:transform .2s}.imavz.aperto .fr{transform:rotate(180deg)}
+
+/* Parole difficili: esempio e conferma */
+.pwes{background:#f0f9ff;border:1px solid #cfe7f8;border-radius:10px;padding:9px 12px;font-size:12.5px;color:#0c4a6e;line-height:1.5;margin-top:12px}
+.pwok{color:#059669;font-weight:600;font-size:13px;margin-top:6px}.pwok:empty{display:none}
+.tag2.nuova{background:#ecfdf5;border-color:#6ee7b7;color:#047857;animation:pwlamp 1.6s}
+@keyframes pwlamp{0%{box-shadow:0 0 0 6px #a7f3d0}100%{box-shadow:none}}

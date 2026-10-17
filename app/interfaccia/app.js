@@ -1278,19 +1278,30 @@ async function disegnaParole(materia) {
   $('pwTags').querySelectorAll('b[data-i]').forEach(b => b.onclick = () => salvaParole(PW.parole.filter((_, i) => i !== +b.dataset.i)));
   $('pwProp').innerHTML = r.proposte && r.proposte.length ? `<div class="lbl" style="margin-top:14px">${esc(t('pw.prop', {m: r.materia}))}</div><div class="tags">` +
     r.proposte.map(w => `<span class="tag2 prop" data-w="${esc(w)}">+ ${esc(w)}</span>`).join('') + '</div>' : '';
-  $('pwProp').querySelectorAll('.prop').forEach(e => e.onclick = () => salvaParole([...PW.parole, e.dataset.w]));
+  $('pwTit').textContent = vuoto ? '' : t('pw.tue', {m: r.materia});
+  if (PWNUOVA.length) [...$('pwTags').querySelectorAll('.tag2')].forEach(e => { if (e.firstChild && PWNUOVA.includes(e.firstChild.textContent)) e.classList.add('nuova'); });
+  $('pwProp').querySelectorAll('.prop').forEach(e => e.onclick = () => aggiuntaParola(e.dataset.w));
 }
-async function salvaParole(lista) {
+let PWNUOVA = [];
+async function aggiuntaParola(...ww) {
+  const m = PW.materia;
+  await salvaParole([...PW.parole, ...ww], ww);
+  $('pwOk').textContent = t('pw.ok', {w: ww.join('», «'), m});
+}
+async function salvaParole(lista, nuova) {
   if (!PW.materia) return;
   await A.salva_parole(PW.materia, lista);
+  PWNUOVA = nuova || [];
   await disegnaParole(PW.materia);
+  PWNUOVA = [];
+  if (!nuova) $('pwOk').textContent = '';
   R.parole_n = (R.parole_n || 0);
 }
 function aggiungiParola() {
   const w = $('pwIn').value.trim();
   if (!w) return;
   $('pwIn').value = '';
-  salvaParole([...PW.parole, ...w.split(/[,;]/).map(x => x.trim()).filter(Boolean)]);
+  aggiuntaParola(...w.split(/[,;]/).map(x => x.trim()).filter(Boolean));
 }
 
 /* ------------------------------------------------------------------ chiedi alla lezione */
