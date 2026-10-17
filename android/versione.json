@@ -1,7 +1,7 @@
 {
- "versione": "0.10.2",
+ "versione": "0.10.3",
  "codice": 10,
- "novita": "Schede delle lezioni più pulite: su ogni lezione solo «Apri appunti», «Ripassa» e «⋯ Altro»; Chiedi, Capitoli, Condividi, Trascrizione e il resto sono nel menu «⋯ Altro». Il formato è un'etichetta accanto al nome.",
- "novita_en": "Cleaner lecture cards: each lecture shows only «Open notes», «Review» and «⋯ More»; Ask, Chapters, Share, Transcript and the rest are in the «⋯ More» menu. The format is a tag next to the name.",
- "contenuto": 33
+ "novita": "Piccole correzioni: negli appunti non c'è più «Primo anno anno»; il nome vuoto non è più segnato in rosso appena apri Registra; sparita l'anteprima con «Lezione» quando il nome è vuoto; sul telefono niente più «🎬 0 MB» rosso.",
+ "novita_en": "Small fixes: no more «first year year» in the notes; an empty name is no longer flagged in red as soon as you open Record; no preview with «Lecture» when the name is empty; on the phone no more red «🎬 0 MB».",
+ "contenuto": 34
 }

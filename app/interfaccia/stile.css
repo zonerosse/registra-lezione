@@ -581,3 +581,5 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .lez .inf>b+.ftag,.lez .ftag{display:inline-block;font-size:11px;font-weight:600;color:#7c3aed;background:#f3efff;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
 .lez .ftag.esame{color:#c2410c;background:#fff4ec}.lez .ftag.verbale{color:var(--blue);background:#eff6ff}.lez .ftag.mio{color:#0f766e;background:#ecfdf5}
 .b-altro{font-weight:700;color:var(--mut)}
+
+.nmsg.grigio{color:var(--mut)}

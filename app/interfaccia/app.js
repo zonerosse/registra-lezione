@@ -383,7 +383,7 @@ function controllaNome(id, msgId, btnId, ok2 = null) {
     const m = $(msgId), inp = $(id);
     inp.classList.toggle('n-err', !v.ok && !v.vuoto); inp.classList.toggle('n-ok', !!v.ok);
     if (v.ok) { m.className = 'nmsg ok'; m.textContent = t('nm.ok'); }
-    else if (v.vuoto) { m.className = 'nmsg err'; m.textContent = t('nm.vuoto'); }
+    else if (v.vuoto) { m.className = 'nmsg grigio'; m.textContent = t('nm.vuoto'); }
     else {
       m.className = 'nmsg err';
       m.innerHTML = esc(t('nm.usato', {n: v.nome, d: v.data ? ` (${v.data})` : ''})) + '<div>' + (v.proposte || []).map(p => `<span class="chip" data-p="${esc(p)}">${esc(p)}</span>`).join('') + '</div>';
@@ -401,7 +401,8 @@ function controllaNomeRec() {
 /* ------------------------------------------------------------------ pronto */
 function anteprimaNome() {
   const k = (R && R.tipo) || 'lezione';
-  const n = $('nome').value.trim() || t(k === 'riunione' ? 'tp.riu.t' : k === 'webinar' ? 'tp.web.t' : 'pr.lezione');
+  const n = $('nome').value.trim();
+  if (!n) { $('nomeAnt').textContent = ''; return; }        // senza nome niente anteprima (il nome serve)
   const d = new Date();
   const ora = LINGUA === 'it' ? `ore ${due(d.getHours())}.${due(d.getMinutes())}` : `${due(d.getHours())}:${due(d.getMinutes())}`;
   $('nomeAnt').textContent = t('pr.ant', {n, d: `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${ora}`});
@@ -884,7 +885,7 @@ function disegnaLezioni() {
   const h = L.map((l, i) => {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
     const meta = [l.tipo === 'riunione' ? t('tp.b.riu') : l.tipo === 'webinar' ? t('tp.b.web') : '', l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
-      (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
+      (!l.video_testo || (ANDROID && /^0 MB/.test(l.video_testo)) ? '' : ANDROID ? ` · <span style="color:var(--mut)">🎧 ${l.video_testo}</span>` : ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>`);
     const errL = l.errore ? `<div class="hint" style="color:#be123c">⚠ ${esc(l.errore)}</div>` : '';
     let pill, prim = '';
     if (APLAV && APLAV === l.cartella) { const pc = apPerc(); pill = `<span class="pill p-cor">${ico('spark', 12)}${t('ar.aplav', {p: pc})}</span><div class="bar cor" style="width:100%;margin:2px 0 4px"><i style="width:${pc}%"></i></div>`; }

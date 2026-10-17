@@ -154,7 +154,12 @@ def riga_studente(info):
     corso = d.get("corso", "")
     if d.get("anno"):
         anno = tr("anno", testi.lingua_di(info))
-        corso = f"{corso}, {d['anno']} {anno}" if corso else f"{d['anno']} {anno}"
+        a = str(d["anno"]).strip()
+        if a.isdigit() and anno == "anno":
+            a += "°"
+        if not any(x in a.lower() for x in ("anno", "year")):     # «Primo anno» resta così (non «Primo anno anno»)
+            a = f"{a} {anno}"
+        corso = f"{corso}, {a}" if corso else a
     return " · ".join(x for x in (d.get("nome", ""), corso, d.get("universita", "")) if x)
 
 
