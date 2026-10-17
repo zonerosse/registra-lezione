@@ -958,6 +958,31 @@ class Motore:
 
     # ------------------------------------------------------------------ lezioni gia' registrate
 
+    def _pacchetti_mancanti(self, cart):
+        """Parti trascritte senza il loro pacchetto (o con il file sparito): lo rifaccio, se no gli appunti
+        di quella parte non si possono creare. Ritorna True se ne ha rifatto qualcuno."""
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        pac = info.get("pacchetti") or {}
+        rifatti = False
+        for f in sorted(cart.glob("trascrizione_[0-9][0-9][0-9].json")):
+            try:
+                k = int(f.stem.split("_")[1])
+            except ValueError:
+                continue
+            z = pac.get(str(k))
+            if z and Path(z).exists():
+                continue
+            segs = el.leggi_json(f, [])
+            if not isinstance(segs, list) or not segs:
+                continue
+            try:
+                el.crea_pacchetto(cart, k, self.cfg["cartella_pacchetti"])
+                log.info("pacchetto della parte %s rifatto (mancava)", k)
+                rifatti = True
+            except Exception:
+                log.exception("pacchetto mancante, parte %s", k)
+        return rifatti
+
     def appunti_mancanti(self, cartella, formato=None):
         """Crea gli appunti che mancano, nel formato indicato (gli altri restano come sono)."""
         cart = Path(cartella)
@@ -967,6 +992,8 @@ class Motore:
             formato = info.get("formato_appunti") or self._formato()
         if formato == "mio" and not info.get("mio"):
             el.aggiorna_info(cart, mio=self.cfg.get("mio"))
+        if self._pacchetti_mancanti(cart):
+            info = el.leggi_json(cart / "info.json", {}) or {}
         pac, fatti = info.get("pacchetti") or {}, info.get(ap.chiave_info(formato)) or {}
         if not info.get("formato_appunti"):
             el.aggiorna_info(cart, formato_appunti=formato)
@@ -1204,11 +1231,13 @@ class Motore:
             info = el.leggi_json(cart / "info.json", {}) or {}
             pac = info.get("pacchetti") or {}
             utili = set(ap.parti_utili(cart, pac))
+            # parti trascritte senza pacchetto: «Crea appunti» lo rifa' (se no non c'e' niente da riassumere)
+            senza_pac = [f for f in cart.glob("trascrizione_[0-9][0-9][0-9].json") if f.stem.split("_")[1].lstrip("0") not in pac]
             fatti = {f: ap.appunti_fatti(info, f) for f in ap.FORMATI}
             appunti = {k: v for f in ap.FORMATI for k, v in fatti[f].items()}
             mancano = {f: [k for k, z in pac.items() if k in utili and Path(z).exists() and k not in fatti[f]]
                        for f in ap.FORMATI}
-            puo = stato == "pronta" and ha_chiave and not self.occupato and bool(pac)
+            puo = stato == "pronta" and ha_chiave and not self.occupato and bool(pac or senza_pac)
             tipo = info.get("tipo") if info.get("tipo") in ap.FORMATI_TIPO else "lezione"
             # i formati che hanno senso per questo tipo («Il mio formato» solo se e' stato descritto)
             possibili = [f for f in ap.FORMATI_TIPO[tipo] if f != "mio" or (info.get("mio") or self.cfg.get("mio"))]
@@ -1222,7 +1251,7 @@ class Motore:
                 "n_appunti": len(appunti), "n_pacchetti": len(pac),
                 "formati": [f for f in ap.FORMATI if fatti[f]],
                 # nessun appunto: si creano nel formato scelto; altrimenti si puo' creare anche l'altro formato
-                "crea_appunti": bool(puo and not appunti and utili),
+                "crea_appunti": bool(puo and not appunti and (utili or senza_pac)),
                 "crea_anche": [f for f in possibili if puo and appunti and not fatti[f]],
                 "completa_appunti": [f for f in ap.FORMATI if puo and fatti[f] and mancano[f]],
                 "rifai": [f for f in ap.FORMATI if puo and fatti[f] and not mancano[f]],

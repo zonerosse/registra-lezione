@@ -1,7 +1,7 @@
 {
- "versione": "0.9.10",
+ "versione": "0.9.11",
  "codice": 9,
- "novita": "Corretto: «Crea appunti» non restava fermo senza fare niente. Una parte lunga ora ha sempre i suoi appunti, e se qualcosa non va compare un messaggio con il motivo. Inoltre: riquadro «Prima di iniziare», Impostazioni › Privacy e pagina «Licenze».",
- "novita_en": "Fixed: «Create notes» no longer sits still doing nothing. A long part now always gets its notes, and if something goes wrong a message explains why. Also: «Before you start» box, Settings › Privacy and «Licenses» page.",
- "contenuto": 21
+ "novita": "Corretto: «Crea appunti» diceva «non ci sono parole» anche con la trascrizione piena. Ora rifà il pezzo che mancava e crea gli appunti.",
+ "novita_en": "Fixed: «Create notes» said «no words» even with a full transcript. It now rebuilds the missing piece and creates the notes.",
+ "contenuto": 22
 }
