@@ -372,6 +372,22 @@ class Api:
         from testi import tr
         return {**r, "percorso": f} if r.get("ok") else {"ok": False, "msg": tr("dc_err")}
 
+    def scegli_testo(self):
+        """Finestra di Windows per scegliere la trascrizione da importare (PDF, Word, testo)."""
+        try:
+            scelta = self._win.create_file_dialog(webview.FileDialog.OPEN,
+                                                  file_types=("Testo (*.pdf;*.docx;*.txt;*.md)", "Tutti i file (*.*)"),
+                                                  directory=str(Path.home() / "Downloads"))
+        except Exception:
+            log.exception("scegli testo")
+            return {"ok": False}
+        if not scelta:
+            return {"ok": False}
+        return self._m.info_testo(scelta[0] if isinstance(scelta, (list, tuple)) else scelta)
+
+    def importa_testo(self, percorso, nome, formato=None):
+        return self._m.importa_testo(percorso, nome, formato)
+
     def scegli_video(self):
         """Finestra di Windows per scegliere il video (o l'audio) da importare."""
         tipi = ("Video e audio (*.mp4;*.mov;*.mkv;*.webm;*.avi;*.m4v;*.3gp;*.wmv;*.mp3;*.m4a;*.wav;*.aac;*.ogg;*.opus;*.flac)",

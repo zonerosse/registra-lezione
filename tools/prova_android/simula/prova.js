@@ -67,6 +67,19 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
             await p.$('.lez [data-a="appunti"]'), fis && fis.n_appunti);
       await foto('06c-appunti-creati');
     }
+    // «Importa una trascrizione» (un PDF di testo)
+    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(1200);
+    if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(1000); }
+    passo('riquadro «Hai già la trascrizione?»', await p.isVisible('#btnImportaTesto'));
+    await p.click('#btnImportaTesto'); await p.waitForSelector('#v-itesto:not(.hidden)', {timeout: 10000}).catch(() => {}); await foto('06d-importa-testo');
+    passo('importa testo: pagina con file e parole', await p.isVisible('#itVai') && /parole/.test(await p.textContent('#itInfo')), await p.textContent('#itInfo'));
+    await p.fill('#itNome', 'Fisiologia – muscolo'); await p.click('#itFmt [data-f="cornell"]'); await p.click('#itVai');
+    await p.waitForTimeout(800);
+    passo('importa testo: resta in Le mie lezioni con la barra', await p.evaluate(() => pagina === 'arch'));
+    await p.waitForFunction(() => !APLAV, null, {timeout: 90000}).catch(() => {}); await p.waitForTimeout(1500); await foto('06e-testo-appunti');
+    const fis2 = (await p.evaluate(() => A.lezioni())).lezioni.find(l => l.nome.startsWith('Fisiologia'));
+    passo('importa testo: appunti fatti', fis2 && fis2.n_appunti > 0, fis2 && JSON.stringify({n: fis2.n_appunti, s: fis2.stato}));
+    if (fis2) await p.evaluate(c => A.elimina(c, false), fis2.cartella);
     // appunti, lezioni
     const lz = await p.evaluate(() => A.lezioni());
     passo('Le mie lezioni', lz.lezioni.length === 2 && lz.lezioni.every(l => l.stato === 'pronta'), lz.lezioni.map(l => l.nome + ':' + l.stato).join(', '));

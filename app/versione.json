@@ -1,6 +1,6 @@
 {
- "versione": "3.37",
+ "versione": "3.38",
  "librerie": 2,
- "novita": "Corretto: se il pacchetto di una parte non si riesce a fare con le slide, si fa solo con il testo e gli appunti si creano lo stesso. Se gli appunti non partono, la finestra mostra i dettagli.",
- "novita_en": "Fixed: if a part's package can't be made with the slides, it's made with text only and the notes are created anyway. If notes don't start, the window shows details."
+ "novita": "Nuovo: «Importa una trascrizione» nella pagina Registra. Dai un PDF, un file Word o di testo con quello che ha detto il docente, anche il «Per Claude» di un'altra registrazione, e il programma ne fa gli appunti.",
+ "novita_en": "New: «Import a transcript» on the Record page. Give it a PDF, Word or text file with what the lecturer said, even the «For Claude» file of another recording, and it makes the notes."
 }

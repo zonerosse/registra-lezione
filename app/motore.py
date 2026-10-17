@@ -817,6 +817,72 @@ class Motore:
         log.info("importazione: %s -> %s", src, cart)
         return {"ok": True}
 
+    def info_testo(self, percorso):
+        """Per la pagina «Importa una trascrizione»: quante pagine/parole, o il motivo per cui non va."""
+        import testo_importato as ti
+        p = Path(percorso)
+        try:
+            testo = ti.leggi(p)
+        except ti.ErroreTesto as e:
+            return {"ok": False, "msg": tr("it_err_tipo" if str(e) == "tipo" else "it_err_vuoto")}
+        except Exception:
+            log.exception("leggo il testo da importare")
+            return {"ok": False, "msg": tr("it_err_vuoto")}
+        parole = len(testo.split())
+        nome = re.sub(r"^(Per Claude|For Claude)\s*[-–]\s*", "", p.stem).strip() or p.stem
+        return {"ok": True, "percorso": str(p), "file": p.name, "parole": parole, "nome": nome,
+                "stima": self.stima_appunti_parole(parole)}
+
+    def stima_appunti_parole(self, parole):
+        minuti = max(1, round(parole / 140))
+        return round(max(0.01, 0.2 * minuti / 60), 2)
+
+    def importa_testo(self, percorso, nome, formato=None):
+        """Crea una registrazione dal testo (senza audio) e prepara gli appunti nel formato scelto."""
+        import testo_importato as ti
+        src = Path(percorso)
+        if self.occupato:
+            return {"ok": False, "msg": tr("aspetta_lavoro")}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            testo = ti.leggi(src)
+        except ti.ErroreTesto as e:
+            return {"ok": False, "msg": tr("it_err_tipo" if str(e) == "tipo" else "it_err_vuoto")}
+        nome = (nome or "").strip() or src.stem
+        self.ricorda_materia(nome)
+        quando = datetime.datetime.now()
+        cart = BASE / f"{quando:%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
+        n = 2
+        while cart.exists():
+            cart = BASE / f"{quando:%Y-%m-%d %H%M} - {el.nome_sicuro(nome)} ({n})"
+            n += 1
+        cart.mkdir(parents=True)
+        segs = ti.segmenti(testo)
+        durata = round(segs[-1]["fine"]) if segs else 0
+        tipo = self._tipo()
+        if formato not in ap.FORMATI:
+            formato = self._formato(tipo)
+        el.scrivi_json(cart / "info.json", {"nome": nome, "inizio": quando.isoformat(timespec="seconds"),
+                                            "durata": durata, "n_slide": 0, "stato": "pronta", "pacchetti": {},
+                                            "studente": self.cfg.get("studente") or {}, "importata": True,
+                                            "da_testo": True, "file_originale": str(src),
+                                            "parte_secondi": max(durata + 60, 3600),
+                                            "lingua_appunti": testi.LINGUA,
+                                            "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
+                                            "formato_appunti": formato, "parole": self.parole_di(nome),
+                                            "tipo": tipo, "mio": self.cfg.get("mio") or None, "chi_parla": False})
+        el.scrivi_json(cart / "trascrizione_001.json", segs)
+        try:
+            el.crea_pacchetto(cart, 1, self.cfg["cartella_pacchetti"])
+            el.crea_completa(cart, segs)
+        except Exception as e:
+            log.exception("importa testo")
+            return {"ok": False, "msg": f"{type(e).__name__}: {e} [{_dove_errore(e)}]"}
+        log.info("testo importato: %s -> %s (%s parole)", src, cart, len(testo.split()))
+        r = self.appunti_mancanti(str(cart), formato)
+        return {**r, "cartella": str(cart)}
+
     def _imp_perc(self, fase, f):
         if self.imp is not None:
             self.imp.update(fase=fase + int(self.imp.get("off") or 0), perc=round(float(f), 3))

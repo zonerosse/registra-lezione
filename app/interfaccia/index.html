@@ -136,6 +136,9 @@
       <div class="imp mt solo-pc" id="btnImporta"><span class="ico i-teal"><svg><use href="#i-imp"/></svg></span>
         <div class="sp"><b style="color:var(--ink)" data-t="im.v.t">Hai già un video della lezione?</b><div class="hint" data-t="im.v">Registrato col telefono o dato dall'università (mp4, mov, mkv, mp3, m4a…). Lo trasformo in trascrizione, slide e appunti, come una registrazione fatta qui.</div></div>
         <span class="btn b-ghost b-sm" data-t="im.v.b">Importa un video…</span></div>
+      <div class="imp mt" id="btnImportaTesto"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span>
+        <div class="sp"><b style="color:var(--ink)" data-t="it.b.t">Hai già la trascrizione della lezione?</b><div class="hint" data-t="it.b">Un PDF, un file Word o di testo con quello che ha detto il docente (anche il «Per Claude» di un'altra registrazione). Ne faccio gli appunti.</div></div>
+        <span class="btn b-ghost b-sm" data-t="it.b.b">Importa un testo…</span></div>
       <div class="hint" style="text-align:center;margin-top:12px" id="prPrima" data-t="pr.prima">Prima di iniziare entra nella lezione (Meet, Teams, Zoom…) e tieni la sua finestra sullo schermo principale, con il volume acceso.</div>
     </section>
 
@@ -150,6 +153,22 @@
         <div class="set" id="ivSlideRiga" style="margin-top:12px"><div class="t"><b data-t="iv.sl.t">C'è lo schermo con le slide?</b><span data-t="iv.sl">Se il video ha solo l'audio (o solo la faccia del docente) salto le slide.</span></div><div class="seg" id="ivSlide"><span data-v="1" data-t="iv.sl.si">Sì, cerco le slide</span><span data-v="0" data-t="iv.sl.no">Solo audio</span></div></div>
         <div class="hint" style="margin-top:10px" id="ivStima"></div>
         <div class="row mt"><span class="sp"></span><button class="btn b-ghost b-sm" id="ivAnnulla" data-t="annulla">Annulla</button><button class="btn b-main" id="ivVai" data-t="iv.vai">Importa e prepara gli appunti</button></div>
+      </div>
+    </section>
+
+    <!-- REGISTRA: importa una trascrizione -->
+    <section class="pg hidden" id="v-itesto">
+      <div class="hd"><div><h2 data-t="it.h">Importa una trascrizione</h2><p data-t="it.p">Ne faccio gli appunti: il file originale resta dov'è.</p></div></div>
+      <div class="card">
+        <div class="file"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><div class="sp"><b style="color:var(--ink)" id="itFile"></b><div class="hint" id="itInfo"></div></div><button class="btn b-ghost b-sm" id="itCambia" data-t="im.cambia">Cambia…</button></div>
+        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="itNome" maxlength="90" autocomplete="off">
+        <div class="lbl" style="margin-top:14px" data-t="it.fmt">Che appunti vuoi?</div>
+        <div id="itFmt" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <div class="aiopt" data-f="cornell"><span class="rd"></span><b data-t="it.fmt.c.t">Cornell</b><small data-t="it.fmt.c">Domande a sinistra, appunti a destra, riassunto in fondo.</small></div>
+          <div class="aiopt" data-f="esame"><span class="rd"></span><b data-t="it.fmt.e.t">Formato Esame</b><small data-t="it.fmt.e">Le domande più probabili, con lo schema della risposta.</small></div>
+        </div>
+        <div class="hint" style="margin-top:10px" id="itStima"></div>
+        <div class="row mt"><span class="sp"></span><button class="btn b-ghost b-sm" id="itAnnulla" data-t="annulla">Annulla</button><button class="btn b-main" id="itVai" data-t="it.vai">Crea gli appunti</button></div>
       </div>
     </section>
 

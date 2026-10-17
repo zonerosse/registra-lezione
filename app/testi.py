@@ -58,6 +58,8 @@ T = {
         "ap_occupato": "Claude non risponde o manca internet: tocca Riprova piu' tardi",
         "ap_vuoto": "risposta di Claude senza appunti: tocca Riprova",
         "ap_imprevisto": "errore imprevisto (dettagli nel file registra_lezione.log)",
+        "it_err_tipo": "Questo tipo di file non lo so leggere: usa un PDF, un file Word (.docx) o di testo (.txt).",
+        "it_err_vuoto": "Nel file non trovo testo da leggere (forse è una scansione fatta di foto).",
         # file
         "parte": "parte",
         "ore": "ore",
@@ -293,6 +295,8 @@ T = {
         "ap_occupato": "Claude is not answering or there is no internet: tap Retry later",
         "ap_vuoto": "Claude answered without notes: tap Retry",
         "ap_imprevisto": "unexpected error (details in registra_lezione.log)",
+        "it_err_tipo": "I can't read this type of file: use a PDF, a Word file (.docx) or a text file (.txt).",
+        "it_err_vuoto": "I can't find any text in the file (maybe it's a scan made of photos).",
         "parte": "part",
         "ore": "",
         "file_appunti": "Notes",

@@ -65,6 +65,7 @@ window.indietro = () => {
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
+  if (IT) { IT = null; vai('reg'); return true; }
   return false;
 };
 
@@ -115,8 +116,8 @@ window.chiusura = async c => {
 function vai(p) {
   pagina = p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
-  if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
@@ -173,6 +174,11 @@ function inizializza() {
   collegaNovita();
   $('ivCambia').onclick = scegliVideo;
   $('ivAnnulla').onclick = () => { IV = null; vai('reg'); };
+  $('btnImportaTesto').onclick = scegliTesto;
+  $('itCambia').onclick = scegliTesto;
+  $('itAnnulla').onclick = () => { IT = null; vai('reg'); };
+  $('itVai').onclick = importaTesto;
+  $('itFmt').querySelectorAll('.aiopt').forEach(o => o.onclick = () => { if (IT) { IT.formato = o.dataset.f; disegnaTesto(); } });
   $('ivVai').onclick = importaVideo;
   $('ivSlide').querySelectorAll('span').forEach(x => x.onclick = () => { IV.slide = x.dataset.v === '1'; disegnaImporta(); });
   // registrazione
@@ -544,6 +550,38 @@ function copiaVecchia(testo) {
 
 /* ------------------------------------------------------------------ importa un video */
 let IV = null;   // video scelto da importare
+let IT = null;   // trascrizione (PDF, Word, testo) scelta da importare
+async function scegliTesto() {
+  if (S.registro || S.occupato) { toast(t('aspetta')); return; }
+  const r = await A.scegli_testo();
+  if (!r || !r.ok) { if (r && r.msg) dialogo({titolo: t('it.h'), testo: r.msg}); return; }
+  IT = {...r, formato: (IT && IT.formato) || (R.formato === 'esame' ? 'esame' : 'cornell')};
+  $('itNome').value = r.nome || '';
+  disegnaTesto();
+  vai('reg');
+}
+function disegnaTesto() {
+  if (!IT) return;
+  $('itFile').textContent = IT.file;
+  $('itInfo').textContent = t('it.info', {n: num(IT.parole)});
+  $('itFmt').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.f === IT.formato));
+  const cc = Math.max(1, Math.round((IT.stima || 0.01) * 100));
+  $('itStima').textContent = cc === 1 ? t('it.stima1') : t('it.stima', {c: cc});
+}
+async function importaTesto() {
+  if (!IT) return;
+  if (!R.chiave) { dialogo({titolo: t('it.h'), testo: t('it.manca')}); return; }
+  $('itVai').disabled = true;
+  let r;
+  try { r = await A.importa_testo(IT.percorso, $('itNome').value, IT.formato); }
+  catch (e) { r = {ok: false, msg: String(e && e.message || e)}; }
+  finally { $('itVai').disabled = false; }
+  if (!r || !r.ok) { dialogo({titolo: t('ar.aperr.t'), testo: (r && r.msg) || ''}); return; }
+  IT = null;
+  S = await A.stato(); vistaPrima = S.vista;
+  if (ANDROID) { APLAV = r.cartella; apVisti = false; vai('arch'); }
+  else vai('reg');
+}
 function durataTesto(sec) {
   const m = Math.round(sec / 60), h = Math.floor(m / 60);
   return h ? t('dur.h', {h, m: m % 60}) : t('dur.m', {m: Math.max(1, m)});

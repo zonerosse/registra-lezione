@@ -600,6 +600,14 @@ def _api_android(api, mt):
             log.exception("info video")
             return {"ok": False, "msg": "?"}
 
+    def scegli_testo():
+        # (l'app installata sa scegliere solo i PDF; Word e .txt arriveranno con l'app completa nuova)
+        f = str(Ponte.scegliFile("pdf"))
+        if not f:
+            return {"ok": False}
+        return api._m.info_testo(f)
+
+    api.scegli_testo = scegli_testo
     api.scegli_pdf = scegli_pdf
     api.scegli_video = scegli_video
     api.scegli_cartella = lambda: {"ok": False}
