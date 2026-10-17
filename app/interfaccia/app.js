@@ -382,9 +382,10 @@ function controllaNome(id, msgId, btnId, ok2 = null) {
     if (n !== st.n) return;
     st.ok = !!v.ok;
     const m = $(msgId), inp = $(id);
-    inp.classList.toggle('n-err', !v.ok && !v.vuoto); inp.classList.toggle('n-ok', !!v.ok);
+    inp.classList.toggle('n-err', !v.ok && !v.vuoto && !v.corto && !v.generico); inp.classList.toggle('n-ok', !!v.ok);
     if (v.ok) { m.className = 'nmsg ok'; m.textContent = t('nm.ok'); }
     else if (v.vuoto) { m.className = 'nmsg grigio'; m.textContent = t('nm.vuoto'); }
+    else if (v.corto || v.generico) { m.className = 'nmsg grigio'; m.textContent = t('nm.senso'); }
     else {
       m.className = 'nmsg err';
       m.innerHTML = esc(t('nm.usato', {n: v.nome, d: v.data ? ` (${v.data})` : ''})) + '<div>' + (v.proposte || []).map(p => `<span class="chip" data-p="${esc(p)}">${esc(p)}</span>`).join('') + '</div>';
@@ -396,7 +397,7 @@ function controllaNome(id, msgId, btnId, ok2 = null) {
 }
 const nomeOk = id => !!(NOMI[id] && NOMI[id].ok);
 function controllaNomeRec() {
-  controllaNome('nome', 'nomeMsg', 'btnRec', v => { $('recNome').textContent = v.ok ? '' : t(v.vuoto ? 'nm.prima' : 'nm.prima2'); });
+  controllaNome('nome', 'nomeMsg', 'btnRec', v => { $('recNome').textContent = v.ok ? '' : t(v.vuoto || v.corto || v.generico ? 'nm.prima' : 'nm.prima2'); $('nomeAnt').classList.toggle('hidden', !v.ok); });
 }
 
 /* ------------------------------------------------------------------ pronto */
@@ -887,7 +888,7 @@ function disegnaLezioni() {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
     const meta = [l.tipo === 'riunione' ? t('tp.b.riu') : l.tipo === 'webinar' ? t('tp.b.web') : '', l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
       (l.cloud === true ? ` · <span style="color:#0284c7">${t('ar.cloud')}</span>` : l.cloud === false ? ` · <span style="color:#ea580c">${t('ar.cloud.no')}</span>` : '') +
-      (!l.video_testo || (ANDROID && /^0 MB/.test(l.video_testo)) ? '' : ANDROID ? ` · <span style="color:var(--mut)">🎧 ${l.video_testo}</span>` : ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>`);
+      (!l.video_testo || (ANDROID && /^0 MB/.test(l.video_testo)) ? '' : ANDROID ? ` · <span style="color:var(--mut)">🎧 ${l.video_testo}</span>` : ` · <span style="color:var(--mut)">🎬 ${l.video_testo}</span>`);
     const errL = l.errore ? `<div class="hint" style="color:#be123c">⚠ ${esc(l.errore)}</div>` : '';
     let pill, prim = '';
     if (APLAV && APLAV === l.cartella) { const pc = apPerc(); pill = `<span class="pill p-cor">${ico('spark', 12)}${t('ar.aplav', {p: pc})}</span><div class="bar cor" style="width:100%;margin:2px 0 4px"><i style="width:${pc}%"></i></div>`; }

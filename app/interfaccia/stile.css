@@ -627,3 +627,13 @@ html.android .cfpassi{grid-template-columns:1fr}
 .pwok{color:#059669;font-weight:600;font-size:13px;margin-top:6px}.pwok:empty{display:none}
 .tag2.nuova{background:#ecfdf5;border-color:#6ee7b7;color:#047857;animation:pwlamp 1.6s}
 @keyframes pwlamp{0%{box-shadow:0 0 0 6px #a7f3d0}100%{box-shadow:none}}
+
+/* «Le mie registrazioni» più calma: un colore principale (blu); le copertine restano colorate per materia */
+#v-arch .banda{background:#fff;border:1px solid #e2e8f0;box-shadow:0 6px 18px -12px rgba(13,66,117,.25)}
+#v-arch .banda .ico{background:#eff6ff;color:var(--navy);box-shadow:none}
+#v-arch .banda .chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+#v-arch .banda .b-cor{background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;border:0}
+#v-arch .b-rip{background:#fff;color:var(--navy);border:1px solid #9fc0e0;box-shadow:none}
+#v-arch .b-rip:hover{background:#f0f7ff;filter:none}
+#v-arch .lez .ftag,#v-arch .lez .ftag.esame,#v-arch .lez .ftag.verbale,#v-arch .lez .ftag.mio{color:#475569;background:#f1f5f9}
+#v-arch .lez .b-cor{background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;border:0}

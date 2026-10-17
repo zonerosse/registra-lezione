@@ -844,6 +844,11 @@ class Motore:
         nome = re.sub(r"\s+", " ", str(nome or "")).strip()
         if not nome:
             return {"ok": False, "vuoto": True, "proposte": []}
+        lettere = [c for c in nome.lower() if c.isalpha()]
+        if len(lettere) < 3 or len(set(lettere)) < 2:         # «b», «aaa», «12»: non vuol dire niente
+            return {"ok": False, "corto": True, "proposte": []}
+        if self._norm_nome(nome) in self.NOMI_GENERICI:        # «Lezione», «prova»…: non si ritrova più
+            return {"ok": False, "generico": True, "proposte": []}
         usati = self._nomi_usati(escludi)
         if self._norm_nome(nome) not in usati:
             return {"ok": True}
@@ -864,14 +869,22 @@ class Motore:
         proposte.append(f"{nome} – {n}")
         return {"ok": False, "vuoto": False, "nome": vecchio, "data": data, "proposte": proposte}
 
+    NOMI_GENERICI = {"lezione", "riunione", "webinar", "registrazione", "prova", "test", "nuova", "nuovo",
+                     "lecture", "meeting", "recording", "senza nome", "boh", "asd", "aaa", "xxx"}
+
     def nome_unico(self, nome):
         """Per chi parte da solo (calendario): il nome se e' libero, se no il primo nome libero proposto."""
         v = self.nome_libero(nome)
+        if v.get("corto") or v.get("generico") or v.get("vuoto"):
+            nome = f"{(nome or '').strip() or 'Lezione'} – {datetime.datetime.now():%d/%m %H.%M}"
+            v = self.nome_libero(nome)
         return nome if v.get("ok") else (v.get("proposte") or [nome or "Lezione"])[0]
 
     def _msg_nome(self, v):
         if v.get("vuoto"):
             return tr("nome_vuoto")
+        if v.get("corto") or v.get("generico"):
+            return tr("nome_senso")
         return tr("nome_usato", n=v.get("nome", ""), p=" / ".join(v.get("proposte") or []))
 
     def avvia(self, nome, opzioni=None):

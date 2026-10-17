@@ -1,7 +1,7 @@
 {
- "versione": "0.10.9",
+ "versione": "0.10.10",
  "codice": 10,
- "novita": "Dove trascrivo: le due scelte («Sul telefono» e «Sul server») ora sono sempre in vista, una accanto all'altra, come «Online / In aula».",
- "novita_en": "Where I transcribe: the two choices («On the phone» and «On the server») are now always visible, side by side, like «Online / In class».",
- "contenuto": 40
+ "novita": "«Le mie lezioni» più calma: un colore principale (blu), le copertine restano colorate per materia. Il nome di una registrazione deve dire cos'è: niente nomi di una lettera o generici come «Lezione» o «prova».",
+ "novita_en": "Calmer «My lectures»: one main colour (blue), covers stay coloured by subject. A recording name must say what it is: no one-letter or generic names like «Lecture» or «test».",
+ "contenuto": 41
 }
