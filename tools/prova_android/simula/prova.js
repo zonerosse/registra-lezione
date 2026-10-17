@@ -199,8 +199,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await p.evaluate(() => document.getElementById('calCard').scrollIntoView()); await foto('17-calendario-imp');
     // «Dove trascrivo: sul server» (RunPod finto)
     await p.evaluate(() => document.getElementById('dvCard').scrollIntoView()); await foto('17b-dove-telefono');
-    passo('«Dove trascrivo»: sul telefono si vedono velocità e limiti, niente server', await p.isVisible('#dvSel') && await p.isVisible('#dvPc') && await p.isVisible('#segQuando') && !(await p.isVisible('.dvcosa')) && !(await p.isVisible('#srvCod')));
-    await p.click('#dvSel'); await p.waitForTimeout(200);
+    passo('«Dove trascrivo»: sul telefono si vedono velocità e limiti, niente server', await p.isVisible('#dvBox [data-d="server"]') && await p.isVisible('#dvPc') && await p.isVisible('#segQuando') && !(await p.isVisible('.dvcosa')) && !(await p.isVisible('#srvCod')));
     await p.click('#dvBox [data-d="server"]'); await p.waitForTimeout(300);
     passo('«Sul server»: spiegazione e limiti, sparisce il riquadro del telefono', await p.isVisible('.dvcosa') && !(await p.isVisible('#dvPc')));
     await p.fill('#srvCod', 'prova123'); await p.fill('#srvKey', 'rpa_prova_telefono_1'); await p.click('#srvVai');

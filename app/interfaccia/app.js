@@ -1081,11 +1081,8 @@ function disegnaInviti() {
 }
 function disegnaDove() {
   const dove = DV.scelto || R.dove || 'qui';
-  const opt = $('dvBox').querySelector(`[data-d="${dove}"]`);
-  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.classList.toggle('on', o === opt));
-  $('dvIco').textContent = dove === 'server' ? '⚡' : (ANDROID ? '📱' : '💻');
-  $('dvT').textContent = t(dove === 'server' ? 'dv.srv.t' : 'dv.qui.t');
-  $('dvS').textContent = t(dove === 'server' ? 'dv.srv.b' : 'dv.qui.b');
+  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.classList.toggle('on', o.dataset.d === dove));
+  $('dvIcoQui').textContent = ANDROID ? '📱' : '💻';
   if (document.activeElement !== $('srvCod')) $('srvCod').value = R.server_endpoint || $('srvCod').value || '';
   $('srvKey').placeholder = R.server_endpoint ? t('dv.chiave.gia') : '';
   $('srvVia').classList.toggle('hidden', !R.server_endpoint);
@@ -1095,13 +1092,11 @@ function disegnaDove() {
   $('dvVel').textContent = v > 0 ? t('dv.vel', {m: Math.max(1, Math.round(60 / v))}) : t('dv.vel0');
   // la scelta che vale davvero adesso (spunta nella tendina e riga verde)
   const attivo = R.server_endpoint && R.dove === 'server' ? 'server' : 'qui';
-  $('dvBox').querySelectorAll('[data-d]').forEach(o => o.classList.toggle('attivo', o.dataset.d === attivo));
   $('dvAttivo').textContent = attivo === 'server' ? t('dv.att.srv') : dove === 'server' ? t('dv.att.manca') : t('dv.att.qui');
   $('dvStato').textContent = '';
   if (!DV.esito) { $('srvEsito').textContent = ''; $('srvEsito').style.color = ''; }
-  $('dvSel').onclick = () => { const h = $('dvBox').classList.toggle('hidden'); $('dvSel').classList.toggle('aperto', !h); };
   $('dvBox').querySelectorAll('[data-d]').forEach(o => o.onclick = async () => {
-    DV.esito = ''; $('dvBox').classList.add('hidden'); $('dvSel').classList.remove('aperto');
+    DV.esito = '';
     if (o.dataset.d === 'qui') { DV.scelto = null; await A.server_scegli('qui'); await rileggi(); return; }
     if (R.server_endpoint) { DV.scelto = null; await A.server_scegli('server'); await rileggi(); return; }
     DV.scelto = 'server'; disegnaDove(); $('dvAltre').open = true; $('srvCod').focus();
