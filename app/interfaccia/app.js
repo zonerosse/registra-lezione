@@ -50,6 +50,7 @@ async function avvio() {
   $('splash').classList.add('via');
   setTimeout(() => $('splash').remove(), 500);
   if (!R.lingua_scelta) benvenuto();
+  else if (!R.privacy_ok) primaDiIniziare();
   contaFare();
   ciclo();
 }
@@ -158,6 +159,7 @@ function inizializza() {
   $('btnCercaAgg').onclick = () => A.cerca_aggiornamenti();
   $('btnAss').onclick = () => A.assistenza();
   $('btnLic').onclick = () => vai('lic');
+  $('btnPrivacy').onclick = () => primaDiIniziare(true);
   $('licIndietro').onclick = () => vai('info');
   // pronto
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); });
@@ -230,9 +232,31 @@ function benvenuto() {
     <div class="hint" style="margin-top:12px">${esc(t('bv.s'))}</div></div>`;
   v.querySelectorAll('[data-l]').forEach(b => {
     if (b.dataset.l === LINGUA) b.className = 'btn b-main';
-    b.onclick = async () => { v.remove(); await cambiaLingua(b.dataset.l); };
+    b.onclick = async () => { v.remove(); await cambiaLingua(b.dataset.l); if (!R.privacy_ok) primaDiIniziare(); };
   });
   document.body.appendChild(v);
+}
+
+// «Prima di iniziare»: privacy in breve e spunta sul permesso di registrare (una volta sola; poi da Impostazioni)
+function primaDiIniziare(rileggi) {
+  const v = document.createElement('div');
+  v.className = 'velo';
+  const punto = (ic, k, cl) => `<div class="pv-i${cl || ''}"><span class="ic">${ic}</span><div><b>${esc(t(k + '.t'))}</b><span>${esc(t(k))}</span></div></div>`;
+  v.innerHTML = `<div class="dlg"><h3>${esc(t('pv.t'))}</h3><div class="tx">${esc(t('pv.s'))}</div>
+    <div class="pv-p">${punto('🔒', 'pv.1')}${punto('🚫', 'pv.2')}${punto('🤖', 'pv.3')}${punto('📝', 'pv.4', ' az')}</div>
+    <div class="pv-r"><b>${esc(t('pv.r.t'))}</b><p>${esc(t('pv.r'))}</p>
+      ${rileggi ? '' : `<label><input type="checkbox" id="pvCk"> ${esc(t('pv.ck'))}</label>`}</div>
+    <div class="pv-bt"><a id="pvLink">${esc(t('pv.link'))}</a>
+      <button class="btn b-main" id="pvOk"${rileggi ? '' : ' disabled'}>${esc(t(rileggi ? 'pv.chiudi' : 'pv.inizia'))}</button></div></div>`;
+  document.body.appendChild(v);
+  v.querySelector('#pvLink').onclick = () => A.informativa();
+  const ck = v.querySelector('#pvCk');
+  if (ck) ck.onchange = () => { v.querySelector('#pvOk').disabled = !ck.checked; };
+  v.querySelector('#pvOk').onclick = async () => {
+    if (!rileggi) { await A.imposta('privacy_ok', true); R.privacy_ok = true; }
+    v.remove();
+  };
+  if (rileggi) v.onclick = e => { if (e.target === v) v.remove(); };
 }
 
 /* ------------------------------------------------------------------ ciclo */

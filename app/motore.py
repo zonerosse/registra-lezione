@@ -30,6 +30,11 @@ APP = "Verba Manent IA"
 SITO_ASSISTENZA = "https://puntowebferrara.com/contatti/"
 
 
+def sito_privacy():
+    """L'informativa privacy sul sito, nella lingua del programma."""
+    return "https://verbamanent.app/privacy/" if testi.LINGUA == "it" else "https://verbamanent.app/en/privacy/"
+
+
 # ----------------------------------------------------------------------------- cartelle e impostazioni
 
 def cartella_documenti():
@@ -503,6 +508,7 @@ class Motore:
         cart = Path(self.cfg["cartella_pacchetti"])
         ha_chiave = bool(self.chiave())
         return {"lingua": testi.LINGUA, "lingua_scelta": self.cfg.get("lingua") in testi.T,
+                "privacy_ok": bool(self.cfg.get("privacy_ok")),
                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                 "formato": self._formato("lezione"), "tipo": self._tipo(), "mio": self.cfg.get("mio") or None,
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
@@ -528,7 +534,10 @@ class Motore:
     # ------------------------------------------------------------------ impostazioni
 
     def imposta(self, campo, valore):
-        if campo == "lingua":
+        if campo == "privacy_ok":
+            # «Prima di iniziare»: spunta sul permesso di registrare, con data e ora
+            self.cfg["privacy_ok"] = datetime.datetime.now().isoformat(timespec="seconds")
+        elif campo == "lingua":
             if valore not in testi.T:
                 return {"ok": False, "msg": "?"}
             vecchia = str(cartella_documenti() / tr("pacchetti_cartella"))

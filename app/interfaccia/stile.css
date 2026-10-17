@@ -195,6 +195,17 @@ h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 .dlg .tx{font-size:14px;line-height:1.5;color:var(--txt);white-space:pre-line}
 .dlg .bt{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
 .dlg .passi{background:var(--soft);border-radius:12px;padding:10px 12px;margin-top:12px;font-size:13px;line-height:1.7}
+.pv-p{display:grid;gap:8px;margin:14px 0}
+.pv-i{display:flex;gap:12px;align-items:flex-start;background:#ecfdf5;border-radius:12px;padding:10px 12px}
+.pv-i.az{background:var(--soft)}
+.pv-i .ic{font-size:20px;line-height:1}
+.pv-i b{display:block;color:var(--ink);font-size:14px}.pv-i span{font-size:12.5px;color:var(--mut)}
+.pv-r{border:1.5px solid #fde68a;background:#fffbeb;border-radius:12px;padding:12px}
+.pv-r b{color:var(--ink)}.pv-r p{margin:4px 0 10px;font-size:13px;line-height:1.5}
+.pv-r label{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;color:var(--ink);cursor:pointer;font-weight:600}
+.pv-r input{width:18px;height:18px;margin-top:1px;flex:none;accent-color:var(--blue)}
+.pv-bt{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.pv-bt a{color:var(--blue);font-weight:600;text-decoration:none;cursor:pointer}
 .dlg label.ck{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--mut);margin-top:12px;cursor:pointer}
 .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#0f1b2d;color:#fff;border-radius:12px;padding:10px 16px;font-size:13.5px;z-index:60;box-shadow:0 12px 30px -10px rgba(0,0,0,.5);animation:fade .2s}
 

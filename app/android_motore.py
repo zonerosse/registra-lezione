@@ -605,6 +605,7 @@ def _api_android(api, mt):
     api.scegli_cartella = lambda: {"ok": False}
     api.apri_pacchetti = lambda: False
     api.assistenza = lambda: Ponte.apriLink(mt.SITO_ASSISTENZA)
+    api.informativa = lambda: Ponte.apriLink(mt.sito_privacy())
     api.esci = lambda: None
     api._apri_mini = lambda: None
     api.apri_finestra = lambda: None

@@ -1,6 +1,6 @@
 {
- "versione": "3.33",
+ "versione": "3.34",
  "librerie": 2,
- "novita": "Corretto: se la registrazione finisce proprio allo scoccare della mezz'ora, l'ultimo pezzo vuoto non crea più appunti sbagliati («Tratto vuoto»). Le lezioni già fatte si sistemano da sole.",
- "novita_en": "Fixed: if a recording ends right on the half hour, the empty last piece no longer creates wrong notes («Empty stretch»). Existing lectures fix themselves."
+ "novita": "Privacy: al primo avvio un riquadro spiega in breve cosa resta sul tuo computer e cosa esce, e chiede di confermare che hai il permesso di registrare le altre persone. Si rilegge quando vuoi in Impostazioni › Privacy.",
+ "novita_en": "Privacy: on first start a box briefly explains what stays on your computer and what leaves, and asks you to confirm you have permission to record other people. You can read it again anytime in Settings › Privacy."
 }
