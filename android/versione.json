@@ -1,7 +1,7 @@
 {
- "versione": "0.9.16",
+ "versione": "0.9.17",
  "codice": 9,
- "novita": "Nomi unici: non si può più registrare o importare con un nome vuoto o uguale a una lezione che c'è già. Il programma lo dice subito sotto il nome e propone nomi liberi da toccare.",
- "novita_en": "Unique names: you can no longer record or import with an empty name or one that matches an existing lecture. The program tells you right under the name and suggests free names to tap.",
- "contenuto": 27
+ "novita": "Corretto: il messaggio «Avvisa i partecipanti» ora dice che la registrazione resta sul telefono (prima diceva «computer»).",
+ "novita_en": "Fixed: the «Notify participants» message now says the recording stays on the phone (it used to say «computer»).",
+ "contenuto": 28
 }
