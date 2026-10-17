@@ -18,7 +18,7 @@ const GUIDA = {
      "<b>Le slide le fotografa da solo</b> e le mette negli appunti accanto alle parole, al minuto giusto.",
      "<b>Tutto in un posto</b>: cerca una parola in tutte le registrazioni, le cose da fare di tutte le riunioni, il calendario che avvisa (o registra da solo), il verbale per email, Word, Google Docs, Slack, Teams, Notion o il CRM.",
      "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione» e la preparazione all'esame su tutto il corso, con simulazione corretta da Claude.",
-     "<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave di Claude (circa 0,20 $ per ora registrata), oppure porti i pacchetti all'AI che preferisci.",
+     "<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave di Claude (circa 0,20 $ per ora registrata), oppure porti i file all'AI che preferisci.",
      "Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi."
     ]
    },
@@ -70,7 +70,7 @@ const GUIDA = {
      "<b>Le tue note</b> (nella finestra grande): scrivi due parole e premi Invio, oppure tocca <b>⭐ Importante</b>, <b>❓ Da chiarire</b>, <b>✅ Cosa da fare</b>. Ogni nota prende il minuto. Claude le usa: quei punti negli appunti sono più completi e segnati «(tua nota)».",
      "<b>Chiedi adesso</b>: fai una domanda su quello che si è detto finora, per esempio «cosa ha detto 5 minuti fa sui costi?» o «riassumi gli ultimi 10 minuti». Risponde in pochi secondi con il minuto. Circa 1 centesimo a domanda. Funziona meglio con <b>Testo in diretta</b> acceso (Impostazioni).",
      "<b>Pausa</b> durante l'intervallo: non registra niente e il tempo si ferma. <b>Riprendi</b> quando ricomincia.",
-     "Le slide vengono fotografate da sole quando cambiano. Ogni 30 minuti (o ogni ora) prepara un <b>pacchetto</b>; con gli appunti automatici Claude comincia subito a scriverli."
+     "Le slide vengono fotografate da sole quando cambiano. Ogni 30 minuti (o ogni ora) salva una <b>parte</b>, così non si perde niente; con gli appunti automatici Claude comincia subito a scriverli."
     ]
    },
    {
@@ -80,7 +80,7 @@ const GUIDA = {
     "p": [
      "Tocca <b>Fine</b> nella mini finestra o nella finestra grande e conferma.",
      "Il programma trascrive l'ultima parte, riconosce chi parla, prepara il video e la trascrizione completa. Puoi fare altro, ma <b>non spegnere il PC</b>.",
-     "Quando compare «Registrazione salvata!», tocca <b>Apri gli appunti</b>. Li trovi anche nella <b>Cartella dei pacchetti</b> (di solito Documenti → Pacchetti per Claude)."
+     "Quando compare «Registrazione salvata!», tocca <b>Apri gli appunti</b>. Li trovi anche nella <b>Cartella delle lezioni</b> (di solito Documenti → Pacchetti per Claude)."
     ]
    },
    {
@@ -194,10 +194,10 @@ const GUIDA = {
     "t": "Impostazioni",
     "p": [
      "<b>Lingua</b> del programma e degli appunti: italiano o inglese.",
-     "<b>Intelligenza artificiale</b>: «Appunti automatici con Claude» con la tua chiave (circa 0,20 $ per ora registrata; si crea su platform.claude.com e resta sul PC, protetta da Windows), oppure «Cartella per l'AI che vuoi»: solo i pacchetti zip da portare a Claude, ChatGPT, Gemini…",
-     "<b>Formato degli appunti</b> e <b>✎ Il mio formato</b>; <b>ogni quanto preparo un pacchetto</b> (30 minuti o 1 ora); <b>mini finestra</b>; <b>Trascrizione più precisa</b> (sbaglia meno, ci mette una volta e mezza il tempo); <b>Testo in diretta</b>; <b>Riconosci chi parla</b>; promemoria <b>Non disturbare</b>.",
+     "<b>Intelligenza artificiale</b>: «Appunti automatici con Claude» con la tua chiave (circa 0,20 $ per ora registrata; si crea su platform.claude.com e resta sul PC, protetta da Windows), oppure «Cartella per l'AI che vuoi»: solo i file da portare a Claude, ChatGPT, Gemini…",
+     "<b>Formato degli appunti</b> e <b>✎ Il mio formato</b>; <b>ogni quanto salvo una parte</b> (30 minuti o 1 ora); <b>mini finestra</b>; <b>Trascrizione più precisa</b> (sbaglia meno, ci mette una volta e mezza il tempo); <b>Testo in diretta</b>; <b>Riconosci chi parla</b>; promemoria <b>Non disturbare</b>.",
      "<b>Parole difficili</b>: per ogni materia scrivi nomi e termini tecnici (o tocca quelli proposti). La trascrizione li sbaglia molto meno e Claude li scrive giusti.",
-     "<b>Condividi e collega</b> (Slack, Teams, Notion, CRM), <b>Calendario</b>, <b>Dove salvo i pacchetti</b> e <b>I tuoi dati</b> (compaiono sugli appunti)."
+     "<b>Condividi e collega</b> (Slack, Teams, Notion, CRM), <b>Calendario</b>, <b>Dove salvo le lezioni</b> e <b>I tuoi dati</b> (compaiono sugli appunti)."
     ]
    },
    {
@@ -242,7 +242,7 @@ const GUIDA = {
      "<b>Slides are captured automatically</b> and placed in the notes next to the words, at the right minute.",
      "<b>Everything in one place</b>: search a word in all recordings, the to-dos of all meetings, a calendar that reminds you (or records by itself), the minutes by email, Word, Google Docs, Slack, Teams, Notion or the CRM.",
      "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture» and exam preparation on the whole course, with a mock exam corrected by Claude.",
-     "<b>No subscription</b>: you only pay for what you use with your Claude key (about 0.20 $ per recorded hour), or take the packages to the AI you prefer.",
+     "<b>No subscription</b>: you only pay for what you use with your Claude key (about 0.20 $ per recorded hour), or take the files to the AI you prefer.",
      "Videos, notes and transcripts stay <b>on your PC</b>: they are yours."
     ]
    },
@@ -294,7 +294,7 @@ const GUIDA = {
      "<b>Your notes</b> (in the main window): type a couple of words and press Enter, or tap <b>⭐ Important</b>, <b>❓ To clarify</b>, <b>✅ To-do</b>. Each note takes the minute. Claude uses them: those points are more complete in the notes and marked «(your note)».",
      "<b>Ask now</b>: ask about what has been said so far, e.g. «what did they say about costs 5 minutes ago?» or «summarise the last 10 minutes». It answers in a few seconds with the minute. About 1 cent per question. It works best with <b>Live text</b> on (Settings).",
      "<b>Pause</b> during the break: nothing is recorded and the clock stops. <b>Resume</b> when it restarts.",
-     "Slides are captured automatically when they change. Every 30 minutes (or every hour) a <b>package</b> is prepared; with automatic notes Claude starts writing them straight away."
+     "Slides are captured automatically when they change. Every 30 minutes (or every hour) a <b>part</b> is saved, so nothing gets lost; with automatic notes Claude starts writing them straight away."
     ]
    },
    {
@@ -304,7 +304,7 @@ const GUIDA = {
     "p": [
      "Tap <b>Stop</b> in the mini window or in the main window and confirm.",
      "The program transcribes the last part, recognises who is speaking, prepares the video and the full transcript. You can do something else, but <b>don't turn the PC off</b>.",
-     "When «Recording saved!» appears, tap <b>Open the notes</b>. You also find them in the <b>Packages folder</b> (usually Documents → Packages for Claude)."
+     "When «Recording saved!» appears, tap <b>Open the notes</b>. You also find them in the <b>Lectures folder</b> (usually Documents → Packages for Claude)."
     ]
    },
    {
@@ -418,10 +418,10 @@ const GUIDA = {
     "t": "Settings",
     "p": [
      "<b>Language</b> of the program and notes: Italian or English.",
-     "<b>Artificial intelligence</b>: «Automatic notes with Claude» with your key (about 0.20 $ per recorded hour; create it on platform.claude.com, it stays on the PC, protected by Windows), or «Folder for the AI of your choice»: only the zip packages, to take to Claude, ChatGPT, Gemini…",
-     "<b>Notes format</b> and <b>✎ My format</b>; <b>how often a package is prepared</b> (30 minutes or 1 hour); <b>mini window</b>; <b>More accurate transcript</b> (fewer mistakes, one and a half times as long); <b>Live text</b>; <b>Recognise who is speaking</b>; <b>Do not disturb</b> reminder.",
+     "<b>Artificial intelligence</b>: «Automatic notes with Claude» with your key (about 0.20 $ per recorded hour; create it on platform.claude.com, it stays on the PC, protected by Windows), or «Folder for the AI of your choice»: only the files, to take to Claude, ChatGPT, Gemini…",
+     "<b>Notes format</b> and <b>✎ My format</b>; <b>how often a part is saved</b> (30 minutes or 1 hour); <b>mini window</b>; <b>More accurate transcript</b> (fewer mistakes, one and a half times as long); <b>Live text</b>; <b>Recognise who is speaking</b>; <b>Do not disturb</b> reminder.",
      "<b>Difficult words</b>: for each subject type names and technical terms (or tap the suggested ones). The transcript gets them wrong far less and Claude spells them right.",
-     "<b>Share and connect</b> (Slack, Teams, Notion, CRM), <b>Calendar</b>, <b>Where packages are saved</b> and <b>Your details</b> (they appear on the notes)."
+     "<b>Share and connect</b> (Slack, Teams, Notion, CRM), <b>Calendar</b>, <b>Where lectures are saved</b> and <b>Your details</b> (they appear on the notes)."
     ]
    },
    {

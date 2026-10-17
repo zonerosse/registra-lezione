@@ -53,7 +53,7 @@ if (ANDROID) {
       'sp.cartella': 'Manda con…', 'sp.audio': 'Crea lo spezzone', 'sp.nota': 'Scorciatoia: tocca ✂ accanto a un capitolo. Sul telefono lo spezzone è solo audio.',
       'cg.s': 'Email, Word e calendario funzionano subito, dal pulsante «Condividi» di ogni registrazione. Questi si collegano una volta sola:',
       'im.voci.s': "Nella trascrizione e negli appunti c'è scritto chi ha detto cosa. Tutto sul telefono: l'audio non va su internet. La prima volta scarica un modello di 26 MB.",
-      'fn.pac': "Ogni parte è un pacchetto (slide + parole del docente): toccando «Condividi» lo mandi all'AI che usi (o metti la chiave di Claude in Impostazioni per gli appunti automatici).",
+      'fn.pac': "Ogni parte è un file per l'AI (slide + parole del docente): toccando «Condividi» lo mandi all'AI che usi (o metti la chiave di Claude in Impostazioni per gli appunti automatici).",
     },
     en: {
       'pv.1.t': 'Recordings stay on your phone', 'im.pv.s': 'What stays on your phone, what leaves and where it goes', 'rq.si': 'Where in the program the error happened, the version and the type of phone.',
@@ -103,7 +103,7 @@ if (ANDROID) {
       'sp.cartella': 'Send with…', 'sp.audio': 'Create the clip', 'sp.nota': 'Shortcut: tap ✂ next to a chapter. On the phone the clip is audio only.',
       'cg.s': 'Email, Word and calendar work right away, from the «Share» button of each recording. These are connected once:',
       'im.voci.s': 'The transcript and the notes say who said what. All on the phone: the audio does not go on the internet. The first time it downloads a 26 MB model.',
-      'fn.pac': 'Each part is a package (slides + the lecturer\'s words): tap «Share» to send it to the AI you use (or add your Claude key in Settings for automatic notes).',
+      'fn.pac': 'Each part is a file for AI (slides + the lecturer\'s words): tap «Share» to send it to the AI you use (or add your Claude key in Settings for automatic notes).',
     },
   };
   // messaggio «Avvisa»: sul telefono la registrazione resta sul telefono, non sul computer

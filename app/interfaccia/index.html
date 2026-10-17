@@ -178,7 +178,7 @@
         <div class="big" id="lT">00:00:00</div>
         <div class="nm" id="lNm"></div>
         <div class="wave" id="lWave"></div>
-        <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">pacchetti pronti</small></div></div>
+        <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">parti pronte</small></div></div>
       </div>
       <div class="card mt avv-card hidden" id="avvCard">
         <div class="avv-testa"><span class="avv-ic">📣</span><div class="sp"><b class="avv-t" id="avvT"></b><div class="hint" id="avvSub"></div></div></div>
@@ -213,7 +213,7 @@
         <div class="thumbs" id="thumbs"><div class="vuoto" data-t="lv.vuoto">Le slide compaiono qui appena cambiano sullo schermo.</div></div>
       </div>
       <div class="card mt">
-        <div class="lbl" data-t="lv.parti">Pacchetti e appunti</div>
+        <div class="lbl" data-t="lv.parti">Parti e appunti</div>
         <div class="parts" id="lParti"></div>
       </div>
       <div class="row mt">
@@ -234,12 +234,12 @@
       <div class="card mt hidden" id="fImp"><div class="lbl" data-t="iv.fasi">A che punto sono</div><div class="fasi" id="fFasi"></div></div>
       <div class="card mt" id="fAp"></div>
       <div class="card mt">
-        <div class="lbl" data-t="lv.parti">Pacchetti e appunti</div>
+        <div class="lbl" data-t="lv.parti">Parti e appunti</div>
         <div class="parts" id="fParti"></div>
       </div>
       <div class="grid3 mt">
         <button class="btn b-ghost b-sm" id="fTras"><svg><use href="#i-text"/></svg><span data-t="fn.tras">Slide e trascrizione</span></button>
-        <button class="btn b-ghost b-sm solo-pc" id="fPac"><svg><use href="#i-zip"/></svg><span data-t="fn.cartpac">Cartella dei pacchetti</span></button>
+        <button class="btn b-ghost b-sm solo-pc" id="fPac"><svg><use href="#i-zip"/></svg><span data-t="fn.cartpac">Cartella delle lezioni</span></button>
         <button class="btn b-ghost b-sm" id="fNuova"><svg><use href="#i-rec"/></svg><span data-t="fn.nuova">Nuova registrazione</span></button>
       </div>
     </section>
@@ -372,7 +372,7 @@
             <div id="chiaveBox"></div>
           </div>
           <div class="aiopt" id="aiB"><span class="rd"></span><span class="ico i-blue"><svg><use href="#i-zip"/></svg></span><b data-t="im.b.t">Cartella per l'AI che vuoi</b>
-            <small data-t="im.b">Nessuna chiave: preparo i pacchetti (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
+            <small data-t="im.b">Nessuna chiave: preparo i file (slide + parole del docente) da portare a Claude, ChatGPT, Gemini o qualsiasi altra AI.</small></div>
         </div>
       </div>
       <div class="card mt hidden" id="hoCard">
@@ -504,12 +504,12 @@
         <div id="calImpegni"></div>
       </div>
       <div class="card mt">
-        <div class="set"><div class="t"><b data-t="im.ogni">Ogni quanto preparo un pacchetto</b><span data-t="im.ogni.s">Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30" data-t="im.30">30 min</span><span data-v="60" data-t="im.60">1 ora</span></div></div>
+        <div class="set"><div class="t"><b data-t="im.ogni">Ogni quanto salvo una parte</b><span data-t="im.ogni.s">Con 30 minuti gli appunti arrivano prima; il costo è quasi lo stesso.</span></div><div class="seg" id="segDur"><span data-v="30" data-t="im.30">30 min</span><span data-v="60" data-t="im.60">1 ora</span></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.mini">Mini finestra durante la registrazione</b><span data-t="im.mini.s">Piccola, sempre in primo piano, con Pausa e Fine.</span></div><div class="sw" id="swMini"></div></div>
         <div class="set"><div class="t"><b data-t="im.voci">Riconosci chi parla</b><span data-t="im.voci.s">Nella trascrizione e negli appunti c'è scritto chi ha detto cosa.</span></div><div class="sw" id="swVoci"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dir">Testo in diretta</b><span data-t="im.dir.s">Mentre registri vedi il testo con circa 2 minuti di ritardo. Il PC lavora di più: su un portatile lento può rallentare Meet.</span></div><div class="sw" id="swDir"></div></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.dnd">Ricordami «Non disturbare»</b><span data-t="im.dnd.s">Così i suoni delle notifiche non finiscono nella registrazione.</span></div><div class="sw" id="swDnd"></div></div>
-        <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo i pacchetti</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>
+        <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo le lezioni</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.base">Le registrazioni sono in</b><span id="impBase"></span></div><button class="btn b-ghost b-sm" id="btnBase" data-t="im.apri">Apri</button></div>
       </div>
       <div class="card mt">

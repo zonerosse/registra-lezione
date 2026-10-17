@@ -1,6 +1,6 @@
 {
- "versione": "3.54",
+ "versione": "3.55",
  "librerie": 2,
- "novita": "Pagina Registra più ordinata: microfono e slide del docente stanno dentro «Dove si tiene?», sotto la scelta «In aula». Per le lezioni online una sola riga con schermo, audio e slide.",
- "novita_en": "Tidier Record page: microphone and lecturer's slides are inside «Where is it held?», under «In class». For online lectures a single line with screen, audio and slides."
+ "novita": "Parole più semplici: niente più «pacchetti». Ora si legge «parte» (il pezzo da 30 minuti), «file per l'AI» e «cartella delle lezioni».",
+ "novita_en": "Simpler words: no more «packages». Now it says «part» (the 30-minute piece), «file for AI» and «lectures folder»."
 }
