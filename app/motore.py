@@ -975,6 +975,7 @@ class Motore:
         info = el.leggi_json(cart / "info.json", {}) or {}
         pac = info.get("pacchetti") or {}
         rifatti = False
+        self._err_pacchetto = ""
         for f in sorted(cart.glob("trascrizione_[0-9][0-9][0-9].json")):
             try:
                 k = int(f.stem.split("_")[1])
@@ -990,9 +991,26 @@ class Motore:
                 el.crea_pacchetto(cart, k, self.cfg["cartella_pacchetti"])
                 log.info("pacchetto della parte %s rifatto (mancava)", k)
                 rifatti = True
-            except Exception:
+            except Exception as e:
                 log.exception("pacchetto mancante, parte %s", k)
+                self._err_pacchetto = f"{type(e).__name__}: {e} [{_dove_errore(e)}]"
         return rifatti
+
+    def diagnosi_appunti(self, cartella):
+        """Due righe per capire perche' gli appunti non partono (si fotografano e si mandano)."""
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        pac = info.get("pacchetti") or {}
+        righe = [
+                 f"durata {info.get('durata')} · parte {el.parte_secondi(cart)} · stato {info.get('stato')}",
+                 "pacchetti: " + (", ".join(f"{k}{'' if Path(v).exists() else '(manca file)'}" for k, v in sorted(pac.items())) or "nessuno")]
+        for f in sorted(cart.glob("trascrizione_*.json")):
+            segs = el.leggi_json(f)
+            n = sum(len(str(x.get("testo") or "").split()) for x in segs if isinstance(x, dict)) if isinstance(segs, list) else type(segs).__name__
+            righe.append(f"{f.name}: {n} parole")
+        righe.append("audio: " + (", ".join(sorted(p.name for p in cart.glob("audio_*"))) or "nessuno"))
+        righe.append("vuote: " + str([k for k in pac if ap.parte_vuota(cart, k)]))
+        return "\n".join(r for r in righe if r)
 
     def appunti_mancanti(self, cartella, formato=None):
         """Crea gli appunti che mancano, nel formato indicato (gli altri restano come sono)."""
@@ -1005,6 +1023,8 @@ class Motore:
             el.aggiorna_info(cart, mio=self.cfg.get("mio"))
         if self._pacchetti_mancanti(cart):
             info = el.leggi_json(cart / "info.json", {}) or {}
+        if self._err_pacchetto:
+            return {"ok": False, "msg": self._err_pacchetto}
         pac, fatti = info.get("pacchetti") or {}, info.get(ap.chiave_info(formato)) or {}
         if not info.get("formato_appunti"):
             el.aggiorna_info(cart, formato_appunti=formato)

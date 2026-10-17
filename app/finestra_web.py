@@ -492,6 +492,9 @@ class Api:
     def appunti_mancanti(self, cartella, formato=None):
         return self._m.appunti_mancanti(cartella, formato)
 
+    def diagnosi_appunti(self, cartella):
+        return self._m.diagnosi_appunti(cartella)
+
     def stima_appunti(self, cartella):
         return self._m.stima_appunti(cartella)
 

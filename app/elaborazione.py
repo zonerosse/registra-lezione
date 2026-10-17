@@ -800,12 +800,22 @@ def crea_txt(info, gruppi, segmenti, destinazione, titolo_extra=""):
 
 # --------------------------------------------------------------------------- pacchetto di una parte
 
-def crea_pacchetto(cartella, k, cartella_pacchetti):
-    """Crea '<nome> – parte k (00h-01h).zip' con PDF e testo di quella parte."""
+def crea_pacchetto(cartella, k, cartella_pacchetti, semplice=False):
+    """Crea '<nome> – parte k (00h-01h).zip' con PDF e testo di quella parte.
+    semplice=True: solo il testo, senza slide (se con le slide non si riesce, gli appunti si fanno lo stesso)."""
+    if not semplice:
+        try:
+            return _crea_pacchetto(cartella, k, cartella_pacchetti, False)
+        except Exception:
+            log.exception("pacchetto della parte %s con le slide: lo rifaccio solo con il testo", k)
+    return _crea_pacchetto(cartella, k, cartella_pacchetti, True)
+
+
+def _crea_pacchetto(cartella, k, cartella_pacchetti, semplice):
     cartella = Path(cartella)
     info = leggi_json(cartella / "info.json", {}) or {}
-    meta = leggi_json(cartella / "meta.json", {}) or {}
-    if (cartella / "docente.json").exists():      # slide del docente: abbinamento con la trascrizione nuova
+    meta = {} if semplice else (leggi_json(cartella / "meta.json", {}) or {})
+    if not semplice and (cartella / "docente.json").exists():      # slide del docente: abbinamento con la trascrizione nuova
         import docente
         docente.allinea(cartella)
     segmenti = leggi_json(cartella / f"trascrizione_{k:03d}.json", []) or []
@@ -813,7 +823,7 @@ def crea_pacchetto(cartella, k, cartella_pacchetti):
     fine = inizio + durata_wav(cartella / f"audio_{k:03d}.wav")
     if fine <= inizio and segmenti:
         fine = max(s["fine"] for s in segmenti)
-    gruppi = raggruppa(slide_in_tempo_audio(meta, cartella), segmenti, inizio, fine)
+    gruppi = raggruppa([] if semplice else slide_in_tempo_audio(meta, cartella), segmenti, inizio, fine)
 
     L = testi.lingua_di(info)
     etichetta = f"{tr('parte', L)} {k} ({ore_min(inizio)}-{ore_min(fine)})"

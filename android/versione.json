@@ -1,7 +1,7 @@
 {
- "versione": "0.9.12",
+ "versione": "0.9.13",
  "codice": 9,
- "novita": "Rapporti sugli errori, solo se dici di sì: se l'app si blocca può mandare un rapporto tecnico anonimo (mai registrazioni, trascrizioni o appunti). La domanda compare una volta; poi si cambia in Impostazioni › Privacy.",
- "novita_en": "Error reports, only if you say yes: if the app crashes it can send an anonymous technical report (never recordings, transcripts or notes). You're asked once; change it anytime in Settings › Privacy.",
- "contenuto": 23
+ "novita": "Corretto: se il pacchetto di una parte non si riesce a fare con le slide, si fa solo con il testo e gli appunti si creano lo stesso. Se gli appunti non partono, la finestra mostra i dettagli.",
+ "novita_en": "Fixed: if a part's package can't be made with the slides, it's made with text only and the notes are created anyway. If notes don't start, the window shows details.",
+ "contenuto": 24
 }

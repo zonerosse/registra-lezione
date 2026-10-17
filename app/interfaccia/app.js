@@ -315,7 +315,10 @@ async function apFine(c, err) {
   await caricaLezioni();
   const l = LZ && LZ.lezioni.find(x => x.cartella === c);
   if (err !== null) dialogo({titolo: t('ar.aperr.t'), testo: err});
-  else if (l && !l.n_appunti) dialogo({titolo: t('ar.aperr.t'), testo: t('ar.apnulla')});
+  else if (l && !l.n_appunti) {
+    let d = ''; try { d = 'v' + R.versione + '\n' + await A.diagnosi_appunti(c); } catch (e) { d = String(e); }
+    dialogo({titolo: t('ar.aperr.t'), html: `${esc(t('ar.apnulla'))}<div class="hint" style="margin-top:10px;white-space:pre-wrap;font-size:11px">${esc(d)}</div>`});
+  }
 }
 async function creaQui(c, f) {
   APLAV = c; apVisti = false;
