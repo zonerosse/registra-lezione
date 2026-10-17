@@ -1,9 +1,9 @@
 {
- "versione": "0.10.0",
+ "versione": "0.10.1",
  "codice": 10,
- "novita": "App nuova (da installare una volta con «Scarica»): ora «Importa un testo» sa scegliere anche i file Word e .txt, oltre ai PDF.",
- "novita_en": "New app (install once with «Download»): «Import a text» can now pick Word and .txt files too, besides PDFs.",
- "contenuto": 31,
+ "novita": "Impostazioni › Dove trascrivo: con «Sul PC» (o «Sul telefono») si vedono velocità, «Trascrizione più precisa» e i limiti; le voci del server compaiono solo con «Sul server». «Altre opzioni» più visibile.",
+ "novita_en": "Settings › Where I transcribe: with «On the PC» (or «On the phone») you see speed, «More accurate transcript» and the limits; server fields appear only with «On the server». «More options» easier to see.",
+ "contenuto": 32,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
 }
