@@ -25,6 +25,9 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('aspetto da telefono', await p.evaluate(() => document.documentElement.classList.contains('android') && getComputedStyle(document.querySelector('.side .brand')).display === 'none'));
     passo('chiave di Claude (protetta dal telefono)', (await p.evaluate(() => A.prova_chiave('sk-ant-prova'))).ok);
     await p.evaluate(() => A.imposta('appunti_attivi', true)); await rileggiPagina();
+    await p.click('#nav [data-p="fare"]'); await p.waitForTimeout(800); await foto('00b-fare-vuota');
+    passo('«Da fare» vuota: spiega cos\'è e porta a registrare una riunione', await p.isVisible('.cfvuoto') && await p.isVisible('#cfRiu'));
+    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(500);
     await p.click('#doveBox [data-m="aula"]'); await foto('01-pronto');
     // «Durante»
     await p.fill('#nome', 'Analisi 1 – Derivate'); await p.click('#quandoBox [data-q="durante"]'); await p.click('#btnRec');

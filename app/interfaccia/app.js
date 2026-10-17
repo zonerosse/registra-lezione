@@ -1591,7 +1591,16 @@ async function apriCose() { disegnaCose(await A.cose_da_fare()); }
 function disegnaCose(d) {
   CF.d = d;
   $('navFare').textContent = d.aperte; $('navFare').classList.toggle('hidden', !d.aperte);
-  $('cfSub').textContent = d.scadute ? t('cf.sub2', {a: d.aperte, s: d.scadute}) : t('cf.sub', {a: d.aperte});
+  $('cfSub').textContent = !d.cose.length ? t('cf.sub0') : d.scadute ? t('cf.sub2', {a: d.aperte, s: d.scadute}) : t('cf.sub', {a: d.aperte});
+  $('cfFiltri').classList.toggle('hidden', !d.cose.length);
+  if (!d.cose.length) {
+    const passo = (n) => `<div class="cfpasso"><div class="n">${n}</div><b>${esc(t('cf.v' + n + '.t'))}</b><span>${esc(t('cf.v' + n))}</span></div>`;
+    $('cfLista').innerHTML = `<div class="cfvuoto"><div class="ic">✅</div><h3>${esc(t('cf.v.t'))}</h3><p>${esc(t('cf.v.s'))}</p>
+      <div class="cfpassi">${passo(1)}${passo(2)}${passo(3)}</div>
+      <button class="btn b-main" id="cfRiu">${esc(t('cf.v.b'))}</button><div class="hint" style="margin-top:14px">${esc(t('cf.v.studio'))}</div></div>`;
+    $('cfRiu').onclick = async () => { await A.imposta('tipo', 'riunione'); R.tipo = 'riunione'; disegnaPronto(); vai('reg'); };
+    return;
+  }
   const chip = (k, v, n) => `<span class="chip${CF[k] === v ? ' on' : ''}" data-k="${k}" data-v="${esc(v)}">${esc(n)}</span>`;
   $('cfFiltri').innerHTML = chip('filtro', 'aperte', t('cf.aperte')) + chip('filtro', 'fatte', t('cf.fatte')) + chip('filtro', 'tutte', t('cf.tutte')) + '<span class="sp"></span>' +
     (d.persone.length > 1 ? chip('chi', '', t('cf.tutti')) + d.persone.map(p => chip('chi', p, p)).join('') : '');

@@ -1,7 +1,7 @@
 {
- "versione": "0.10.3",
+ "versione": "0.10.4",
  "codice": 10,
- "novita": "Piccole correzioni: negli appunti non c'è più «Primo anno anno»; il nome vuoto non è più segnato in rosso appena apri Registra; sparita l'anteprima con «Lezione» quando il nome è vuoto; sul telefono niente più «🎬 0 MB» rosso.",
- "novita_en": "Small fixes: no more «first year year» in the notes; an empty name is no longer flagged in red as soon as you open Record; no preview with «Lecture» when the name is empty; on the phone no more red «🎬 0 MB».",
- "contenuto": 34
+ "novita": "«Cose da fare» ora spiega cos'è: quando è vuota mostra in tre passi come si riempie (dalle riunioni di lavoro) e un bottone per registrare una riunione.",
+ "novita_en": "«To-dos» now explains what it is: when empty it shows in three steps how it fills up (from work meetings) and a button to record a meeting.",
+ "contenuto": 35
 }

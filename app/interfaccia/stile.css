@@ -583,3 +583,13 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .b-altro{font-weight:700;color:var(--mut)}
 
 .nmsg.grigio{color:var(--mut)}
+
+/* Cose da fare vuota: spiegazione */
+.cfvuoto{text-align:center;padding:14px 6px 6px}.cfvuoto .ic{font-size:40px}
+.cfvuoto h3{margin:6px 0;color:var(--ink);font-size:18px}.cfvuoto p{color:var(--mut);margin:0 auto 16px;max-width:430px;line-height:1.5}
+.cfpassi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:left;margin:4px 0 18px}
+.cfpasso{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:11px}
+.cfpasso b{display:block;color:var(--ink);font-size:13.5px;margin:5px 0 3px}.cfpasso span{color:var(--mut);font-size:12.5px;line-height:1.45}
+.cfpasso .n{width:24px;height:24px;border-radius:50%;background:var(--navy);color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center}
+@media(max-width:700px){.cfpassi{grid-template-columns:1fr}}
+html.android .cfpassi{grid-template-columns:1fr}
