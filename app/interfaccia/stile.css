@@ -301,6 +301,12 @@ h2,h3{font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif}
 .dove .ico{width:34px;height:34px;border-radius:10px}.dove .ico svg{width:17px;height:17px}
 select.sel{border:1px solid #d5e1ee;border-radius:10px;padding:5px 8px;font:inherit;font-size:12.5px;background:#fff;color:var(--ink);margin-top:4px;max-width:100%;width:100%}
 .livello{display:flex;gap:3px;align-items:flex-end;height:20px;margin-top:6px}
+.srcsub{margin-top:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 12px;display:grid;gap:10px}
+.srcr{display:flex;align-items:center;gap:12px}.srcr>b{color:var(--ink);font-size:13.5px;min-width:130px}
+.srcr .ico{width:36px;height:36px;border-radius:10px}.srcr .livello{margin-top:0;flex:none}
+.srcok{display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13px}.srcok b{color:var(--ink);font-weight:600}.srcok small{font-weight:600;font-size:12.5px}
+@media (max-width:700px){.srcr{flex-wrap:wrap}.srcr>b{min-width:0;flex:1}.srcr>.sp{flex:1 1 100%;order:3}.srcr>.row,.srcr>.livello{order:4}}
+html.android .srcr{flex-wrap:wrap}html.android .srcr>b{min-width:0;flex:1}html.android .srcr>.sp{flex:1 1 100%;order:3}html.android .srcr>.row,html.android .srcr>.livello{order:4}
 .livello i{width:5px;border-radius:2px;background:#cbd5e1;transition:height .15s,background .15s}
 .livello i.on{background:#059669}
 .diretta{max-height:240px;overflow:auto;font-size:14.5px;line-height:1.6;color:var(--txt);-webkit-user-select:text;user-select:text}

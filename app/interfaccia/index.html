@@ -88,6 +88,13 @@
           <div class="aiopt" data-m="online"><span class="rd"></span><span class="ico i-blue"><svg><use href="#i-scr"/></svg></span><b data-t="pr.online.t">Online</b><small data-t="pr.online">Meet, Teams, Zoom: registro schermo e audio del PC.</small></div>
           <div class="aiopt" data-m="aula"><span class="rd"></span><span class="ico i-teal"><svg><use href="#i-mic"/></svg></span><b data-t="pr.aula.t">In aula</b><small data-t="pr.aula">Il docente è lì davanti: registro dal microfono del portatile.</small></div>
         </div>
+        <div class="srcsub hidden" id="srcAula">
+          <div class="srcr"><span class="ico i-teal"><svg><use href="#i-mic"/></svg></span><b data-t="src.mic">Microfono</b><div class="sp" style="min-width:0"><select class="sel" id="selMic"></select></div><div class="livello" id="micLiv"></div></div>
+          <div class="srcr"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><b data-t="src.pdf">Slide del docente</b><div class="sp" style="min-width:0"><small class="mutt" id="pdfTxt" data-t="src.pdf.s">Facoltativo: il PDF, se il docente lo pubblica</small><div class="hint" data-t="src.pdf.dove" style="font-size:12px;margin-top:2px">Le metto negli appunti di questa lezione, accanto a quando il docente ne parla. Puoi aggiungerle anche dopo: «⋯ Altro» sulla lezione.</div></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="btnPdfA" data-t="src.pdf.b">Scegli il PDF…</button><button class="lnk hidden" id="btnPdfX" data-t="togli">Togli</button></div></div>
+        </div>
+        <div class="srcsub solo-pc" id="srcOnline">
+          <div class="srcok"><span><b data-t="src.scr">Schermo</b> <small class="okt" id="srcScr">✓ Schermo principale</small></span><span><b data-t="src.aud">Audio del PC</b> <small id="srcAud" class="mutt">Controllo…</small></span><span><b data-t="src.sl">Slide</b> <small class="okt" data-t="src.sl.ok">✓ Cattura automatica</small></span></div>
+        </div>
       </div>
       <div class="card">
         <div class="lbl" data-t="pr.nome">Nome</div>
@@ -118,16 +125,6 @@
           <div class="aiopt" data-q="dopo"><span class="rd"></span><span class="ico i-vio">🌙</span><b data-t="and.dopo.t">Dopo</b><small data-t="and.dopo"></small></div>
         </div>
         <div class="hint" id="quandoStima" style="margin-top:10px"></div>
-      </div>
-      <div class="grid3 mt hidden" id="srcAula">
-        <div class="src"><span class="ico i-teal"><svg><use href="#i-mic"/></svg></span><div class="sp" style="min-width:0"><b data-t="src.mic">Microfono</b><select class="sel" id="selMic"></select><div class="livello" id="micLiv"></div></div></div>
-        <div class="src"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><div class="sp" style="min-width:0"><b data-t="src.pdf">Slide del docente</b><small class="mutt" id="pdfTxt" data-t="src.pdf.s">Facoltativo: il PDF, se il docente lo pubblica</small><div class="row" style="gap:6px;margin-top:6px"><button class="btn b-ghost b-sm" id="btnPdfA" data-t="src.pdf.b">Scegli il PDF…</button><button class="lnk hidden" id="btnPdfX" data-t="togli">Togli</button></div></div></div>
-        <div class="src"><span class="ico i-blue"><svg><use href="#i-scr"/></svg></span><div><b data-t="src.scr">Schermo</b><small class="mutt" data-t="src.scr.no">Non serve in aula</small></div></div>
-      </div>
-      <div class="grid3 mt solo-pc" id="srcOnline">
-        <div class="src"><span class="ico i-blue"><svg><use href="#i-scr"/></svg></span><div><b data-t="src.scr">Schermo</b><small class="okt" id="srcScr">✓ Schermo principale</small></div></div>
-        <div class="src"><span class="ico i-teal"><svg><use href="#i-aud"/></svg></span><div><b data-t="src.aud">Audio del PC</b><small id="srcAud" class="mutt">Controllo…</small></div></div>
-        <div class="src"><span class="ico i-vio"><svg><use href="#i-sli"/></svg></span><div><b data-t="src.sl">Slide</b><small class="okt" data-t="src.sl.ok">✓ Cattura automatica</small></div></div>
       </div>
       <div class="recwrap mt">
         <button class="recbtn" id="btnRec"><span></span><b data-t="rec">REGISTRA</b></button>

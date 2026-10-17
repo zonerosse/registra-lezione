@@ -1,7 +1,7 @@
 {
- "versione": "0.10.10",
+ "versione": "0.10.11",
  "codice": 10,
- "novita": "«Le mie lezioni» più calma: un colore principale (blu), le copertine restano colorate per materia. Il nome di una registrazione deve dire cos'è: niente nomi di una lettera o generici come «Lezione» o «prova».",
- "novita_en": "Calmer «My lectures»: one main colour (blue), covers stay coloured by subject. A recording name must say what it is: no one-letter or generic names like «Lecture» or «test».",
- "contenuto": 41
+ "novita": "Pagina Registra più ordinata: microfono e slide del docente stanno dentro «Dove si tiene?», sotto la scelta «In aula».",
+ "novita_en": "Tidier Record page: microphone and lecturer's slides are inside «Where is it held?», under «In class».",
+ "contenuto": 42
 }
