@@ -1,7 +1,7 @@
 {
- "versione": "0.9.3",
+ "versione": "0.9.4",
  "codice": 9,
- "novita": "Trascrizione sul server: corretto il modello di trascrizione.",
- "novita_en": "Server transcription: fixed the transcription model.",
- "contenuto": 14
+ "novita": "Le mie lezioni: se una lezione ha qualcosa che non va, le altre si vedono lo stesso (e quella mostra il motivo).",
+ "novita_en": "My lectures: if one lecture has a problem, the others are still shown (and that one shows why).",
+ "contenuto": 15
 }

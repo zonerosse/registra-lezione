@@ -672,6 +672,10 @@ async function apriAppunti(cartella) {
 /* ------------------------------------------------------------------ le mie registrazioni */
 async function caricaLezioni() {
   LZ = await A.lezioni();
+  if (!LZ || !LZ.lezioni) {        // il motore non e' riuscito a fare l'elenco: lo dico, con il motivo
+    $('lista').innerHTML = `<div class="card" style="padding:24px;color:#be123c">⚠ ${esc(t('ar.err'))}<div class="hint" style="margin-top:6px">${esc((LZ && LZ.errore) || '')}</div></div>`;
+    LZ = null; return;
+  }
   const n = LZ.lezioni.length;
   $('navCnt').textContent = n; $('navCnt').classList.toggle('hidden', !n);
   contaFare();
@@ -691,6 +695,7 @@ function disegnaLezioni() {
     const lg = l.lingua_lezione && l.lingua_lezione !== LINGUA && t('lingue')[l.lingua_lezione] && l.lingua_lezione !== 'auto' ? t('ar.lingua', {l: t('lingue')[l.lingua_lezione]}) : '';
     const meta = [l.tipo === 'riunione' ? t('tp.b.riu') : l.tipo === 'webinar' ? t('tp.b.web') : '', l.quando, l.durata, l.n_slide ? l.n_slide + ' slide' : '', lg, l.importata ? t('ar.importata') : ''].filter(Boolean).join(' · ') +
       (l.video_testo ? ` · <span style="color:#be123c">🎬 ${l.video_testo}</span>` : '');
+    const errL = l.errore ? `<div class="hint" style="color:#be123c">⚠ ${esc(l.errore)}</div>` : '';
     let pill, prim = '';
     if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
@@ -706,7 +711,7 @@ function disegnaLezioni() {
     const sec = chiedi + capi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
-      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div><div class="acts">${pill}${prim}${sec}</div></div>
+      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div>${errL}<div class="acts">${pill}${prim}${sec}</div></div>
       ${l.stato !== 'in_corso' ? `<button class="more" data-a="menu" title="${t('ar.altre')}">⋯</button>` : ''}</div>`;
   }).join('');
   disegnaBanda();

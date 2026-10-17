@@ -1134,6 +1134,33 @@ class Motore:
         ha_chiave = bool(self.chiave())
         out, tot_video = [], 0
         for cart in cartelle:
+            try:
+                tot_video += self._voce_lezione(cart, ha_chiave, out)
+            except Exception as e:
+                # una registrazione con qualcosa che non va non deve far sparire tutte le altre dall'elenco
+                log.exception("elenco: %s", cart.name)
+                info = el.leggi_json(cart / "info.json", {}) or {}
+                nome = info.get("nome", cart.name)
+                out.append({"cartella": str(cart), "nome": nome, "quando": cart.name[:16], "durata": "", "n_slide": 0,
+                            "stato": "pronta" if info.get("stato") == "pronta" else "da_completare", "video": "", "video_testo": "",
+                            "n_appunti": 0, "n_pacchetti": 0, "formati": [], "crea_appunti": False, "crea_anche": [],
+                            "completa_appunti": [], "rifai": [], "rifai_appunti": False, "formato_serie": "cornell",
+                            "tipo": info.get("tipo") or "lezione", "nome_mio": "", "capitoli": False, "infografica": False,
+                            "voci": 0, "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
+                            "docente": False, "mappa": False, "aula": False, "trascritta": False,
+                            "ripasso": {"n": 0, "no": 0, "tre": 0}, "formato": "cornell", "importata": False, "dopo": False,
+                            "lingua_lezione": None, "errore": f"{type(e).__name__}: {e}"[:200]})
+        try:
+            liberi = shutil.disk_usage(BASE).free
+        except OSError:
+            liberi = 0
+        return {"lezioni": out, "video_tot": tot_video, "video_testo": gb_testo(tot_video),
+                "quota": tot_video / (tot_video + liberi) if (tot_video + liberi) else 0, "base": str(BASE)}
+
+    def _voce_lezione(self, cart, ha_chiave, out):
+        """Una riga dell'elenco (la aggiunge a out); ritorna i byte del video."""
+        tot_video = 0
+        if True:
             info = el.leggi_json(cart / "info.json", {}) or {}
             stato = info.get("stato")
             in_corso = self.cartella_corrente is not None and cart == Path(self.cartella_corrente) and self.occupato
@@ -1154,6 +1181,7 @@ class Motore:
             except Exception:
                 pass
             ap.sistema_vecchi(cart)
+            el.sistema_in_corso(cart)
             info = el.leggi_json(cart / "info.json", {}) or {}
             pac = info.get("pacchetti") or {}
             fatti = {f: ap.appunti_fatti(info, f) for f in ap.FORMATI}
@@ -1192,12 +1220,7 @@ class Motore:
                 "dopo": stato == "da_completare" and info.get("quando") == "dopo" and not in_corso,
                 "lingua_lezione": info.get("lingua_rilevata") if info.get("lingua_lezione") == "auto" else info.get("lingua_lezione"),
             })
-        try:
-            liberi = shutil.disk_usage(BASE).free
-        except OSError:
-            liberi = 0
-        return {"lezioni": out, "video_tot": tot_video, "video_testo": gb_testo(tot_video),
-                "quota": tot_video / (tot_video + liberi) if (tot_video + liberi) else 0, "base": str(BASE)}
+        return tot_video
 
     # ------------------------------------------------------------------ in aula: microfoni
 

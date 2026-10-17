@@ -277,7 +277,25 @@ def _taglio(audio, da, a):
 
 
 def _file_pre(cartella, k):
-    return Path(cartella) / f"trascrizione_{k:03d}_in_corso.json"
+    # (non «trascrizione_...»: chi legge le trascrizioni lo scambierebbe per una parte)
+    cartella = Path(cartella)
+    vecchio = cartella / f"trascrizione_{k:03d}_in_corso.json"      # nome usato dalla 3.26 alla 3.29
+    nuovo = cartella / f"in_corso_{k:03d}.json"
+    if vecchio.exists():
+        try:
+            vecchio.replace(nuovo)
+        except OSError:
+            pass
+    return nuovo
+
+
+def sistema_in_corso(cartella):
+    """Le versioni 3.26-3.29 lasciavano «trascrizione_00k_in_corso.json»: lo rinomino (confondeva le trascrizioni)."""
+    for f in Path(cartella).glob("trascrizione_*_in_corso.json"):
+        try:
+            f.replace(f.with_name("in_corso_" + f.name.split("_")[1] + ".json"))
+        except OSError:
+            pass
 
 
 def pre_trascrivi(cartella, k, threads=None):
