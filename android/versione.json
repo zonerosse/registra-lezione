@@ -1,7 +1,7 @@
 {
- "versione": "0.10.16",
+ "versione": "0.10.17",
  "codice": 10,
- "novita": "Nella preparazione all'esame il bottone «Simulazione d'esame completa» è blu come gli altri.",
- "novita_en": "In exam preparation the «Full exam simulation» button is blue like the others.",
- "contenuto": 47
+ "novita": "L'avviso di aggiornamento dice che l'app si chiude e si riapre da sola. Il bottone ora è «Aggiorna e riapri».",
+ "novita_en": "The update notice says the app closes and reopens by itself. The button is now «Update and reopen».",
+ "contenuto": 48
 }

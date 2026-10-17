@@ -366,7 +366,8 @@ async function avvisoAgg() {
   const d = g.dato || {};
   const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
   const v = await dialogo({titolo: t('ag.pronta', {v: d.versione}), testo: nov + (d.completo ? '\n\n' + t('ag.completo') : ''),
-    bottoni: [{t: t('ag.tardi'), v: false}, {t: d.completo ? t('ag.pagina') : t('ag.adesso'), cls: 'b-main', v: true}]});
+    html: d.completo ? '' : `<div class="hint" style="margin-top:10px">${esc(t('ag.riapri.s'))}</div>`,
+    bottoni: [{t: t('ag.tardi'), v: false}, {t: d.completo ? t('ag.pagina') : t('ag.riapri'), cls: 'b-main', v: true}]});
   if (v) { A.installa_aggiornamento(); vai('info'); }
 }
 
@@ -2131,8 +2132,8 @@ function disegnaAgg() {
     const d = g.dato;
     const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
     h = `<div class="card" style="padding:14px 16px;border-color:#bae6fd"><b style="color:var(--ink)">${esc(t('ag.c', {v: d.versione}))}</b>
-      <div class="hint" style="margin:4px 0 10px">${esc(nov)}${d.completo ? '<br>' + t('ag.completo') : ''}</div>
-      <div class="row"><span class="sp"></span><button class="btn b-ghost b-sm" id="aggX">${t('ag.tardi')}</button><button class="btn b-main b-sm" id="aggOk">${d.completo ? t('ag.pagina') : t('ag.installa')}</button></div></div>`;
+      <div class="hint" style="margin:4px 0 10px">${esc(nov)}${d.completo ? '<br>' + t('ag.completo') : '<br><br>' + esc(t('ag.riapri.s'))}</div>
+      <div class="row"><span class="sp"></span><button class="btn b-ghost b-sm" id="aggX">${t('ag.tardi')}</button><button class="btn b-main b-sm" id="aggOk">${d.completo ? t('ag.pagina') : t('ag.riapri')}</button></div></div>`;
   } else if (g.tipo === 'scarico') h = `<div class="card" style="padding:12px 14px">${t('ag.scarico', {p: Math.round((g.perc || 0) * 100)})}<div class="bar"><i style="width:${(g.perc || 0) * 100}%"></i></div></div>`;
   else if (g.tipo === 'fatto') h = `<div class="card row" style="padding:12px 14px"><span class="pill p-ok">✓</span><span>${esc(g.testo)}</span></div>`;
   const b = $('aggBox');
