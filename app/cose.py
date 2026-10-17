@@ -24,8 +24,8 @@ def id_cosa(cartella, cosa):
 
 
 def _nome_serie(nome):
-    """«Riunione commerciale – 15/10» e «Riunione commerciale» sono la stessa serie."""
-    n = re.sub(r"[\s–-]*\d{1,2}[/.]\d{1,2}([/.]\d{2,4})?\s*$", "", str(nome or "").lower())
+    """«Riunione commerciale – 15/10», «Riunione commerciale – 15/10 19.10» e «Riunione commerciale» sono la stessa serie."""
+    n = re.sub(r"[\s–-]*\d{1,2}[/.]\d{1,2}([/.]\d{2,4})?(\s+\d{1,2}[.:]\d{2})?\s*$", "", str(nome or "").lower())
     return re.sub(r"\W+", " ", n).strip()
 
 

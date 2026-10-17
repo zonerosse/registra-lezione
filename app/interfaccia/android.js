@@ -310,6 +310,28 @@ if (ANDROID) {
    "g": "lez"
   },
   {
+   "ico": "lib",
+   "v": "tel-menu",
+   "g": "lez",
+   "t": "Il menu «⋯ Altro», voce per voce",
+   "p": [
+    "Su ogni registrazione tocca <b>⋯ Altro</b>. Le voci cambiano un po' da una registrazione all'altra: compaiono solo quelle che servono. Ecco cosa fa ognuna.",
+    "<b>Chiedi alla lezione</b>: scrivi una domanda su quello che si è detto; risponde con slide e minuto. Meno di 1 centesimo a domanda.",
+    "<b>Capitoli</b>: l'indice degli argomenti. Tocca un argomento e l'audio riparte da lì; con ✂ accanto a un capitolo fai uno spezzone.",
+    "<b>Chi parla</b>: la trascrizione con i nomi di chi ha parlato; da qui dai i nomi alle voci e apri le statistiche.",
+    "<b>Condividi</b>: manda appunti o verbale per email, Word, Google Docs, calendario, Slack, Teams, Notion o CRM.",
+    "<b>Trascrizione</b>: apre il PDF «Per Claude» con tutto quello che è stato detto. <b>Audio</b>: riascolti la registrazione.",
+    "<b>Crea appunti con Claude</b>: c'è quando gli appunti non sono stati fatti. <b>Crea anche in Formato Esame</b> (o in Cornell): aggiunge l'altro formato, quelli che hai restano. <b>Completa gli appunti</b>: fa le parti che mancano. Costo: circa 0,20 $ per ora di registrazione (prima te lo dice).",
+    "<b>Rifai appunti</b>: li rifà da capo, per esempio dopo aver aggiunto le parole difficili. Quelli di prima vengono sostituiti. Stesso costo.",
+    "<b>Mappa mentale</b>: lo schema ad albero della lezione. <b>Infografica (una pagina)</b>: tutta la registrazione in un foglio. Circa 1 centesimo ciascuna, una volta sola; si salvano in PDF.",
+    "<b>Riconosci chi parla</b>: separa le voci, se non è già stato fatto. Gratis, sul telefono. <b>Statistiche</b>: durata, chi ha parlato e quanto, domande, argomenti. Gratis.",
+    "<b>✂ Spezzone da mandare</b>: scegli dal… al… e crei un pezzo dell'audio da mandare.",
+    "<b>Aggiungi le slide del docente (PDF)…</b>: mette le slide originali negli appunti, accanto alle parole (capitolo «Le slide del docente»).",
+    "<b>Rinomina</b>: cambia il nome della registrazione, dei file e degli appunti.",
+    "<b>Elimina l'audio</b>: libera spazio; appunti, slide e trascrizione restano. <b>Elimina la registrazione</b>: viene cancellata dal telefono."
+   ]
+  },
+  {
    "ico": "chat",
    "v": "tel-chiparla",
    "t": "Chi parla",
@@ -618,6 +640,28 @@ if (ANDROID) {
     "If the phone turned off while working, tap <b>Complete</b>."
    ],
    "g": "lez"
+  },
+  {
+   "ico": "lib",
+   "v": "tel-menu",
+   "g": "lez",
+   "t": "The «⋯ More» menu, item by item",
+   "p": [
+    "On each recording tap <b>⋯ More</b>. The items change a little from one recording to another: only the useful ones appear. Here is what each does.",
+    "<b>Ask the lecture</b>: type a question about what was said; it answers with slide and minute. Less than 1 cent per question.",
+    "<b>Chapters</b>: the index of topics. Tap a topic and the audio starts from there; with ✂ next to a chapter you make a clip.",
+    "<b>Who speaks</b>: the transcript with the names of who spoke; from here you name the voices and open the statistics.",
+    "<b>Share</b>: send notes or minutes by email, Word, Google Docs, calendar, Slack, Teams, Notion or CRM.",
+    "<b>Transcript</b>: opens the «Per Claude» PDF with everything that was said. <b>Audio</b>: listen to the recording again.",
+    "<b>Create notes with Claude</b>: there when notes were not made. <b>Also create in Exam format</b> (or Cornell): adds the other format, the ones you have stay. <b>Complete the notes</b>: makes the missing parts. Cost: about 0.20 $ per recorded hour (it tells you first).",
+    "<b>Redo notes</b>: redoes them from scratch, for example after adding difficult words. The previous ones are replaced. Same cost.",
+    "<b>Mind map</b>: the tree outline of the lecture. <b>Infographic (one page)</b>: the whole recording on one sheet. About 1 cent each, once; saved as PDF.",
+    "<b>Recognise who is speaking</b>: separates the voices, if not done yet. Free, on the phone. <b>Statistics</b>: length, who spoke and how much, questions, topics. Free.",
+    "<b>✂ Clip to send</b>: choose from… to… and make a piece of audio to send.",
+    "<b>Add the lecturer's slides (PDF)…</b>: puts the original slides in the notes, next to the words (chapter «The lecturer's slides»).",
+    "<b>Rename</b>: changes the name of the recording, files and notes.",
+    "<b>Delete the audio</b>: frees space; notes, slides and transcript stay. <b>Delete the recording</b>: it is deleted from the phone."
+   ]
   },
   {
    "ico": "chat",

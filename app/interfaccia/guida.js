@@ -130,7 +130,7 @@ const GUIDA = {
      "Hai già quello che ha detto il docente scritto in un file? In <b>Registra</b>, nel riquadro <b>Hai già la trascrizione della lezione?</b>, tocca <b>Importa un testo…</b>.",
      "Va bene un <b>PDF</b>, un file <b>Word</b> o di <b>testo</b>, anche il «Per Claude» di un'altra registrazione (per esempio una lezione registrata sul telefono).",
      "Il programma mostra quante parole ci sono e quanto costa (pochi centesimi). Scegli il nome, <b>Cornell</b> o <b>Formato Esame</b>, e tocca <b>Crea gli appunti</b>.",
-     "Resti in «Le mie registrazioni» con la barra che avanza. Quando è finito compare <b>Apri appunti</b>. Serve la chiave di Claude (o un invito)."
+     "Si apre la pagina della registrazione mentre Claude prepara gli appunti; quando sono pronti tocca <b>Apri gli appunti</b>. Serve la chiave di Claude (o un invito)."
     ],
     "g": "gia"
    },
@@ -207,6 +207,28 @@ const GUIDA = {
      "<b>☁ nel cloud</b> vuol dire che la copia nel cloud è fatta (capitolo «Copia nel cloud»). Se il PC si è spento mentre preparava i file, tocca <b>Completa</b>."
     ],
     "g": "lez"
+   },
+   {
+    "ico": "lib",
+    "v": "menu",
+    "g": "lez",
+    "t": "Il menu «⋯ Altro», voce per voce",
+    "p": [
+     "Su ogni registrazione tocca <b>⋯ Altro</b>. Le voci cambiano un po' da una registrazione all'altra: compaiono solo quelle che servono. Ecco cosa fa ognuna.",
+     "<b>Chiedi alla lezione</b>: scrivi una domanda su quello che si è detto; risponde con slide e minuto. Meno di 1 centesimo a domanda.",
+     "<b>Capitoli</b>: l'indice degli argomenti. Tocca un argomento e il video riparte da lì; con ✂ accanto a un capitolo fai uno spezzone.",
+     "<b>Chi parla</b>: la trascrizione con i nomi di chi ha parlato; da qui dai i nomi alle voci e apri le statistiche.",
+     "<b>Condividi</b>: manda appunti o verbale per email, Word, Google Docs, calendario, Slack, Teams, Notion o CRM.",
+     "<b>Trascrizione</b>: apre il PDF «Per Claude» con tutto quello che è stato detto. <b>Video</b>: riguardi la registrazione (se il video c'è ancora).",
+     "<b>Crea appunti con Claude</b>: c'è quando gli appunti non sono stati fatti. <b>Crea anche in Formato Esame</b> (o in Cornell): aggiunge l'altro formato, quelli che hai restano. <b>Completa gli appunti</b>: fa le parti che mancano. Costo: circa 0,20 $ per ora di registrazione (prima te lo dice).",
+     "<b>Rifai appunti</b>: li rifà da capo, per esempio dopo aver aggiunto le parole difficili. Quelli di prima vengono sostituiti. Stesso costo.",
+     "<b>Mappa mentale</b>: lo schema ad albero della lezione. <b>Infografica (una pagina)</b>: tutta la registrazione in un foglio. Circa 1 centesimo ciascuna, una volta sola; si salvano in PDF.",
+     "<b>Riconosci chi parla</b>: separa le voci, se non è già stato fatto. Gratis, sul PC. <b>Statistiche</b>: durata, chi ha parlato e quanto, domande, argomenti. Gratis.",
+     "<b>✂ Spezzone da mandare</b>: scegli dal… al… e crei un pezzo di video con sottotitoli o solo audio.",
+     "<b>Aggiungi le slide del docente (PDF)…</b>: mette le slide originali negli appunti, accanto alle parole (capitolo «Le slide del docente»).",
+     "<b>Rinomina</b>: cambia il nome della registrazione, dei file e degli appunti. <b>Apri la cartella</b>: apre in Esplora file la cartella della lezione.",
+     "<b>Elimina il video</b>: libera spazio; appunti, slide e trascrizione restano. <b>Elimina la registrazione</b>: va nel Cestino di Windows, da dove la recuperi se ti sbagli."
+    ]
    },
    {
     "ico": "chat",
@@ -472,7 +494,7 @@ const GUIDA = {
      "Already have what the lecturer said written in a file? In <b>Record</b>, in the box <b>Already have the lecture's transcript?</b>, tap <b>Import a text…</b>.",
      "A <b>PDF</b>, a <b>Word</b> or a <b>text</b> file is fine, even the «Per Claude» file of another recording (for example a lecture recorded on the phone).",
      "The program shows how many words there are and the cost (a few cents). Choose the name, <b>Cornell</b> or <b>Exam format</b>, and tap <b>Create the notes</b>.",
-     "You stay in «My recordings» with a progress bar. When it is done, <b>Open notes</b> appears. You need the Claude key (or an invitation)."
+     "The recording's page opens while Claude prepares the notes; when they are ready tap <b>Open the notes</b>. You need the Claude key (or an invitation)."
     ],
     "g": "gia"
    },
@@ -549,6 +571,28 @@ const GUIDA = {
      "<b>☁ in the cloud</b> means the cloud copy is done (chapter «Copy to the cloud»). If the PC turned off while preparing the files, tap <b>Complete</b>."
     ],
     "g": "lez"
+   },
+   {
+    "ico": "lib",
+    "v": "menu",
+    "g": "lez",
+    "t": "The «⋯ More» menu, item by item",
+    "p": [
+     "On each recording tap <b>⋯ More</b>. The items change a little from one recording to another: only the useful ones appear. Here is what each does.",
+     "<b>Ask the lecture</b>: type a question about what was said; it answers with slide and minute. Less than 1 cent per question.",
+     "<b>Chapters</b>: the index of topics. Tap a topic and the video starts from there; with ✂ next to a chapter you make a clip.",
+     "<b>Who speaks</b>: the transcript with the names of who spoke; from here you name the voices and open the statistics.",
+     "<b>Share</b>: send notes or minutes by email, Word, Google Docs, calendar, Slack, Teams, Notion or CRM.",
+     "<b>Transcript</b>: opens the «Per Claude» PDF with everything that was said. <b>Video</b>: watch the recording again (if the video is still there).",
+     "<b>Create notes with Claude</b>: there when notes were not made. <b>Also create in Exam format</b> (or Cornell): adds the other format, the ones you have stay. <b>Complete the notes</b>: makes the missing parts. Cost: about 0.20 $ per recorded hour (it tells you first).",
+     "<b>Redo notes</b>: redoes them from scratch, for example after adding difficult words. The previous ones are replaced. Same cost.",
+     "<b>Mind map</b>: the tree outline of the lecture. <b>Infographic (one page)</b>: the whole recording on one sheet. About 1 cent each, once; saved as PDF.",
+     "<b>Recognise who is speaking</b>: separates the voices, if not done yet. Free, on the PC. <b>Statistics</b>: length, who spoke and how much, questions, topics. Free.",
+     "<b>✂ Clip to send</b>: choose from… to… and make a piece of video with subtitles or audio only.",
+     "<b>Add the lecturer's slides (PDF)…</b>: puts the original slides in the notes, next to the words (chapter «The lecturer's slides»).",
+     "<b>Rename</b>: changes the name of the recording, files and notes. <b>Open the folder</b>: opens the lecture's folder in File Explorer.",
+     "<b>Delete the video</b>: frees space; notes, slides and transcript stay. <b>Delete the recording</b>: goes to the Windows Recycle Bin, where you can recover it if you make a mistake."
+    ]
    },
    {
     "ico": "chat",
