@@ -21,7 +21,7 @@ const GUIDA = {
      "<b>Tutto in un posto</b>: cerca una parola in tutte le registrazioni, le cose da fare di tutte le riunioni, il calendario. Con la copia nel cloud ritrovi le lezioni anche sul telefono.",
      "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso e la simulazione corretta da Claude.",
      "<b>Da dare a chi ti fidi</b>: con un invito dai il programma già pronto, con le tue chiavi, senza fargliele vedere.",
-     "<b>Niente abbonamento</b>: paghi solo quello che usi con la tua chiave di Claude (circa 0,20 $ per ora registrata).",
+     "<b>Due modi di pagare</b>: con la tua chiave di Claude paghi solo quello che usi (circa 0,20 $ per ora registrata). Oppure, prossimamente, con un abbonamento che comprende già Claude e il server veloce, senza chiavi da mettere.",
      "Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi."
     ],
     "g": "primi"
@@ -396,7 +396,7 @@ const GUIDA = {
      "<b>Everything in one place</b>: search a word in all recordings, the to-dos of all meetings, the calendar. With the cloud copy you find the lectures on the phone too.",
      "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course and the mock exam corrected by Claude.",
      "<b>To give to people you trust</b>: with an invitation you give the program ready to use, with your keys, without them seeing them.",
-     "<b>No subscription</b>: you only pay for what you use with your Claude key (about 0.20 $ per recorded hour).",
+     "<b>Two ways to pay</b>: with your own Claude key you only pay for what you use (about 0.20 $ per recorded hour). Or, coming soon, with a subscription that already includes Claude and the fast server, with no keys to enter.",
      "Videos, notes and transcripts stay <b>on your PC</b>: they are yours."
     ],
     "g": "primi"
