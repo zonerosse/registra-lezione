@@ -32,7 +32,8 @@ const GUIDA = {
      "<b>Con un invito</b>: chi ti invita ti manda un messaggio su WhatsApp. In <b>Impostazioni → Ho un invito</b> incolla tutto il messaggio e tocca <b>Attiva</b>. Le chiavi arrivano già pronte, senza che tu le veda; quello che usi lo paga chi ti ha invitato.",
      "<b>Senza chiave</b>: scegli «Cartella per l'AI che vuoi». Il programma registra e trascrive lo stesso e prepara un file per ogni parte, da portare a Claude, ChatGPT o Gemini."
     ],
-    "g": "primi"
+    "g": "primi",
+    "v": "chiave"
    },
    {
     "ico": "info",
@@ -70,7 +71,8 @@ const GUIDA = {
      "Se parte dal calendario con un titolo generico, il programma aggiunge da solo data e ora (per esempio «Lezione – 17/10 19.10»), così la registrazione non si blocca mai.",
      "Per cambiarlo dopo: <b>⋯ Altro → Rinomina</b>. Cambia anche il nome dei file e degli appunti."
     ],
-    "g": "reg"
+    "g": "reg",
+    "v": "nome"
    },
    {
     "ico": "chat",
@@ -132,7 +134,8 @@ const GUIDA = {
      "Il programma mostra quante parole ci sono e quanto costa (pochi centesimi). Scegli il nome, <b>Cornell</b> o <b>Formato Esame</b>, e tocca <b>Crea gli appunti</b>.",
      "Si apre la pagina della registrazione mentre Claude prepara gli appunti; quando sono pronti tocca <b>Apri gli appunti</b>. Serve la chiave di Claude (o un invito)."
     ],
-    "g": "gia"
+    "g": "gia",
+    "v": "itesto"
    },
    {
     "ico": "pdf",
@@ -143,7 +146,8 @@ const GUIDA = {
      "<b>A lezione finita</b>: sulla registrazione tocca <b>⋯ Altro → Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide (prima ti dice quanto costa); quelli di prima restano come copia.",
      "Il PDF viene copiato nella cartella della lezione: puoi spostare o cancellare l'originale."
     ],
-    "g": "gia"
+    "g": "gia",
+    "v": "docente"
    },
    {
     "ico": "doc",
@@ -280,7 +284,8 @@ const GUIDA = {
      "Tocca una volta <b>Copia anche le lezioni già fatte</b>: da lì in poi le nuove si copiano da sole. Se manca internet il programma riprova da solo ogni 10 minuti.",
      "Dal telefono: apri l'app OneDrive o Google Drive → cartella «Verba Manent IA»."
     ],
-    "g": "lez"
+    "g": "lez",
+    "v": "cloud"
    },
    {
     "ico": "set",
@@ -302,7 +307,8 @@ const GUIDA = {
      "<b>Sul server (veloce)</b>: un computer potente a noleggio (RunPod, in Europa) trascrive un'ora di lezione in circa un minuto, anche se il PC è lento. Pochi centesimi l'ora. Si collega con un invito, oppure in <b>⚙ Altre opzioni</b> con codice e chiave.",
      "Le righe grigie <b>«Da sapere»</b> dicono i limiti di ognuno. Se manca internet o il server non risponde, il programma trascrive sul PC: la registrazione non si perde mai."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "dove"
    },
    {
     "ico": "abc",
@@ -313,7 +319,8 @@ const GUIDA = {
      "Sotto, <b>«Trovate nei tuoi appunti»</b>: parole proposte dal programma. Toccandone una la aggiungi alla lista.",
      "Valgono per quella materia e <b>dalla prossima registrazione</b>: le lezioni già fatte non cambiano. Esempio: il docente dice «ciclo di Krebs» e la trascrizione scrive «ciclo di crebs»; con «ciclo di Krebs» tra le parole di Biochimica, dalla lezione dopo lo scrive giusto."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "parole"
    },
    {
     "ico": "info",
@@ -336,7 +343,8 @@ const GUIDA = {
      "Scrivi <b>per chi è</b>, spunta cosa gli dai (<b>la chiave di Claude</b>, <b>il server per trascrivere</b>) e tocca <b>Prepara l'invito</b>. Poi <b>Copia il messaggio</b> e mandalo su WhatsApp.",
      "Chi lo riceve apre il programma → <b>Impostazioni → Ho un invito</b>, incolla tutto il messaggio e tocca <b>Attiva</b>."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "inviti"
    },
    {
     "ico": "aud",
@@ -396,7 +404,8 @@ const GUIDA = {
      "<b>With an invitation</b>: whoever invites you sends you a WhatsApp message. In <b>Settings → I have an invitation</b> paste the whole message and tap <b>Activate</b>. The keys arrive ready, without you seeing them; what you use is paid by whoever invited you.",
      "<b>Without a key</b>: choose «Folder for the AI of your choice». The program still records and transcribes and prepares a file for each part, to take to Claude, ChatGPT or Gemini."
     ],
-    "g": "primi"
+    "g": "primi",
+    "v": "chiave"
    },
    {
     "ico": "info",
@@ -434,7 +443,8 @@ const GUIDA = {
      "If it starts from the calendar with a generic title, the program adds date and time by itself (for example «Lecture – 17/10 19.10»), so the recording never gets stuck.",
      "To change it later: <b>⋯ More → Rename</b>. It also renames the files and the notes."
     ],
-    "g": "reg"
+    "g": "reg",
+    "v": "nome"
    },
    {
     "ico": "chat",
@@ -496,7 +506,8 @@ const GUIDA = {
      "The program shows how many words there are and the cost (a few cents). Choose the name, <b>Cornell</b> or <b>Exam format</b>, and tap <b>Create the notes</b>.",
      "The recording's page opens while Claude prepares the notes; when they are ready tap <b>Open the notes</b>. You need the Claude key (or an invitation)."
     ],
-    "g": "gia"
+    "g": "gia",
+    "v": "itesto"
    },
    {
     "ico": "pdf",
@@ -507,7 +518,8 @@ const GUIDA = {
      "<b>After the lecture</b>: on the recording tap <b>⋯ More → Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides (it tells you the cost first); the previous ones stay as a copy.",
      "The PDF is copied into the lecture's folder: you can move or delete the original."
     ],
-    "g": "gia"
+    "g": "gia",
+    "v": "docente"
    },
    {
     "ico": "doc",
@@ -644,7 +656,8 @@ const GUIDA = {
      "Tap <b>Also copy the lectures already done</b> once: from then on new ones are copied by themselves. If there is no internet the program retries every 10 minutes.",
      "From the phone: open the OneDrive or Google Drive app → «Verba Manent IA» folder."
     ],
-    "g": "lez"
+    "g": "lez",
+    "v": "cloud"
    },
    {
     "ico": "set",
@@ -666,7 +679,8 @@ const GUIDA = {
      "<b>On the server (fast)</b>: a powerful rented computer (RunPod, in Europe) transcribes an hour of lecture in about a minute, even if the PC is slow. A few cents per hour. Connect it with an invitation, or in <b>⚙ More options</b> with code and key.",
      "The grey <b>«Good to know»</b> lines say the limits of each. If there is no internet or the server doesn't answer, the program transcribes on the PC: the recording is never lost."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "dove"
    },
    {
     "ico": "abc",
@@ -677,7 +691,8 @@ const GUIDA = {
      "Below, <b>«Found in your notes»</b>: words suggested by the program. Tap one to add it to the list.",
      "They are for that subject and <b>from the next recording</b>: lectures already made don't change. Example: the lecturer says «Krebs cycle» and the transcript writes «crebs cycle»; with «Krebs cycle» among the Biochemistry words, from the next lecture it is written correctly."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "parole"
    },
    {
     "ico": "info",
@@ -700,7 +715,8 @@ const GUIDA = {
      "Type <b>who it is for</b>, tick what you give (<b>the Claude key</b>, <b>the transcription server</b>) and tap <b>Prepare the invitation</b>. Then <b>Copy the message</b> and send it on WhatsApp.",
      "Whoever receives it opens the program → <b>Settings → I have an invitation</b>, pastes the whole message and taps <b>Activate</b>."
     ],
-    "g": "imp"
+    "g": "imp",
+    "v": "inviti"
    },
    {
     "ico": "aud",

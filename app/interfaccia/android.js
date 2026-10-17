@@ -145,7 +145,8 @@ if (ANDROID) {
     "<b>Con un invito</b>: chi ti invita ti manda un messaggio su WhatsApp. Copialo tutto, poi in <b>Impostazioni → Ho un invito</b> incollalo e tocca <b>Attiva</b>. Le chiavi arrivano già pronte, senza che tu le veda; quello che usi lo paga chi ti ha invitato.",
     "<b>Senza chiave</b> l'app registra e trascrive lo stesso, ma gli appunti non si creano."
    ],
-   "g": "primi"
+   "g": "primi",
+   "v": "tel-chiave"
   },
   {
    "ico": "info",
@@ -156,7 +157,8 @@ if (ANDROID) {
     "Se serve l'app nuova il bottone è <b>Scarica</b>: apri il file scaricato e tocca <b>Installa</b>. Registrazioni e appunti restano.",
     "Puoi cercare anche a mano: <b>Impostazioni → Aggiorna l'app → Cerca aggiornamenti</b>. Nella stessa pagina c'è <b>Assistenza</b> (Punto Web Ferrara)."
    ],
-   "g": "primi"
+   "g": "primi",
+   "v": "tel-aggiornamenti"
   },
   {
    "ico": "rec",
@@ -180,7 +182,8 @@ if (ANDROID) {
     "<b>Due registrazioni non possono avere lo stesso nome.</b> Se il nome c'è già, l'app lo dice e propone nomi liberi, per esempio «Analisi 1 – 17/10»: un tocco e lo usi.",
     "Per cambiarlo dopo: <b>⋯ Altro → Rinomina</b>."
    ],
-   "g": "reg"
+   "g": "reg",
+   "v": "tel-nome"
   },
   {
    "ico": "chat",
@@ -228,7 +231,8 @@ if (ANDROID) {
     "Scegli il file: mp3, m4a, wav… anche da Drive (una nota vocale, un registratore, un audio dato dall'università).",
     "L'app mostra la durata e propone il nome: correggilo se serve. Tocca <b>Importa e trascrivi</b>: resti in «Le mie lezioni» con la barra che avanza. Il file originale resta dov'è."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-importa"
   },
   {
    "ico": "text",
@@ -238,7 +242,8 @@ if (ANDROID) {
     "Va bene un <b>PDF</b>, un file <b>Word</b> o di <b>testo</b>, anche il «Per Claude» di un'altra registrazione.",
     "L'app mostra quante parole ci sono e quanto costa (pochi centesimi). Scegli il nome, <b>Cornell</b> o <b>Formato Esame</b>, e tocca <b>Crea gli appunti</b>. Quando è finito compare <b>Apri appunti</b>."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-itesto"
   },
   {
    "ico": "pdf",
@@ -248,7 +253,8 @@ if (ANDROID) {
     "<b>Prima di registrare</b> (in aula): in «Dove si tiene?» → <b>In aula</b> → <b>Slide del docente</b> → <b>Scegli il PDF…</b>. Valgono solo per quella registrazione.",
     "<b>A lezione finita</b>: sulla registrazione tocca <b>⋯ Altro → Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide; quelli di prima restano come copia."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-docente"
   },
   {
    "ico": "doc",
@@ -388,7 +394,8 @@ if (ANDROID) {
     "<b>Sul server (veloce)</b>: un computer potente a noleggio (RunPod, in Europa) trascrive un'ora di lezione in circa un minuto e il telefono non scalda. Pochi centesimi l'ora. Si collega con un invito, oppure con codice e chiave.",
     "Le righe grigie <b>«Da sapere»</b> dicono i limiti di ognuno. Se manca internet o il server non risponde, l'app trascrive sul telefono: la registrazione non si perde mai."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-dove"
   },
   {
    "ico": "abc",
@@ -398,7 +405,8 @@ if (ANDROID) {
     "In <b>Impostazioni → Parole difficili</b> scegli la materia, scrivi una parola e premi Invio (o tocca <b>Aggiungi</b>). La × la toglie. Sotto, in <b>«Trovate nei tuoi appunti»</b>, tocca le parole proposte per aggiungerle.",
     "Valgono per quella materia e <b>dalla prossima registrazione</b>: le lezioni già fatte non cambiano."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-parole"
   },
   {
    "ico": "info",
@@ -419,7 +427,8 @@ if (ANDROID) {
     "Il riquadro <b>Inviti</b> (in Impostazioni avanzate) c'è solo se le chiavi le hai messe tu a mano: chi ha ricevuto un invito non può invitare altri.",
     "Scrivi <b>per chi è</b>, spunta cosa gli dai e tocca <b>Prepara l'invito</b>. Poi <b>Copia il messaggio</b> e mandalo su WhatsApp. Chi lo riceve va in <b>Impostazioni → Ho un invito</b>, incolla e tocca <b>Attiva</b>."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-inviti"
   },
   {
    "ico": "aud",
@@ -477,7 +486,8 @@ if (ANDROID) {
     "<b>With an invitation</b>: whoever invites you sends you a WhatsApp message. Copy all of it, then in <b>Settings → I have an invitation</b> paste it and tap <b>Activate</b>. The keys arrive ready, without you seeing them; what you use is paid by whoever invited you.",
     "<b>Without a key</b> the app still records and transcribes, but notes are not created."
    ],
-   "g": "primi"
+   "g": "primi",
+   "v": "tel-chiave"
   },
   {
    "ico": "info",
@@ -488,7 +498,8 @@ if (ANDROID) {
     "If the new app is needed the button is <b>Download</b>: open the downloaded file and tap <b>Install</b>. Recordings and notes stay.",
     "You can also look by hand: <b>Settings → Update the app → Check for updates</b>. On the same page there is <b>Support</b> (Punto Web Ferrara)."
    ],
-   "g": "primi"
+   "g": "primi",
+   "v": "tel-aggiornamenti"
   },
   {
    "ico": "rec",
@@ -512,7 +523,8 @@ if (ANDROID) {
     "<b>Two recordings cannot have the same name.</b> If the name is taken, the app says so and suggests free names, for example «Calculus 1 – 17/10»: one tap and you use it.",
     "To change it later: <b>⋯ More → Rename</b>."
    ],
-   "g": "reg"
+   "g": "reg",
+   "v": "tel-nome"
   },
   {
    "ico": "chat",
@@ -560,7 +572,8 @@ if (ANDROID) {
     "Choose the file: mp3, m4a, wav… also from Drive (a voice note, a recorder, an audio given by the university).",
     "The app shows the length and suggests the name: fix it if needed. Tap <b>Import and transcribe</b>: you stay in «My lectures» with a progress bar. The original file stays where it is."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-importa"
   },
   {
    "ico": "text",
@@ -570,7 +583,8 @@ if (ANDROID) {
     "A <b>PDF</b>, a <b>Word</b> or a <b>text</b> file is fine, even the «Per Claude» file of another recording.",
     "The app shows how many words there are and the cost (a few cents). Choose the name, <b>Cornell</b> or <b>Exam format</b>, and tap <b>Create the notes</b>. When it is done, <b>Open notes</b> appears."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-itesto"
   },
   {
    "ico": "pdf",
@@ -580,7 +594,8 @@ if (ANDROID) {
     "<b>Before recording</b> (in class): «Where does it take place?» → <b>In the classroom</b> → <b>Lecturer's slides</b> → <b>Choose the PDF…</b>. They are only for that recording.",
     "<b>After the lecture</b>: on the recording tap <b>⋯ More → Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides; the previous ones stay as a copy."
    ],
-   "g": "gia"
+   "g": "gia",
+   "v": "tel-docente"
   },
   {
    "ico": "doc",
@@ -720,7 +735,8 @@ if (ANDROID) {
     "<b>On the server (fast)</b>: a powerful rented computer (RunPod, in Europe) transcribes an hour of lecture in about a minute and the phone stays cool. A few cents per hour. Connect it with an invitation, or with code and key.",
     "The grey <b>«Good to know»</b> lines say the limits of each. If there is no internet or the server doesn't answer, the app transcribes on the phone: the recording is never lost."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-dove"
   },
   {
    "ico": "abc",
@@ -730,7 +746,8 @@ if (ANDROID) {
     "In <b>Settings → Difficult words</b> choose the subject, type a word and press Enter (or tap <b>Add</b>). The × removes it. Below, in <b>«Found in your notes»</b>, tap the suggested words to add them.",
     "They are for that subject and <b>from the next recording</b>: lectures already made don't change."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-parole"
   },
   {
    "ico": "info",
@@ -751,7 +768,8 @@ if (ANDROID) {
     "The <b>Invitations</b> box (in Advanced settings) is there only if you typed the keys yourself: whoever received an invitation cannot invite others.",
     "Type <b>who it is for</b>, tick what you give and tap <b>Prepare the invitation</b>. Then <b>Copy the message</b> and send it on WhatsApp. Whoever receives it goes to <b>Settings → I have an invitation</b>, pastes and taps <b>Activate</b>."
    ],
-   "g": "imp"
+   "g": "imp",
+   "v": "tel-inviti"
   },
   {
    "ico": "aud",
