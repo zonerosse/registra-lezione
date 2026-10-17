@@ -92,6 +92,7 @@
       <div class="card">
         <div class="lbl" data-t="pr.nome">Nome</div>
         <input class="in" id="nome" data-tp="pr.ph" placeholder="Es. Analisi 1 – Limiti" maxlength="90" autocomplete="off">
+        <div class="nmsg" id="nomeMsg"></div>
         <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
         <div class="calora hidden" id="calOra"></div>
         <div class="chips" id="recenti"></div>
@@ -130,6 +131,7 @@
       </div>
       <div class="recwrap mt">
         <button class="recbtn" id="btnRec"><span></span><b data-t="rec">REGISTRA</b></button>
+        <div class="hint" id="recNome" style="font-weight:600"></div>
         <div class="hint" id="recHint"></div>
         <div class="hint" id="recModello" style="color:var(--blue);font-weight:600"></div>
       </div>
@@ -147,7 +149,7 @@
       <div class="hd"><div><h2 data-t="iv.h">Importa un video</h2><p data-t="iv.p">Lo copio nelle tue registrazioni: il file originale resta dov'è.</p></div></div>
       <div class="card">
         <div class="file"><span class="ico i-teal"><svg><use href="#i-film"/></svg></span><div class="sp"><b style="color:var(--ink)" id="ivFile"></b><div class="hint" id="ivInfo"></div></div><button class="btn b-ghost b-sm" id="ivCambia" data-t="im.cambia">Cambia…</button></div>
-        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="ivNome" maxlength="90" autocomplete="off">
+        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="ivNome" maxlength="90" autocomplete="off"><div class="nmsg" id="ivNomeMsg"></div>
         <div class="lbl" style="margin-top:14px" data-t="pr.lingua">In che lingua parla il docente?</div>
         <div class="chips" id="ivLingue"></div>
         <div class="set" id="ivSlideRiga" style="margin-top:12px"><div class="t"><b data-t="iv.sl.t">C'è lo schermo con le slide?</b><span data-t="iv.sl">Se il video ha solo l'audio (o solo la faccia del docente) salto le slide.</span></div><div class="seg" id="ivSlide"><span data-v="1" data-t="iv.sl.si">Sì, cerco le slide</span><span data-v="0" data-t="iv.sl.no">Solo audio</span></div></div>
@@ -161,7 +163,7 @@
       <div class="hd"><div><h2 data-t="it.h">Importa una trascrizione</h2><p data-t="it.p">Ne faccio gli appunti: il file originale resta dov'è.</p></div></div>
       <div class="card">
         <div class="file"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><div class="sp"><b style="color:var(--ink)" id="itFile"></b><div class="hint" id="itInfo"></div></div><button class="btn b-ghost b-sm" id="itCambia" data-t="im.cambia">Cambia…</button></div>
-        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="itNome" maxlength="90" autocomplete="off">
+        <div class="lbl" data-t="iv.nome">Nome della lezione</div><input class="in" id="itNome" maxlength="90" autocomplete="off"><div class="nmsg" id="itNomeMsg"></div>
         <div class="lbl" style="margin-top:14px" data-t="it.fmt">Che appunti vuoi?</div>
         <div id="itFmt" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
           <div class="aiopt" data-f="cornell"><span class="rd"></span><b data-t="it.fmt.c.t">Cornell</b><small data-t="it.fmt.c">Domande a sinistra, appunti a destra, riassunto in fondo.</small></div>

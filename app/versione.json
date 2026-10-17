@@ -1,6 +1,6 @@
 {
- "versione": "3.39",
+ "versione": "3.40",
  "librerie": 2,
- "novita": "«Importa un video» ora si chiama «Importa un video o un audio»: accetta anche gli audio (mp3, m4a, wav…, note vocali, registratori).",
- "novita_en": "«Import a video» is now «Import a video or audio»: it also takes audio files (mp3, m4a, wav…, voice notes, recorders)."
+ "novita": "Nomi unici: non si può più registrare o importare con un nome vuoto o uguale a una lezione che c'è già. Il programma lo dice subito sotto il nome e propone nomi liberi da toccare.",
+ "novita_en": "Unique names: you can no longer record or import with an empty name or one that matches an existing lecture. The program tells you right under the name and suggests free names to tap."
 }

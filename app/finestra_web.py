@@ -385,6 +385,9 @@ class Api:
             return {"ok": False}
         return self._m.info_testo(scelta[0] if isinstance(scelta, (list, tuple)) else scelta)
 
+    def nome_libero(self, nome, escludi=None):
+        return self._m.nome_libero(nome, escludi)
+
     def importa_testo(self, percorso, nome, formato=None):
         return self._m.importa_testo(percorso, nome, formato)
 

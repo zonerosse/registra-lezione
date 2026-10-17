@@ -650,8 +650,73 @@ class Motore:
         return {"occupato": False, "audio_ok": c["audio_ok"], "liberi": c["liberi"], "cartella_ok": cart_ok,
                 "dnd": bool(self.cfg.get("promemoria_dnd", True))}
 
+    # ------------------------------------------------------------------ nomi unici
+
+    @staticmethod
+    def _norm_nome(n):
+        return re.sub(r"\s+", " ", str(n or "").replace(" - ", " – ")).strip().casefold()
+
+    def _nomi_usati(self, escludi=None):
+        """{nome normalizzato: (nome, data gg/mm)} delle registrazioni che ci sono."""
+        out = {}
+        esc = str(Path(escludi)) if escludi else None
+        try:
+            cartelle = [p for p in BASE.iterdir() if p.is_dir()]
+        except OSError:
+            cartelle = []
+        for c in cartelle:
+            if esc and str(c) == esc:
+                continue
+            info = el.leggi_json(c / "info.json")
+            if not isinstance(info, dict) or not info.get("nome"):
+                continue
+            try:
+                d = datetime.datetime.fromisoformat(info.get("inizio", "")).strftime("%d/%m")
+            except Exception:
+                d = ""
+            out[self._norm_nome(info["nome"])] = (info["nome"], d)
+        return out
+
+    def nome_libero(self, nome, escludi=None):
+        """Il nome si puo' usare? Se no, il motivo e due nomi liberi da proporre."""
+        nome = re.sub(r"\s+", " ", str(nome or "")).strip()
+        if not nome:
+            return {"ok": False, "vuoto": True, "proposte": []}
+        usati = self._nomi_usati(escludi)
+        if self._norm_nome(nome) not in usati:
+            return {"ok": True}
+        vecchio, data = usati[self._norm_nome(nome)]
+        nome = vecchio                    # le proposte con le maiuscole giuste
+        materia = materia_di(nome) or nome
+        oggi = datetime.datetime.now().strftime("%d/%m")
+        proposte = []
+        p1 = f"{materia} – {oggi}"
+        n = 2
+        while self._norm_nome(p1) in usati:
+            p1 = f"{materia} – {oggi} ({n})"
+            n += 1
+        proposte.append(p1)
+        n = 2
+        while self._norm_nome(f"{nome} – {n}") in usati or self._norm_nome(f"{nome} – {n}") == self._norm_nome(p1):
+            n += 1
+        proposte.append(f"{nome} – {n}")
+        return {"ok": False, "vuoto": False, "nome": vecchio, "data": data, "proposte": proposte}
+
+    def nome_unico(self, nome):
+        """Per chi parte da solo (calendario): il nome se e' libero, se no il primo nome libero proposto."""
+        v = self.nome_libero(nome)
+        return nome if v.get("ok") else (v.get("proposte") or [nome or "Lezione"])[0]
+
+    def _msg_nome(self, v):
+        if v.get("vuoto"):
+            return tr("nome_vuoto")
+        return tr("nome_usato", n=v.get("nome", ""), p=" / ".join(v.get("proposte") or []))
+
     def avvia(self, nome, opzioni=None):
         opzioni = opzioni or {}
+        v = self.nome_libero(nome)
+        if not v.get("ok"):
+            return {"ok": False, "msg": self._msg_nome(v), "nome": v}
         modo = "aula" if (opzioni.get("modo") or self.cfg.get("modo")) == "aula" else "online"
         microfono = opzioni.get("microfono") or self.cfg.get("microfono") or None
         pdf = opzioni.get("pdf") if modo == "aula" else None
@@ -776,6 +841,9 @@ class Motore:
         src = Path(percorso)
         if not src.exists():
             return {"ok": False, "msg": "?"}
+        v = self.nome_libero(nome)
+        if not v.get("ok"):
+            return {"ok": False, "msg": self._msg_nome(v)}
         with self._lock:
             if self.occupato:
                 return {"ok": False, "msg": tr("aspetta_lavoro")}
@@ -851,6 +919,9 @@ class Motore:
             testo = ti.leggi(src)
         except ti.ErroreTesto as e:
             return {"ok": False, "msg": tr("it_err_tipo" if str(e) == "tipo" else "it_err_vuoto")}
+        v = self.nome_libero(nome)
+        if not v.get("ok"):
+            return {"ok": False, "msg": self._msg_nome(v)}
         nome = (nome or "").strip() or src.stem
         self.ricorda_materia(nome)
         quando = datetime.datetime.now()
@@ -2026,7 +2097,7 @@ class Motore:
         if ev.get("link"):
             apri(ev["link"])
         tipo = "lezione" if ev.get("lezione") else self._tipo()
-        r = self.avvia(ev["titolo"], {"modo": "aula" if ev.get("aula") else "online", "tipo": tipo,
+        r = self.avvia(self.nome_unico(ev["titolo"]), {"modo": "aula" if ev.get("aula") else "online", "tipo": tipo,
                                      "partecipanti": ev.get("partecipanti") or []})
         if r.get("ok"):
             self.cal_rec = ev
@@ -2190,8 +2261,11 @@ class Motore:
         info = el.leggi_json(cart / "info.json", {}) or {}
         vecchio = info.get("nome", "Lezione")
         nuovo = (nuovo or "").strip()
-        if not nuovo or nuovo == vecchio:
+        if nuovo == vecchio:
             return {"ok": True}
+        v = self.nome_libero(nuovo, escludi=cart)
+        if not v.get("ok"):
+            return {"ok": False, "msg": self._msg_nome(v)}
         try:
             self._applica_rinomina(cart, vecchio, nuovo)
             return {"ok": True}

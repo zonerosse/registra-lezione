@@ -142,6 +142,7 @@ const TESTI = {
     'lv.parti': 'Pacchetti e appunti', 'lv.pz': 'Pausa (intervallo)', 'lv.ri': 'Riprendi la registrazione', 'lv.fine': 'Fine', 'lv.riduci': 'Puoi ridurre questa finestra: la registrazione continua.',
     'fine.t': 'Fermo la registrazione?', 'fine': 'Poi preparo il video, la trascrizione e gli ultimi pacchetti.', 'fine.si': 'Sì, ferma',
     'pt.nessuna': 'Nessuna parte registrata.', 'pt.parte': 'Parte {k}', 'pt.reg': '● in registrazione', 'pt.coda': 'in coda…', 'pt.lav': 'Trascrivo… {p}%', 'pt.ok': '✓ Pacchetto pronto', 'pt.mostra': 'Mostra', 'pt.err': '⚠ problema',
+    'nm.vuoto': 'Scrivi il nome della lezione', 'nm.usato': "C'è già una lezione «{n}»{d}. Cambia il nome, oppure tocca uno di questi:", 'nm.ok': '✓ Nome libero', 'nm.prima': 'Prima il nome', 'nm.prima2': 'Prima un nome nuovo',
     'ar.aplav': 'Appunti in preparazione… {p}%', 'ar.aperr.t': 'Appunti non creati', 'ar.apnulla': 'Gli appunti non si sono potuti creare: in questa registrazione non ci sono parole da riassumere.', 'pt.ap.coda': 'Appunti in coda…', 'pt.ap.lav': 'Claude scrive…', 'pt.ap.ok': '✓ Appunti pronti', 'pt.apri': 'Apri', 'pt.ap.err': '⚠ Appunti non creati: {m}', 'pt.riprova': 'Riprova',
     // fine
     'fn.ok': 'Registrazione salvata!', 'fn.lav': 'Preparo la registrazione completa…', 'fn.spesa': ' · {n} appunti creati da Claude · spesa circa {d} $',
@@ -367,6 +368,7 @@ const TESTI = {
     'lv.parti': 'Packages and notes', 'lv.pz': 'Pause (break)', 'lv.ri': 'Resume recording', 'lv.fine': 'Stop', 'lv.riduci': 'You can minimise this window: recording continues.',
     'fine.t': 'Stop the recording?', 'fine': "Then I'll prepare the video, the transcript and the last packages.", 'fine.si': 'Yes, stop',
     'pt.nessuna': 'No part recorded.', 'pt.parte': 'Part {k}', 'pt.reg': '● recording', 'pt.coda': 'queued…', 'pt.lav': 'Transcribing… {p}%', 'pt.ok': '✓ Package ready', 'pt.mostra': 'Show', 'pt.err': '⚠ problem',
+    'nm.vuoto': 'Write the lecture name', 'nm.usato': 'There is already a lecture «{n}»{d}. Change the name, or tap one of these:', 'nm.ok': '✓ Name available', 'nm.prima': 'Name first', 'nm.prima2': 'A new name first',
     'ar.aplav': 'Preparing notes… {p}%', 'ar.aperr.t': 'Notes not created', 'ar.apnulla': 'The notes could not be created: there are no words to summarise in this recording.', 'pt.ap.coda': 'Notes queued…', 'pt.ap.lav': 'Claude is writing…', 'pt.ap.ok': '✓ Notes ready', 'pt.apri': 'Open', 'pt.ap.err': '⚠ Notes not created: {m}', 'pt.riprova': 'Retry',
     'fn.ok': 'Recording saved!', 'fn.lav': 'Preparing the full recording…', 'fn.spesa': ' · {n} notes created by Claude · cost about {d} $',
     'fn.cornell': 'Cornell format', 'fn.primi': 'The first notes are ready', 'fn.tuoi': 'Your notes are ready',

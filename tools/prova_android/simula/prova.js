@@ -102,6 +102,14 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await aspetta(x => !x.occupato, 60);
     await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(1500);
     if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(1200); }
+    // nomi unici: vuoto e già usato spengono REGISTRA, la proposta lo riaccende
+    await p.fill('#nome', ''); await p.waitForTimeout(700);
+    passo('nome vuoto: REGISTRA spento', await p.isDisabled('#btnRec') && /nome/.test(await p.textContent('#nomeMsg')), await p.textContent('#nomeMsg'));
+    await p.fill('#nome', 'analisi 1 – derivate '); await p.waitForTimeout(700); await foto('09a-nome-usato');
+    const chipN = await p.$('#nomeMsg .chip');
+    passo('nome già usato: REGISTRA spento e nomi proposti', await p.isDisabled('#btnRec') && chipN, await p.textContent('#nomeMsg'));
+    if (chipN) { await chipN.click(); await p.waitForTimeout(700); }
+    passo('nome proposto: REGISTRA acceso', !(await p.isDisabled('#btnRec')), await p.inputValue('#nome'));
     await p.click('#tipoBox [data-k="riunione"]'); await p.waitForTimeout(400);
     passo('riunione: modelli di riunione', await p.isVisible('#modBox'));
     await p.click('#doveBox [data-m="aula"]');

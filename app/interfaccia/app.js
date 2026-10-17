@@ -164,8 +164,10 @@ function inizializza() {
   $('btnPrivacy').onclick = () => primaDiIniziare(true);
   $('licIndietro').onclick = () => vai('info');
   // pronto
-  $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); });
-  $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });
+  $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); controllaNomeRec(); });
+  $('ivNome').addEventListener('input', () => controllaNome('ivNome', 'ivNomeMsg', 'ivVai'));
+  $('itNome').addEventListener('input', () => controllaNome('itNome', 'itNomeMsg', 'itVai'));
+  $('nome').addEventListener('keydown', e => { if (e.key === 'Enter' && nomeOk('nome')) inizia(); });
   $('btnRec').onclick = inizia;
   $('avvCopia').onclick = avvCopia; $('avvFatto').onclick = avvFatto;
   $('avvRiapri').onclick = () => { AVV.aperto = true; AVV.copiato = false; disegnaAvvisa(); };
@@ -208,6 +210,7 @@ function inizializza() {
     i.addEventListener('blur', salvaDati);
   });
   disegnaPronto();
+  controllaNomeRec();
   vai('reg');
 }
 async function rileggi() { R = await A.riepilogo(); disegnaImpostazioni(); disegnaPronto(); }
@@ -365,6 +368,36 @@ function disegnaStato() {
   if ($('footAgg').innerHTML !== fa) $('footAgg').innerHTML = fa;
 }
 
+/* ------------------------------------------------------------------ nomi unici */
+// Ogni campo «nome»: controlla (con un attimo di pausa) che il nome non sia vuoto né già usato;
+// sotto scrive il motivo e propone nomi liberi; finché non va, il bottone resta spento.
+const NOMI = {};
+function controllaNome(id, msgId, btnId, ok2 = null) {
+  const st = NOMI[id] || (NOMI[id] = {ok: false, t: null, n: 0});
+  clearTimeout(st.t);
+  st.t = setTimeout(async () => {
+    const n = ++st.n, val = $(id).value;
+    let v; try { v = await A.nome_libero(val, null); } catch (e) { v = {ok: true}; }
+    if (n !== st.n) return;
+    st.ok = !!v.ok;
+    const m = $(msgId), inp = $(id);
+    inp.classList.toggle('n-err', !v.ok && !v.vuoto); inp.classList.toggle('n-ok', !!v.ok);
+    if (v.ok) { m.className = 'nmsg ok'; m.textContent = t('nm.ok'); }
+    else if (v.vuoto) { m.className = 'nmsg err'; m.textContent = t('nm.vuoto'); }
+    else {
+      m.className = 'nmsg err';
+      m.innerHTML = esc(t('nm.usato', {n: v.nome, d: v.data ? ` (${v.data})` : ''})) + '<div>' + (v.proposte || []).map(p => `<span class="chip" data-p="${esc(p)}">${esc(p)}</span>`).join('') + '</div>';
+      m.querySelectorAll('.chip').forEach(c => c.onclick = () => { inp.value = c.dataset.p; inp.dispatchEvent(new Event('input')); });
+    }
+    if ($(btnId)) $(btnId).disabled = !v.ok;
+    if (ok2) ok2(v);
+  }, 250);
+}
+const nomeOk = id => !!(NOMI[id] && NOMI[id].ok);
+function controllaNomeRec() {
+  controllaNome('nome', 'nomeMsg', 'btnRec', v => { $('recNome').textContent = v.ok ? '' : t(v.vuoto ? 'nm.prima' : 'nm.prima2'); });
+}
+
 /* ------------------------------------------------------------------ pronto */
 function anteprimaNome() {
   const k = (R && R.tipo) || 'lezione';
@@ -378,7 +411,7 @@ function disegnaPronto() {
     : `<span class="pill p-blue">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
   $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('pr.recenti')}</span>` +
     R.recenti.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('') : '';
-  $('recenti').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = $('nome'); i.value = c.dataset.m + ' – '; i.focus(); i.setSelectionRange(i.value.length, i.value.length); anteprimaNome(); });
+  $('recenti').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = $('nome'); i.value = c.dataset.m + ' – '; i.focus(); i.setSelectionRange(i.value.length, i.value.length); anteprimaNome(); controllaNomeRec(); });
   $('srcScr').textContent = t('src.scr.ok') + (R.schermo ? ' · ' + R.schermo : '');
   disegnaLingue();
   anteprimaNome();
@@ -496,8 +529,9 @@ async function inizia() {
     }
     const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
                                 tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : [], modello: R.tipo === 'riunione' ? (MOD || R.modello || 'generica') : ''});
+    if (!r.ok && r.msg) { await dialogo({titolo: t('nm.prima2'), testo: r.msg}); return; }
     if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; MOD = null; MOD_RICORDO = false; R = await A.riepilogo(); disegnaModo(); await aggiorna(); }
-  } finally { $('btnRec').disabled = false; }
+  } finally { $('btnRec').disabled = false; controllaNomeRec(); }
 }
 
 /* ------------------------------------------------------------------ avvisa i partecipanti */
@@ -558,6 +592,7 @@ async function scegliTesto() {
   IT = {...r, formato: (IT && IT.formato) || (R.formato === 'esame' ? 'esame' : 'cornell')};
   $('itNome').value = r.nome || '';
   disegnaTesto();
+  controllaNome('itNome', 'itNomeMsg', 'itVai');
   vai('reg');
 }
 function disegnaTesto() {
@@ -575,7 +610,7 @@ async function importaTesto() {
   let r;
   try { r = await A.importa_testo(IT.percorso, $('itNome').value, IT.formato); }
   catch (e) { r = {ok: false, msg: String(e && e.message || e)}; }
-  finally { $('itVai').disabled = false; }
+  finally { $('itVai').disabled = !nomeOk('itNome'); }
   if (!r || !r.ok) { dialogo({titolo: t('ar.aperr.t'), testo: (r && r.msg) || ''}); return; }
   IT = null;
   S = await A.stato(); vistaPrima = S.vista;
@@ -597,6 +632,7 @@ async function scegliVideo() {
   IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA, nome: (IV && IV.nome) || ''};
   $('ivNome').value = r.nome_proposto || '';
   disegnaImporta();
+  controllaNome('ivNome', 'ivNomeMsg', 'ivVai');
   vai('reg');
   setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
 }
@@ -614,6 +650,7 @@ async function scegliLink() {
   IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA};
   $('ivNome').value = r.nome_proposto || '';
   disegnaImporta();
+  controllaNome('ivNome', 'ivNomeMsg', 'ivVai');
   vai('reg');
   setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
 }
@@ -637,10 +674,10 @@ async function importaVideo() {
   try {
     const r = IV.link ? await A.importa_link(IV.link, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video)
       : await A.importa(IV.percorso, $('ivNome').value, IV.lingua, IV.slide && IV.ha_video);
-    if (!r.ok) { toast(r.msg && r.msg !== '?' ? r.msg : t('iv.err')); return; }
+    if (!r.ok) { dialogo({titolo: t('iv.h'), testo: r.msg && r.msg !== '?' ? r.msg : t('iv.err')}); return; }
     IV = null;
     await aggiorna(); vai('reg');
-  } finally { $('ivVai').disabled = false; }
+  } finally { $('ivVai').disabled = !nomeOk('ivNome'); }
 }
 function disegnaFasi() {
   const g = S.importa;
@@ -1284,7 +1321,7 @@ function disegnaCalOra() {
   if (e.dataset.h === h) return;
   e.dataset.h = h; e.innerHTML = h;
   $('calUsa').onclick = async () => {
-    $('nome').value = c.titolo; anteprimaNome();
+    $('nome').value = c.titolo; anteprimaNome(); controllaNomeRec();
     if (c.partecipanti.length) { PART = [...c.partecipanti]; if (R.tipo !== 'riunione' && !c.aula) { await A.imposta('tipo', 'riunione'); R.tipo = 'riunione'; } }
     await A.imposta('modo', c.aula ? 'aula' : 'online'); R.modo = c.aula ? 'aula' : 'online';
     disegnaPronto();

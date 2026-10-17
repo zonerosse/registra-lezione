@@ -546,3 +546,10 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .li-c.on .fr{transform:rotate(90deg)}
 .li-tx{display:none;margin:0 2px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;padding:12px;font:12px/1.5 Consolas,monospace;white-space:pre-wrap;max-height:240px;overflow:auto;color:#334155;-webkit-user-select:text;user-select:text}
 .li-c.on .li-tx{display:block}
+
+/* nomi unici */
+.nmsg{font-size:12.5px;margin-top:6px;line-height:1.45}.nmsg:empty{display:none}
+.nmsg.err{color:#be123c}.nmsg.ok{color:#059669}
+.nmsg .chip{margin:6px 6px 0 0;border-color:#bfdbfe;background:#eff6ff;color:var(--blue);font-weight:600;cursor:pointer}
+.in.n-err{border-color:#be123c;box-shadow:0 0 0 3px #fde2e8}.in.n-ok{border-color:#059669}
+.recbtn:disabled{filter:grayscale(1);opacity:.5;cursor:not-allowed}.recbtn:disabled::before{animation:none;border-color:#cbd5e1}
