@@ -112,8 +112,8 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 function vai(p) {
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p)));
-  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
+  ['pronto', 'importa', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   $('main').scrollTop = 0;
@@ -121,8 +121,34 @@ function vai(p) {
   if (p === 'fare') apriCose();
   if (p === 'imp') { disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
+  if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
+}
+
+/* ------------------------------------------------------------------ licenze */
+// i testi (quasi 1 MB) stanno in licenze.js, caricato solo quando si apre la pagina
+function apriLicenze() {
+  const box = $('licGruppi');
+  if (window.LICENZE) { if (box.dataset.l !== LINGUA) disegnaLicenze(); return; }
+  box.innerHTML = `<p class="hint">${esc(t('li.carico'))}</p>`;
+  const s = document.createElement('script');
+  s.src = 'licenze.js';
+  s.onload = disegnaLicenze;
+  document.head.appendChild(s);
+}
+function disegnaLicenze() {
+  const D = window.LICENZE, box = $('licGruppi');
+  const cl = l => /^GPL$|GPL con/.test(l) ? ' gp' : /LGPL/.test(l) ? ' lg' : l === 'Microsoft' ? ' ms' : '';
+  const voce = (n, d, l, tx) => `<div class="li-c"><div class="li-r"><div class="t"><b>${esc(n)}</b>${d ? `<span>${esc(d)}</span>` : ''}</div>`
+    + (l ? `<span class="li-l${cl(l)}">${esc(l === 'GPL con eccezione' && LINGUA !== 'it' ? 'GPL with exception' : l === 'Libera' && LINGUA !== 'it' ? 'Free' : l)}</span>` : '')
+    + `<span class="fr">›</span></div><div class="li-tx">${esc(tx)}</div></div>`;
+  let h = D.gruppi.map(g => `<div class="card"><h3>${esc(g[LINGUA] || g.en)}</h3>`
+    + g.voci.map(v => voce(v.n, v[LINGUA] || v.en, v.l, v.t.map(k => D.testi[k]).join('\n\n') || '—')).join('') + '</div>').join('');
+  h += `<div class="card"><h3>${esc(t('li.comuni'))}</h3>` + D.comuni.map(([n, k]) => voce(n, '', '', D.testi[k])).join('') + '</div>';
+  box.innerHTML = h;
+  box.dataset.l = LINGUA;
+  box.querySelectorAll('.li-r').forEach(r => r.onclick = () => r.parentNode.classList.toggle('on'));
 }
 
 function inizializza() {
@@ -131,6 +157,8 @@ function inizializza() {
   $('footAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('btnCercaAgg').onclick = () => A.cerca_aggiornamenti();
   $('btnAss').onclick = () => A.assistenza();
+  $('btnLic').onclick = () => vai('lic');
+  $('licIndietro').onclick = () => vai('info');
   // pronto
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); });
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter') inizia(); });

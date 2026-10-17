@@ -13,6 +13,7 @@ rm -f $R/interfaccia/mini.html
 find $R/interfaccia/video -name '*.webm' ! -name 'tel-*' -delete 2>/dev/null || true
 cp -R android/risorse/font $R/font
 cp android/versione.json $R/versione_android.json
+cp app/LICENZE.txt $R/
 find $R -name __pycache__ -prune -exec rm -rf {} \;
 if [ -n "$2" ]; then
   Z=$(cd "$(dirname "$2")" && pwd)/$(basename "$2")

@@ -182,6 +182,11 @@ const TESTI = {
     // informazioni
     'in.desc': "Registra lezioni, webinar e riunioni online. Trascrive sul tuo PC, senza mandare l'audio su internet, e prepara appunti di studio in formato Cornell.",
     'in.ass': 'Assistenza', 'in.cerca': 'Cerca aggiornamenti',
+    'in.lic': 'Licenze', 'li.h': 'Licenze', 'li.sub': 'Di chi è il programma e quali componenti liberi usa, con le loro licenze.',
+    'li.prop': 'Verba Manent IA © 2026 Sara Boldrini · Punto Web Ferrara', 'li.prop.s': "Tutti i diritti riservati. Il programma è concesso in uso secondo il contratto di licenza accettato all'installazione.",
+    'li.leg.lib': 'uso libero, basta citarli', 'li.leg.lgpl': 'uso libero, la libreria resta sostituibile', 'li.leg.gpl': 'programma separato, si indica dove trovarne il codice', 'li.leg.ms': 'componente di Windows',
+    'li.tocca': 'Tocca un componente per leggere il testo completo della licenza.', 'li.indietro': '‹ Informazioni', 'li.carico': 'Carico le licenze…',
+    'li.comuni': 'Testi completi delle licenze GPL e LGPL', 'li.file': 'Gli stessi testi sono nel file LICENZE.txt, nella cartella del programma.',
     'ag.c': "C'è la versione {v}", 'ag.completo': 'Questa versione cambia anche le librerie: va scaricato il programma completo (Setup).', 'ag.tardi': 'Più tardi', 'ag.pagina': 'Apri la pagina', 'ag.installa': 'Installa', 'ag.scarico': "Scarico l'aggiornamento… {p}%",
     // benvenuto
     'bv.t': 'Benvenuto · Welcome', 'bv': 'Scegli la lingua del programma e degli appunti.\nChoose the language of the app and of your notes.', 'bv.s': 'Si cambia quando vuoi in Impostazioni · You can change it anytime in Settings',
@@ -381,6 +386,11 @@ const TESTI = {
     'im.d.nome': 'Full name', 'im.d.uni': 'University', 'im.d.corso': 'Degree course', 'im.d.anno': 'Year',
     'in.desc': 'Records lectures, webinars and online meetings. Transcribes on your PC, without sending the audio over the internet, and prepares Cornell study notes.',
     'in.ass': 'Support', 'in.cerca': 'Check for updates',
+    'in.lic': 'Licenses', 'li.h': 'Licenses', 'li.sub': 'Who owns the program and which free components it uses, with their licenses.',
+    'li.prop': 'Verba Manent IA © 2026 Sara Boldrini · Punto Web Ferrara', 'li.prop.s': 'All rights reserved. The program is licensed for use under the license agreement accepted at installation.',
+    'li.leg.lib': 'free to use, credit required', 'li.leg.lgpl': 'free to use, the library stays replaceable', 'li.leg.gpl': 'separate program, its source code location is given', 'li.leg.ms': 'Windows component',
+    'li.tocca': 'Tap a component to read the full license text.', 'li.indietro': '‹ About', 'li.carico': 'Loading licenses…',
+    'li.comuni': 'Full texts of the GPL and LGPL licenses', 'li.file': 'The same texts are in the LICENZE.txt file, in the program folder.',
     'ag.c': 'Version {v} is available', 'ag.completo': 'This version also changes the libraries: download the full program (Setup).', 'ag.tardi': 'Later', 'ag.pagina': 'Open the page', 'ag.installa': 'Install', 'ag.scarico': 'Downloading the update… {p}%',
     'bv.t': 'Benvenuto · Welcome', 'bv': 'Scegli la lingua del programma e degli appunti.\nChoose the language of the app and of your notes.', 'bv.s': 'Si cambia quando vuoi in Impostazioni · You can change it anytime in Settings',
     'mn.trascina': '⠿ drag', 'mn.pausa': 'Pause', 'mn.riprendi': 'Resume', 'mn.fine': 'Stop', 'mn.grande': 'Open the main window ↗', 'mn.info': '{n} · {s} slides · {p} packages ready', 'mn.pz': '❚❚ PAUSED {t}',

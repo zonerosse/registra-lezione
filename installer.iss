@@ -11,6 +11,7 @@ AppId={{6C1E5D0B-3F1A-4E7C-9C2B-5A7D2E8F4B10}
 AppName=Verba Manent IA
 AppVersion={#Versione}
 AppPublisher=Punto Web Ferrara
+AppCopyright=(C) 2026 Sara Boldrini - Punto Web Ferrara
 AppPublisherURL=https://puntowebferrara.com/
 AppSupportURL=https://puntowebferrara.com/contatti/
 DefaultDirName={localappdata}\Programs\RegistraLezione
@@ -31,8 +32,8 @@ WizardImageFile=grafica\installa-0.bmp,grafica\installa-1.bmp,grafica\installa-2
 WizardSmallImageFile=grafica\installa-piccola-0.bmp,grafica\installa-piccola-1.bmp,grafica\installa-piccola-2.bmp,grafica\installa-piccola-3.bmp
 
 [Languages]
-Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"
-Name: "en"; MessagesFile: "compiler:Default.isl"
+Name: "it"; MessagesFile: "compiler:Languages\Italian.isl"; LicenseFile: "CONTRATTO-it.txt"
+Name: "en"; MessagesFile: "compiler:Default.isl"; LicenseFile: "CONTRATTO-en.txt"
 
 [CustomMessages]
 it.Apri=Apri Verba Manent IA

@@ -1,0 +1,9 @@
+FFmpeg 7.1 (essentials build by www.gyan.dev, distributed with imageio-ffmpeg)
+Copyright (c) 2000-2024 the FFmpeg developers
+
+This build of FFmpeg is licensed under the GNU General Public License version 3 (GPLv3),
+full text in the "GNU GENERAL PUBLIC LICENSE" section of this file.
+
+FFmpeg is a separate program: Verba Manent IA starts it to convert audio and video and
+does not modify it. The source code of FFmpeg is available at https://ffmpeg.org/download.html
+and the build configuration at https://www.gyan.dev/ffmpeg/builds/

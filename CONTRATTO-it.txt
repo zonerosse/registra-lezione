@@ -1,0 +1,15 @@
+﻿CONTRATTO DI LICENZA D'USO — VERBA MANENT IA
+
+Verba Manent IA © 2026 Sara Boldrini, che opera con il nome commerciale Punto Web Ferrara, Ostellato (FE), Italia. Tutti i diritti riservati.
+
+1. Licenza. Ti concediamo il diritto di installare e usare il programma sui computer indicati dalla tua licenza. Non puoi venderlo, noleggiarlo o distribuirlo.
+
+2. I tuoi dati. Registrazioni, trascrizioni e appunti restano sul tuo computer. Il programma non conserva impronte della voce e i tuoi contenuti non vengono usati per addestrare alcuna intelligenza artificiale. Dettagli nell'informativa privacy: https://verbamanent.app/privacy/
+
+3. Registrare altre persone. Il permesso di registrare lezioni e riunioni devi averlo tu. A ogni registrazione il programma ti propone un messaggio pronto per avvisare i partecipanti.
+
+4. Componenti di terze parti. Il programma contiene componenti liberi, ciascuno con la sua licenza: li trovi nel file LICENZE.txt, nella cartella del programma, e nella pagina Informazioni > Licenze. Queste licenze valgono per i rispettivi componenti e non sono limitate da questo contratto.
+
+5. Garanzia. Il programma è fornito così com'è. La trascrizione automatica e gli appunti preparati dall'intelligenza artificiale possono contenere errori: controlla sempre i punti importanti.
+
+Contatti: info@puntowebferrara.com

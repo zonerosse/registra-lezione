@@ -1,0 +1,7 @@
+WeSpeaker ResNet34-LM speaker model (VoxCeleb)
+Created by the WeNet community (https://github.com/wenet-e2e/wespeaker), trained on the VoxCeleb dataset.
+ONNX version distributed by the k2-fsa / sherpa-onnx project (https://github.com/k2-fsa/sherpa-onnx).
+
+The model is licensed under the Creative Commons Attribution 4.0 International License (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+Verba Manent IA uses the model unchanged. It is downloaded the first time «Who's speaking» is used.

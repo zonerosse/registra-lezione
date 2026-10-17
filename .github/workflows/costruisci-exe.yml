@@ -82,6 +82,7 @@ jobs:
           Copy-Item app "$dest/app" -Recurse
           Get-ChildItem "$dest/app" -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
           Copy-Item LEGGIMI.txt $dest
+          Copy-Item app/LICENZE.txt $dest
 
           $p = Start-Process -FilePath "$dest/Registra Lezione.exe" -ArgumentList "--prova" -Wait -PassThru
           $esito = ""
