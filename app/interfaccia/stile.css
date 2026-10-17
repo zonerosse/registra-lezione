@@ -576,3 +576,8 @@ html.android .calt input.in{width:100%;padding:6px 7px;font-size:13px;margin:2px
 .dvpc{margin-top:12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:10px 14px}
 .dvpc .set{padding:9px 0}
 .dvlim{background:#fff7ed;border:1px solid #fed7aa;color:#7c2d12;border-radius:10px;padding:8px 11px;font-size:12.5px;line-height:1.45;margin-top:10px}
+
+/* schede lezioni: formato come etichetta accanto al nome, «⋯ Altro» */
+.lez .inf>b+.ftag,.lez .ftag{display:inline-block;font-size:11px;font-weight:600;color:#7c3aed;background:#f3efff;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.lez .ftag.esame{color:#c2410c;background:#fff4ec}.lez .ftag.verbale{color:var(--blue);background:#eff6ff}.lez .ftag.mio{color:#0f766e;background:#ecfdf5}
+.b-altro{font-weight:700;color:var(--mut)}

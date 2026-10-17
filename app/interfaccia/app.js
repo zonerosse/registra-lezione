@@ -891,7 +891,7 @@ function disegnaLezioni() {
     else if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
-    else if (l.n_appunti) { pill = (l.formati || []).map(f => `<span class="pill ${f === 'esame' ? 'p-warn' : f === 'verbale' ? 'p-blue' : f === 'mio' ? 'p-mio' : 'p-cor'}">${ico('spark', 12)}${esc(nomeFormato(f, l.nome_mio))}</span>`).join(''); prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
+    else if (l.n_appunti) { pill = ''; prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = ANDROID ? '' : `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
@@ -899,11 +899,13 @@ function disegnaLezioni() {
     const capi = (l.capitoli && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="capitoli">${ico('text')}${t('ar.cap')}</button>` : '') +
       (l.voci >= 2 && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="voci">${ico('chat')}${t('ar.voci')}</button>` : '') +
       (l.n_appunti && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="condividi">${ico('share')}${t('ar.cond')}</button>` : '');
-    const sec = chiedi + capi + (l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="tras">${ico('text')}${t('ar.tras')}</button>` + (l.video ? `<button class="btn b-ghost b-sm" data-a="video">${ico('play')}${t('ar.vid')}</button>` : '') : '') + rip;
+    // (Chiedi, Capitoli, Chi parla, Condividi, Trascrizione, Video: nel menu «⋯ Altro»)
+    const altro = l.stato !== 'in_corso' ? `<button class="btn b-ghost b-sm b-altro" data-a="menu" title="${t('ar.altre')}">⋯ ${t('ar.altro')}</button>` : '';
+    const sec = rip + altro;
+    const tags = l.n_appunti ? (l.formati || []).map(f => `<span class="ftag ${f}">${esc(nomeFormato(f, l.nome_mio))}</span>`).join('') : '';
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
     return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
-      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b><div class="meta">${meta}</div>${errL}<div class="acts">${pill}${prim}${sec}</div></div>
-      ${l.stato !== 'in_corso' ? `<button class="more" data-a="menu" title="${t('ar.altre')}">⋯</button>` : ''}</div>`;
+      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b>${tags}<div class="meta">${meta}</div>${errL}<div class="acts">${pill}${prim}${sec}</div></div></div>`;
   }).join('');
   disegnaBanda();
   if ($('lista').dataset.h === h) return;
@@ -974,13 +976,20 @@ function menuLezione(l, btn) {
   document.querySelectorAll('.menu').forEach(m => m.remove());
   const m = document.createElement('div'); m.className = 'menu';
   const voci = [];
+  const pronta = l.stato === 'pronta';
+  if (l.trascritta && pronta) voci.push(['chiedi', 'chat', t('ar.m.chiedi')]);
+  if (l.capitoli && pronta) voci.push(['capitoli', 'text', t('ar.cap')]);
+  if (l.voci >= 2 && pronta) voci.push(['voci', 'chat', t('ar.voci')]);
+  if (l.n_appunti && pronta) voci.push(['condividi', 'share', t('ar.cond')]);
+  if (pronta) voci.push(['tras', 'text', t('ar.tras')]);
+  if (l.video && pronta) voci.push(['video', 'play', t('ar.vid')]);
+  if (voci.length) voci.push(['-']);
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
   (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
-  if (l.n_appunti && l.stato === 'pronta') voci.push(['condividi', 'share', t('ar.cond')]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['stat', 'chat', t('ar.m.stat')]);
   if (l.video && l.stato === 'pronta') voci.push(['spezzone', 'film', t('ar.m.sp')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
@@ -988,7 +997,7 @@ function menuLezione(l, btn) {
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
   voci.push(['elimina', 'trash', t('ar.m.el'), 'r']);
-  m.innerHTML = voci.map(v => (v[3] && !m.dataset.sep ? (m.dataset.sep = 1, '<hr>') : '') + `<button data-a="${v[0]}" class="${v[3] || ''}">${ico(v[1], 16)}${esc(v[2])}</button>`).join('');
+  m.innerHTML = voci.map(v => v[0] === '-' ? '<hr>' : (v[3] && !m.dataset.sep ? (m.dataset.sep = 1, '<hr>') : '') + `<button data-a="${v[0]}" class="${v[3] || ''}">${ico(v[1], 16)}${esc(v[2])}</button>`).join('');
   document.body.appendChild(m);
   const r = btn.getBoundingClientRect();
   m.style.top = Math.min(innerHeight - m.offsetHeight - 10, r.bottom + 6) + 'px';

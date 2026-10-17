@@ -137,8 +137,12 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('chi parla: voci riconosciute sul telefono', vc && (vc.voci || []).length >= 1, JSON.stringify((vc.voci || []).map(v => v.nome)));
     // condividi
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1500);
-    const bc = await p.$('.lez [data-a="condividi"]');
-    passo('bottone Condividi', bc);
+    // schede pulite: sulla lezione solo «Apri appunti», «Ripassa» e «⋯ Altro»; il resto nel menu
+    const card = await p.$('.lez:has-text("Riunione commerciale")');
+    passo('scheda: niente Chiedi/Condividi/Trascrizione a vista, c\'è «⋯ Altro»', card && !(await card.$('[data-a="condividi"]')) && !(await card.$('[data-a="tras"]')) && await card.$('[data-a="menu"]') && await card.$('[data-a="appunti"]'));
+    await foto('10b-schede');
+    const bc = {click: async () => { const c = await p.$('.lez:has-text("Riunione commerciale")'); await (await c.$('[data-a="menu"]')).click(); await p.waitForSelector('.menu [data-a="condividi"]', {timeout: 5000}); await p.click('.menu [data-a="condividi"]'); }};
+    passo('menu «⋯ Altro»: Chiedi, Condividi, Trascrizione', await (async () => { const c = await p.$('.lez:has-text("Riunione commerciale")'); await (await c.$('[data-a="menu"]')).click(); await p.waitForSelector('.menu', {timeout: 5000}); await foto('10c-menu'); const ok = await p.$('.menu [data-a="chiedi"]') && await p.$('.menu [data-a="condividi"]') && await p.$('.menu [data-a="tras"]'); await p.mouse.click(5, 5); await p.waitForTimeout(300); return ok; })());
     await bc.click(); await p.waitForSelector('.velo .tile'); await foto('11-condividi');
     passo('condividi: «WhatsApp e altre app», niente Google Docs', await p.$('.velo .tile[data-k="manda"]') && !(await p.$('.velo .tile[data-k="gdocs"]')));
     await p.click('.velo .tile[data-k="email"]'); await p.waitForSelector('.velo .dest .in');
