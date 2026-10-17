@@ -286,6 +286,63 @@ def unisci_video(cartella, meta):
     return bool(Ponte.unisciAudio(jarray(jclass("java.lang.String"))(wavs), str(out)))
 
 
+# ----------------------------------------------------------------------------- «Importa un audio» (sul telefono)
+
+def _durata_media(percorso):
+    """Durata di un audio/video in secondi (lettore di Android), 0 se non si sa."""
+    try:
+        MMR = jclass("android.media.MediaMetadataRetriever")
+        r = MMR()
+        try:
+            r.setDataSource(str(percorso))
+            return float(str(r.extractMetadata(MMR.METADATA_KEY_DURATION) or 0)) / 1000
+        finally:
+            r.release()
+    except Exception:
+        log.exception("durata del file")
+        return 0.0
+
+
+def info_file(percorso):
+    import datetime
+    import re
+    p = Path(percorso)
+    st = p.stat()
+    return {"percorso": str(p), "nome_file": p.name, "durata": _durata_media(p), "ha_video": False, "ha_audio": True,
+            "peso": st.st_size, "data": datetime.datetime.fromtimestamp(st.st_mtime).isoformat(timespec="seconds"),
+            "nome_proposto": re.sub(r"[_\-]+", " ", p.stem).strip()[:80]}
+
+
+def copia(src, cart, avanzamento):
+    """Il file scelto e' gia' una copia nella cache dell'app: lo sposto nella lezione."""
+    import shutil
+    src = Path(src)
+    dest = Path(cart) / f"audio_originale{src.suffix.lower() or '.m4a'}"
+    if str(src).startswith(str(Ponte.cartellaCache())):
+        shutil.move(str(src), str(dest))
+    else:
+        shutil.copyfile(str(src), str(dest))
+    avanzamento(1.0)
+    return dest
+
+
+def dividi_audio(sorgente, cart, parte_sec, durata, avanzamento):
+    """Le parti audio_00k.wav (16 kHz mono) decodificate dal lettore di Android, una alla volta."""
+    import elaborazione as el
+    cart = Path(cart)
+    n = max(1, int(-(-durata // parte_sec))) if durata else 10 ** 6
+    for i in range(n):
+        da = i * parte_sec
+        if durata and da >= durata:
+            break
+        out = cart / f"audio_{i + 1:03d}.wav"
+        if not Ponte.decodificaWav(str(sorgente), str(out), int(da * 1000), int(parte_sec * 1000)) or el.durata_wav(out) < 1:
+            out.unlink(missing_ok=True)
+            break
+        avanzamento(min(1.0, (da + parte_sec) / durata) if durata else 0.5)
+    return el.file_parti(cart)
+
+
 def disegna_pagine(pdf, cartella_tmp):
     import docente as dc
     cartella_tmp = Path(cartella_tmp)
@@ -549,6 +606,11 @@ def _prepara(cartella_app, lingua_tel):
 
     import docente as dc
     dc._disegna_pagine = disegna_pagine
+
+    import importa as im
+    im.info_file = info_file
+    im.copia = copia
+    im.dividi_audio = dividi_audio
 
     import appunti as ap
     ap.nascondi_chiave = lambda k: "android:" + str(Ponte.cifra(k))

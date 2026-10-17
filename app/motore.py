@@ -737,6 +737,8 @@ class Motore:
         if not v:      # non ancora misurata in questa modalita': la precisa ci mette circa una volta e mezza
             v = float(self.cfg.get("velocita_trascrizione") or 0.8) / (1.5 if prec else 1)
         i["stima"] = round(i["durata"] / max(0.1, float(v)))
+        if self._server():          # sul server: circa 15 volte il tempo reale, piu' l'accensione
+            i["stima"] = round(i["durata"] / 15 + 60)
         return i
 
     def info_link(self, url):

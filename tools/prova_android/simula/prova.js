@@ -80,6 +80,20 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     const fis2 = (await p.evaluate(() => A.lezioni())).lezioni.find(l => l.nome.startsWith('Fisiologia'));
     passo('importa testo: appunti fatti', fis2 && fis2.n_appunti > 0, fis2 && JSON.stringify({n: fis2.n_appunti, s: fis2.stato}));
     if (fis2) await p.evaluate(c => A.elimina(c, false), fis2.cartella);
+    // «Importa un audio» (sul telefono)
+    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(1200);
+    if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(1000); }
+    passo('riquadro «Hai già un audio?»', await p.isVisible('#btnImporta'), await p.textContent('#btnImporta b'));
+    await p.click('#btnImporta'); await p.waitForSelector('#v-importa:not(.hidden)', {timeout: 15000}).catch(() => {}); await foto('06f-importa-audio');
+    passo('importa audio: pagina con durata', await p.isVisible('#ivVai') && /min|s/.test(await p.textContent('#ivInfo')), await p.textContent('#ivInfo'));
+    await p.fill('#ivNome', 'Chimica – audio'); await p.click('#ivVai');
+    s = await aspetta(x => x.finale === 'ok' && !x.occupato, 180); await foto('06g-audio-trascritto');
+    const chi = (await p.evaluate(() => A.lezioni())).lezioni.find(l => l.nome.startsWith('Chimica'));
+    passo('importa audio: trascritto con gli appunti', chi && chi.stato === 'pronta' && chi.trascritta && chi.n_appunti > 0,
+          chi && JSON.stringify({s: chi.stato, t: chi.trascritta, n: chi.n_appunti, d: chi.durata}));
+    if (chi) await p.evaluate(c => A.elimina(c, false), chi.cartella);
+    await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(800);
+    if (await p.$('#fNuova') && await p.isVisible('#fNuova')) { await p.click('#fNuova'); await p.waitForTimeout(800); }
     // appunti, lezioni
     const lz = await p.evaluate(() => A.lezioni());
     passo('Le mie lezioni', lz.lezioni.length === 2 && lz.lezioni.every(l => l.stato === 'pronta'), lz.lezioni.map(l => l.nome + ':' + l.stato).join(', '));

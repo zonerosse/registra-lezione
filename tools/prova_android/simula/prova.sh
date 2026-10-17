@@ -5,7 +5,7 @@ QUI=$(cd "$(dirname "$0")" && pwd)
 OUT=$(mkdir -p "$1" && cd "$1" && pwd)
 T=$(mktemp -d)
 export SIM_DATI=$T/dati SIM_RL=$T/rl SIM_PORTA=$T/porta SIM_CARICA=1 SIM_VELOCITA=4 RL_PARTE_SECONDI=20 RL_PEZZO_SECONDI=5 RL_ATTESA_PEZZO=1 RL_PAROLE_MINIME=2 \
-       SIM_WAV=$QUI/../lezione_it.wav PYTHON=${PYTHON:-python3} TEST_PDF=$QUI/trascrizione_prova.pdf
+       SIM_WAV=$QUI/../lezione_it.wav PYTHON=${PYTHON:-python3} TEST_PDF=$QUI/trascrizione_prova.pdf TEST_VIDEO=$QUI/../lezione_it.wav
 (cd "$QUI/../../.." && bash tools/prova_android/prepara_rl.sh $T/zip_rl $T/contenuto.zip > /dev/null)
 export SIM_ZIP=$T/contenuto.zip
 $PYTHON "$QUI/../../prove/runpod_finto.py" 8799 > "$OUT/runpod_finto.txt" 2>&1 &      # «Sul server»: un RunPod finto

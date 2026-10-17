@@ -1,6 +1,6 @@
 {
- "versione": "3.38",
+ "versione": "3.39",
  "librerie": 2,
- "novita": "Nuovo: «Importa una trascrizione» nella pagina Registra. Dai un PDF, un file Word o di testo con quello che ha detto il docente, anche il «Per Claude» di un'altra registrazione, e il programma ne fa gli appunti.",
- "novita_en": "New: «Import a transcript» on the Record page. Give it a PDF, Word or text file with what the lecturer said, even the «For Claude» file of another recording, and it makes the notes."
+ "novita": "«Importa un video» ora si chiama «Importa un video o un audio»: accetta anche gli audio (mp3, m4a, wav…, note vocali, registratori).",
+ "novita_en": "«Import a video» is now «Import a video or audio»: it also takes audio files (mp3, m4a, wav…, voice notes, recorders)."
 }

@@ -588,7 +588,7 @@ function durataTesto(sec) {
 }
 async function scegliVideo() {
   if (S.registro || S.occupato) { toast(t('aspetta')); return; }
-  const da = await dialogo({titolo: t('il.t'), testo: t('il.s'),
+  const da = ANDROID ? 'file' : await dialogo({titolo: t('il.t'), testo: t('il.s'),
     bottoni: [{t: t('annulla'), v: null}, {t: '🔗 ' + t('il.link'), cls: 'b-ghost', v: 'link'}, {t: '📁 ' + t('il.file'), cls: 'b-main', v: 'file'}]});
   if (da === 'link') return scegliLink();
   if (da !== 'file') return;

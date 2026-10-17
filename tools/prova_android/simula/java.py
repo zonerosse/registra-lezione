@@ -138,7 +138,17 @@ class _Whisper:
         return "\n".join(righe)
 class _W: INSTANCE = _Whisper()
 _R = _Reg()
+class _MMR:
+    METADATA_KEY_DURATION = 9
+    def setDataSource(self, p): self.p = p
+    def extractMetadata(self, k):
+        import imageio_ffmpeg, re
+        r = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-i", self.p], capture_output=True, text=True)
+        m = re.search(r"Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)", r.stderr)
+        return str(int((int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3))) * 1000)) if m else None
+    def release(self): pass
 def jclass(n):
+    if n == "android.media.MediaMetadataRetriever": return _MMR
     if n.endswith("Ponte"): return _Ponte()
     if n.endswith("Registrazione"): return _R
     if n.endswith("Whisper"): return _W
