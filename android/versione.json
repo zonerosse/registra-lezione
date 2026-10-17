@@ -1,7 +1,7 @@
 {
- "versione": "0.10.18",
+ "versione": "0.10.19",
  "codice": 10,
- "novita": "Freccia per tornare indietro: nelle pagine di una lezione (Chiedi, Mappa, Esame…) c'è in alto «← …» che riporta alla pagina da cui sei arrivato. Anche il tasto Indietro fa lo stesso.",
- "novita_en": "Back arrow: in a lecture's pages (Ask, Map, Exam…) there is «← …» at the top that takes you back to where you came from. The Back key does the same.",
- "contenuto": 49
+ "novita": "Guida aggiornata e divisa per argomento, con i capitoli nuovi: chiave o invito, nome della registrazione, importare audio e trascrizione, slide del docente, dove trascrivo, parole difficili, inviti.",
+ "novita_en": "Guide updated and divided by topic, with new chapters: key or invitation, recording name, importing audio and transcript, lecturer's slides, where I transcribe, difficult words, invitations.",
+ "contenuto": 50
 }

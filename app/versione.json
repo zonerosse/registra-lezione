@@ -1,6 +1,6 @@
 {
- "versione": "3.62",
+ "versione": "3.63",
  "librerie": 2,
- "novita": "Freccia per tornare indietro: in Chiedi, Mappa, Capitoli, Esame, Infografica, Chi parla, Statistiche e Ripassa c'è in alto «← …» che riporta alla pagina da cui sei arrivato.",
- "novita_en": "Back arrow: in Ask, Map, Chapters, Exam, Infographic, Who speaks, Statistics and Review there is «← …» at the top that takes you back to where you came from."
+ "novita": "Guida aggiornata e divisa per argomento (Primi passi, Registrare, Hai già la lezione?, Studiare, Le mie registrazioni, Impostazioni, Aiuto), con i capitoli nuovi: chiave o invito, nome della registrazione, importare una trascrizione, slide del docente, copia nel cloud, dove trascrivo, parole difficili, inviti.",
+ "novita_en": "Guide updated and divided by topic, with new chapters: key or invitation, recording name, importing a transcript, lecturer's slides, copy to the cloud, where I transcribe, difficult words, invitations."
 }

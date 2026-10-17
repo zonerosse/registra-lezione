@@ -1236,7 +1236,14 @@ function disegnaGuida(l) {
   const G = GUIDA[l] || GUIDA.it;
   $('gT').textContent = G.titolo; $('gS').textContent = G.sotto;
   const aperti = [...document.querySelectorAll('#gCap details')].map(d => d.open);
-  $('gCap').innerHTML = G.capitoli.map((c, i) => `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${c.perche ? '★' : i}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video>` : ''}<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}></details>`).join('');
+  const gr = G.gruppi || {};
+  let num = 0, prima = null;
+  $('gCap').innerHTML = G.capitoli.map((c, i) => {
+    const n = c.perche ? '★' : ++num;
+    let tit = '';
+    if (c.g && c.g !== prima) { prima = c.g; if (gr[c.g]) tit = `<div class="gtit">${esc(gr[c.g])}</div>`; }
+    return tit + `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${n}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video>` : ''}<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}></details>`;
+  }).join('');
   // aprendo un capitolo il suo video parte da capo; chiudendolo si ferma
   $('gCap').querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => {
     const v = d.querySelector('video'); if (!v) return;

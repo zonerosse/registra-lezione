@@ -660,3 +660,5 @@ html.android .banda.corta .btn{flex:1 1 40%;justify-content:center;order:3}
 #v-esame .b-cor{background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;border:0}
 .indietro{display:inline-flex;align-items:center;gap:6px;border:1px solid #cbd8e6;background:#fff;color:var(--navy);border-radius:999px;padding:6px 13px 6px 10px;font:600 13px "Segoe UI",Roboto,system-ui,sans-serif;cursor:pointer;margin-bottom:10px}
 .indietro:hover{background:#f0f7ff}
+.gtit{font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 8px 4px}
+#gCap>.gtit:first-child{margin-top:4px}
