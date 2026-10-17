@@ -522,6 +522,7 @@ class Motore:
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "da_invito": self.cfg.get("da_invito") or "",
+                "app_codice": int(agg.versione_locale().get("codice") or 0),
                 "puo_invitare": bool(ha_chiave or self._server_dati()) and not self.cfg.get("da_invito"),
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
                 "studente": self.cfg.get("studente") or {}, "recenti": self.cfg.get("materie_recenti") or [],

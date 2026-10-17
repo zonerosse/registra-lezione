@@ -663,8 +663,8 @@ def _api_android(api, mt):
             return {"ok": False, "msg": "?"}
 
     def scegli_testo():
-        # (l'app installata sa scegliere solo i PDF; Word e .txt arriveranno con l'app completa nuova)
-        f = str(Ponte.scegliFile("pdf"))
+        # l'app 0.10 (codice 10) sa scegliere anche Word e .txt; quelle prima solo i PDF
+        f = str(Ponte.scegliFile("testo" if int(Ponte.codice()) >= 10 else "pdf"))
         if not f:
             return {"ok": False}
         return api._m.info_testo(f)

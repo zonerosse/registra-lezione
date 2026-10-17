@@ -90,7 +90,7 @@ object Ponte {
     private var scelto: String = ""
     const val SCEGLI = 41
 
-    /** tipo: "video" (video o audio) o "pdf". Ritorna il percorso di una copia nella cache dell'app, o "". */
+    /** tipo: "video" (video o audio), "pdf" o "testo" (PDF, Word, .txt). Ritorna il percorso di una copia nella cache dell'app, o "". */
     @JvmStatic fun scegliFile(tipo: String): String {
         val a = attivita.get() ?: return ""
         val l = CountDownLatch(1)
@@ -99,6 +99,11 @@ object Ponte {
         a.runOnUiThread {
             val i = Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
             if (tipo == "pdf") i.type = "application/pdf"
+            else if (tipo == "testo") {
+                i.type = "*/*"
+                i.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/pdf", "text/plain", "text/markdown",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+            }
             else { i.type = "*/*"; i.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("video/*", "audio/*")) }
             a.startActivityForResult(i, SCEGLI)
         }

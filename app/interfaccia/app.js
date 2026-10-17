@@ -407,6 +407,7 @@ function anteprimaNome() {
   $('nomeAnt').textContent = t('pr.ant', {n, d: `${due(d.getDate())}/${due(d.getMonth() + 1)}/${d.getFullYear()} ${ora}`});
 }
 function disegnaPronto() {
+  if (ANDROID && (R.app_codice || 0) >= 10) { const h = $('btnImportaTesto').querySelector('.hint'); if (h) h.textContent = t('it.b10'); }
   $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-cor">${ico('spark', 13)}${t(R.formato === 'esame' ? 'pr.pill.ai.e' : 'pr.pill.ai')}</span>`
     : `<span class="pill p-blue">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
   $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('pr.recenti')}</span>` +
