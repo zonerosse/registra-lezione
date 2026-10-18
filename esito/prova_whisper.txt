@@ -1,1 +1,5 @@
-nessun esito dopo 3 minuti
+161.1 s
+WHISPER : COREML = 0 | OPENVINO = 0 | Metal : EMBED_LIBRARY = 1 | CPU : NEON = 1 | ARM_FMA = 1 | FP16_VA = 1 | DOTPROD = 1 | ACCELERATE = 1 | REPACK = 1 | 
+PRIMA|0.000000
+LANG|en
+0.000000|11.000000| And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country.
