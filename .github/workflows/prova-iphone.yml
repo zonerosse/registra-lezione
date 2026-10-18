@@ -115,6 +115,34 @@ jobs:
             comando 08-calendario "[\"eventi\", [\"Esame di diritto\", $C, $C, true, \"Portare il libretto\", \"\"], [\"Consegna tesina\", $A, $B, false, \"\", \"Aula 3\"]]"
             comando 09-notifica "[\"notifica\", \"Lezione pronta\", \"Gli appunti di Prova iPhone sono pronti.\"]"
           fi
+          # giro completo dell'app come la vede una persona nuova: installazione da capo, poi ogni schermata
+          xcrun simctl terminate "$DEV" $ID || true
+          xcrun simctl uninstall "$DEV" $ID
+          xcrun simctl install "$DEV" "$APP"
+          xcrun simctl privacy "$DEV" grant microphone $ID || true
+          DATI=$(xcrun simctl get_app_container "$DEV" $ID data)
+          touch "$DATI/prova_js_attiva"
+          xcrun simctl launch "$DEV" $ID
+          for i in $(seq 1 40); do [ -f "$DATI/porta.txt" ] && break; sleep 2; done; sleep 10
+          su='document.querySelectorAll("*").forEach(e=>{if(e.scrollHeight>e.clientHeight+40)e.scrollTop=0});window.scrollTo(0,0);'
+          giu() { echo "document.querySelectorAll('*').forEach(e=>{if(e.scrollHeight>e.clientHeight+40)e.scrollTop=(e.scrollHeight-e.clientHeight)*$1});window.scrollTo(0,(document.body.scrollHeight)*$1);"; }
+          vai() { echo "$su document.querySelector('#nav a[data-p=$1]').click();"; }
+          js() { echo "$2" > "$DATI/prova_js.txt"; sleep ${3:-4}; xcrun simctl io "$DEV" screenshot esito/giro-$1.png; }
+          mkdir -p esito
+          js 01-benvenuto ""
+          js 02-prima-di-iniziare "document.querySelector('[data-l=it]').click()"
+          js 03-prima-spuntata "$(giu 1) var c=document.querySelector('#pvCk'); c.checked=true; c.onchange();"
+          js 04-registra "document.querySelector('#pvOk').click()"
+          js 05-registra-meta "$(giu 0.5)"
+          js 06-registra-fondo "$(giu 1)"
+          js 07-lezioni "$(vai arch)"
+          js 08-da-fare "$(vai fare)"
+          js 09-impostazioni "$(vai imp)"
+          js 10-impostazioni-meta "$(giu 0.5)"
+          js 11-impostazioni-fondo "$(giu 1)"
+          js 12-guida "$(vai guida)"
+          js 13-guida-meta "$(giu 0.5)"
+          js 14-guida-fondo "$(giu 1)"
           ls -lR "$DATI" | grep -v "^total" > esito/documenti.txt 2>&1 || true
 
       - name: Pubblica l'esito

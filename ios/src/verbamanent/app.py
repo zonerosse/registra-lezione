@@ -57,6 +57,8 @@ class VerbaManent(toga.App):
             url = f"http://127.0.0.1:{porta}/index.html?android=1&iphone=1"
             self.loop.call_soon_threadsafe(self._mostra, url)
             self._prova_comando()
+            if (Path.home() / "prova_js_attiva").exists():
+                threading.Thread(target=self._prova_js, daemon=True).start()
             self._prova_whisper()
         except Exception:
             err = traceback.format_exc()
@@ -66,6 +68,20 @@ class VerbaManent(toga.App):
             except OSError:
                 pass
             self.loop.call_soon_threadsafe(lambda: setattr(self.attesa, "text", "Verba Manent IA\n\n⚠ " + err[-600:]))
+
+    def _prova_js(self):
+        """Solo per la prova automatica: tocca la pagina al posto della persona (prova_js.txt = codice JavaScript)."""
+        import time
+        f = Path.home() / "prova_js.txt"
+        while True:
+            time.sleep(0.5)
+            if f.exists():
+                try:
+                    codice = f.read_text(encoding="utf-8")
+                    f.unlink()
+                    self.loop.call_soon_threadsafe(lambda c=codice: self.web.evaluate_javascript(c))
+                except Exception:
+                    pass
 
     def _prova_comando(self):
         """Solo per la prova automatica: prova_comando.json = ["funzione del ponte", argomenti...]."""
