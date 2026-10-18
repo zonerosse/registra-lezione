@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'lb', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -141,6 +141,9 @@ function nomePagina(p) {
   if (p === 'gl') return t('gl.nome');
   if (p === 'tu') return t('tu.nome');
   if (p === 'lb') return t('lb.nome');
+  if (p === 'fo') return t('fo.nome');
+  if (p === 'sc') return t('sc.nome');
+  if (p === 'ru') return t('ru.nome');
   if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
@@ -163,6 +166,7 @@ function vai(p, tornando = false) {
   if (p !== 'karaoke' && KK && KK.au) KK.au.pause();
   if (p !== 'gl' && GL && GL.au) GL.au.pause();
   if (p !== 'lb' && LB && LB.poll) { clearInterval(LB.poll); LB.poll = null; }
+  if (p !== 'ru' && RU && RU.poll) { clearInterval(RU.poll); RU.poll = null; }
   if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
@@ -174,7 +178,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lb', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -794,6 +798,9 @@ function disegnaReg() {
   $('lSl').textContent = ANDROID ? (S.batteria >= 0 ? S.batteria + '%' : '–') : S.slide;
   $('lGb').textContent = gb(S.gb || 0);
   $('lPk').textContent = S.pronti;
+  const aulaReg = ANDROID ? (R.app_codice || 0) >= 12 : R.modo === 'aula';   // la fotocamera serve l'app nuova (codice 12)
+  $('lFotoBox').classList.toggle('hidden', !aulaReg);
+  if ($('lFotoT').textContent === '') $('lFotoT').textContent = t(ANDROID ? 'fo.btn.and' : 'fo.btn.pc');
   $('live').classList.toggle('pz', !!S.pausa);
   $('lTag').className = 'tag' + (S.pausa ? ' pz' : '');
   $('lTag').innerHTML = S.pausa ? esc(t('lv.pausa', {t: ms(S.pausa_sec)})) : '<i></i>REC';
@@ -1020,6 +1027,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'spezzone') { await apriCapitoli(l); $('spCard').scrollIntoView({block: 'center'}); return; }
   if (a === 'condividi') return apriCondividi(l);
   if (a === 'voci_rifai') return apriVoci(l, true);
+  if (a === 'rumore') return apriRumore(l);
   if (a === 'pdf') return aggiungiPdf(l);
   if (a === 'tras') return A.apri_lezione(c);
   if (a === 'video') return A.apri(l.video);
@@ -1089,6 +1097,7 @@ function menuLezione(l, btn, servizio = false) {
   if (l.trascritta && l.stato === 'pronta' && !servizio) voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
   if (l.trascritta && l.stato === 'pronta' && !servizio) voci.push(['stat', 'chat', t('ar.m.stat')]);
+  if (l.stato === 'pronta' && l.video) voci.push(['rumore', 'mic', t('ar.m.rumore')]);
   if (l.video && l.stato === 'pronta' && !servizio) voci.push(['spezzone', 'film', t('ar.m.sp')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
@@ -1368,6 +1377,7 @@ async function disegnaModo() {
   const aula = R.modo === 'aula';
   $('doveBox').querySelectorAll('.aiopt').forEach(o => o.classList.toggle('on', o.dataset.m === (aula ? 'aula' : 'online')));
   $('srcAula').classList.toggle('hidden', !aula);
+  $('srcRum').classList.toggle('hidden', !aula); $('swRum').classList.toggle('on', !!R.aula_rumorosa);
   $('srcOnline').classList.toggle('hidden', aula);
   $('prP').textContent = t(aula ? 'pr.p.aula' : 'pr.p');
   $('prPrima').textContent = t(aula ? 'pr.prima.aula' : 'pr.prima');
@@ -1814,7 +1824,8 @@ function disegnaLezione() {
   const d = k => D.has(k);
   const fmtTiles = ha.ap ? (l.formati || []).map(f => tile('apf:' + f, f === 'esame' ? '⭐' : '📄', t('tl.appunti.f', {f: nomeFormato(f, l.nome_mio)}), t('tl.appunti.s'), '', d('ap'))) : [];
   const ancheTiles = pronta ? (l.crea_anche || []).map(f => tile('anche:' + f, '＋', t('tl.anche', {f: nomeFormato(f, l.nome_mio)}), t('tl.anche.s')).replace('class="tile', 'class="tile da')) : [];
-  const resto = gruppo(t('g.leggi'), [...(fmtTiles.length ? fmtTiles : [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap'))]), ...ancheTiles, ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.kk.s'), '', d('kk')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
+  const fotoTiles = [pronta && l.n_foto && tile('foto', '📷', t('tl.fo'), t('tl.fo.s', {n: l.n_foto})), pronta && tile('scritti', '✍', t('tl.sc'), t('tl.sc.s'), l.n_scritti ? t('tl.sc.n', {n: l.n_scritti}) : '')];
+  const resto = gruppo(t('g.leggi'), [...(fmtTiles.length ? fmtTiles : [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap'))]), ...ancheTiles, ...fotoTiles, ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.kk.s'), '', d('kk')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
       ha.tras && tile('tras', '📝', t('tl.tras'), t('tl.tras.s')), ha.vid && tile('video', '▶', t('tl.vid'), t('tl.vid.s'))]) +
     gruppo(t('g.capisci'), [ha.chiedi && tile('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), '', d('chiedi')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.mappa.s'), '', d('mappa')),
       ha.ig && tile('infografica', '🖼', t('tl.ig'), t('tl.ig.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), '', d('cap')),
@@ -1855,6 +1866,8 @@ async function tileLezione(l, a) {
   if (a === 'studia_mat') return apriStudia(l.materia);
   if (a === 'podcast') return apriPodcast(l);
   if (a === 'karaoke') return apriKaraoke(l);
+  if (a === 'foto') return apriFoto(l);
+  if (a === 'scritti') return apriScritti(l);
   return azioneLezione(l, a);
 }
 
@@ -2135,6 +2148,111 @@ async function tileStudia(m, a) {
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
 }
+/* ------------------------------------------------------------------ foto in aula */
+async function scattaFotoLive() {
+  const b = $('lFoto'); b.disabled = true;
+  const r = await A.scatta_foto();
+  b.disabled = false;
+  if (!r || !r.ok) { if (r && r.msg) toast(r.msg); return; }
+  $('lFotoStrip').insertAdjacentHTML('beforeend', `<div class="fth" style="background-image:url('${r.url}')"><em>${hms(r.sec)}</em></div>`);
+  toast(t('fo.ok', {t: hms(r.sec)}));
+}
+var FO = {l: null, foto: [], i: 0};
+async function apriFoto(l) {
+  FO = {l, foto: [], i: 0};
+  $('foSub').textContent = ''; $('foGal').innerHTML = '<span class="spin"></span>'; $('foDet').innerHTML = '';
+  vai('fo');
+  const r = await A.foto_lezione(l.cartella);
+  if (FO.l !== l) return;
+  FO.foto = r.foto || [];
+  $('foSub').textContent = t('fo.sub', {n: FO.foto.length, l: l.nome});
+  $('foGal').innerHTML = FO.foto.map((f, i) => `<div class="fth" data-i="${i}" style="background-image:url('${f.url}')"><em>${hms(f.sec)}</em></div>`).join('');
+  $('foGal').querySelectorAll('.fth').forEach(x => x.onclick = () => foMostra(+x.dataset.i));
+  if (FO.foto.length) foMostra(0);
+}
+async function foMostra(i) {
+  FO.i = i; const f = FO.foto[i], l = FO.l;
+  $('foGal').querySelectorAll('.fth').forEach(x => x.classList.toggle('on', +x.dataset.i === i));
+  $('foDet').innerHTML = `<div class="lbl">${esc(t('fo.alle', {t: hms(f.sec)}))}</div><img class="fobig" src="${f.url}" alt="">
+    <div class="lbl" style="margin-top:12px">${esc(t('fo.cosa'))}</div><div class="foocr" id="foOcr">${f.testo ? esc(f.testo) : `<span class="spin" style="width:14px;height:14px"></span> ${esc(t('fo.lav'))}`}</div>
+    <div class="row mt" style="gap:8px;flex-wrap:wrap"><button class="btn b-ghost b-sm" id="foSenti">${esc(t('fo.senti'))}</button><button class="btn b-ghost b-sm" id="foZoom">${esc(t('fo.zoom'))}</button></div>`;
+  $('foSenti').onclick = () => mostraMomento(l.cartella, f.sec, null, l.nome);
+  const zoom = () => dialogo({titolo: t('fo.alle', {t: hms(f.sec)}), html: `<img src="${f.url}" style="width:100%;border-radius:10px">`});
+  $('foZoom').onclick = zoom; $('foDet').querySelector('.fobig').onclick = zoom;
+  if (!f.testo) {
+    const r = await A.foto_leggi(l.cartella, f.file);
+    if (FO.l !== l || FO.i !== i || !$('foOcr')) return;
+    if (r.ok) { f.testo = r.testo; $('foOcr').textContent = r.testo; silabizza($('foOcr')); } else $('foOcr').innerHTML = `<span style="color:#be123c">⚠ ${esc(r.msg || '')}</span>`;
+  } else silabizza($('foOcr'));
+}
+/* ------------------------------------------------------------------ appunti a mano e fotocopie */
+var SC = {l: null};
+async function apriScritti(l) {
+  SC = {l};
+  const vecchia = ANDROID && (R.app_codice || 0) < 12;
+  $('scScatta').classList.toggle('hidden', vecchia); $('scScegli').classList.toggle('hidden', vecchia);
+  $('scSub').textContent = l.nome;
+  $('scBox').innerHTML = '<span class="spin"></span>';
+  vai('sc');
+  const r = await A.scritti_lezione(l.cartella);
+  if (SC.l === l) disegnaScritti(r.scritti || []);
+}
+function disegnaScritti(lista) {
+  const l = SC.l;
+  $('scBox').innerHTML = lista.length ? `<div class="hint" style="margin-bottom:10px">${esc(t('sc.dubbi'))}</div>` + lista.map((v, i) => `<div class="card scfo"><div>${v.url ? `<img src="${v.url}" alt="" data-z="${i}">` : ''}<div class="row mt" style="gap:6px"><b style="color:var(--ink)">${esc(t('sc.foglio', {n: i + 1}))}</b><span class="sp"></span><button class="btn b-ghost b-sm b-red" data-togli="${esc(v.file)}">${esc(t('sc.togli'))}</button></div></div>
+      <div><textarea class="in" data-f="${esc(v.file)}">${esc(v.testo || '')}</textarea><div class="hint" data-ok="${esc(v.file)}"></div></div></div>`).join('')
+    : `<div class="card"><div class="hint">${esc(t('sc.vuoto'))}</div></div>`;
+  $('scBox').querySelectorAll('textarea').forEach(x => x.onchange = async () => { await A.scritti_correggi(l.cartella, x.dataset.f, x.value); const h = $('scBox').querySelector(`[data-ok="${x.dataset.f}"]`); if (h) h.textContent = t('sc.salvato'); });
+  $('scBox').querySelectorAll('[data-togli]').forEach(b => b.onclick = async () => { const r = await A.scritti_togli(l.cartella, b.dataset.togli); disegnaScritti(r.scritti || []); });
+  $('scBox').querySelectorAll('[data-z]').forEach(x => x.onclick = () => dialogo({titolo: t('sc.foglio', {n: +x.dataset.z + 1}), html: `<img src="${x.src}" style="width:100%;border-radius:10px">`}));
+}
+async function scrittiAggiungi(scatta) {
+  const l = SC.l; if (!l) return;
+  const s = scatta ? await A.scatta_foglio() : await A.scegli_immagini();
+  if (!s || !s.ok || !s.percorsi.length) return;
+  $('scBox').insertAdjacentHTML('afterbegin', `<div class="card" id="scLav" style="margin-bottom:12px"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('sc.lav', {n: s.percorsi.length}))}</div></div>`);
+  const r = await A.scritti_aggiungi(l.cartella, s.percorsi);
+  if (SC.l !== l) return;
+  if (!r.ok) { if ($('scLav')) $('scLav').remove(); await dialogo({titolo: t('sc.nome'), testo: r.msg || ''}); return; }
+  disegnaScritti(r.scritti || []);
+  toast(t('sc.ok', {n: r.n}));
+  l.n_scritti = (r.scritti || []).length;
+}
+/* ------------------------------------------------------------------ aula rumorosa (dopo) */
+var RU = {l: null, poll: null};
+async function apriRumore(l) {
+  if (RU.poll) clearInterval(RU.poll);
+  RU = {l, poll: null};
+  $('ruSub').textContent = l.nome;
+  $('ruBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('ru.lav'))}</div></div>`;
+  vai('ru');
+  const r = await A.rumore_info(l.cartella);
+  if (RU.l !== l) return;
+  if (!r.prima) { $('ruBox').innerHTML = `<div class="card"><div class="hint">${esc(t('ru.noaudio'))}</div></div>`; return; }
+  const g = r.snr >= 20 ? 'ru.g1' : r.snr >= 14 ? 'ru.g2' : 'ru.g3';
+  $('ruBox').innerHTML = `<div class="card"><div class="hint">${esc(t('ru.snr', {d: r.snr, g: t(g)}))}</div>${r.auto ? `<div class="avviso mt">${esc(t('ru.auto'))}</div>` : ''}
+      <div class="set mt"><div class="t"><b>${esc(t('ru.sw'))}</b><span>${esc(t('ru.sw.s'))}</span></div><div class="sw${r.rumorosa || (r.rumorosa == null && r.auto) ? ' on' : ''}" id="ruSw"></div></div></div>
+    <div class="card mt"><div class="lbl">${esc(t('ru.senti'))}</div>
+      <div class="ruonda"><b style="width:60px">${esc(t('ru.prima'))}</b><audio controls preload="none" src="${r.prima}"></audio></div>
+      <div class="ruonda"><b style="width:60px">${esc(t('ru.dopo'))}</b><audio controls preload="none" src="${r.dopo}"></audio></div></div>
+    <div class="card mt"><button class="btn b-main b-sm" id="ruRifai"${r.occupato ? ' disabled' : ''}>${esc(t('ru.rifai'))}</button><div class="hint mt">${esc(t('ru.rifai.s'))}</div><div id="ruAv"></div></div>`;
+  $('ruSw').onclick = async () => { const on = !$('ruSw').classList.contains('on'); $('ruSw').classList.toggle('on', on); await A.rumore_imposta(l.cartella, on); };
+  $('ruRifai').onclick = async () => {
+    const x = await A.ritrascrivi(l.cartella);
+    if (!x.ok) { toast(x.msg || ''); return; }
+    $('ruSw').classList.add('on'); $('ruRifai').disabled = true;
+    $('ruAv').innerHTML = `<div class="row mt" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('ru.rifai.lav'))}</div><div class="bar"><i id="ruBar" style="width:0%"></i></div>`;
+    RU.poll = setInterval(async () => {
+      const a = await A.ritrascrivi_avanzamento();
+      if ($('ruBar')) $('ruBar').style.width = Math.round((a.f || 0) * 100) + '%';
+      if (a.stato === 'fatto' || a.stato === 'errore') {
+        clearInterval(RU.poll); RU.poll = null;
+        $('ruAv').innerHTML = `<div class="${a.stato === 'fatto' ? 'okt' : 'kot'} mt" style="font-weight:700">${esc(a.stato === 'fatto' ? t('ru.rifai.ok') : '⚠ ' + (a.msg || ''))}</div>`;
+        if ($('ruRifai')) $('ruRifai').disabled = false;
+      }
+    }, 800);
+  };
+}
 /* ------------------------------------------------------------------ libro di testo */
 // Il PDF del libro letto sul dispositivo (libro.py): le pagine di ogni lezione, cosa c'e' nel libro ma non a lezione,
 // la pagina da leggere con le frasi della lezione evidenziate.
@@ -2166,6 +2284,30 @@ function lbVuoto() {
     <div class="row" style="justify-content:center;margin-top:16px"><button class="btn b-main" id="lbScegli">${esc(t('lb.v.b'))}</button></div>
     <div class="hint" style="margin-top:10px">${esc(t('lb.v.n'))}</div></div>`;
   $('lbScegli').onclick = () => lbAggiungi(true);
+  $('lbBox').querySelector('.lbvuoto .row').insertAdjacentHTML('beforeend', `<button class="btn b-ghost" id="lbFoto">${esc(t('lb.foto'))}</button>`);
+  $('lbFoto').onclick = () => lbFoto();
+}
+async function lbFoto() {
+  const s = await A.scegli_immagini();
+  if (!s || !s.ok || !s.percorsi.length) return;
+  if (!await conferma(t('lb.foto'), t('lb.foto.q', {n: s.percorsi.length, c: num((s.percorsi.length * 0.004).toFixed(2))}), t('si'), t('annulla'))) return;
+  const m = LB.m;
+  const r = await A.libro_foto(m.m, s.percorsi);
+  if (!r.ok) { await dialogo({titolo: t('lb.nome'), testo: r.msg || ''}); return; }
+  lbAttendi(m, t('lb.foto.lav'));
+}
+function lbAttendi(m, testo) {
+  $('lbBox').innerHTML = `<div class="card" style="padding:22px"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(testo)}</div><div class="bar" style="margin-top:12px"><i id="lbBar" style="width:2%"></i></div></div>`;
+  LB.poll = setInterval(async () => {
+    const a = await A.libro_avanzamento();
+    if (LB.m !== m) return;
+    if ($('lbBar')) $('lbBar').style.width = Math.max(2, Math.round((a.f || 0) * 100)) + '%';
+    if (a.stato === 'fatto' || a.stato === 'errore') {
+      clearInterval(LB.poll); LB.poll = null;
+      if (a.stato === 'errore') await dialogo({titolo: t('lb.nome'), testo: a.msg || ''});
+      lbCarica();
+    }
+  }, 700);
 }
 async function lbAggiungi(sostituisci) {
   const f = await A.scegli_pdf();
@@ -2201,7 +2343,7 @@ function disegnaLibro() {
       <div class="card mt" id="lbManc"></div></div>
     <div class="card"><div class="row" style="justify-content:space-between"><div class="lbl" style="margin:0" id="lbNum"></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="lbPrima">‹</button><button class="btn b-ghost b-sm" id="lbDopo">›</button><button class="btn b-ghost b-sm" id="lbVoce">🔊</button></div></div>
       <div class="lbpag mt" id="lbPag"></div></div></div>`;
-  $('lbDisp').onclick = () => lbAggiungi(false);
+  $('lbDisp').onclick = async () => { const v = await dialogo({titolo: t('lb.quale'), bottoni: [{t: t('annulla'), v: null}, {t: esc(t('lb.quale.foto')), cls: 'b-ghost', v: 'foto'}, {t: esc(t('lb.quale.pdf')), cls: 'b-main', v: 'pdf'}]}); if (v === 'pdf') lbAggiungi(false); else if (v === 'foto') lbFoto(); };
   $('lbCambia').onclick = () => lbAggiungi(true);
   $('lbBox').querySelectorAll('[data-apri]').forEach(b => b.onclick = () => A.apri_pdf_libro(m.m, +b.dataset.apri));
   $('lbBox').querySelectorAll('[data-togli]').forEach(b => b.onclick = async () => {
@@ -3585,6 +3727,10 @@ function collegaNovita() {
   collegaVerifica();
   collegaGlossario();
   collegaTutor();
+  $('lFoto').onclick = scattaFotoLive;
+  $('swRum').onclick = async () => { R.aula_rumorosa = !R.aula_rumorosa; $('swRum').classList.toggle('on', R.aula_rumorosa); await A.imposta('aula_rumorosa', R.aula_rumorosa); };
+  $('scScatta').onclick = () => scrittiAggiungi(true);
+  $('scScegli').onclick = () => scrittiAggiungi(false);
   collegaHoPronto();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);

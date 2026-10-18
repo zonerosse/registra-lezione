@@ -262,6 +262,61 @@ class Api:
     def ripasso_giorno_fatto(self):
         return self._m.ripasso_giorno_fatto()
 
+    def rumore_info(self, cartella):
+        return self._m.rumore_info(cartella)
+
+    def rumore_imposta(self, cartella, si):
+        return self._m.rumore_imposta(cartella, si)
+
+    def ritrascrivi(self, cartella):
+        return self._m.ritrascrivi(cartella)
+
+    def ritrascrivi_avanzamento(self):
+        return self._m.ritrascrivi_avanzamento()
+
+    def scatta_foto(self):
+        """Sul PC: una foto scelta dal disco (per esempio arrivata dal telefono), agganciata al minuto di adesso."""
+        r = self.scegli_immagini()
+        return self._m.foto_aggiungi(r["percorsi"][0]) if r.get("ok") else {"ok": False}
+
+    def scatta_foglio(self):
+        return self.scegli_immagini()
+
+    def scegli_immagini(self):
+        try:
+            scelta = self._win.create_file_dialog(webview.FileDialog.OPEN, allow_multiple=True,
+                                                  file_types=("Immagini (*.jpg;*.jpeg;*.png;*.heic;*.webp)", "Tutti i file (*.*)"),
+                                                  directory=str(Path.home() / "Pictures"))
+        except Exception:
+            log.exception("scegli immagini")
+            return {"ok": False, "percorsi": []}
+        lista = [str(x) for x in (scelta or [])]
+        return {"ok": bool(lista), "percorsi": lista}
+
+    def foto_aggiungi(self, percorso):
+        return self._m.foto_aggiungi(percorso)
+
+    def foto_lezione(self, cartella):
+        return self._m.foto_lezione(cartella)
+
+    def foto_leggi(self, cartella, file):
+        return self._m.foto_leggi(cartella, file)
+
+    def scritti_lezione(self, cartella):
+        return self._m.scritti_lezione(cartella)
+
+    def scritti_aggiungi(self, cartella, percorsi):
+        return self._m.scritti_aggiungi(cartella, percorsi)
+
+    def scritti_correggi(self, cartella, file, testo):
+        return self._m.scritti_correggi(cartella, file, testo)
+
+    def scritti_togli(self, cartella, file):
+        return self._m.scritti_togli(cartella, file)
+
+    def libro_foto(self, materia, percorsi):
+        return self._m.libro_foto(materia, percorsi)
+
     def libro_info(self, materia, cartelle):
         return self._m.libro_info(materia, cartelle)
 

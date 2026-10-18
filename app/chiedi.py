@@ -125,6 +125,15 @@ def testo_lezione(cartella):
             i += 1
         chi = f"{s['chi']}: " if voci and s.get("chi") else ""
         righe.append(f"[{hms(s['inizio'])}] {chi}{s['testo']}")
+    # foto fatte in aula (lavagna) gia' lette e appunti scritti a mano dello studente
+    foto = [f for f in el.leggi_json(Path(cartella) / "foto.json", []) or [] if f.get("testo")]
+    if foto:
+        righe.append("\n=== FOTO FATTE IN AULA (cosa c'e' scritto) ===")
+        righe += [f"[{hms(f['sec'])}] {f['testo']}" for f in foto]
+    scritti = [f for f in el.leggi_json(Path(cartella) / "scritti.json", []) or [] if f.get("testo")]
+    if scritti:
+        righe.append("\n=== APPUNTI SCRITTI A MANO DALLO STUDENTE (o fotocopie) ===")
+        righe += [f["testo"] for f in scritti]
     return "\n".join(righe)
 
 
@@ -634,3 +643,45 @@ def domanda_in_diretta(chiave, cartella, diretta, adesso, storia, testo_domanda,
     spesa = _costo(r.get("usage", {}))
     el.aggiorna_info(cartella, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
     return {"testo": risposta, "spesa": spesa}
+
+
+# --------------------------------------------------------------------------- leggere le foto (lavagna, fogli scritti a mano, fotocopie)
+
+def jpeg_ridotto(sorgente, dest=None, lato=1600):
+    """La foto girata giusta (EXIF), al massimo 1600 px, in JPEG. Torna i byte (e la salva in dest)."""
+    import io
+    from PIL import Image, ImageOps
+    with Image.open(sorgente) as im:
+        im = ImageOps.exif_transpose(im).convert("RGB")
+        if max(im.size) > lato:
+            r = lato / max(im.size)
+            im = im.resize((round(im.width * r), round(im.height * r)), Image.LANCZOS)
+        b = io.BytesIO()
+        im.save(b, "JPEG", quality=82)
+    dati = b.getvalue()
+    if dest:
+        Path(dest).parent.mkdir(parents=True, exist_ok=True)
+        Path(dest).write_bytes(dati)
+    return dati
+
+
+def leggi_foto(chiave, file, tipo="lavagna", lingua=None):
+    """Claude legge una foto: {"testo", "spesa"}. tipo: "lavagna" (foto in aula) o "foglio" (appunti a mano,
+    fotocopie, pagine di libro)."""
+    import base64
+    lingua = lingua or testi.LINGUA
+    dati = jpeg_ridotto(file)
+    if tipo == "lavagna":
+        cosa = ("una foto fatta a lezione (lavagna, slide proiettata o cartellone). Scrivi in poche righe cosa c'e' scritto o "
+                "disegnato: formule (scritte in modo leggibile), parole, schemi descritti a parole. Niente commenti.")
+    else:
+        cosa = ("la foto di un foglio: appunti scritti a mano dallo studente, una fotocopia o una pagina di libro. Trascrivi TUTTO "
+                "il testo, nell'ordine, anche le formule; le parole abbreviate completale tra [quadre] se sei sicuro; se una "
+                "parola non si legge scrivi [?]. Gli schemi e le frecce rendili con elenchi. Niente commenti prima o dopo.")
+    corpo = {"model": MODELLO, "max_tokens": 2500, "system": f"Ti mando {cosa} Scrivi in {testi.nome_lingua(lingua, 'it')}.",
+             "messages": [{"role": "user", "content": [
+                 {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": base64.b64encode(dati).decode()}},
+                 {"type": "text", "text": "Ecco la foto."}]}]}
+    r = _chiama(chiave, corpo)
+    testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text").strip()
+    return {"testo": testo, "spesa": _costo(r.get("usage", {}))}

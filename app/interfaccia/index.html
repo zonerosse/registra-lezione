@@ -97,6 +97,7 @@
           <div class="srcr"><span class="ico i-teal"><svg><use href="#i-mic"/></svg></span><b data-t="src.mic">Microfono</b><div class="sp" style="min-width:0"><select class="sel" id="selMic"></select></div><div class="livello" id="micLiv"></div></div>
           <div class="srcr"><span class="ico i-vio"><svg><use href="#i-pdf"/></svg></span><b data-t="src.pdf">Slide del docente</b><div class="sp" style="min-width:0"><small class="mutt" id="pdfTxt" data-t="src.pdf.s">Facoltativo: il PDF, se il docente lo pubblica</small><div class="hint" data-t="src.pdf.dove" style="font-size:12px;margin-top:2px">Le metto negli appunti di questa lezione, accanto a quando il docente ne parla. Puoi aggiungerle anche dopo: «⋯ Altro» sulla lezione.</div></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="btnPdfA" data-t="src.pdf.b">Scegli il PDF…</button><button class="lnk hidden" id="btnPdfX" data-t="togli">Togli</button></div></div>
         </div>
+        <div class="srcsub hidden" id="srcRum"><div class="srcr"><span class="ico i-teal">🔇</span><b data-t="ru.t">Aula rumorosa</b><div class="sp" style="min-width:0"><small class="mutt" data-t="ru.s">Toglie brusio, sedie e ronzio e alza la voce del prof prima di trascrivere. Spento: decide il programma se serve.</small></div><div class="sw" id="swRum"></div></div></div>
         <div class="srcsub solo-pc" id="srcOnline">
           <div class="srcok"><span><b data-t="src.scr">Schermo</b> <small class="okt" id="srcScr">✓ Schermo principale</small></span><span><b data-t="src.aud">Audio del PC</b> <small id="srcAud" class="mutt">Controllo…</small></span><span><b data-t="src.sl">Slide</b> <small class="okt" data-t="src.sl.ok">✓ Cattura automatica</small></span></div>
         </div>
@@ -189,6 +190,7 @@
         <div class="big" id="lT">00:00:00</div>
         <div class="nm" id="lNm"></div>
         <div class="wave" id="lWave"></div>
+        <div class="hidden" id="lFotoBox" style="margin-top:12px;position:relative;z-index:1"><button class="fotob" id="lFoto">📷 <span id="lFotoT"></span></button><div class="strip" id="lFotoStrip"></div></div>
         <div class="stats"><div><b id="lSl">0</b><small data-t="lv.slide">slide catturate</small></div><div><b id="lGb">0 MB</b><small data-t="lv.reg">registrati</small></div><div><b id="lPk">0</b><small data-t="lv.pac">parti pronte</small></div></div>
       </div>
       <div class="card mt avv-card hidden" id="avvCard">
@@ -292,6 +294,20 @@
     </section>
 
     <!-- KARAOKE DELLA LEZIONE -->
+    <section class="pg hidden" id="v-fo">
+      <div class="hd"><div><h2 data-t="fo.h">📷 Foto della lezione</h2><p id="foSub"></p></div></div>
+      <div class="fogrid"><div class="card"><div class="fogal" id="foGal"></div></div><div class="card" id="foDet"></div></div>
+    </section>
+    <section class="pg hidden" id="v-sc">
+      <div class="hd"><div><h2 data-t="sc.h">✍ Appunti a mano e fotocopie</h2><p id="scSub"></p></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn b-main b-sm solo-and" id="scScatta" data-t="sc.scatta">📷 Scatta</button><button class="btn b-ghost b-sm" id="scScegli" data-t="sc.scegli">🖼 Scegli foto</button></div></div>
+      <div class="hint" style="margin-bottom:12px" data-t="sc.s">Foto dei tuoi fogli scritti a mano o delle fotocopie: Claude li legge e il testo si aggiunge alla lezione (Chiedi, tutor, mappe, test, glossario). Pochi centesimi a foglio.</div>
+      <div id="scBox"></div>
+    </section>
+    <section class="pg hidden" id="v-ru">
+      <div class="hd"><div><h2 data-t="ru.h">🔇 Aula rumorosa</h2><p id="ruSub"></p></div></div>
+      <div id="ruBox"></div>
+    </section>
     <section class="pg hidden" id="v-lb">
       <div class="hd"><div><h2 id="lbH">📘 Libro di testo</h2><p data-t="lb.sub">Il tuo libro collegato alle lezioni: le pagine giuste per ogni lezione e quello che a lezione non si è detto.</p></div></div>
       <div id="lbBox"></div>

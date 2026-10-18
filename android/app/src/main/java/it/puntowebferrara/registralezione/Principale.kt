@@ -106,6 +106,7 @@ class Principale : Activity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == Ponte.SCEGLI) Ponte.risultatoScelta(if (resultCode == RESULT_OK) data else null)
+        if (requestCode == Ponte.SCATTA) Ponte.risultatoScatto(resultCode == RESULT_OK)
     }
 
     @Deprecated("Deprecated in Java")

@@ -147,7 +147,7 @@ class RegistratoreAndroid:
         import elaborazione as el
         el.scrivi_json(self.cartella / "meta.json", {
             "nome": self.nome, "inizio": getattr(self, "inizio", ""), "audio_t0": 0.0, "video_t0": 0.0,
-            "durata": getattr(self, "durata", None), "slides": [], "errori": self.errori,
+            "durata": getattr(self, "durata", None), "slides": list(self.slides), "errori": self.errori,
             "parte_secondi": self.parte_secondi})
 
 
@@ -751,6 +751,33 @@ def _api_android(api, mt):
             return {"ok": False}
         return api._m.info_testo(f)
 
+    def scatta_foto():
+        """La fotocamera del telefono (durante la registrazione: foto alla lavagna)."""
+        try:
+            f = str(Ponte.scatta())
+        except Exception:
+            log.exception("fotocamera")
+            f = ""
+        if not f:
+            return {"ok": False}
+        return api._m.foto_aggiungi(f)
+
+    def scatta_foglio():
+        try:
+            f = str(Ponte.scatta())
+        except Exception:
+            log.exception("fotocamera")
+            f = ""
+        return {"ok": bool(f), "percorsi": [f] if f else []}
+
+    def scegli_immagini():
+        f = str(Ponte.scegliFile("immagini"))
+        lista = [x for x in f.split("\n") if x]
+        return {"ok": bool(lista), "percorsi": lista}
+
+    api.scatta_foto = scatta_foto
+    api.scatta_foglio = scatta_foglio
+    api.scegli_immagini = scegli_immagini
     api.scegli_testo = scegli_testo
     api.scegli_pdf = scegli_pdf
     api.scegli_video = scegli_video

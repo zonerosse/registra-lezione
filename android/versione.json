@@ -1,7 +1,7 @@
 {
- "versione": "0.11.16",
- "codice": 11,
- "novita": "Nuovo: «📘 Libro di testo» in Studia. Aggiungi il PDF del tuo libro (resta sul tuo dispositivo): per ogni lezione le pagine giuste, cosa c'è nel libro ma a lezione non si è detto, e la pagina con le frasi della lezione evidenziate. Il libro compare anche nella lezione, nelle flashcard, nel glossario, in Chiedi e nel tutor.",
- "novita_en": "New: «📘 Textbook» in Study. Add the PDF of your book (it stays on your device): for each lecture the right pages, what is in the book but was not said in class, and the page with the lecture sentences highlighted. The book also shows in the lecture, flashcards, glossary, Ask and the tutor.",
- "contenuto": 73
+ "versione": "0.12.0",
+ "codice": 12,
+ "novita": "Nuovo: «📷 Foto alla lavagna» mentre registri (la foto si aggancia al minuto e Claude legge cosa c'è scritto), «✍ Appunti a mano e fotocopie» nella pagina della lezione, libri fotografati nel Libro di testo e «🔇 Aula rumorosa», che pulisce l'audio prima di trascrivere. Sul telefono va installata l'app nuova (per la fotocamera).",
+ "novita_en": "New: «📷 Photo of the board» while recording (the photo is linked to the minute and Claude reads what is written), «✍ Handwritten notes and photocopies» on the lecture page, photographed books in Textbook and «🔇 Noisy classroom», which cleans the audio before transcribing. On the phone install the new app (for the camera).",
+ "contenuto": 74
 }

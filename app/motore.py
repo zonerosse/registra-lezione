@@ -553,7 +553,7 @@ class Motore:
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "nome_classe": self.cfg.get("nome_classe") or "",
-                "lettura": self._lettura(),
+                "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")),
                 "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
                 "rg_promemoria": bool(self.cfg.get("rg_promemoria", True)), "rg_ora": self.cfg.get("rg_ora") or "18:00",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
@@ -640,7 +640,7 @@ class Motore:
             self.cfg["rg_ora"] = valore if re.fullmatch(r"\d{2}:\d{2}", str(valore or "")) else "18:00"
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
+        elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
             self.cfg[campo] = el.FACILITATA = bool(valore)
@@ -988,6 +988,7 @@ class Motore:
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                                                 "modo": modo, "parole": self.parole_di(nome),
                                                 **({"materia": materia} if materia else {}),
+                                                **({"rumorosa": True} if self.cfg.get("aula_rumorosa") else {}),
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                                                 "quando": "dopo" if dopo else "durante",
                                                 "tipo": tipo, "partecipanti": partecipanti,
@@ -1656,6 +1657,7 @@ class Motore:
             nome = info.get("nome", cart.name)
             out.append({
                 "cartella": str(cart), "nome": nome, "quando": quando,
+                "n_foto": len(el.leggi_json(cart / "foto.json", []) or []), "n_scritti": len(el.leggi_json(cart / "scritti.json", []) or []),
                 "durata": el.durata_leggibile(info.get("durata", 0)) if info.get("durata") else "",
                 "n_slide": info.get("n_slide", 0), "stato": "in_corso" if in_corso else ("pronta" if stato == "pronta" else "da_completare"),
                 "video": str(video) if video else "", "video_testo": gb_testo(vb) if video else "",
@@ -2076,6 +2078,214 @@ class Motore:
         except Exception:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
+
+    # ------------------------------------------------------------------ aula rumorosa
+
+    def rumore_info(self, cartella):
+        """Prima e dopo: 15 secondi della lezione cosi' come sono e puliti (per sentire la differenza)."""
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        wav = next(iter(sorted(cart.glob("audio_[0-9][0-9][0-9].wav"))), None)
+        out = {"ok": True, "rumorosa": info.get("rumorosa"), "auto": bool(info.get("rumorosa_auto")), "prima": None, "dopo": None,
+               "occupato": bool(self.occupato or self.reg is not None)}
+        if not wav:
+            return out
+        try:
+            import numpy as np
+            import wave as wv
+            audio = el.audio_16k(wav)
+            if len(audio) < 16000 * 20:
+                return out
+            out["snr"] = round(el.stima_rumore(audio), 1)
+            # 15 s presi dove si parla (non all'inizio, spesso vuoto)
+            n = 16000 * 15
+            da = min(len(audio) - n, max(0, len(audio) // 5))
+            pezzo = audio[da:da + n]
+            pulito = el.pulisci_audio(audio[:min(len(audio), da + n)])[da:da + n]
+            dove = cart / "rumore"
+            dove.mkdir(exist_ok=True)
+            for nome, x in (("prima", pezzo), ("dopo", pulito)):
+                f = dove / f"{nome}.wav"
+                with wv.open(str(f), "wb") as w:
+                    w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000)
+                    w.writeframes((np.clip(x, -1, 1) * 32767).astype("<i2").tobytes())
+                out[nome] = servi_video.registra(f)
+        except Exception:
+            log.exception("aula rumorosa: prova")
+        return out
+
+    def rumore_imposta(self, cartella, si):
+        el.aggiorna_info(Path(cartella), rumorosa=bool(si))
+        return {"ok": True}
+
+    def ritrascrivi(self, cartella):
+        """Rifa' la trascrizione (qui, gratis) con l'audio pulito. Gli appunti restano come sono."""
+        if self.occupato or self.reg is not None or (getattr(self, "_ritr", None) or {}).get("stato") == "lavoro":
+            return {"ok": False, "msg": tr("aspetta_lavoro")}
+        cart = Path(cartella)
+        el.aggiorna_info(cart, rumorosa=True)
+        parti = sorted(el.file_parti(cart).items())
+        self._ritr = {"stato": "lavoro", "f": 0.0, "cartella": str(cart)}
+
+        def lavoro():
+            try:
+                for i, (k, wav) in enumerate(parti):
+                    vecchia = cart / f"trascrizione_{k:03d}.json"
+                    if vecchia.exists():
+                        vecchia.replace(cart / f"trascrizione_{k:03d}.prima.json")
+                    el.trascrivi_parte(cart, k, lambda f, i=i: self._ritr.update(f=(i + f) / max(1, len(parti))))
+                self._ritr = {"stato": "fatto", "f": 1.0, "cartella": str(cart)}
+            except Exception:
+                log.exception("ritrascrivi")
+                for p in cart.glob("trascrizione_*.prima.json"):          # rimetto quella di prima
+                    p.replace(cart / p.name.replace(".prima", ""))
+                self._ritr = {"stato": "errore", "msg": tr("ap_imprevisto"), "cartella": str(cart)}
+        threading.Thread(target=lavoro, daemon=True).start()
+        return {"ok": True}
+
+    def ritrascrivi_avanzamento(self):
+        return dict(getattr(self, "_ritr", None) or {"stato": "niente"})
+
+    # ------------------------------------------------------------------ foto in aula
+
+    def scatta_foto(self):
+        """Sul PC: si sceglie una foto (sul telefono la fotocamera, in android_motore)."""
+        return {"ok": False}
+
+    def foto_aggiungi(self, percorso):
+        """Una foto durante la registrazione: si aggancia al minuto, entra fra le slide (appunti, Karaoke)."""
+        reg, cart = self.reg, self.cartella_corrente
+        if reg is None or cart is None:
+            return {"ok": False, "msg": tr("fo_noreg")}
+        try:
+            cart = Path(cart)
+            sec = float(reg.secondi())
+            (cart / "slide").mkdir(exist_ok=True)
+            lista = el.leggi_json(cart / "foto.json", []) or []
+            nome = f"foto_{len(lista) + 1:03d}.jpg"
+            ch.jpeg_ridotto(percorso, cart / "slide" / nome)
+            with getattr(reg, "_lock", threading.Lock()):
+                reg.slides.append({"file": nome, "t": round(sec, 2), "foto": True})
+            try:
+                reg._salva_meta()
+            except Exception:
+                log.exception("foto: meta")
+            lista.append({"file": nome, "sec": round(sec, 1)})
+            el.scrivi_json(cart / "foto.json", lista)
+            return {"ok": True, "sec": round(sec, 1), "n": len(lista), "url": servi_video.registra(cart / "slide" / nome)}
+        except Exception:
+            log.exception("foto in aula")
+            return {"ok": False, "msg": tr("fo_err")}
+
+    def foto_lezione(self, cartella):
+        cart = Path(cartella)
+        out = []
+        for f in el.leggi_json(cart / "foto.json", []) or []:
+            p = cart / "slide" / f["file"]
+            if p.exists():
+                out.append({**f, "url": servi_video.registra(p)})
+        return {"ok": True, "foto": out}
+
+    def foto_leggi(self, cartella, file):
+        """Claude dice cosa c'e' scritto nella foto (una volta, poi resta salvato)."""
+        cart = Path(cartella)
+        lista = el.leggi_json(cart / "foto.json", []) or []
+        f = next((x for x in lista if x["file"] == file), None)
+        if not f:
+            return {"ok": False}
+        if f.get("testo"):
+            return {"ok": True, "testo": f["testo"]}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            r = ch.leggi_foto(self.chiave(), cart / "slide" / file, "lavagna")
+            f["testo"] = r["testo"]
+            el.scrivi_json(cart / "foto.json", lista)
+            info = el.leggi_json(cart / "info.json", {}) or {}
+            el.aggiorna_info(cart, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+            return {"ok": True, "testo": r["testo"]}
+        except Exception:
+            log.exception("foto: leggi")
+            return {"ok": False, "msg": tr("fo_err")}
+
+    # ------------------------------------------------------------------ appunti a mano e fotocopie
+
+    def scegli_immagini(self):
+        return {"ok": False}
+
+    def scritti_lezione(self, cartella):
+        cart = Path(cartella)
+        out = []
+        for f in el.leggi_json(cart / "scritti.json", []) or []:
+            p = cart / "scritti" / f["file"]
+            out.append({**f, "url": servi_video.registra(p) if p.exists() else None})
+        return {"ok": True, "scritti": out}
+
+    def scritti_aggiungi(self, cartella, percorsi):
+        """Le foto dei fogli: Claude le legge, il testo va con gli appunti della lezione (Chiedi, tutor, mappe, test…)."""
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        cart = Path(cartella)
+        lista = el.leggi_json(cart / "scritti.json", []) or []
+        nuovi, spesa = [], 0.0
+        for p in [x for x in percorsi or [] if x][:30]:
+            try:
+                nome = f"foglio_{len(lista) + 1:03d}.jpg"
+                ch.jpeg_ridotto(p, cart / "scritti" / nome)
+                r = ch.leggi_foto(self.chiave(), cart / "scritti" / nome, "foglio")
+                spesa += r["spesa"]
+                v = {"file": nome, "testo": r["testo"], "quando": datetime.datetime.now().isoformat(timespec="seconds")}
+                lista.append(v)
+                nuovi.append(v)
+                el.scrivi_json(cart / "scritti.json", lista)
+            except Exception:
+                log.exception("scritti: foto %s", p)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        el.aggiorna_info(cart, spesa_appunti=round(float(info.get("spesa_appunti") or 0) + spesa, 4))
+        if not nuovi:
+            return {"ok": False, "msg": tr("sc_err")}
+        return {"ok": True, "n": len(nuovi), "spesa": spesa, **self.scritti_lezione(cartella)}
+
+    def scritti_correggi(self, cartella, file, testo):
+        cart = Path(cartella)
+        lista = el.leggi_json(cart / "scritti.json", []) or []
+        for v in lista:
+            if v["file"] == file:
+                v["testo"] = str(testo or "")[:20000]
+        el.scrivi_json(cart / "scritti.json", lista)
+        return {"ok": True}
+
+    def scritti_togli(self, cartella, file):
+        cart = Path(cartella)
+        lista = [v for v in el.leggi_json(cart / "scritti.json", []) or [] if v["file"] != file]
+        el.scrivi_json(cart / "scritti.json", lista)
+        (cart / "scritti" / file).unlink(missing_ok=True)
+        return {"ok": True, **self.scritti_lezione(cartella)}
+
+    def libro_foto(self, materia, percorsi):
+        """Un libro fotografato o delle fotocopie: Claude legge le pagine e diventano un documento del libro di testo."""
+        import libro as lb
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        if getattr(self, "_libro", None) and self._libro.get("stato") == "lavoro":
+            return {"ok": False, "msg": tr("lb_lavoro")}
+        percorsi = [x for x in percorsi or [] if x][:400]
+        self._libro = {"stato": "lavoro", "f": 0.0}
+
+        def lavoro():
+            try:
+                pag = []
+                for i, p in enumerate(percorsi):
+                    r = ch.leggi_foto(self.chiave(), p, "foglio")
+                    pag.append({"n": i + 1, "et": str(i + 1), "t": r["testo"], "cap": ""})
+                    self._libro.update(f=0.9 * (i + 1) / len(percorsi))
+                docs = lb.aggiungi_pagine(BASE, materia, pag, tr("lb_foto_nome", n=len(pag)))
+                self._libro = {"stato": "fatto", "f": 1.0, "documenti": docs}
+            except Exception:
+                log.exception("libro fotografato")
+                self._libro = {"stato": "errore", "msg": tr("lb_err")}
+        threading.Thread(target=lavoro, daemon=True).start()
+        return {"ok": True}
 
     # ------------------------------------------------------------------ libro di testo della materia
 

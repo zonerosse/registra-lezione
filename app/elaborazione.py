@@ -201,9 +201,93 @@ def audio_parziale(wav):
 SERVER = None      # il motore ci mette una funzione() -> (endpoint, chiave) se si trascrive «Sul server»
 
 
+# --------------------------------------------------------------------------- aula rumorosa
+# Prima di trascrivere: via il brusio costante (sedie, ventole, proiettore, voci lontane) con una sottrazione
+# dello spettro del rumore, fatta qui con numpy (anche sul telefono), e la voce portata a un volume giusto.
+# info.json "rumorosa": True (sempre), False (mai), assente = decide il programma (stima_rumore).
+
+def stima_rumore(audio):
+    """Rapporto voce/rumore in dB: sotto i 14 dB l'aula e' rumorosa."""
+    import numpy as np
+    n = 320                                  # 20 ms
+    k = len(audio) // n
+    if k < 50:
+        return 99.0
+    rms = np.sqrt(np.mean(audio[:k * n].reshape(k, n) ** 2, axis=1) + 1e-12)
+    fondo, voce = np.percentile(rms, 15), np.percentile(rms, 92)
+    return float(20 * np.log10((voce + 1e-9) / (fondo + 1e-9)))
+
+
+def pulisci_audio(audio, forza=1.6):
+    """Toglie il rumore di fondo costante e normalizza il volume. Lavora a pezzi di 60 s."""
+    import numpy as np
+    if len(audio) < 16000:
+        return audio
+    N, H = 512, 256
+    fin = np.hanning(N).astype(np.float32)
+    # profilo del rumore: i tratti piu' silenziosi dei primi 5 minuti
+    campione = audio[:16000 * 300]
+    k = (len(campione) - N) // H
+    fr = np.lib.stride_tricks.as_strided(campione, shape=(k, N), strides=(campione.strides[0] * H, campione.strides[0]))
+    en = np.mean(fr ** 2, axis=1)
+    quieti = fr[en <= np.percentile(en, 12)]
+    rumore = np.median(np.abs(np.fft.rfft(quieti * fin, axis=1)), axis=0) + 1e-6
+    basse = np.fft.rfftfreq(N, 1 / 16000) < 80
+    out = np.zeros_like(audio)
+    peso = np.zeros_like(audio)
+    passo = 16000 * 60
+    for i0 in range(0, len(audio), passo):
+        x = audio[max(0, i0 - N):min(len(audio), i0 + passo + N)]
+        if len(x) < N:
+            continue
+        k = (len(x) - N) // H + 1
+        fr = np.lib.stride_tricks.as_strided(x, shape=(k, N), strides=(x.strides[0] * H, x.strides[0]))
+        S = np.fft.rfft(fr * fin, axis=1)
+        mag = np.abs(S) + 1e-9
+        g = np.clip(1 - forza * rumore / mag, 0.12, 1.0)
+        g[:, basse] = 0.05
+        g = (g + np.roll(g, 1, axis=0) + np.roll(g, -1, axis=0)) / 3          # meno «acqua» tra un frame e l'altro
+        y = np.fft.irfft(S * g, n=N, axis=1).astype(np.float32) * fin
+        base = max(0, i0 - N)
+        for j in range(k):
+            a = base + j * H
+            out[a:a + N] += y[j]
+            peso[a:a + N] += fin ** 2
+    out = out / np.maximum(peso, 1e-3)
+    # volume: la voce (frame piu' forti) intorno a 0,1
+    n = 320
+    kk = len(out) // n
+    if kk > 10:
+        rms = np.sqrt(np.mean(out[:kk * n].reshape(kk, n) ** 2, axis=1))
+        liv = np.percentile(rms, 95)
+        if liv > 1e-5:
+            out = out * min(10.0, 0.1 / liv)
+    return np.clip(out, -1, 1).astype(np.float32)
+
+
+def forse_pulisci(audio, cartella):
+    """Pulisce l'audio se l'aula e' rumorosa (scelta dello studente o stima del programma)."""
+    try:
+        info = leggi_json(Path(cartella) / "info.json", {}) or {}
+        r = info.get("rumorosa")
+        if r is None and len(audio) > 16000 * 20:
+            snr = stima_rumore(audio)
+            r = snr < 14
+            if r and not info.get("rumorosa_auto"):
+                with _BLOCCO_INFO:
+                    aggiorna_info(cartella, rumorosa_auto=True)
+                log.info("aula rumorosa (voce/rumore %.1f dB): pulisco l'audio", snr)
+        if r:
+            return pulisci_audio(audio)
+    except Exception:
+        log.exception("pulizia dell'audio")
+    return audio
+
+
 def trascrivi_campioni(audio, cartella, progresso=lambda f: None, threads=None):
     """Trascrive dei campioni (16 kHz): [{"inizio", "fine", "testo"}] con gli orari dall'inizio dei campioni.
     Con «Sul server» li manda al server; se il server non va, li trascrive qui (non si perde niente)."""
+    audio = forse_pulisci(audio, cartella)
     srv = SERVER() if SERVER else None
     if srv and len(audio) > 16000:
         import server_trascrizione as st
@@ -516,7 +600,7 @@ def immagine_slide(cartella, nome, originale=False):
     (originale=True: sempre la foto dello schermo, ritagliata)."""
     from PIL import Image
     orig = Path(cartella) / "slide" / nome
-    if nome.startswith("docente_"):
+    if nome.startswith("docente_") or nome.startswith("foto_"):      # foto fatte in aula: cosi' come sono
         return orig
     if not originale and (Path(cartella) / "docente.json").exists():
         sost = (leggi_json(Path(cartella) / "docente.json", {}) or {}).get("sostituzioni") or {}

@@ -142,6 +142,18 @@ def aggiungi(base, materia, percorso, sostituisci, avanzamento=lambda f: None):
     return docs
 
 
+def aggiungi_pagine(base, materia, pag, nome):
+    """Pagine gia' lette (foto di un libro o fotocopie, lette da Claude): un documento in piu'."""
+    c = cartella(base, materia)
+    docs = documenti(base, materia)
+    k = max([d["k"] for d in docs] + [0]) + 1
+    el.scrivi_json(c / f"pagine_{k}.json", pag)
+    docs.append({"k": k, "nome": nome, "percorso": "", "pagine": len(pag), "tipo": "libro" if not docs else "dispense"})
+    el.scrivi_json(c / "documenti.json", docs)
+    (c / "indice.json").unlink(missing_ok=True)
+    return docs
+
+
 def togli(base, materia, k):
     c = cartella(base, materia)
     docs = [d for d in documenti(base, materia) if d["k"] != k]

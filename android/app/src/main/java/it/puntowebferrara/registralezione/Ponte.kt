@@ -99,6 +99,7 @@ object Ponte {
         a.runOnUiThread {
             val i = Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
             if (tipo == "pdf") i.type = "application/pdf"
+            else if (tipo == "immagini") { i.type = "image/*"; i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true) }
             else if (tipo == "testo") {
                 i.type = "*/*"
                 i.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/pdf", "text/plain", "text/markdown",
@@ -112,6 +113,23 @@ object Ponte {
     }
 
     fun risultatoScelta(dati: Intent?) {
+        // piu' immagini insieme (foto dei fogli): i percorsi uno per riga
+        val clip = dati?.clipData
+        if (clip != null && clip.itemCount > 0) {
+            val dir = File(app.cacheDir, "scelti").apply { mkdirs() }
+            val fatti = mutableListOf<String>()
+            for (j in 0 until clip.itemCount) {
+                try {
+                    val uu = clip.getItemAt(j).uri
+                    val dest = File(dir, "img_${System.currentTimeMillis()}_$j.jpg")
+                    app.contentResolver.openInputStream(uu)!!.use { inp -> dest.outputStream().use { inp.copyTo(it) } }
+                    fatti.add(dest.absolutePath)
+                } catch (e: Exception) { }
+            }
+            scelto = fatti.joinToString("\n")
+            scelta?.countDown()
+            return
+        }
         val u = dati?.data
         if (u != null) {
             try {
@@ -126,6 +144,37 @@ object Ponte {
             } catch (e: Exception) { scelto = "" }
         }
         scelta?.countDown()
+    }
+
+    // ------------------------------------------------------------------ fotocamera (foto alla lavagna, fogli)
+    const val SCATTA = 42
+    private var scatto: CountDownLatch? = null
+    @Volatile private var scattoOk = false
+
+    /** Apre la fotocamera e aspetta la foto. Ritorna il percorso del file (o "" se annullata). */
+    @JvmStatic fun scatta(): String {
+        val a = attivita.get() ?: return ""
+        val dir = File(app.cacheDir, "foto").apply { mkdirs() }
+        val f = File(dir, "foto_${System.currentTimeMillis()}.jpg")
+        val uri = androidx.core.content.FileProvider.getUriForFile(app, "it.puntowebferrara.registralezione.file", f)
+        val l = CountDownLatch(1)
+        scatto = l
+        scattoOk = false
+        a.runOnUiThread {
+            try {
+                val i = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+                    .putExtra(android.provider.MediaStore.EXTRA_OUTPUT, uri)
+                    .addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                a.startActivityForResult(i, SCATTA)
+            } catch (e: Exception) { l.countDown() }
+        }
+        l.await(15, TimeUnit.MINUTES)
+        return if (scattoOk && f.exists() && f.length() > 0) f.absolutePath else ""
+    }
+
+    fun risultatoScatto(ok: Boolean) {
+        scattoOk = ok
+        scatto?.countDown()
     }
 
     // ------------------------------------------------------------------ riconoscitore vocale
