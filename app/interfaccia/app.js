@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {sy: '🔄', fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -138,6 +138,7 @@ function nomePagina(p) {
   if (p === 'verifica') return t('tl.mv');
   if (p === 'rg') return t('rg.h');
   if (p === 'lm') return t('lm.nome');
+  if (p === 'sy') return t('sy.nome');
   if (p === 'gl') return t('gl.nome');
   if (p === 'tu') return t('tu.nome');
   if (p === 'lb') return t('lb.nome');
@@ -167,6 +168,7 @@ function vai(p, tornando = false) {
   if (p !== 'gl' && GL && GL.au) GL.au.pause();
   if (p !== 'lb' && LB && LB.poll) { clearInterval(LB.poll); LB.poll = null; }
   if (p !== 'ru' && RU && RU.poll) { clearInterval(RU.poll); RU.poll = null; }
+  if (p !== 'sy' && SY.poll) syChiudi();
   if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
@@ -178,7 +180,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -187,6 +189,7 @@ function vai(p, tornando = false) {
   if (p === 'arch') caricaLezioni();
   if (p === 'dsa') disegnaSpazioDsa();
   if (p === 'lm') disegnaLM();
+  if (p === 'sy') apriSY();
   segnaUso(p);
   if (p === 'studia') apriStudia();
   if (p === 'fare') apriCose();
@@ -231,6 +234,8 @@ function inizializza() {
   $('btnLic').onclick = () => vai('lic');
   $('btnPrivacy').onclick = () => primaDiIniziare(true);
   $('lmApri').onclick = () => vai('lm');
+  $('syApri').onclick = () => vai('sy');
+  $('footSync').onclick = () => vai('sy');
   $('licIndietro').onclick = () => vai('info');
   // pronto
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); controllaNomeRec(); });
@@ -447,6 +452,7 @@ function disegnaStato() {
   else if (S.occupato) h = `<b><span class="dot lav"></span>${t('st.lav')}</b>${t('st.lav2')}`;
   else h = `<b><span class="dot"></span>${t('st.pronto')}</b>${t('st.ai', {x: R.appunti_on ? t('st.on') : t('st.off')})}`;
   if ($('statobox').innerHTML !== h) $('statobox').innerHTML = h;
+  footSync();
   $('navRec').classList.toggle('hidden', !S.registro);
   const nuovo = S.agg && S.agg.tipo === 'trovato';
   const fa = esc(t('agg')) + (nuovo ? '<span class="nuovo"></span>' : '');
@@ -2679,6 +2685,131 @@ function disegnaLM() {
   $('lmS').querySelectorAll('span').forEach(b => b.onclick = () => salva({s: +b.dataset.v}));
   $('lmSil').onclick = () => salva({sil: !o.sil});
   $('lmRig').onclick = () => salva({rig: !o.rig});
+}
+/* ------------------------------------------------------------------ sincronizza */
+// Il PC fa da centro; il telefono (o un altro PC) si collega una volta con un codice di 6 cifre e poi si
+// sincronizza da solo quando sono sulla stessa rete Wi-Fi (sincronizza.py).
+var SY = {d: null, poll: null, modo: '', msg: '', fatto: ''};
+function syFa(iso) {
+  if (!iso) return t('sy.mai');
+  const m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
+  if (m < 1) return t('sy.ora');
+  if (m < 60) return t('sy.min', {n: m});
+  if (m < 60 * 24) return t('sy.ore', {n: Math.round(m / 60)});
+  return t('sy.giorni', {n: Math.round(m / 1440)});
+}
+function footSync() {
+  const y = S.sync, f = $('footSync');
+  f.classList.toggle('hidden', !y);
+  if (!y) return;
+  const h = y.in_corso ? '🔄 ' + esc(t('sy.incorso')) : y.errore && y.client ? '🔄 ' + esc(t('sy.lontano')) : '🔄 ' + esc(t('sy.fatto', {q: syFa(y.ultimo)}));
+  if (f.innerHTML !== h) f.innerHTML = h;
+}
+function apriSY() {
+  SY.modo = ''; SY.msg = ''; SY.fatto = '';
+  disegnaSY(true);
+  if (!SY.poll) SY.poll = setInterval(() => disegnaSY(false), 2000);
+}
+function syChiudi() {
+  clearInterval(SY.poll); SY.poll = null;
+  if (SY.modo === 'codice') A.sync_annulla_codice();
+  SY.modo = '';
+}
+async function disegnaSY(tutto) {
+  const r = SY.d = await A.sync_stato();
+  if (pagina !== 'sy') return;
+  if (r.evento && r.evento.tipo === 'abbinato') { SY.modo = ''; SY.fatto = r.evento.nome; tutto = true; }
+  if (SY.modo === 'codice' && !r.codice) { SY.modo = ''; tutto = true; }
+  if (!tutto) {     // ogni 2 secondi: solo lo stato e il tempo del codice (senza toccare quello che si sta scrivendo)
+    if ($('syStato')) $('syStato').innerHTML = syStato(r);
+    if ($('syDisp')) $('syDisp').innerHTML = syDispositivi(r);
+    if ($('syScade')) $('syScade').textContent = t('sy.scade', {n: Math.max(1, Math.ceil(r.codice_sec / 60))});
+    syBottoniDisp();
+    return;
+  }
+  const box = $('syBox');
+  const fatto = SY.fatto ? `<div class="syok" style="margin-bottom:14px">✓ ${esc(t('sy.collegati', {a: r.nome, b: SY.fatto}))}</div>` : '';
+  const rete = `<div class="card mt"><div class="lbl">${esc(t('sy.nontrova.l'))}</div><div class="hint">${t('sy.nontrova')}${ANDROID ? '' : '<br><br>' + t('sy.firewall')}</div></div>`;
+  if (SY.modo === 'codice') {
+    box.innerHTML = `<div class="card" style="text-align:center"><div class="lbl" style="text-align:left">💻 ${esc(t('sy.questopc', {n: r.nome}))}</div>
+      <div class="sycod">${esc(r.codice.slice(0, 3) + ' ' + r.codice.slice(3))}</div>
+      <div class="hint">${esc(t('sy.scrivilo'))}</div><div class="hint" id="syScade">${esc(t('sy.scade', {n: Math.max(1, Math.ceil(r.codice_sec / 60))}))}</div>
+      <div class="row mt" style="gap:10px;justify-content:center;color:var(--mut)"><span class="spin"></span>${esc(t('sy.aspetto'))}</div>
+      <div class="row mt" style="justify-content:center"><button class="btn b-ghost b-sm" id="syAnn">${esc(t('annulla'))}</button></div></div>` + rete;
+    $('syAnn').onclick = () => { A.sync_annulla_codice(); SY.modo = ''; disegnaSY(true); };
+    return;
+  }
+  if (SY.modo === 'collega') {
+    box.innerHTML = `<div class="card" style="text-align:center"><div class="lbl" style="text-align:left">🔄 ${esc(t('sy.collegati.t'))}</div>
+      <div class="hint">${esc(t('sy.scrivi'))}</div>
+      <input class="in syin" id="syCod" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000">
+      <div class="row mt" style="gap:8px;justify-content:center"><button class="btn b-main b-sm" id="syVai">${esc(t('sy.collega'))}</button><button class="btn b-ghost b-sm" id="syAnn">${esc(t('annulla'))}</button></div>
+      <div id="syMsg" class="mt"></div></div>` + rete;
+    const vai_ = async () => {
+      const b = $('syVai'); b.disabled = true;
+      $('syMsg').innerHTML = `<div class="row" style="gap:10px;justify-content:center;color:var(--mut)"><span class="spin"></span>${esc(t('sy.cerco'))}</div>`;
+      const x = await A.sync_collega($('syCod').value);
+      b.disabled = false;
+      if (x.ok) { SY.modo = ''; SY.fatto = x.nome; disegnaSY(true); }
+      else $('syMsg').innerHTML = `<div class="avviso">${esc(x.msg)}</div>`;
+    };
+    $('syVai').onclick = vai_;
+    $('syCod').onkeydown = e => { if (e.key === 'Enter') vai_(); };
+    $('syAnn').onclick = () => { SY.modo = ''; disegnaSY(true); };
+    setTimeout(() => $('syCod') && $('syCod').focus(), 50);
+    return;
+  }
+  const bott = ANDROID ? `<button class="btn b-main b-sm" id="syColl">📱 ${esc(t('sy.collegati.t'))}</button>`
+    : `<button class="btn b-main b-sm" id="syCodice">💻 ${esc(t('sy.colltel'))}</button><button class="btn b-ghost b-sm" id="syColl">${esc(t('sy.collpc'))}</button>`;
+  if (!r.dispositivi.length) {
+    box.innerHTML = fatto + `<div class="card"><div class="lbl">${esc(t('sy.una'))}</div>
+      <div class="sypasso"><span class="n">1</span><div><b>${esc(t('sy.p1'))}</b><span>${esc(t('sy.p1s'))}</span></div></div>
+      <div class="sypasso"><span class="n">2</span><div><b>${esc(t('sy.p2'))}</b><span>${esc(t('sy.p2s'))}</span></div></div>
+      <div class="sypasso"><span class="n">3</span><div><b>${esc(t('sy.p3'))}</b><span>${esc(t('sy.p3s'))}</span></div></div>
+      <div class="row mt" style="gap:8px;flex-wrap:wrap">${bott}</div></div>` + rete;
+  } else {
+    const o = r.opzioni;
+    const ck = (k, s) => `<label class="syck"><input type="checkbox" data-o="${k}"${o[k] ? ' checked' : ''}><span>${esc(t('sy.o.' + k))}<small>${esc(t('sy.o.' + k + '.s'))}</small></span></label>`;
+    box.innerHTML = fatto + `<div class="sygrid"><div class="card"><div class="lbl">${esc(t('sy.disp'))}</div>
+      <div id="syDisp">${syDispositivi(r)}</div>
+      <div id="syStato" class="mt">${syStato(r)}</div>
+      <div class="row mt" style="gap:8px;flex-wrap:wrap">${r.dispositivi.some(d => d.ruolo === 'centro') ? `<button class="btn b-main b-sm" id="syOra">🔄 ${esc(t('sy.adesso'))}</button>` : ''}
+        <button class="btn b-ghost b-sm" id="${ANDROID ? 'syColl' : 'syCodice'}">+ ${esc(t('sy.altro'))}</button></div>
+      <div class="hint mt">${esc(t(ANDROID ? 'sy.nota.tel' : 'sy.nota.pc'))}</div></div>
+      <div class="card"><div class="lbl">${esc(t('sy.cosa'))}</div>${['lezioni', 'studio', 'materie', 'libro', 'video'].map(k => ck(k)).join('')}
+      <div class="hint mt">${esc(t('sy.unisce'))}</div></div></div>` + rete;
+    box.querySelectorAll('[data-o]').forEach(c => c.onchange = () => A.sync_opzione(c.dataset.o, c.checked));
+    if ($('syOra')) $('syOra').onclick = async () => { await A.sync_adesso(); setTimeout(() => disegnaSY(false), 300); };
+    syBottoniDisp();
+  }
+  if ($('syCodice')) $('syCodice').onclick = async () => {
+    const x = await A.sync_codice();
+    if (!x.ok) { dialogo({titolo: t('sy.nome'), testo: x.msg}); return; }
+    SY.modo = 'codice'; SY.fatto = ''; disegnaSY(true);
+  };
+  if ($('syColl')) $('syColl').onclick = () => { SY.modo = 'collega'; SY.fatto = ''; disegnaSY(true); };
+}
+function syDispositivi(r) {
+  return r.dispositivi.map(d => `<div class="sydisp"><span class="ic">${d.ruolo === 'centro' ? '💻' : '📱'}</span><div class="sp"><b>${esc(d.nome)}</b>
+    <small>${esc(d.ultimo ? t('sy.fatto', {q: syFa(d.ultimo)}) : t('sy.ancora'))}</small></div>
+    <button class="btn b-ghost b-sm b-red" data-sc="${esc(d.id)}" data-n="${esc(d.nome)}">${esc(t('sy.scollega'))}</button></div>`).join('');
+}
+function syBottoniDisp() {
+  document.querySelectorAll('#syDisp [data-sc]').forEach(b => b.onclick = async () => {
+    if (!await conferma(t('sy.scollega'), t('sy.scollega.d', {n: b.dataset.n}), t('sy.scollega'), t('annulla'), 'b-end')) return;
+    await A.sync_scollega(b.dataset.sc); disegnaSY(true);
+  });
+}
+function syStato(r) {
+  if (r.in_corso) return `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('sy.incorso'))} ${Math.round((r.fase || 0) * 100)}%</div>`;
+  const client = r.dispositivi.some(d => d.ruolo === 'centro');
+  if (client && r.errore === 'non_trovato') return `<div class="avviso">${esc(t('sy.err.lontano'))}</div>`;
+  if (client && r.errore) return `<div class="avviso">${esc(t('sy.err.rete'))}</div>`;
+  const ult = r.dispositivi.reduce((a, d) => (d.ultimo || '') > a ? d.ultimo : a, '');
+  if (!ult) return `<div class="hint">${esc(t(client ? 'sy.attesa.c' : 'sy.attesa.s'))}</div>`;
+  const g = r.giro;
+  const det = g && (g.arrivati || g.mandati || g.uniti) ? `<div class="hint mt">${esc(t('sy.ultimo', {a: g.arrivati, m: g.mandati, u: g.uniti}))}</div>` : '';
+  return `<div class="syok">🔄 ${esc(t('sy.fatto', {q: syFa(ult)}))}</div>` + det;
 }
 /* ------------------------------------------------------------------ ripasso del giorno */
 // Poche carte ogni giorno fra tutte le lezioni (ripasso_giorno.py). Si ripassa nella pagina delle flashcard (v-rip)

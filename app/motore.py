@@ -384,6 +384,7 @@ class Motore:
         for f in (self._lavoratore, self._lavoratore_appunti, self._prepara_modello, self._ciclo, self._riprova_cloud):
             threading.Thread(target=f, daemon=True).start()
         threading.Thread(target=self.controlli, daemon=True).start()
+        threading.Thread(target=self.avvia_sincronizza, daemon=True).start()
 
     # ------------------------------------------------------------------ utilita'
 
@@ -467,6 +468,7 @@ class Motore:
             s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
             s["formato"] = self.formato_vista
             s["importa"] = self.imp
+            s["sync"] = self._sync_breve()
             return s
 
     def _spesa(self):
@@ -3445,8 +3447,185 @@ class Motore:
             nuova = cart.with_name(cart.name.split(" - ", 1)[0] + " - " + nb)
             if not nuova.exists():
                 cart.rename(nuova)
+                self._sync_tolta(cart.name)
                 if self.cartella_corrente == cart:
                     self.cartella_corrente = nuova
+
+    # ------------------------------------------------------------------ sincronizza (Wi-Fi)
+    # Il PC fa da centro; il telefono (o un altro PC) si collega una volta con un codice di 6 cifre e poi si
+    # sincronizza da solo ogni minuto, quando e' sulla stessa rete. Vedi sincronizza.py.
+
+    def base(self):
+        return BASE
+
+    def pacchetti(self):
+        return Path(self.cfg["cartella_pacchetti"])
+
+    def salva_cfg(self):
+        salva_config(self.cfg)
+
+    def nome_dispositivo(self):
+        if self.cfg.get("sync_nome"):
+            return self.cfg["sync_nome"]
+        import socket
+        try:
+            n = socket.gethostname()
+        except OSError:
+            n = ""
+        if n and n.lower() not in ("localhost", "android") and not n.lower().startswith("android-"):
+            return n
+        try:                                   # telefono Android: il modello (es. «Samsung Galaxy A54»)
+            from java import jclass
+            b = jclass("android.os.Build")
+            mod = str(b.MODEL or "")
+            marca = str(b.MANUFACTURER or "")
+            return (mod if mod.lower().startswith(marca.lower()) else f"{marca.capitalize()} {mod}").strip() or tr("sy_questo")
+        except Exception:
+            return tr("sy_questo")
+
+    def sync_evento(self, tipo, nome):
+        ev = getattr(self, "_sync_ev", None)
+        if ev and ev.get("tipo") == "abbinato" and tipo != "abbinato" and time.time() - ev["t"] < 30:
+            return          # «Collegati ✓» non si perde dietro alla prima sincronizzazione
+        self._sync_ev = {"tipo": tipo, "nome": nome, "t": time.time()}
+
+    def _sync(self):
+        if getattr(self, "_sy", None) is None:
+            import sincronizza as sy
+            sy.CESTINO = al_cestino
+            self._sy_mod = sy
+            self._sy = sy.Centro(self)
+            self._sy_stato = {"in_corso": False, "errore": "", "fase": 0.0, "ultimo": None, "giro": None}
+            self._sy_lock = threading.Lock()
+            self._sync_ev = None
+            threading.Thread(target=self._sync_ciclo, daemon=True).start()
+        return self._sy
+
+    def avvia_sincronizza(self):
+        """All'avvio: se ci sono dispositivi collegati, il centro si accende e il giro parte da solo."""
+        if self.cfg.get("sync_dispositivi"):
+            c = self._sync()
+            if any(d.get("ruolo") == "client" for d in self.cfg["sync_dispositivi"]):
+                c.avvia()
+
+    def _sync_ciclo(self):
+        while True:
+            time.sleep(5)
+            centri = [d for d in self.cfg.get("sync_dispositivi") or [] if d.get("ruolo") == "centro"]
+            if not centri or self.occupato:
+                continue
+            ult = self._sy_stato.get("ultimo") or 0
+            if time.time() - ult >= 60 or self._sy_stato.get("subito"):
+                self._sy_stato["subito"] = False
+                self._sync_giro()
+
+    def _sync_opzioni(self):
+        o = {"lezioni": True, "studio": True, "materie": True, "libro": True, "video": False}
+        o.update(self.cfg.get("sync_opzioni") or {})
+        return o
+
+    def _sync_giro(self):
+        sy = self._sy_mod
+        if not self._sy_lock.acquire(blocking=False):
+            return
+        st = self._sy_stato
+        try:
+            st.update(in_corso=True, errore="", fase=0.0)
+            for d in [d for d in self.cfg.get("sync_dispositivi") or [] if d.get("ruolo") == "centro"]:
+                try:
+                    r = sy.sincronizza(d, BASE, self.pacchetti(), self.cfg, self._sync_opzioni(),
+                                       lambda f, rel: st.update(fase=f))
+                    d["ip"] = r["ip"]
+                    d["ultimo"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+                    st["giro"] = r
+                    st["errore"] = ""
+                except ConnectionError:
+                    st["errore"] = "non_trovato"
+                except Exception:
+                    log.exception("sincronizza")
+                    st["errore"] = "rete"
+            salva_config(self.cfg)
+        finally:
+            st.update(in_corso=False, ultimo=time.time())
+            self._sy_lock.release()
+
+    def sync_stato(self):
+        c = self._sync()
+        lista = [{"id": d.get("id"), "nome": d.get("nome"), "ultimo": d.get("ultimo") or "", "ruolo": d.get("ruolo")}
+                 for d in self.cfg.get("sync_dispositivi") or []]
+        ev, self._sync_ev = self._sync_ev, None
+        return {"dispositivi": lista, "opzioni": self._sync_opzioni(), "nome": self.nome_dispositivo(),
+                "centro": c.attivo, "ip": self._sy_mod._io_ip(), "codice": c.codice if c.codice and time.time() < c.codice_fino else "",
+                "codice_sec": max(0, int(c.codice_fino - time.time())) if c.codice else 0,
+                "in_corso": self._sy_stato["in_corso"], "fase": self._sy_stato["fase"], "errore": self._sy_stato["errore"],
+                "giro": self._sy_stato["giro"], "evento": ev}
+
+    def _sync_breve(self):
+        """Per la riga in basso a sinistra: «🔄 Sincronizzato 2 min fa»."""
+        ds = self.cfg.get("sync_dispositivi") or []
+        if not ds:
+            return None
+        st = getattr(self, "_sy_stato", None) or {}
+        return {"in_corso": bool(st.get("in_corso")), "errore": st.get("errore") or "",
+                "ultimo": max((d.get("ultimo") or "" for d in ds), default=""), "client": any(d.get("ruolo") == "centro" for d in ds)}
+
+    def sync_codice(self):
+        """«Collega un telefono»: il centro si accende e mostra un codice di 6 cifre (vale 10 minuti)."""
+        c = self._sync()
+        if not c.avvia():
+            return {"ok": False, "msg": tr("sy_err_porta")}
+        return {"ok": True, "codice": c.nuovo_codice(), "nome": self.nome_dispositivo(), "ip": self._sy_mod._io_ip()}
+
+    def sync_annulla_codice(self):
+        self._sync().codice = None
+        return {"ok": True}
+
+    def sync_collega(self, codice):
+        """«Collegati al PC»: cerca sulla rete il PC che mostra questo codice."""
+        self._sync()
+        codice = re.sub(r"\D", "", str(codice or ""))
+        if len(codice) != 6:
+            return {"ok": False, "msg": tr("sy_err_codice")}
+        if not self.cfg.get("sync_id"):
+            self.cfg["sync_id"] = __import__("secrets").token_hex(6)
+        d, err = self._sy_mod.abbina(codice, self.cfg["sync_id"], self.nome_dispositivo())
+        if not d:
+            return {"ok": False, "msg": tr({"non_trovato": "sy_err_trova", "codice": "sy_err_codice"}.get(err, "sy_err_rete"))}
+        lista = [x for x in self.cfg.get("sync_dispositivi") or [] if x.get("id") != d["id"]]
+        lista.append(d)
+        self.cfg["sync_dispositivi"] = lista
+        salva_config(self.cfg)
+        self._sy_stato["subito"] = True
+        return {"ok": True, "nome": d["nome"]}
+
+    def sync_adesso(self):
+        self._sync()
+        if any(d.get("ruolo") == "centro" for d in self.cfg.get("sync_dispositivi") or []):
+            threading.Thread(target=self._sync_giro, daemon=True).start()
+        return {"ok": True}
+
+    def sync_scollega(self, id_disp):
+        self.cfg["sync_dispositivi"] = [d for d in self.cfg.get("sync_dispositivi") or [] if d.get("id") != id_disp]
+        salva_config(self.cfg)
+        return {"ok": True}
+
+    def sync_opzione(self, chiave, valore):
+        if chiave in ("lezioni", "studio", "materie", "libro", "video"):
+            self.cfg.setdefault("sync_opzioni", {})[chiave] = bool(valore)
+            salva_config(self.cfg)
+        elif chiave == "nome":
+            self.cfg["sync_nome"] = str(valore or "").strip()[:40]
+            salva_config(self.cfg)
+        return {"ok": True}
+
+    def _sync_tolta(self, nome):
+        """Una lezione eliminata o rinominata: anche sugli altri dispositivi sparisce (non torna indietro)."""
+        if self.cfg.get("sync_dispositivi"):
+            el_ = list(self.cfg.get("sync_eliminate") or [])
+            if nome not in el_:
+                el_.append(nome)
+                self.cfg["sync_eliminate"] = el_[-500:]
+                salva_config(self.cfg)
 
     def elimina(self, cartella, anche_pacchetti=False):
         cart = Path(cartella)
@@ -3458,6 +3637,7 @@ class Motore:
                      [info.get("appunti_completi"), info.get("appunti_completi_esame")] if v and Path(v).exists()]
         try:
             al_cestino([cart] + [Path(f) for f in extra])
+            self._sync_tolta(cart.name)
             return {"ok": True}
         except Exception:
             log.exception("elimina")

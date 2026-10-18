@@ -365,6 +365,27 @@ class Api:
     def glossario_pdf(self, materia):
         return self._m.glossario_pdf(materia)
 
+    def sync_stato(self):
+        return self._m.sync_stato()
+
+    def sync_codice(self):
+        return self._m.sync_codice()
+
+    def sync_annulla_codice(self):
+        return self._m.sync_annulla_codice()
+
+    def sync_collega(self, codice):
+        return self._m.sync_collega(codice)
+
+    def sync_adesso(self):
+        return self._m.sync_adesso()
+
+    def sync_scollega(self, id_disp):
+        return self._m.sync_scollega(id_disp)
+
+    def sync_opzione(self, chiave, valore):
+        return self._m.sync_opzione(chiave, valore)
+
     def segna_uso(self, chiave):
         return self._m.segna_uso(chiave)
 

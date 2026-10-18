@@ -1,6 +1,6 @@
 {
- "versione": "3.87",
+ "versione": "3.88",
  "librerie": 2,
- "novita": "Nuovo: «📷 Foto alla lavagna» mentre registri (la foto si aggancia al minuto e Claude legge cosa c'è scritto), «✍ Appunti a mano e fotocopie» nella pagina della lezione, libri fotografati nel Libro di testo e «🔇 Aula rumorosa», che pulisce l'audio prima di trascrivere. Sul telefono va installata l'app nuova (per la fotocamera).",
- "novita_en": "New: «📷 Photo of the board» while recording (the photo is linked to the minute and Claude reads what is written), «✍ Handwritten notes and photocopies» on the lecture page, photographed books in Textbook and «🔇 Noisy classroom», which cleans the audio before transcribing. On the phone install the new app (for the camera)."
+ "novita": "Nuovo: «🔄 Sincronizza» (Impostazioni). Collega il telefono al PC una volta con un codice di 6 cifre: da lì in poi, sulla stessa rete Wi-Fi (o con l'hotspot del telefono), lezioni, appunti, ripasso, voti e materie sono uguali sul PC e sul telefono.",
+ "novita_en": "New: «🔄 Sync» (Settings). Link the phone to the PC once with a 6-digit code: from then on, on the same Wi-Fi network (or with the phone's hotspot), lessons, notes, review, marks and subjects are the same on PC and phone."
 }

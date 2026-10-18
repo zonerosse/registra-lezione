@@ -68,6 +68,7 @@
     </nav>
     <div class="foot">
       <div class="statobox" id="statobox"></div>
+      <a id="footSync" class="hidden"></a>
       <span id="footVer">Versione</span> · <a id="footAgg">Aggiorna</a>
     </div>
   </aside>
@@ -334,6 +335,10 @@
         <div><div class="lmprova" id="lmProva"></div><div class="hint mt" data-t="lm.nota">Così vedrai gli appunti, «Ascolta», il Karaoke, le flashcard e i PDF per DSA. Le sillabe colorate solo in italiano.</div></div>
       </div>
     </section>
+    <section class="pg hidden" id="v-sy">
+      <div class="hd"><div><h2 data-t="sy.h">🔄 Sincronizza</h2><p data-t="sy.sub">Le stesse lezioni, gli stessi appunti e lo stesso ripasso sul PC e sul telefono.</p></div></div>
+      <div id="syBox"></div>
+    </section>
     <section class="pg hidden" id="v-rg">
       <div class="hd"><div><h2 data-t="rg.h2">🃏 Ripasso del giorno</h2><p data-t="rg.sub">Poche carte ogni giorno, scelte per te, fino all'esame.</p></div></div>
       <div id="rgBox"></div>
@@ -514,6 +519,10 @@
         <div class="set"><div class="t"><b data-t="im.lingua.t">Lingua del programma e degli appunti</b><span data-t="im.lingua.s">Menu, pulsanti, appunti Cornell e PDF.</span></div><div class="seg" id="segLingua"><span data-l="it">Italiano</span><span data-l="en">English</span></div></div>
         <div class="set"><div class="t"><b data-t="fa.t">Lettura facilitata (DSA)</b><span data-t="fa.s">Carattere ad alta leggibilità, lettere e righe più distanziate, fondo color crema: in «Ascolta gli appunti», nelle flashcard e nei PDF degli appunti nuovi.</span></div><div class="sw" id="swFac"></div></div>
         <div class="set" id="lmImp"><div class="t"><b data-t="lm.t">👓 Come leggo meglio</b><span data-t="lm.s">Carattere, grandezza, colore dello sfondo, sillabe colorate, righello di lettura.</span></div><button class="btn b-ghost b-sm" id="lmApri" data-t="lm.apri">Scegli…</button></div>
+      </div>
+      <div class="card mt">
+        <div class="lbl" data-t="sy.lbl">Sincronizza</div>
+        <div class="set"><div class="t"><b data-t="sy.t">🔄 PC e telefono insieme</b><span id="syImpS" data-t="sy.s">Le stesse lezioni e lo stesso ripasso su PC e telefono, sulla stessa rete Wi-Fi.</span></div><button class="btn b-ghost b-sm" id="syApri" data-t="sy.apri">Apri…</button></div>
       </div>
       <div class="card mt">
         <div class="lbl" data-t="im.ai">Intelligenza artificiale</div>
