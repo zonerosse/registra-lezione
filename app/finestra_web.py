@@ -247,6 +247,24 @@ class Api:
     def esame_pdf(self, materia):
         return self._m.esame_pdf(materia)
 
+    def orale_nuova(self, materia):
+        return self._m.orale_nuova(materia)
+
+    def orale_ascolta(self):
+        return self._m.orale_ascolta()
+
+    def orale_livello(self):
+        return self._m.orale_livello()
+
+    def orale_fine(self, n, domanda):
+        return self._m.orale_fine(n, domanda)
+
+    def orale_correggi(self):
+        return self._m.orale_correggi()
+
+    def orale_chiudi(self):
+        return self._m.orale_chiudi()
+
     def cose_da_fare(self):
         return self._m.cose_da_fare()
 

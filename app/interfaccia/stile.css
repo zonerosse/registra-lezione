@@ -501,6 +501,22 @@ html.android .dove.tre{grid-template-columns:1fr}
 .esd.esame{background:#fff1f2;border:1px solid #fecdd3}.esd.esame div{color:#be123c;font-weight:800}
 .essim{margin-top:12px}.essim textarea{margin-top:6px;resize:vertical}
 .escorr{background:#f8fafc;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5}
+/* interrogazione a voce */
+.orprof{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
+.orprof .av{width:42px;height:42px;border-radius:50%;flex:none;background:#e0f2fe;color:var(--navy);display:grid;place-items:center;font-size:20px}
+.orprof .bal{background:#f8fafc;border-radius:4px 14px 14px 14px;padding:12px 14px;font-size:15px;line-height:1.5;color:var(--ink);flex:1;-webkit-user-select:text;user-select:text}
+.orprof .bal .hint{margin-top:6px}
+.ortu{display:flex;justify-content:flex-end;margin-top:12px}
+.ortu .bal{background:#f0f9ff;border-radius:14px 4px 14px 14px;padding:12px 14px;font-size:14px;line-height:1.55;max-width:80%;color:var(--txt);-webkit-user-select:text;user-select:text}
+.ormic{width:86px;height:86px;border-radius:50%;border:0;background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;font-size:34px;box-shadow:0 8px 20px rgba(13,66,117,.3)}
+.ormic.on{background:linear-gradient(180deg,#f43f5e,#be123c);font-size:28px;transition:box-shadow .15s}
+.orcentro{display:flex;flex-direction:column;align-items:center;gap:8px;margin:18px 0 6px}
+.ortempo{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.orpassi{display:flex;gap:6px}.orpassi span{width:26px;height:5px;border-radius:5px;background:#e2e8f0}.orpassi span.f{background:var(--navy)}
+.orstile{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.orstile div{background:#f8fafc;border-radius:10px;padding:10px;font-size:12.5px;color:var(--mut)}
+.orstile b{display:block;font-size:18px;color:var(--ink)}
+@media(max-width:700px){.orstile{grid-template-columns:1fr}}
 @media (max-width:720px){.escal{grid-template-columns:repeat(2,1fr)}}
 
 /* chiedi in diretta */

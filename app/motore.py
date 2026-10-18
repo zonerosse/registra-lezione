@@ -1890,6 +1890,8 @@ class Motore:
 
     def esame_info(self, materia, cartelle, rifai=False):
         import esame as es
+        if not getattr(self, "_orale", None):            # audio di un'interrogazione rimasto (programma chiuso a meta')
+            shutil.rmtree(self._orale_cartella(), ignore_errors=True)
         L = testi.LINGUA
         d = es.leggi(BASE, materia)
         spesa = 0.0
@@ -1975,6 +1977,136 @@ class Motore:
         except Exception:
             log.exception("pdf esame")
             return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    # ------------------------------------------------------------------ interrogazione a voce
+    # Le risposte si registrano dal microfono (come una lezione «In aula», ma in una cartella a parte), si trascrivono
+    # QUI sul PC (o sul telefono) e a Claude va solo il testo. L'audio si cancella quando si chiude l'interrogazione.
+
+    def _orale_cartella(self):
+        return BASE / "esami" / "_orale"
+
+    def orale_nuova(self, materia):
+        import esame as es
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        if self.reg is not None:
+            return {"ok": False, "msg": tr("or_occupato")}
+        self.orale_chiudi()
+        try:
+            orale, spesa = es.orale_nuova(BASE, materia, self.chiave(), testi.LINGUA)
+            self._orale = {"materia": materia, "risposte": [], "reg": None, "k": 0}
+            return {"ok": True, "orale": orale, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("interrogazione")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def orale_ascolta(self):
+        """Comincia a registrare la risposta dal microfono."""
+        o = getattr(self, "_orale", None)
+        if not o or self.reg is not None:
+            return {"ok": False, "msg": tr("or_occupato")}
+        if o.get("reg") is not None:
+            return {"ok": True}
+        o["k"] += 1
+        cart = self._orale_cartella() / f"r{o['k']:02d}"
+        shutil.rmtree(cart, ignore_errors=True)
+        cart.mkdir(parents=True, exist_ok=True)
+        try:
+            o["reg"] = rg.Registratore(cart, "orale", 3600, modo="aula", microfono=self.cfg.get("microfono") or None)
+            o["reg"].avvia()
+            o["cart"] = cart
+            return {"ok": True}
+        except Exception:
+            log.exception("interrogazione: microfono")
+            o["reg"] = None
+            return {"ok": False, "msg": tr("or_mic")}
+
+    def orale_livello(self):
+        o = getattr(self, "_orale", None)
+        r = (o or {}).get("reg")
+        if r is None:
+            return {"ok": False}
+        return {"ok": True, "livello": float(r.livello or 0), "sec": float(r.secondi())}
+
+    def orale_fine(self, n, domanda):
+        """Ferma la registrazione, trascrive la risposta e chiede a Claude se fare una domanda in più."""
+        import esame as es
+        o = getattr(self, "_orale", None)
+        r = (o or {}).get("reg")
+        if r is None:
+            return {"ok": False, "msg": tr("es_err")}
+        o["reg"] = None
+        cart = o["cart"]
+        try:
+            sec = float(r.ferma() or 0)
+            wav = cart / "audio_001.wav"
+            segs = []
+            if wav.exists() and wav.stat().st_size > 2000:
+                el.scrivi_json(cart / "info.json", {"lingua_lezione": testi.LINGUA, "precisa": True})
+                segs = el.trascrivi_campioni(el.audio_16k(wav), cart)
+            testo = " ".join(s["testo"] for s in segs if s.get("testo")).strip()
+            if not testo:
+                return {"ok": False, "vuota": True, "msg": tr("or_vuota")}
+            o["risposte"].append({"sec": sec, "segmenti": segs, "wav": str(wav)})
+            extra, spesa = es.orale_risposta(BASE, o["materia"], n, domanda, testo, self.chiave(), testi.LINGUA)
+            return {"ok": True, "testo": testo, "extra": extra, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("interrogazione: risposta")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def orale_correggi(self):
+        import esame as es
+        o = getattr(self, "_orale", None)
+        if not o:
+            return {"ok": False, "msg": tr("es_err")}
+        try:
+            stile = es.come_hai_parlato(o["risposte"], testi.LINGUA)
+            orale, spesa = es.orale_correggi(BASE, o["materia"], stile, self.chiave(), testi.LINGUA)
+            return {"ok": True, "orale": orale, "ascolta": self._orale_audio(o), "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("interrogazione: correzione")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def _orale_audio(self, o):
+        """Tutte le risposte in un solo file, per «Riascoltati» (indirizzo per la finestra o None)."""
+        import wave
+        files = [Path(x["wav"]) for x in o["risposte"] if Path(x["wav"]).exists()]
+        if not files:
+            return None
+        dest = self._orale_cartella() / "risposte.wav"
+        try:
+            with wave.open(str(files[0]), "rb") as w0:
+                par = w0.getparams()
+            with wave.open(str(dest), "wb") as out:
+                out.setnchannels(par.nchannels)
+                out.setsampwidth(par.sampwidth)
+                out.setframerate(par.framerate)
+                for f in files:
+                    with wave.open(str(f), "rb") as w:
+                        if w.getframerate() == par.framerate:
+                            out.writeframes(w.readframes(w.getnframes()))
+            return servi_video.registra(dest)
+        except Exception:
+            log.exception("interrogazione: riascolta")
+            return None
+
+    def orale_chiudi(self):
+        """Fine dell'interrogazione: si ferma il microfono e si cancella l'audio delle risposte."""
+        o = getattr(self, "_orale", None)
+        if o and o.get("reg") is not None:
+            try:
+                o["reg"].ferma()
+            except Exception:
+                log.exception("interrogazione: stop")
+        self._orale = None
+        shutil.rmtree(self._orale_cartella(), ignore_errors=True)
+        return {"ok": True}
 
     def cose_da_fare(self):
         import cose

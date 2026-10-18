@@ -19,7 +19,7 @@ const GUIDA = {
      "<b>Le slide</b>: le fotografa da sole dallo schermo, oppure usa il PDF del docente, e le mette negli appunti accanto alle parole.",
      "<b>Scrive giusti i termini difficili</b>: per ogni materia gli dai nomi e parole tecniche, e non li sbaglia più.",
      "<b>Tutto in un posto</b>: cerca una parola in tutte le registrazioni, le cose da fare di tutte le riunioni, il calendario. Con la copia nel cloud ritrovi le lezioni anche sul telefono.",
-     "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso e la simulazione corretta da Claude.",
+     "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso, la simulazione scritta e l'interrogazione a voce corrette da Claude.",
      "<b>Da dare a chi ti fidi</b>: con un invito dai il programma già pronto, con le tue chiavi, senza fargliele vedere.",
      "<b>Due modi di pagare</b>: con la tua chiave di Claude paghi solo quello che usi (circa 0,20 $ per ora registrata). Oppure, prossimamente, con un abbonamento che comprende già Claude e il server veloce, senza chiavi da mettere.",
      "Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi."
@@ -186,7 +186,8 @@ const GUIDA = {
      "In «Le mie registrazioni», nella riga in alto <b>Ripassa</b>, scegli la materia e tocca <b>🎯 Preparati all'esame</b> (per le materie con almeno una lezione con gli appunti).",
      "<b>Le domande più probabili di tutto il corso</b>: Claude guarda gli appunti di tutte le lezioni. Sale quello che torna in più lezioni o su cui il docente insiste. Tocca una domanda per vedere lo schema della risposta. Si aggiorna da solo quando arriva una lezione nuova (circa 1-3 centesimi).",
      "<b>Data dell'esame</b>: sceglila e arriva il <b>piano di studio</b> giorno per giorno: gli argomenti in ordine, ripassi, simulazioni, la domenica riposo. Con <b>📅 Nel calendario</b> va in Outlook o Google Calendar. <b>Salva in PDF</b> per stamparlo.",
-     "<b>🎯 Simulazione d'esame completa</b>: domande nuove su tutto il corso. Rispondi come all'esame scritto, senza guardare gli appunti, poi tocca <b>Correggi</b>: punti per ogni domanda, cosa va bene, cosa manca, voto in trentesimi e cosa ripassare prima.",
+     "<b>✍ Simulazione scritta</b>: domande nuove su tutto il corso. Rispondi come all'esame scritto, senza guardare gli appunti, poi tocca <b>Correggi</b>: punti per ogni domanda, cosa va bene, cosa manca, voto in trentesimi e cosa ripassare prima.",
+     "<b>🎤 Interrogazione a voce</b>: come all'orale. Il docente fa 3 domande, tu tocchi il microfono e rispondi parlando; se manca qualcosa ti fa una <b>domanda in più</b>. Alla fine: voto, cosa va bene e cosa manca, e <b>come hai parlato</b> (tempo, «cioè» ed «ehm», pause). La voce si trascrive sul PC: a Claude va solo il testo.",
      "In alto a sinistra la freccia <b>←</b> ti riporta alla pagina da cui sei arrivato."
     ],
     "g": "studio"
@@ -394,7 +395,7 @@ const GUIDA = {
      "<b>Slides</b>: it photographs them from the screen by itself, or uses the lecturer's PDF, and puts them in the notes next to the words.",
      "<b>It writes difficult terms correctly</b>: for each subject you give it names and technical words, and it stops getting them wrong.",
      "<b>Everything in one place</b>: search a word in all recordings, the to-dos of all meetings, the calendar. With the cloud copy you find the lectures on the phone too.",
-     "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course and the mock exam corrected by Claude.",
+     "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course, the written mock exam and the oral exam marked by Claude.",
      "<b>To give to people you trust</b>: with an invitation you give the program ready to use, with your keys, without them seeing them.",
      "<b>Two ways to pay</b>: with your own Claude key you only pay for what you use (about 0.20 $ per recorded hour). Or, coming soon, with a subscription that already includes Claude and the fast server, with no keys to enter.",
      "Videos, notes and transcripts stay <b>on your PC</b>: they are yours."
@@ -561,7 +562,8 @@ const GUIDA = {
      "In «My recordings», in the <b>Review</b> line at the top, choose the subject and tap <b>🎯 Prepare for the exam</b> (for subjects with at least one lecture with notes).",
      "<b>The most likely questions of the whole course</b>: Claude looks at the notes of all lectures. What comes back in several lectures, or what the lecturer stresses, goes up. Tap a question to see the outline of the answer. It updates by itself when a new lecture arrives (about 1-3 cents).",
      "<b>Exam date</b>: choose it and the day-by-day <b>study plan</b> arrives: topics in order, reviews, simulations, Sunday off. With <b>📅 To calendar</b> it goes to Outlook or Google Calendar. <b>Save as PDF</b> to print it.",
-     "<b>🎯 Full exam simulation</b>: new questions on the whole course. Answer as in the written exam, without looking at the notes, then tap <b>Correct</b>: points for each question, what is right, what is missing, mark out of 30 and what to review first.",
+     "<b>✍ Written mock exam</b>: new questions on the whole course. Answer as in the written exam, without looking at the notes, then tap <b>Correct</b>: points for each question, what is right, what is missing, mark out of 30 and what to review first.",
+     "<b>🎤 Oral exam</b>: as in an oral exam. The examiner asks 3 questions, you tap the microphone and answer out loud; if something is missing you get a <b>follow-up question</b>. At the end: mark, what is right and what is missing, and <b>how you spoke</b> (time, «um» and «uh», pauses). Your voice is transcribed on the PC: Claude only receives the text.",
      "At the top left the <b>←</b> arrow takes you back to the page you came from."
     ],
     "g": "studio"

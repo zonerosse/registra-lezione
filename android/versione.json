@@ -1,7 +1,7 @@
 {
- "versione": "0.10.23",
+ "versione": "0.10.24",
  "codice": 10,
- "novita": "Guida: sotto ogni video c'è «⛶ Schermo intero». Per tornare indietro: «✕ Chiudi» (o Esc sul PC, Indietro sul telefono).",
- "novita_en": "Guide: under each video there is «⛶ Full screen». To go back: «✕ Close» (or Esc on the PC, Back on the phone).",
- "contenuto": 54
+ "novita": "Preparazione all'esame: nuova «🎤 Interrogazione a voce». Rispondi parlando come all'orale, il docente ti fa la domanda in più e alla fine ti dà il voto e ti dice come hai parlato.",
+ "novita_en": "Exam preparation: new «🎤 Oral exam». Answer out loud as in an oral exam, the examiner asks follow-up questions and at the end gives you a mark and tells you how you spoke.",
+ "contenuto": 55
 }

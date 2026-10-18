@@ -249,6 +249,130 @@ def correggi(base, materia, risposte, chiave, L="it"):
     return sim, ch._costo(r.get("usage", {}))
 
 
+# ------------------------------------------------------------------ interrogazione a voce (come all'orale)
+
+SCHEMA_INCALZA = {"type": "object", "properties": {"domanda_in_piu": {"type": "string"}}, "required": ["domanda_in_piu"]}
+N_ORALE = 3
+
+
+def orale_nuova(base, materia, chiave, L="it"):
+    """Le domande di un'interrogazione a voce (3, come le farebbe il docente all'orale). Torna (orale, spesa)."""
+    d = leggi(base, materia)
+    if not d.get("classifica"):
+        raise ap.ErroreAppunti(tr("es_vuoto"))
+    gia = [q["domanda"] for s in (d.get("simulazioni") or []) + (d.get("orali") or []) for q in s.get("domande") or []][-30:]
+    corpo = {"model": ch.MODELLO, "max_tokens": 1500,
+             "system": "Sei il docente di questa materia e fai un'INTERROGAZIONE ORALE: prepara " + str(N_ORALE) + " domande "
+                       "da dire a voce, brevi e naturali come le direbbe il docente (\"Mi parli di...\", \"Come funziona...\"), "
+                       "la prima sulle domande piu' probabili. \"deve_contenere\" = cosa deve dire una risposta completa, "
+                       "\"punti\" = quanto vale (totale 30). Non ripetere le domande gia' fatte se puoi. Scrivi in "
+                       + testi.nome_lingua(L, "it") + ". Chiama lo strumento salva_simulazione.",
+             "tools": [{"name": "salva_simulazione", "description": "Salva.", "input_schema": SCHEMA_SIM}],
+             "tool_choice": {"type": "tool", "name": "salva_simulazione"},
+             "messages": [{"role": "user", "content": json.dumps({"materia": materia, "classifica": d["classifica"]["domande"],
+                                                                  "argomenti": d["classifica"]["argomenti"], "gia_fatte": gia},
+                                                                 ensure_ascii=False)}]}
+    dati, usage = _strumento(chiave, corpo, "domande")
+    dom = [q for q in dati["domande"] if isinstance(q, dict) and q.get("domanda")]
+    if not dom:
+        raise ap.ErroreAppunti(tr("es_err"))
+    orale = {"quando": datetime.datetime.now().isoformat(timespec="seconds"),
+             "domande": [{"domanda": str(q.get("domanda", "")), "deve_contenere": str(q.get("deve_contenere", "")),
+                          "punti": int(q.get("punti") or 10)} for q in dom[:N_ORALE]], "turni": [], "voto": None}
+    d.setdefault("orali", []).append(orale)
+    d["orali"] = d["orali"][-20:]
+    salva(base, materia, d)
+    return orale, ch._costo(usage)
+
+
+def orale_risposta(base, materia, n, domanda, testo, chiave, L="it"):
+    """Salva la risposta detta a voce. Se e' la prima risposta alla domanda n e manca qualcosa di importante,
+    Claude fa una «domanda in più» (come all'orale vero). Torna (domanda_in_piu o "", spesa)."""
+    d = leggi(base, materia)
+    orale = (d.get("orali") or [None])[-1]
+    if not orale or not (0 <= int(n) < len(orale["domande"])):
+        raise ap.ErroreAppunti(tr("es_err"))
+    n = int(n)
+    prima = not any(t["n"] == n for t in orale["turni"])
+    orale["turni"].append({"n": n, "domanda": str(domanda or orale["domande"][n]["domanda"]), "extra": not prima,
+                           "testo": str(testo or "")[:4000]})
+    salva(base, materia, d)
+    if not prima or not str(testo or "").strip():
+        return "", 0.0
+    q = orale["domande"][n]
+    corpo = {"model": ch.MODELLO, "max_tokens": 300,
+             "system": "Sei il docente all'esame orale. Lo studente ha appena risposto a voce (trascrizione automatica, "
+                       "ignora errori di trascrizione). Se nella risposta manca un punto IMPORTANTE di \"deve_contenere\" o "
+                       "c'e' un errore, fai UNA domanda in piu' breve, naturale, che lo porti su quel punto (senza dare la "
+                       "risposta). Se la risposta e' gia' completa, \"domanda_in_piu\" = \"\". Scrivi in "
+                       + testi.nome_lingua(L, "it") + ". Chiama lo strumento incalza.",
+             "tools": [{"name": "incalza", "description": "Salva.", "input_schema": SCHEMA_INCALZA}],
+             "tool_choice": {"type": "tool", "name": "incalza"},
+             "messages": [{"role": "user", "content": json.dumps({"domanda": q["domanda"], "deve_contenere": q["deve_contenere"],
+                                                                  "risposta": str(testo)[:4000]}, ensure_ascii=False)}]}
+    r = ch._chiama(chiave, corpo)
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    extra = str(((blocco or {}).get("input") or {}).get("domanda_in_piu") or "").strip()
+    return extra, ch._costo(r.get("usage") or {})
+
+
+def orale_correggi(base, materia, stile, chiave, L="it"):
+    """Claude corregge l'interrogazione: per ogni domanda (con le eventuali domande in più) punti, cosa va bene,
+    cosa manca; voto in trentesimi e cosa ripassare. `stile` = come ha parlato (calcolato sul PC). Torna (orale, spesa)."""
+    d = leggi(base, materia)
+    orale = (d.get("orali") or [None])[-1]
+    if not orale:
+        raise ap.ErroreAppunti(tr("es_err"))
+    lez = {q["domanda"]: q.get("lezioni") or [] for q in (d.get("classifica") or {}).get("domande") or []}
+    corpo = {"model": ch.MODELLO, "max_tokens": 2000,
+             "system": "Correggi questa INTERROGAZIONE ORALE come un docente giusto ma esigente. Le risposte sono state dette "
+                       "a voce e trascritte in automatico: ignora errori di trascrizione e di forma parlata. Per ogni domanda "
+                       "(conta anche la risposta alla domanda in piu'): \"punti\" ottenuti su \"su\", \"bene\" (cosa c'e' di "
+                       "giusto, una riga) e \"manca\" (cosa manca o e' sbagliato, una riga, concreto; se aiuta, di' in quale "
+                       "lezione ripassarlo, es. L4, guardando \"lezioni_della_classifica\"). Risposta vuota = 0 punti. "
+                       "\"voto\" in trentesimi (somma), \"consiglio\" = cosa ripassare prima di tutto e come rispondere meglio "
+                       "a voce. Scrivi in " + testi.nome_lingua(L, "it") + ". Chiama lo strumento salva_correzione.",
+             "tools": [{"name": "salva_correzione", "description": "Salva.", "input_schema": SCHEMA_VOTO}],
+             "tool_choice": {"type": "tool", "name": "salva_correzione"},
+             "messages": [{"role": "user", "content": json.dumps({
+                 "domande": [{"n": i + 1, "domanda": q["domanda"], "punti": q["punti"], "deve_contenere": q["deve_contenere"],
+                              "risposte": [{"domanda_detta": t["domanda"], "in_piu": t["extra"], "risposta": t["testo"]}
+                                           for t in orale["turni"] if t["n"] == i]}
+                             for i, q in enumerate(orale["domande"])],
+                 "lezioni_della_classifica": lez}, ensure_ascii=False)}]}
+    v, usage = _strumento(chiave, corpo, "risposte")
+    orale["correzione"] = [x for x in v["risposte"] if isinstance(x, dict)]
+    orale["voto"] = max(0, min(31, int(v.get("voto") or 0)))
+    orale["consiglio"] = str(v.get("consiglio") or "")
+    orale["stile"] = stile or {}
+    salva(base, materia, d)
+    return orale, ch._costo(usage)
+
+
+INTERCALARI = {"it": ("cioè", "cioe'", "ehm", "eh", "ehh", "uhm", "mmh", "praticamente", "diciamo"),
+               "en": ("um", "uh", "erm", "uhm", "basically", "you know")}
+
+
+def come_hai_parlato(risposte, L="it"):
+    """Dalle risposte trascritte [{"sec", "segmenti":[{inizio, fine, testo}]}]: tempo totale, intercalari, pause lunghe.
+    Calcolato qui, senza Claude."""
+    sec = sum(float(r.get("sec") or 0) for r in risposte)
+    testo = " ".join(s.get("testo", "") for r in risposte for s in r.get("segmenti") or []).lower()
+    parole = re.findall(r"[\w']+", testo)
+    lista = INTERCALARI.get(L, INTERCALARI["it"])
+    singole = [x for x in lista if " " not in x]
+    n_int = sum(1 for p in parole if p in singole) + sum(testo.count(x) for x in lista if " " in x)
+    pause = 0
+    for r in risposte:
+        seg = r.get("segmenti") or []
+        pause += sum(1 for a, b in zip(seg, seg[1:]) if float(b["inizio"]) - float(a["fine"]) > 2.5)
+        if seg and float(seg[0]["inizio"]) > 4:          # ci ha messo tanto a cominciare
+            pause += 1
+    minuti = max(sec / 60, 0.5)
+    giudizio = "sicuro" if pause / minuti < 1 else "esitante" if pause / minuti < 2.5 else "molte_pause"
+    return {"sec": round(sec), "intercalari": n_int, "pause": pause, "giudizio": giudizio}
+
+
 def eventi_calendario(d, materia, L="it"):
     out = []
     for g in piano(d, L=L):

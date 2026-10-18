@@ -134,7 +134,7 @@ if (ANDROID) {
     "<b>Le slide del docente</b>: con il PDF delle slide le mette negli appunti accanto alle parole.",
     "<b>Scrive giusti i termini difficili</b>: per ogni materia gli dai nomi e parole tecniche, e non li sbaglia più.",
     "<b>Tutto in un posto</b>: cerca una parola in tutte le registrazioni, le cose da fare di tutte le riunioni in <b>Da fare</b>, il calendario che avvisa; il verbale va per email, WhatsApp, Slack, Teams, Notion o nel CRM.",
-    "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso e la simulazione corretta da Claude.",
+    "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso, la simulazione scritta e l'interrogazione a voce corrette da Claude.",
     "<b>Da dare a chi ti fidi</b>: con un invito dai l'app già pronta, con le tue chiavi, senza fargliele vedere.",
     "<b>Due modi di pagare</b>: con la tua chiave di Claude paghi solo quello che usi (circa 0,20 $ per ora registrata). Oppure, prossimamente, con un abbonamento che comprende già Claude e il server veloce, senza chiavi da mettere.",
     "Audio, appunti e trascrizioni restano <b>sul tuo telefono</b>: sono tuoi."
@@ -293,7 +293,8 @@ if (ANDROID) {
     "In «Le mie lezioni», nella riga in alto <b>Ripassa</b>, scegli la materia e tocca <b>🎯 Preparati all'esame</b>.",
     "Le <b>domande più probabili di tutto il corso</b>, con le stelle: quelle ripetute in più lezioni o su cui il docente ha insistito vengono prima. Tocca una domanda per lo schema della risposta.",
     "Scegli la <b>data dell'esame</b>: arriva il <b>piano di studio</b> giorno per giorno, da mettere nel calendario o salvare in PDF.",
-    "<b>Simulazione d'esame</b>: rispondi come allo scritto, poi <b>Correggi</b>: punti, cosa manca e voto. Pochi centesimi.",
+    "<b>Simulazione scritta</b>: rispondi come allo scritto, poi <b>Correggi</b>: punti, cosa manca e voto. Pochi centesimi.",
+    "<b>🎤 Interrogazione a voce</b>: rispondi parlando, come all'orale; se manca qualcosa arriva una domanda in più. Alla fine voto e come hai parlato.",
     "In alto la freccia <b>←</b> (o il tasto Indietro) ti riporta alla pagina da cui sei arrivato."
    ],
    "g": "studio"
@@ -479,7 +480,7 @@ if (ANDROID) {
     "<b>The lecturer's slides</b>: with the slides' PDF it puts them in the notes next to the words.",
     "<b>It writes difficult terms correctly</b>: for each subject you give it names and technical words, and it stops getting them wrong.",
     "<b>Everything in one place</b>: search a word in all recordings, the to-dos of all meetings in <b>To-dos</b>, the calendar that reminds you; the minutes go by email, WhatsApp, Slack, Teams, Notion or to the CRM.",
-    "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course and the mock exam corrected by Claude.",
+    "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course, the written mock exam and the oral exam marked by Claude.",
     "<b>To give to people you trust</b>: with an invitation you give the app ready to use, with your keys, without them seeing them.",
     "<b>Two ways to pay</b>: with your own Claude key you only pay for what you use (about 0.20 $ per recorded hour). Or, coming soon, with a subscription that already includes Claude and the fast server, with no keys to enter.",
     "Audio, notes and transcripts stay <b>on your phone</b>: they are yours."
@@ -638,7 +639,8 @@ if (ANDROID) {
     "In «My lectures», in the <b>Review</b> line at the top, choose the subject and tap <b>🎯 Prepare for the exam</b>.",
     "The <b>most likely questions of the whole course</b>, with stars: those repeated in several lectures or stressed by the lecturer come first. Tap a question for the outline of the answer.",
     "Choose the <b>exam date</b>: the day-by-day <b>study plan</b> arrives, to put in the calendar or save as PDF.",
-    "<b>Exam simulation</b>: answer as in the written exam, then <b>Correct</b>: points, what is missing and the mark. A few cents.",
+    "<b>Written mock exam</b>: answer as in the written exam, then <b>Correct</b>: points, what is missing and the mark. A few cents.",
+    "<b>🎤 Oral exam</b>: answer out loud, as in an oral exam; if something is missing you get a follow-up question. At the end the mark and how you spoke.",
     "At the top the <b>←</b> arrow (or the Back key) takes you back to the page you came from."
    ],
    "g": "studio"

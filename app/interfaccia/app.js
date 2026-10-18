@@ -133,6 +133,7 @@ function frecciaIndietro(p) {
   b.onclick = () => { STORIA.pop(); vai(prima, true); };
 }
 function vai(p, tornando = false) {
+  if (p !== 'esame' && OR && OR.orale) orChiudi();
   if (!tornando) {
     if (INTERNE.includes(p)) { if (pagina && pagina !== p && STORIA[STORIA.length - 1] !== pagina) STORIA.push(pagina); if (STORIA.length > 12) STORIA.shift(); }
     else STORIA = [];
@@ -1625,6 +1626,7 @@ async function nomiVoci() {
 /* ------------------------------------------------------------------ preparazione all'esame */
 let ES = {m: null, d: null};
 async function apriEsame(m, rifai = false) {
+  if (OR.orale && (!ES.m || ES.m.m !== m.m)) orChiudi();
   ES = {m, d: null};
   $('esTit').textContent = t('es.h', {m: m.m}); $('esSub').textContent = m.cartelle.length === 1 ? t('rp.lez1') : t('es.sub', {n: m.cartelle.length});
   $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.lav'))}</div></div>`;
@@ -1651,7 +1653,9 @@ function disegnaEsame() {
   const voti = d.voti && d.voti.length ? `<div class="hint" style="margin-top:8px">${esc(t('es.voti', {v: d.voti.join(', ')}))}</div>` : '';
   $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;flex-wrap:wrap"><div class="lbl sp" style="margin:0">${esc(t('es.data'))}</div><input class="in" type="date" id="esData" value="${esc(d.data_esame)}" style="width:170px">${quando}</div></div>
     <div class="card mt"><div class="lbl">${esc(t('es.dom'))}</div>${dom}
-      <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="esRifai" style="text-align:left">${esc(t('es.rifai'))}</button><button class="btn b-cor b-sm" id="esSim">${esc(t('es.sim'))}</button></div>${voti}</div>
+      <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="esRifai" style="text-align:left">${esc(t('es.rifai'))}</button><button class="btn b-ghost b-sm" id="esSim">${esc(t('es.sim'))}</button><button class="btn b-cor b-sm" id="esOrale">${esc(t('or.b'))}</button></div>
+      <div class="hint" style="margin-top:8px;text-align:right">${esc(t('or.nuovo'))}</div>${voti}</div>
+    <div class="card mt hidden" id="esOrBox"></div>
     <div class="card mt" id="esSimBox"></div>
     <div class="card mt"><div class="row" style="margin-bottom:8px"><div class="lbl sp" style="margin:0">${esc(t('es.piano'))}</div>${P.length ? `<button class="btn b-ghost b-sm" id="esCal">${esc(t('es.cal'))}</button>` : ''}</div>
       ${piano || `<div class="hint">${esc(t('es.nodata'))}</div>`}<div class="hint" style="margin-top:8px">${esc(t('es.piano.s'))}</div></div>`;
@@ -1659,6 +1663,8 @@ function disegnaEsame() {
   $('esBox').querySelectorAll('.esq').forEach(e => e.onclick = () => e.querySelector('ol').classList.toggle('hidden'));
   $('esRifai').onclick = () => apriEsame(ES.m, true);
   $('esSim').onclick = () => nuovaSimulazione();
+  $('esOrale').onclick = () => nuovaOrale();
+  if (OR.orale) disegnaOrale();
   if ($('esCal')) $('esCal').onclick = () => dialogo({titolo: t('es.cal.t'), testo: t('es.cal.s'), bottoni: ANDROID ? [{t: t('annulla'), v: false},
     {t: t('cd.cal.tel'), cls: 'b-main', fn: () => { A.esame_calendario(ES.m.m, 'telefono'); document.querySelector('.velo').remove(); }}] : [{t: t('annulla'), v: false},
     {t: 'Google Calendar', fn: () => { A.esame_calendario(ES.m.m, 'google'); document.querySelector('.velo').remove(); }}, {t: 'Outlook', cls: 'b-main', fn: () => { A.esame_calendario(ES.m.m, 'outlook'); document.querySelector('.velo').remove(); }}]});
@@ -1684,6 +1690,118 @@ function disegnaSimulazione(sim) {
     ES.d.simulazione = r.simulazione; ES.d.voti = (ES.d.voti || []).concat([r.simulazione.voto]); disegnaEsame(); $('esSimBox').scrollIntoView({block: 'start'});
   };
   if ($('esNuova')) $('esNuova').onclick = () => nuovaSimulazione();
+}
+/* ------------------------------------------------------------------ interrogazione a voce */
+// Il docente fa la domanda (scritta e, se il sistema ha una voce, letta ad alta voce); lo studente risponde al
+// microfono; la risposta si trascrive sul PC e Claude decide se fare una «domanda in più». Alla fine il voto.
+var OR = {orale: null};   // var: vai() lo guarda anche prima che arrivi qui
+function orLeggi(testo) {
+  try {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(testo); u.lang = LINGUA === 'en' ? 'en-GB' : 'it-IT'; u.rate = 1;
+    const v = speechSynthesis.getVoices().find(x => (x.lang || '').toLowerCase().startsWith(LINGUA === 'en' ? 'en' : 'it'));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const orVoce = () => { try { return !!(window.speechSynthesis && speechSynthesis.getVoices().length); } catch (e) { return false; } };
+function orStop() {
+  if (OR.poll) clearInterval(OR.poll); OR.poll = null;
+  if (OR.audio) { try { OR.audio.pause(); } catch (e) {} OR.audio = null; }
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+}
+function orChiudi() {
+  const c = !!OR.orale; orStop(); OR = {orale: null};
+  if ($('esOrBox')) { $('esOrBox').classList.add('hidden'); $('esOrBox').innerHTML = ''; }
+  if (c) A.orale_chiudi();
+}
+async function nuovaOrale() {
+  orChiudi();
+  const box = $('esOrBox'); box.classList.remove('hidden');
+  box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('or.prep'))}</div>`;
+  box.scrollIntoView({block: 'start'});
+  const r = await A.orale_nuova(ES.m.m);
+  if (!r.ok) { box.innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  OR = {orale: r.orale, materia: ES.m.m, n: 0, storia: '', fase: 'domanda', domanda: r.orale.domande[0].domanda, extra: false, msg: ''};
+  orDomanda(OR.domanda, false);
+}
+function orProf(testo, extra) {
+  const voce = orVoce() ? `<div class="hint">🔊 <button class="lnk orleggi" data-q="${esc(testo)}">${esc(t('or.riascolta'))}</button></div>` : '';
+  return `<div class="orprof"><div class="av">🎓</div><div class="bal">${extra ? `<span class="pill p-blue" style="margin-bottom:6px">${esc(t('or.extra'))}</span><br>` : ''}${esc(testo)}${voce}</div></div>`;
+}
+const orTu = testo => `<div class="ortu"><div class="bal">${esc(testo)}</div></div>`;
+function orDomanda(testo, extra) {
+  OR.domanda = testo; OR.extra = extra; OR.fase = 'domanda'; OR.msg = '';
+  OR.storia += orProf(testo, extra);
+  disegnaOrale(); orLeggi(testo);
+}
+function disegnaOrale() {
+  const box = $('esOrBox'); if (!box || !OR.orale) return;
+  box.classList.remove('hidden');
+  if (OR.fase === 'fine') return disegnaOrRisultato();
+  const tot = OR.orale.domande.length;
+  const passi = '<div class="orpassi">' + OR.orale.domande.map((_, i) => `<span class="${i <= OR.n ? 'f' : ''}"></span>`).join('') + '</div>';
+  let sotto = '';
+  if (OR.fase === 'domanda') sotto = `${OR.msg ? `<div class="hint" style="color:#be123c;text-align:center;margin-top:10px">⚠ ${esc(OR.msg)}</div>` : ''}<div class="orcentro"><button class="ormic" id="orMic">🎤</button><div class="hint">${esc(t('or.tocca'))}</div></div>`;
+  else if (OR.fase === 'ascolto') sotto = `<div class="orcentro"><button class="ormic on" id="orMic">■</button><div class="ortempo" id="orT">0:00</div><div class="hint">${esc(t('or.ascolto'))}</div></div>`;
+  else sotto = `<div class="row mt" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(OR.fase === 'trascrivo' ? t('or.trascrivo') : OR.fase === 'correggo' ? t('or.corr') : t('or.pensa'))}</div>`;
+  box.innerHTML = `<div class="row" style="margin-bottom:4px"><div class="lbl sp" style="margin:0">${esc(t('or.h', {n: OR.n + 1, t: tot}))}</div>${passi}</div>${OR.storia}${sotto}
+    <div class="row mt"><span class="sp"></span><button class="lnk" id="orX">${esc(t('or.chiudi'))}</button></div>`;
+  box.querySelectorAll('.orleggi').forEach(b => b.onclick = () => orLeggi(b.dataset.q));
+  $('orX').onclick = () => orChiudi();
+  if ($('orMic')) $('orMic').onclick = OR.fase === 'ascolto' ? orFine : orAscolta;
+}
+async function orAscolta() {
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  const r = await A.orale_ascolta();
+  if (!r.ok) { OR.msg = r.msg || ''; return disegnaOrale(); }
+  OR.fase = 'ascolto'; disegnaOrale();
+  OR.poll = setInterval(async () => {
+    const l = await A.orale_livello();
+    if (!l.ok || OR.fase !== 'ascolto') return;
+    const s = Math.floor(l.sec || 0);
+    if ($('orT')) $('orT').textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    if ($('orMic')) $('orMic').style.boxShadow = `0 0 0 ${6 + Math.round((l.livello || 0) * 22)}px rgba(225,29,72,.15)`;
+  }, 250);
+}
+async function orFine() {
+  orStop(); OR.fase = 'trascrivo'; disegnaOrale();
+  const r = await A.orale_fine(OR.n, OR.domanda);
+  if (!OR.orale) return;
+  if (!r.ok) { OR.fase = 'domanda'; OR.msg = r.msg || ''; return disegnaOrale(); }
+  OR.storia += orTu(r.testo);
+  if (r.extra && !OR.extra) { OR.fase = 'pensa'; disegnaOrale(); return setTimeout(() => OR.orale && orDomanda(r.extra, true), 600); }
+  if (OR.n + 1 < OR.orale.domande.length) { OR.n++; return orDomanda(OR.orale.domande[OR.n].domanda, false); }
+  OR.fase = 'correggo'; disegnaOrale();
+  const c = await A.orale_correggi();
+  if (!OR.orale) return;
+  if (!c.ok) { OR.fase = 'domanda'; OR.msg = c.msg || ''; OR.n = OR.orale.domande.length - 1; return disegnaOrale(); }
+  OR.orale = c.orale; OR.ascolta = c.ascolta; OR.fase = 'fine';
+  if (ES.d) ES.d.voti_orali = (ES.d.voti_orali || []).concat([c.orale.voto]);
+  disegnaOrRisultato(); $('esOrBox').scrollIntoView({block: 'start'});
+}
+function disegnaOrRisultato() {
+  const o = OR.orale, corr = o.correzione || [], st = o.stile || {};
+  const m = Math.floor((st.sec || 0) / 60), s = (st.sec || 0) % 60;
+  const giud = {sicuro: t('or.sicuro'), esitante: t('or.esitante'), molte_pause: t('or.molte')}[st.giudizio] || '—';
+  $('esOrBox').innerHTML = `<div class="row"><div class="lbl sp" style="margin:0">${esc(t('or.h.ris'))}</div><span class="pill ${o.voto >= 18 ? 'p-ok' : 'p-red'}" style="font-size:14px">${esc(t('es.voto', {v: o.voto}))}</span></div>
+    ${o.domande.map((q, i) => { const c = corr.find(x => x.n === i + 1);
+      return `<div class="essim"><b>${i + 1}. ${esc(q.domanda)}</b>${c ? ` <span class="hint">(${esc(t('es.punti', {p: num(c.punti), s: num(c.su)}))})</span>` : ''}
+        ${c ? `<div class="escorr">${c.bene ? `<div><span style="color:var(--ok)">✓</span> ${esc(c.bene)}</div>` : ''}${c.manca ? `<div><span style="color:#be123c">✗</span> ${esc(c.manca)}</div>` : ''}</div>` : ''}</div>`; }).join('')}
+    <div class="lbl mt">${esc(t('or.stile'))}</div>
+    <div class="orstile"><div><b>${m}:${String(s).padStart(2, '0')}</b>${esc(t('or.tempo'))}</div><div><b>${esc(t('or.int.n', {n: st.intercalari || 0}))}</b>${esc(t('or.int'))}</div><div><b>${esc(giud)}</b>${esc(t('or.pause', {n: st.pause || 0}))}</div></div>
+    ${o.consiglio ? `<div class="avviso2 mt">${esc(o.consiglio)}</div>` : ''}
+    <div class="hint mt">${esc(t('or.privacy'))}</div>
+    <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="orX" style="text-align:left">${esc(t('or.chiudi'))}</button>${OR.ascolta ? `<button class="btn b-ghost b-sm" id="orAsc">${esc(t('or.riascoltati'))}</button>` : ''}<button class="btn b-cor b-sm" id="orNuova">${esc(t('or.nuova'))}</button></div>`;
+  $('orX').onclick = () => orChiudi();
+  $('orNuova').onclick = () => nuovaOrale();
+  if ($('orAsc')) $('orAsc').onclick = () => {
+    const b = $('orAsc');
+    if (OR.audio) { OR.audio.pause(); OR.audio = null; b.textContent = t('or.riascoltati'); return; }
+    OR.audio = new Audio(OR.ascolta); OR.audio.play().catch(() => {}); b.textContent = t('or.ferma');
+    OR.audio.onended = () => { OR.audio = null; if ($('orAsc')) $('orAsc').textContent = t('or.riascoltati'); };
+  };
 }
 async function nuovaSimulazione() {
   const box = $('esSimBox'); box.classList.remove('hidden');
