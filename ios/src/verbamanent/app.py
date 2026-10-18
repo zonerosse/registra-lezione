@@ -79,7 +79,11 @@ class VerbaManent(toga.App):
             r = java._W.INSTANCE.trascriviFile(str(mod), str(wav), "", 0.0, "en", "", 4, 1)
         except Exception:
             r = traceback.format_exc()
-        (casa / "prova_whisper.txt").write_text(f"{time.monotonic() - t0:.1f} s\n{r}", encoding="utf-8")
+        try:
+            info = java._W.INSTANCE._carica().vm_info().decode(errors="replace")
+        except Exception:
+            info = "?"
+        (casa / "prova_whisper.txt").write_text(f"{time.monotonic() - t0:.1f} s\n{info}\n{r}", encoding="utf-8")
 
     def _mostra(self, url):
         self.web.url = url
