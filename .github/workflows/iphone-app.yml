@@ -70,7 +70,7 @@ jobs:
           xcodebuild -list -project "$P" | tee ../esito-app/progetto.txt
           set -o pipefail
           xcodebuild -project "$P" -scheme "Verba Manent IA" -configuration Release -sdk iphoneos \
-                     -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build 2>&1 \
+                     -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO EXPANDED_CODE_SIGN_IDENTITY=- build 2>&1 \
                      | grep -E "error|warning: .*(dylib|framework)|BUILD|\*\*" | tail -80 | tee ../esito-app/costruzione.txt
           echo "✓ L'app per l'iPhone vero si costruisce. Per mandarla a TestFlight servono le chiavi di Apple."
 
