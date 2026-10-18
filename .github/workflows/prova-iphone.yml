@@ -118,6 +118,8 @@ jobs:
           # giro completo dell'app come la vede una persona nuova: installazione da capo, poi ogni schermata
           xcrun simctl terminate "$DEV" $ID || true
           xcrun simctl uninstall "$DEV" $ID
+          # iPhone riacceso: niente finestre di sistema rimaste aperte dalle prove di prima
+          xcrun simctl shutdown "$DEV"; xcrun simctl boot "$DEV"; xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" "$APP"
           xcrun simctl privacy "$DEV" grant microphone $ID || true
           DATI=$(xcrun simctl get_app_container "$DEV" $ID data)
