@@ -99,12 +99,31 @@ class _Ponte:
             return 100
 
     def apri(self, percorso):
-        log.info("iphone: apri %s (da fare)", percorso)
-        return False
+        """Mostra il file dentro l'app (anteprima di iOS: PDF, Word, audio, immagini...), con il tasto per mandarlo."""
+        f = Path(str(percorso))
+        if not f.is_file():
+            return False
+
+        def fai():
+            try:
+                c = _objc("UIDocumentInteractionController").interactionControllerWithURL_(_url(f))
+                d = _delegati()["anteprima"].alloc().init()
+                c.delegate = d
+                _TIENI["anteprima"] = (c, d)
+                if not c.presentPreviewAnimated_(True):
+                    _condividi_ora(f)                       # tipo che iOS non sa mostrare: lo si manda a un'altra app
+            except Exception:
+                log.exception("iphone: apri")
+        _sul_principale(fai)
+        return True
 
     def condividi(self, percorso):
-        log.info("iphone: condividi %s (da fare)", percorso)
-        return False
+        """Manda un file (WhatsApp, Mail, File, AirDrop...)."""
+        f = Path(str(percorso))
+        if not f.exists():
+            return False
+        _sul_principale(lambda: _condividi_ora(f))
+        return True
 
     def apriLink(self, url):
         def fai():
@@ -116,7 +135,45 @@ class _Ponte:
         _sul_principale(fai)
 
     def scegliFile(self, tipo):
-        return ""
+        """tipo: "video" (video o audio), "pdf" o "testo" (PDF, Word, .txt). Ritorna il percorso di una copia
+        nella cache dell'app, o "". La pagina aspetta finche' la persona sceglie (come su Android)."""
+        tipi = {"pdf": ["com.adobe.pdf"],
+                "testo": ["com.adobe.pdf", "public.plain-text", "net.daringfireball.markdown",
+                          "org.openxmlformats.wordprocessingml.document"]}.get(tipo, ["public.audio", "public.movie"])
+        fatto = threading.Event()
+        esito = {"url": ""}
+
+        def fai():
+            try:
+                from rubicon.objc.runtime import load_library
+                load_library("UniformTypeIdentifiers")
+                UT = _objc("UTType")
+                ut = [x for x in (UT.typeWithIdentifier_(t) for t in tipi) if x is not None]
+                p = _objc("UIDocumentPickerViewController").alloc().initForOpeningContentTypes_asCopy_(ut, True)
+                d = _delegati()["scelta"].alloc().init()
+                _TIENI["risposta"] = (esito, fatto)                    # dove scrivere la risposta
+                p.delegate = d
+                _TIENI["scelta"] = (p, d)
+                _in_cima().presentViewController_animated_completion_(p, True, None)
+            except Exception:
+                log.exception("iphone: scegli file")
+                fatto.set()
+        _sul_principale(fai)
+        fatto.wait(30 * 60)
+        _TIENI.pop("scelta", None)
+        u = esito["url"]
+        if not u:
+            return ""
+        try:
+            import shutil
+            src = Path(u)
+            dest = CACHE / "scelti" / src.name
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(src, dest)
+            return str(dest)
+        except Exception:
+            log.exception("iphone: copia file scelto")
+            return ""
 
     def scarica(self, indirizzo, dest):
         import urllib.request
@@ -277,6 +334,69 @@ class _Ponte:
 
     def notifica(self, titolo, testo):
         log.info("iphone: notifica %s", titolo)
+
+
+_TIENI = {}          # finestre e delegati aperti: restano vivi finche' servono
+_DEL = {}
+
+
+def _in_cima():
+    """La schermata in primo piano, su cui aprire scelta file, condivisione, anteprima."""
+    app = _objc("UIApplication").sharedApplication
+    vc = None
+    for sc in app.connectedScenes.allObjects():
+        try:
+            for w in sc.windows:
+                if w.isKeyWindow:
+                    vc = w.rootViewController
+        except Exception:
+            pass
+    if vc is None:
+        vc = app.windows.firstObject.rootViewController
+    while vc.presentedViewController is not None:
+        vc = vc.presentedViewController
+    return vc
+
+
+def _condividi_ora(f):
+    vc = _in_cima()
+    a = _objc("UIActivityViewController").alloc().initWithActivityItems_applicationActivities_([_url(f)], None)
+    pop = a.popoverPresentationController             # sull'iPad la finestra deve avere un punto di partenza
+    if pop is not None:
+        pop.sourceView = vc.view
+    vc.presentViewController_animated_completion_(a, True, None)
+
+
+def _delegati():
+    """Le classi Objective-C che ricevono le risposte di iOS (create una volta sola)."""
+    if _DEL:
+        return _DEL
+    from rubicon.objc import NSObject, objc_method, ObjCInstance
+
+    class VMAnteprima(NSObject):
+        @objc_method
+        def documentInteractionControllerViewControllerForPreview_(self, c) -> ObjCInstance:
+            return _in_cima()
+
+        @objc_method
+        def documentInteractionControllerDidEndPreview_(self, c) -> None:
+            _TIENI.pop("anteprima", None)
+
+    class VMScelta(NSObject):
+        @objc_method
+        def documentPicker_didPickDocumentsAtURLs_(self, p, urls) -> None:
+            esito, fatto = _TIENI.get("risposta", ({}, threading.Event()))
+            try:
+                esito["url"] = str(urls.firstObject.path) if urls.count else ""
+            finally:
+                fatto.set()
+
+        @objc_method
+        def documentPickerWasCancelled_(self, p) -> None:
+            _TIENI.get("risposta", ({}, threading.Event()))[1].set()
+
+    _DEL.update(anteprima=VMAnteprima, scelta=VMScelta)
+    return _DEL
 
 
 def _url(percorso):

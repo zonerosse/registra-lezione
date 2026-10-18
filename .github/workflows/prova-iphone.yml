@@ -97,6 +97,16 @@ jobs:
             sleep 10
           fi
           xcrun simctl io "$DEV" screenshot esito/03-dopo.png
+          # finestre di iOS: manda, anteprima, scelta di un file (ognuna con l'app riaperta da capo)
+          riapri() { xcrun simctl terminate "$DEV" $ID; rm -f "$DATI/porta.txt" "$DATI/prova_whisper.wav"; xcrun simctl launch "$DEV" $ID
+                     for i in $(seq 1 30); do [ -f "$DATI/porta.txt" ] && break; sleep 2; done; sleep 8; P=$(cat "$DATI/porta.txt"); }
+          finestra() { riapri; echo "== $2 $3" >> esito/api.txt; curl -s -m 10 -X POST -d "$3" http://127.0.0.1:$P/api/$2 >> esito/api.txt; echo >> esito/api.txt
+                       sleep 4; xcrun simctl io "$DEV" screenshot esito/$1.png; }
+          if [ -n "$P" ]; then
+            finestra 04-condividi condividi "[\"$DATI/prova.pdf\"]"
+            finestra 05-anteprima apri "[\"$DATI/prova.pdf\"]"
+            finestra 06-scegli scegli_pdf '[]'
+          fi
           ls -lR "$DATI" | grep -v "^total" > esito/documenti.txt 2>&1 || true
 
       - name: Pubblica l'esito
