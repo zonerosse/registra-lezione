@@ -2725,6 +2725,7 @@ async function disegnaSY(tutto) {
     if ($('syDisp')) $('syDisp').innerHTML = syDispositivi(r);
     if ($('syScade')) $('syScade').textContent = t('sy.scade', {n: Math.max(1, Math.ceil(r.codice_sec / 60))});
     syBottoniDisp();
+    disegnaNV();
     return;
   }
   const box = $('syBox');
@@ -2773,7 +2774,7 @@ async function disegnaSY(tutto) {
       <div class="sypasso"><span class="n">1</span><div><b>${esc(t('sy.p1'))}</b><span>${esc(t('sy.p1s'))}</span></div></div>
       <div class="sypasso"><span class="n">2</span><div><b>${esc(t('sy.p2'))}</b><span>${esc(t('sy.p2s'))}</span></div></div>
       <div class="sypasso"><span class="n">3</span><div><b>${esc(t('sy.p3'))}</b><span>${esc(t('sy.p3s'))}</span></div></div>
-      <div class="row mt" style="gap:8px;flex-wrap:wrap">${bott}</div></div>` + rete;
+      <div class="row mt" style="gap:8px;flex-wrap:wrap">${bott}</div></div>` + NV_BOX + rete;
   } else {
     const o = r.opzioni;
     const ck = (k, s) => `<label class="syck"><input type="checkbox" data-o="${k}"${o[k] ? ' checked' : ''}><span>${esc(t('sy.o.' + k))}<small>${esc(t('sy.o.' + k + '.s'))}</small></span></label>`;
@@ -2784,11 +2785,12 @@ async function disegnaSY(tutto) {
         <button class="btn b-ghost b-sm" id="${ANDROID ? 'syColl' : 'syCodice'}">+ ${esc(t('sy.altro'))}</button></div>
       <div class="hint mt">${esc(t(ANDROID ? 'sy.nota.tel' : 'sy.nota.pc'))}</div></div>
       <div class="card"><div class="lbl">${esc(t('sy.cosa'))}</div>${['lezioni', 'studio', 'materie', 'libro', 'video'].map(k => ck(k)).join('')}
-      <div class="hint mt">${esc(t('sy.unisce'))}</div></div></div>` + rete;
+      <div class="hint mt">${esc(t('sy.unisce'))}</div></div></div>` + NV_BOX + rete;
     box.querySelectorAll('[data-o]').forEach(c => c.onchange = () => A.sync_opzione(c.dataset.o, c.checked));
     if ($('syOra')) $('syOra').onclick = async () => { await A.sync_adesso(); setTimeout(() => disegnaSY(false), 300); };
     syBottoniDisp();
   }
+  disegnaNV();
   if ($('syCodice')) $('syCodice').onclick = async () => {
     const x = await A.sync_codice();
     if (!x.ok) { dialogo({titolo: t('sy.nome'), testo: x.msg}); return; }
@@ -2805,6 +2807,69 @@ function syQr(r) {
     q.make();
     return q.createSvgTag({cellSize: 6, margin: 2, scalable: true});
   } catch (e) { return ''; }
+}
+/* «anche fuori casa»: il cloud con gli zip chiusi da password (nuvola.py) */
+const NV_BOX = '<div class="card mt" id="nvBox"></div>';
+var NV = {p: 'google', d: null, h: ''};
+async function disegnaNV() {
+  const box = $('nvBox');
+  if (!box) return;
+  if (document.activeElement && document.activeElement.id === 'nvChiave') return;
+  const r = NV.d = await A.nuvola_stato();
+  const nomeP = p => p === 'microsoft' ? 'OneDrive' : 'Google Drive';
+  let h = `<div class="lbl">☁️ ${esc(t('nv.lbl'))}</div>`;
+  const coll = `<div class="syok">✓ ${esc(t('nv.collegato', {p: nomeP(r.provider), e: r.email || ''}))}</div>`;
+  if (r.accesso === 'in_corso') {
+    h += `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('nv.browser'))}</div>`;
+  } else if (r.manca_chiave) {
+    h += coll + `<div class="hint mt">${esc(t('nv.manca'))}</div>
+      <input class="in sm mt" id="nvChiave" autocomplete="off" placeholder="XXXX-XXXX-XXXX-XXXX" style="max-width:320px;font-family:ui-monospace,Consolas,monospace;letter-spacing:2px">
+      <div class="row mt" style="gap:8px"><button class="btn b-main b-sm" id="nvOk">${esc(t('nv.ok'))}</button><button class="btn b-ghost b-sm" id="nvVia">${esc(t('nv.scollega'))}</button></div><div id="nvMsg" class="mt"></div>`;
+  } else if (r.attiva) {
+    const g = r.giro;
+    const stato = r.in_corso ? `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('nv.incorso'))} ${Math.round((r.fase || 0) * 100)}%</div>`
+      : r.errore === 'accesso' ? `<div class="avviso">${esc(t('nv.err.accesso'))}</div>`
+      : r.errore === 'chiave' ? `<div class="avviso">${esc(t('nv.err.chiave'))}</div>`
+      : r.errore === 'dati' ? `<div class="hint">${esc(t('nv.err.dati'))}</div>`
+      : r.errore ? `<div class="avviso">${esc(t('nv.err.rete'))}</div>`
+      : r.ultimo ? `<div class="hint">☁️ ${esc(t('nv.fatto', {q: syFa(r.ultimo)}))}${g && (g.su || g.giu) ? ' · ' + esc(t('nv.ultimo', {s: g.su, g: g.giu})) : ''}</div>`
+      : `<div class="hint">${esc(t('nv.primo'))}</div>`;
+    h += coll + `<div class="mt">${stato}</div>
+      <div class="lbl mt">🔑 ${esc(t('nv.chiave'))}</div><div class="nvchiave">${esc(r.chiave)}</div>
+      <div class="hint mt">${esc(t('nv.chiave.s'))}</div>
+      ${ANDROID ? `<label class="syck mt"><input type="checkbox" id="nvWifi"${r.solo_wifi ? ' checked' : ''}><span>${esc(t('nv.wifi'))}<small>${esc(t('nv.wifi.s'))}</small></span></label>` : ''}
+      <div class="row mt" style="gap:8px;flex-wrap:wrap">${r.errore === 'accesso' ? `<button class="btn b-main b-sm" id="nvAcc">${esc(t('nv.riaccedi'))}</button>` : `<button class="btn b-main b-sm" id="nvOra">☁️ ${esc(t('nv.adesso'))}</button>`}
+        <button class="btn b-ghost b-sm b-red" id="nvVia">${esc(t('nv.scollega'))}</button></div>`;
+    if (r.provider) NV.p = r.provider;
+  } else {
+    const disp = r.disponibili[NV.p];
+    h += `<div class="hint">${t('nv.spiega')}</div><div class="lbl mt">${esc(t('nv.quale'))}</div>
+      <div class="nvscel"><label><input type="radio" name="nvp" value="google"${NV.p === 'google' ? ' checked' : ''}>Google Drive<small>${esc(t('nv.g.s'))}</small></label>
+      <label><input type="radio" name="nvp" value="microsoft"${NV.p === 'microsoft' ? ' checked' : ''}>OneDrive<small>${esc(t('nv.m.s'))}</small></label></div>
+      <div class="row mt" style="gap:8px"><button class="btn b-main b-sm" id="nvAcc"${disp ? '' : ' disabled'}>${esc(t(NV.p === 'microsoft' ? 'nv.acc.m' : 'nv.acc.g'))}</button></div>
+      ${disp ? '' : `<div class="hint mt">${esc(t('nv.presto'))}</div>`}
+      ${String(r.accesso).startsWith('errore') ? `<div class="avviso mt">${esc(t(r.accesso === 'errore:annullato' ? 'nv.err.annullato' : r.accesso === 'errore:tempo' ? 'nv.err.tempo' : 'nv.err.rete'))}</div>` : ''}
+      <div class="hint mt">${esc(t('nv.contro'))}</div>`;
+  }
+  if (h === NV.h) return;
+  NV.h = h;
+  box.innerHTML = h;
+  box.querySelectorAll('[name=nvp]').forEach(x => x.onchange = () => { NV.p = x.value; NV.h = ''; disegnaNV(); });
+  if ($('nvAcc')) $('nvAcc').onclick = async () => {
+    const x = await A.nuvola_accedi(r.attiva || r.errore === 'accesso' ? r.provider : NV.p);
+    if (!x.ok) dialogo({titolo: t('nv.lbl'), testo: x.msg}); else { NV.h = ''; disegnaNV(); }
+  };
+  if ($('nvOra')) $('nvOra').onclick = async () => { await A.nuvola_adesso(); setTimeout(() => { NV.h = ''; disegnaNV(); }, 400); };
+  if ($('nvWifi')) $('nvWifi').onchange = () => A.nuvola_opzione('solo_wifi', $('nvWifi').checked);
+  if ($('nvVia')) $('nvVia').onclick = async () => {
+    if (!await conferma(t('nv.scollega'), t('nv.scollega.d'), t('nv.scollega'), t('annulla'), 'b-end')) return;
+    await A.nuvola_scollega(); NV.h = ''; disegnaNV();
+  };
+  if ($('nvOk')) $('nvOk').onclick = async () => {
+    $('nvMsg').innerHTML = `<span class="spin"></span>`;
+    const x = await A.nuvola_chiave($('nvChiave').value);
+    if (x.ok) { NV.h = ''; $('nvChiave').blur(); disegnaNV(); } else $('nvMsg').innerHTML = `<div class="avviso">${esc(x.msg)}</div>`;
+  };
 }
 function syDispositivi(r) {
   return r.dispositivi.map(d => `<div class="sydisp"><span class="ic">${d.ruolo === 'centro' ? '💻' : '📱'}</span><div class="sp"><b>${esc(d.nome)}</b>

@@ -3503,6 +3503,8 @@ class Motore:
 
     def avvia_sincronizza(self):
         """All'avvio: se ci sono dispositivi collegati, il centro si accende e il giro parte da solo."""
+        if self._nv_attiva():
+            self._nv()["subito"] = True
         if self.cfg.get("sync_dispositivi"):
             c = self._sync()
             if any(d.get("ruolo") == "client" for d in self.cfg["sync_dispositivi"]):
@@ -3539,6 +3541,10 @@ class Motore:
                     d["ultimo"] = time.strftime("%Y-%m-%dT%H:%M:%S")
                     st["giro"] = r
                     st["errore"] = ""
+                    try:
+                        self._nv_dal_centro(json.loads(sy._chiedi(r["ip"], "/vm/nuvola", d["token"]) or b"{}"))
+                    except Exception:
+                        log.exception("sincronizza: cloud dal PC")
                 except ConnectionError:
                     st["errore"] = "non_trovato"
                 except Exception:
@@ -3563,6 +3569,10 @@ class Motore:
     def _sync_breve(self):
         """Per la riga in basso a sinistra: «🔄 Sincronizzato 2 min fa»."""
         ds = self.cfg.get("sync_dispositivi") or []
+        if not ds and self._nv_attiva():
+            n = self.cfg.get("nuvola") or {}
+            nst = getattr(self, "_nv_stato", None) or {}
+            return {"in_corso": bool(nst.get("in_corso")), "errore": nst.get("errore") or "", "ultimo": n.get("ultimo") or "", "client": False}
         if not ds:
             return None
         st = getattr(self, "_sy_stato", None) or {}
@@ -3623,6 +3633,188 @@ class Motore:
             self.cfg["sync_nome"] = str(valore or "").strip()[:40]
             salva_config(self.cfg)
         return {"ok": True}
+
+    # ------------------------------------------------------------------ sincronizza anche fuori casa (cloud, zip con password)
+    # Vedi nuvola.py. Il PC lo fa ogni 10 minuti; il telefono solo quando non trova il PC sul Wi-Fi.
+
+    def _nv(self):
+        if getattr(self, "_nv_stato", None) is None:
+            self._nv_stato = {"in_corso": False, "errore": "", "fase": 0.0, "ultimo": 0, "giro": None, "accesso": "", "subito": False}
+            self._nv_lock = threading.Lock()
+            self._nv_cloud = None
+            threading.Thread(target=self._nv_ciclo, daemon=True).start()
+        return self._nv_stato
+
+    def _nv_attiva(self):
+        n = self.cfg.get("nuvola") or {}
+        return bool(n.get("refresh") and n.get("chiave"))
+
+    def _nv_ciclo(self):
+        while True:
+            time.sleep(10)
+            st = self._nv_stato
+            if not self._nv_attiva() or self.occupato:
+                continue
+            if not st["subito"] and time.time() - st["ultimo"] < 600:
+                continue
+            st["subito"] = False
+            # telefono: se il PC e' raggiungibile sul Wi-Fi basta quello (e niente giga)
+            centri = [d for d in self.cfg.get("sync_dispositivi") or [] if d.get("ruolo") == "centro"]
+            sy_st = getattr(self, "_sy_stato", None) or {}
+            if centri and not sy_st.get("errore") and time.time() - (sy_st.get("ultimo") or 0) < 180:
+                st["ultimo"] = time.time()
+                continue
+            if (self.cfg.get("nuvola") or {}).get("solo_wifi", True) and self._rete_a_consumo():
+                st["errore"] = "dati"
+                st["ultimo"] = time.time()
+                continue
+            self._nv_giro()
+
+    def _rete_a_consumo(self):
+        """Telefono sui dati (non sul Wi-Fi)? Sul PC sempre no."""
+        try:
+            from java import jclass
+            cm = jclass("it.puntowebferrara.registralezione.Ponte").contesto().getSystemService("connectivity")
+            return bool(cm.isActiveNetworkMetered())
+        except Exception:
+            return False
+
+    def _nv_giro(self):
+        import nuvola as nv
+        import zip_aes as za
+        if not self._nv_lock.acquire(blocking=False):
+            return
+        st = self._nv_stato
+        n = self.cfg.get("nuvola") or {}
+        try:
+            st.update(in_corso=True, fase=0.0)
+            if not self._nv_cloud or self._nv_cloud.refresh != n.get("refresh"):
+                self._nv_cloud = nv.Cloud.nuovo(n["provider"], n["refresh"])
+            r = nv.giro(self._nv_cloud, BASE, self.pacchetti(), self.cfg, self._sync_opzioni(), n["chiave"],
+                        lambda f: st.update(fase=f), self.nome_dispositivo())
+            if self._nv_cloud.refresh != n.get("refresh"):
+                n["refresh"] = self._nv_cloud.refresh
+            n["ultimo"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+            self.cfg["nuvola"] = n
+            st.update(errore="", giro=r)
+        except nv.ErroreAccesso:
+            st["errore"] = "accesso"
+        except za.PasswordSbagliata:
+            st["errore"] = "chiave"
+        except Exception:
+            log.exception("nuvola")
+            st["errore"] = "rete"
+        finally:
+            salva_config(self.cfg)
+            st.update(in_corso=False, ultimo=time.time())
+            self._nv_lock.release()
+
+    def nuvola_stato(self):
+        import nuvola as nv
+        st = self._nv()
+        n = self.cfg.get("nuvola") or {}
+        cr = nv.credenziali()
+        return {"provider": n.get("provider") or "", "email": n.get("email") or "", "attiva": self._nv_attiva(),
+                "chiave": n.get("chiave") or "", "manca_chiave": bool(n.get("refresh") and not n.get("chiave")),
+                "solo_wifi": n.get("solo_wifi", True), "ultimo": n.get("ultimo") or "",
+                "in_corso": st["in_corso"], "fase": st["fase"], "errore": st["errore"], "giro": st["giro"], "accesso": st["accesso"],
+                "disponibili": {"google": bool(cr["google"]), "microsoft": bool(cr["microsoft"])}}
+
+    def nuvola_accedi(self, provider):
+        """«Accedi con Google / Microsoft»: il browser si apre; qui si aspetta in un thread."""
+        import nuvola as nv
+        st = self._nv()
+        if provider not in ("google", "microsoft") or not nv.credenziali()[provider]:
+            return {"ok": False, "msg": tr("nv_err_nondisp")}
+        if st["accesso"] == "in_corso":
+            return {"ok": True}
+        st["accesso"] = "in_corso"
+
+        def lavora():
+            try:
+                testi_ = {k: tr("nv_pag_" + k) for k in ("ok_t", "ok_s", "no_t", "no_s")}
+                r = nv.accedi(provider, apri, testi_)
+                n = dict(self.cfg.get("nuvola") or {})
+                n.update(provider=provider, refresh=r["refresh"], email=r["email"])
+                n.pop("no", None)
+                c = nv.Cloud.nuovo(provider, r["refresh"])
+                if not n.get("chiave"):
+                    va, gia = nv.controlla_chiave(c, "")
+                    if gia:
+                        n["chiave"] = ""                 # nel cloud ci sono gia' zip: serve la loro password
+                    else:
+                        n["chiave"] = nv.nuova_chiave()
+                else:
+                    va, gia = nv.controlla_chiave(c, n["chiave"])
+                    if not va:
+                        n["chiave"] = ""
+                self.cfg["nuvola"] = n
+                salva_config(self.cfg)
+                st["accesso"] = ""
+                st["subito"] = True
+            except Exception as e:
+                log.exception("nuvola: accesso")
+                st["accesso"] = "errore:" + (str(e) if str(e) in ("annullato", "tempo") else "rete")
+        threading.Thread(target=lavora, daemon=True).start()
+        return {"ok": True}
+
+    def nuvola_chiave(self, chiave):
+        """La password degli zip scritta a mano (quando nel cloud ci sono gia' zip fatti da un altro dispositivo)."""
+        import nuvola as nv
+        n = dict(self.cfg.get("nuvola") or {})
+        chiave = re.sub(r"[^A-Z0-9]", "", str(chiave or "").upper())
+        chiave = "-".join(chiave[i:i + 4] for i in range(0, len(chiave), 4))
+        if not n.get("refresh") or len(chiave) < 8:
+            return {"ok": False, "msg": tr("nv_err_chiave")}
+        try:
+            va, _ = nv.controlla_chiave(nv.Cloud.nuovo(n["provider"], n["refresh"]), chiave)
+        except Exception:
+            log.exception("nuvola: chiave")
+            return {"ok": False, "msg": tr("sy_err_rete")}
+        if not va:
+            return {"ok": False, "msg": tr("nv_err_chiave")}
+        n["chiave"] = chiave
+        self.cfg["nuvola"] = n
+        salva_config(self.cfg)
+        self._nv()["subito"] = True
+        return {"ok": True}
+
+    def nuvola_scollega(self):
+        self.cfg["nuvola"] = {"no": True}
+        salva_config(self.cfg)
+        self._nv().update(errore="", giro=None)
+        return {"ok": True}
+
+    def nuvola_opzione(self, chiave, valore):
+        if chiave == "solo_wifi":
+            n = dict(self.cfg.get("nuvola") or {})
+            n["solo_wifi"] = bool(valore)
+            self.cfg["nuvola"] = n
+            salva_config(self.cfg)
+        return {"ok": True}
+
+    def nuvola_adesso(self):
+        if self._nv_attiva():
+            self._nv()
+            threading.Thread(target=self._nv_giro, daemon=True).start()
+        return {"ok": True}
+
+    def nuvola_per_altri(self):
+        """Al telefono collegato con il QR (solo sul Wi-Fi, con il suo codice): accesso e password del cloud."""
+        n = self.cfg.get("nuvola") or {}
+        return {k: n.get(k) for k in ("provider", "refresh", "email", "chiave")} if self._nv_attiva() else {}
+
+    def _nv_dal_centro(self, d):
+        """Dopo un giro sul Wi-Fi: se il PC usa il cloud, anche questo dispositivo (a meno che l'abbia scollegato qui)."""
+        if not d or (self.cfg.get("nuvola") or {}).get("no"):
+            return
+        n = dict(self.cfg.get("nuvola") or {})
+        if n.get("refresh") and n.get("provider") == d.get("provider") and n.get("chiave") == d.get("chiave"):
+            return
+        n.update({k: d[k] for k in ("provider", "refresh", "email", "chiave") if d.get(k)})
+        self.cfg["nuvola"] = n
+        salva_config(self.cfg)
+        self._nv()
 
     def _sync_tolta(self, nome):
         """Una lezione eliminata o rinominata: anche sugli altri dispositivi sparisce (non torna indietro)."""

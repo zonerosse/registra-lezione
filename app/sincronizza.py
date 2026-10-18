@@ -396,6 +396,8 @@ class Centro:
                         return self._ok({"ok": True})
                     if u.path == "/vm/unisci":
                         return self._ok(centro.unisci(q["p"], json.loads(self._corpo() or b"null"), float(q.get("m") or 0)))
+                    if u.path == "/vm/nuvola":
+                        return self._ok(centro.m.nuvola_per_altri() if hasattr(centro.m, "nuvola_per_altri") else {})
                     if u.path == "/vm/fine":
                         centro.fine(chi, json.loads(self._corpo() or b"{}"))
                         return self._ok({"ok": True})

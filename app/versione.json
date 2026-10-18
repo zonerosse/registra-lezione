@@ -1,6 +1,6 @@
 {
- "versione": "3.89",
+ "versione": "3.90",
  "librerie": 2,
- "novita": "Nuovo: «🔄 Sincronizza» con il QR. Sul PC compare un QR: il telefono lo inquadra e si collega da solo (oppure si scrive il codice di 6 cifre). Da lì in poi, sulla stessa rete Wi-Fi o con l'hotspot del telefono, lezioni, appunti, ripasso, voti e materie sono uguali sul PC e sul telefono. Per il QR va installata l'app nuova sul telefono.",
- "novita_en": "New: «🔄 Sync» with a QR code. A QR appears on the PC: the phone scans it and links by itself (or you type the 6-digit code). From then on, on the same Wi-Fi network or with the phone's hotspot, lessons, notes, review, marks and subjects are the same on PC and phone. For the QR install the new app on the phone."
+ "novita": "Nuovo: «🔄 Sincronizza» anche fuori casa (Impostazioni › Sincronizza): le lezioni passano dal tuo cloud, ognuna in uno zip chiuso con una password. Il collegamento con Google Drive e OneDrive si attiva con il prossimo aggiornamento.",
+ "novita_en": "New: «🔄 Sync» away from home too (Settings › Sync): lessons go through your cloud, each one in a password-locked zip. The link to Google Drive and OneDrive is switched on with the next update."
 }

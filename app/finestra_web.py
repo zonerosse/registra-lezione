@@ -365,6 +365,24 @@ class Api:
     def glossario_pdf(self, materia):
         return self._m.glossario_pdf(materia)
 
+    def nuvola_stato(self):
+        return self._m.nuvola_stato()
+
+    def nuvola_accedi(self, provider):
+        return self._m.nuvola_accedi(provider)
+
+    def nuvola_chiave(self, chiave):
+        return self._m.nuvola_chiave(chiave)
+
+    def nuvola_scollega(self):
+        return self._m.nuvola_scollega()
+
+    def nuvola_opzione(self, chiave, valore):
+        return self._m.nuvola_opzione(chiave, valore)
+
+    def nuvola_adesso(self):
+        return self._m.nuvola_adesso()
+
     def sync_stato(self):
         return self._m.sync_stato()
 
