@@ -73,8 +73,8 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
             await p.evaluate(() => pagina));
       await p.waitForFunction(() => !APLAV, null, {timeout: 90000}).catch(() => {}); await p.waitForTimeout(1500);
       const fis = (await p.evaluate(() => A.lezioni())).lezioni.find(l => l.nome.startsWith('Fisica'));
-      passo('«Crea appunti»: finito, c\'è «Apri appunti»', await p.evaluate(() => pagina === 'arch') && fis && fis.n_appunti > 0 &&
-            await p.$('.lez [data-a="appunti"]'), fis && fis.n_appunti);
+      passo('«Crea appunti»: finito, la lezione si apre toccandola', await p.evaluate(() => pagina === 'arch') && fis && fis.n_appunti > 0 &&
+            await p.$('.lez.apri:has-text("Fisica")'), fis && fis.n_appunti);
       await foto('06c-appunti-creati');
     }
     // «Importa una trascrizione» (un PDF di testo)
@@ -147,12 +147,17 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('chi parla: voci riconosciute sul telefono', vc && (vc.voci || []).length >= 1, JSON.stringify((vc.voci || []).map(v => v.nome)));
     // condividi
     await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(1500);
-    // schede pulite: sulla lezione solo «Apri appunti», «Ripassa» e «⋯ Altro»; il resto nel menu
-    const card = await p.$('.lez:has-text("Riunione commerciale")');
-    passo('scheda: niente Chiedi/Condividi/Trascrizione a vista, c\'è «⋯ Altro»', card && !(await card.$('[data-a="condividi"]')) && !(await card.$('[data-a="tras"]')) && await card.$('[data-a="menu"]') && await card.$('[data-a="appunti"]'));
+    // schede pulite: la lezione pronta si apre toccandola; nella sua pagina le funzioni a riquadri
+    const card = await p.$('.lez.apri:has-text("Riunione commerciale")');
+    passo('scheda: niente bottoni, si apre toccandola', card && !(await card.$('[data-a="condividi"]')) && !(await card.$('[data-a="tras"]')) && !(await card.$('[data-a="menu"]')));
     await foto('10b-schede');
-    const bc = {click: async () => { const c = await p.$('.lez:has-text("Riunione commerciale")'); await (await c.$('[data-a="menu"]')).click(); await p.waitForSelector('.menu [data-a="condividi"]', {timeout: 5000}); await p.click('.menu [data-a="condividi"]'); }};
-    passo('menu «⋯ Altro»: Chiedi, Condividi, Trascrizione', await (async () => { const c = await p.$('.lez:has-text("Riunione commerciale")'); await (await c.$('[data-a="menu"]')).click(); await p.waitForSelector('.menu', {timeout: 5000}); await foto('10c-menu'); const ok = await p.$('.menu [data-a="chiedi"]') && await p.$('.menu [data-a="condividi"]') && await p.$('.menu [data-a="tras"]'); await p.mouse.click(5, 5); await p.waitForTimeout(300); return ok; })());
+    const apriRiu = async () => { await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(800); await p.click('.lez.apri:has-text("Riunione commerciale")'); await p.waitForSelector('#v-lezione [data-ta]', {timeout: 5000}); };
+    const bc = {click: async () => { await apriRiu(); await p.click('#v-lezione [data-ta="condividi"]'); }};
+    passo('pagina della lezione: Chiedi, Condividi, Trascrizione; «⋯ Altro» solo servizio', await (async () => { await apriRiu(); await foto('10c-pagina-lezione');
+      const ok = await p.$('#v-lezione [data-ta="chiedi"]') && await p.$('#v-lezione [data-ta="condividi"]') && await p.$('#v-lezione [data-ta="tras"]');
+      await p.click('#lzAltro'); await p.waitForSelector('.menu', {timeout: 5000}); await foto('10d-altro');
+      const serv = !(await p.$('.menu [data-a="chiedi"]')) && !(await p.$('.menu [data-a="condividi"]')) && await p.$('.menu [data-a="rinomina"]');
+      await p.mouse.click(5, 5); await p.waitForTimeout(300); return ok && serv; })());
     await bc.click(); await p.waitForSelector('.velo .tile'); await foto('11-condividi');
     passo('condividi: «WhatsApp e altre app», niente Google Docs', await p.$('.velo .tile[data-k="manda"]') && !(await p.$('.velo .tile[data-k="gdocs"]')));
     await p.click('.velo .tile[data-k="email"]'); await p.waitForSelector('.velo .dest .in');
@@ -167,6 +172,7 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     await bc.click(); await p.waitForSelector('.velo .tile');
     await p.click('.velo .tile[data-k="manda"]'); await p.waitForTimeout(2000);
     // cerca nelle parole dette
+    await p.click('#nav [data-p="arch"]'); await p.waitForTimeout(800);
     await p.fill('#cerca', 'limite'); await p.dispatchEvent('#cerca', 'input');
     await p.waitForSelector('#paroleRis .pris', {timeout: 10000}).catch(() => {}); await foto('14-cerca-parole');
     passo('cerca nelle parole dette', await p.$('#paroleRis .pris'));
