@@ -1,0 +1,16 @@
+Command line invocation:
+    /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild -list -project "build/verbamanent/ios/xcode/Verba Manent IA.xcodeproj"
+
+Information about project "Verba Manent IA":
+    Targets:
+        Verba Manent IA
+
+    Build Configurations:
+        Debug
+        Release
+
+    If no build configuration is specified and -scheme is not passed then "Release" is used.
+
+    Schemes:
+        Verba Manent IA
+
