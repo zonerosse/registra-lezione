@@ -15,6 +15,7 @@ formal_name = "Verba Manent IA"
 description = "Registra lezioni e riunioni e prepara gli appunti."
 long_description = "Registra lezioni e riunioni, le trascrive sul telefono e prepara appunti, flashcard e verbali."
 sources = ["src/verbamanent"]
+icon = "icons/verbamanent"
 requires = ["numpy", "pillow", "fpdf2==2.8.9"]
 permission.microphone = "Serve per registrare la lezione o la riunione."
 
