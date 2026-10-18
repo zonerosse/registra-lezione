@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,13 +129,15 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
   if (p === 'podcast') return t('tl.pc');
   if (p === 'karaoke') return t('tl.kk');
   if (p === 'verifica') return t('tl.mv');
+  if (p === 'rg') return t('rg.h');
+  if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
 }
@@ -155,6 +157,7 @@ function vai(p, tornando = false) {
   if (p !== 'ascolta' && AS && AS.attivo) asFerma();
   if (p !== 'podcast' && PCS && PCS.attivo) pcFerma();
   if (p !== 'karaoke' && KK && KK.au) KK.au.pause();
+  if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
     STU.dentro = false;
@@ -165,7 +168,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -2057,21 +2060,24 @@ async function disegnaStudia() {
   let gg;
   if (info.giorni == null || info.giorni < 0) gg = `<div class="card stgg"><div style="flex:1"><b style="color:var(--ink)">${esc(t('st.nodata', {m: m.m}))}</b><div class="hint">${esc(t('st.nodata.s'))}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.data'))}</button></div>`;
   else gg = `<div class="card stgg">${info.giorni ? `<div class="gg">${info.giorni}</div>` : ''}<div style="flex:1"><b style="color:var(--ink)">${esc(info.giorni ? t(info.giorni === 1 ? 'st.gg1' : 'st.gg', {m: m.m}) : t('st.oggi.esame', {m: m.m}))}</b><div class="hint">${esc(fmtG(info.data_esame, {day: 'numeric', month: 'long'}))}${info.oggi && info.oggi.cose ? ' · ' + esc(t('st.oggi', {c: info.oggi.cose.join(', ')})) : ''}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.piano'))}</button></div>`;
-  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif'] : []), d = k => D.has(k);
+  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif', 'rgiorno'] : []), d = k => D.has(k);
   const fl = m.n ? (m.no ? t('tl.flash.n', {n: m.n, r: m.no}) : t(m.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: m.n})) : '';
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
       tile('orale', '🎤', t('tl.orale'), t('tl.dsa.orale.s'), ult(info.voti_orali)), tile('test', '☑', t('tl.dsa.test'), t('tl.dsa.test.s'), ult(info.voti_test)),
       tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s')), m.n && tile('fcorso', '🃏', t('tl.dsa.flash'), t('tl.dsa.flc.s'), fl),
-      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
       tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto')), tile('mverif', '🗺', t('tl.mv'), t('tl.mv.s'), '', d('mverif'))]) +
-    gruppo(t('g.ripassa'), [tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
+    gruppo(t('g.ripassa'), [tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s'), '', d('rgiorno')), tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
     gruppo(t('g.capisci'), [tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
-  $('stBox2').innerHTML = gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').innerHTML = `<div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
   $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
+  $('rgStudia').onclick = () => apriRipassoGiorno();
+  A.ripasso_giorno(false, true).then(r => { if (!r.ok || !$('rgStudiaT')) return;
+    $('rgStudiaT').textContent = r.carte ? `${r.carte} ${t(r.carte === 1 ? 'rg.studia1' : r.minuti === 1 ? 'rg.studia' : 'rg.studia', {m: r.minuti})}` : r.totale ? t('rg.studia0') : t('tl.rg.s'); });
 }
 async function tileStudia(m, a) {
   const esame = {m: m.m, cartelle: m.cartelle};
@@ -2085,6 +2091,7 @@ async function tileStudia(m, a) {
   if (a === 'fcorso') return iniziaRipasso(m.cartelle, m.m, 'prima');
   if (a === 'ascm') return apriAscoltaMateria(m);
   if (a === 'mverif') return apriMappaVerifica(m);
+  if (a === 'rgiorno') return apriRipassoGiorno();
   if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
   if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
   if (a === 'mappe') {
@@ -2092,6 +2099,142 @@ async function tileStudia(m, a) {
     const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
+}
+/* ------------------------------------------------------------------ ripasso del giorno */
+// Poche carte ogni giorno fra tutte le lezioni (ripasso_giorno.py). Si ripassa nella pagina delle flashcard (v-rip)
+// con quattro modalita': carte, a voce (parole chiave dette), a crocette (risposte sbagliate nuove ogni settimana), lampo.
+var RG = {d: null};
+const RG_GIORNI = [1, 2, 4, 8, 16, 30];
+const rgDopo = c => RG_GIORNI[Math.min(5, (c.box == null ? 0 : c.box) + 1)];
+function apriRipassoGiorno() { vai('rg'); disegnaRG(); }
+async function disegnaRG() {
+  const box = $('rgBox');
+  box.innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('rg.lav'))}</div></div>`;
+  const r = await A.ripasso_giorno(false, false);
+  if (pagina !== 'rg') return;
+  if (!r.ok) { box.innerHTML = `<div class="card"><div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div></div>`; return; }
+  RG.d = r;
+  if (!r.totale) { box.innerHTML = `<div class="card"><div class="hint">${esc(t('rg.vuoto'))}</div></div>`; return; }
+  const modo = R.rg_modo || 'carte', n = r.carte.length;
+  const serie = r.serie ? `<div class="rgserie">${esc(r.serie === 1 ? t('rg.serie1') : t('rg.serie', {n: r.serie}))}<small>${esc(t('rg.serie.s'))}</small></div>` : '';
+  const righe = r.lezioni.map(l => {
+    const pill = l.rivedere ? `<span class="pill p-red">${esc(t('rg.p.riv', {n: l.rivedere}))}</span>` : l.esame ? `<span class="pill p-warn">${esc(t('rg.p.esame'))}</span>` : l.nuove ? `<span class="pill p-blue">${esc(t('rg.p.nuove'))}</span>` : '';
+    return `<div class="rgcr"><span class="mtag">${esc(l.materia)}</span><div class="sp"><b>${esc(mvSenzaMateria(l.lezione, l.materia))}</b><span>${esc(l.argomenti.join(' · '))}</span></div><span class="nc">${esc(l.n === 1 ? t('rg.ncarta') : t('rg.ncarte', {n: l.n}))}</span>${pill}</div>`;
+  }).join('');
+  const modi = ['carte', 'voce', 'croc', 'lampo'].map(k => `<div class="aiopt${k === modo ? ' on' : ''}" data-m="${k}"><span class="rd"></span><span class="ico i-blue">${{carte: '🃏', voce: '🎙', croc: '☑', lampo: '⚡'}[k]}</span><b>${esc(t('rg.m.' + k))}</b><small>${esc(t('rg.m.' + k + '.s'))}</small></div>`).join('');
+  const oggi = n ? `<div class="rgoggi"><div class="gr">${n}</div><div class="tx"><b>${esc(t(n === 1 ? 'rg.carta' : 'rg.carte'))}</b><span>${esc(t(r.minuti === 1 ? 'rg.min1' : 'rg.min', {m: r.minuti}))}</span></div>${serie}</div>
+      <div class="lbl" style="margin-top:16px">${esc(t('rg.oggi'))}</div><div class="rgcosa">${righe}</div>
+      <div class="lbl" style="margin-top:16px">${esc(t('rg.come'))}</div><div class="rgmodi" id="rgModi">${modi}</div>
+      <div class="row mt"><span class="hint sp" id="rgModoH">${esc(t('rg.h.' + modo))}</span><button class="btn b-main" id="rgVia">${esc(t('rg.via'))}</button></div>`
+    : `<div class="rgoggi"><div class="tx"><b>${esc(t('rg.finito'))}</b><span>${esc(t('rg.finito.s'))}</span></div>${serie}</div>`;
+  const gg = d => { const x = new Date(d + 'T12:00:00'); return x.toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {weekday: 'short'}); };
+  const mat = r.materie.map(m => `<div class="rgmat"><div><b>${esc(m.materia)}</b><span class="hint">${m.giorni == null ? esc(t('rg.nodata', {n: m.carte})) + ` · <a class="lnk" data-dm="${esc(m.materia)}">${esc(t('rg.data'))}</a>` : esc(t(m.giorni === 0 ? 'rg.esame0' : m.giorni === 1 ? 'rg.esame1' : 'rg.esame', {g: m.giorni, n: m.carte}))}</span></div>
+      <div class="barw"><div class="hint">${esc(t('rg.pronto', {p: m.pronto}))}</div><div class="bar"><i style="width:${m.pronto}%"></i></div></div><div class="n">${esc(t('rg.noggi', {n: m.oggi}))}</div></div>`).join('');
+  const sett = r.prossimi.map((g, i) => `<div class="${i ? '' : 'oggi'}">${esc(i ? gg(g.giorno) : t('rg.oggi.g'))}<b>${g.n}</b></div>`).join('');
+  box.innerHTML = `<div class="card">${oggi}</div>
+    <div class="card mt"><div class="lbl">${esc(t('rg.materie'))}</div>${mat}</div>
+    <div class="card mt"><div class="lbl">${esc(t('rg.prossimi'))}</div><div class="rgsett">${sett}</div><div class="hint mt">${esc(t('rg.spiega'))}</div></div>
+    <div class="card mt"><div class="lbl">${esc(t('rg.imp'))}</div>
+      <div class="set"><div class="t"><b>${esc(t('rg.max'))}</b><span>${esc(t('rg.max.s'))}</span></div><div class="seg" id="rgMax">${[10, 20, 30].map(v => `<span data-v="${v}" class="${v === (R.rg_max || 20) ? 'on' : ''}">${v}</span>`).join('')}</div></div>
+      <div class="set solo-and"><div class="t"><b>${esc(t('rg.prom'))}</b><span>${esc(t('rg.prom.s'))}</span></div><input type="time" class="in sm" id="rgOra" value="${esc(R.rg_ora || '18:00')}" style="width:auto"><div class="sw${R.rg_promemoria ? ' on' : ''}" id="rgProm"></div></div>
+    </div>`;
+  if ($('rgModi')) $('rgModi').querySelectorAll('.aiopt').forEach(o => o.onclick = async () => {
+    $('rgModi').querySelectorAll('.aiopt').forEach(x => x.classList.toggle('on', x === o));
+    R.rg_modo = o.dataset.m; $('rgModoH').textContent = t('rg.h.' + o.dataset.m); await A.imposta('rg_modo', o.dataset.m);
+  });
+  if ($('rgVia')) $('rgVia').onclick = () => iniziaRipassoGiorno(R.rg_modo || 'carte');
+  box.querySelectorAll('[data-dm]').forEach(a => a.onclick = () => { const m = materieStudia().find(x => x.m.toLowerCase() === a.dataset.dm.toLowerCase()); if (m) tileStudia(m, 'piano'); });
+  $('rgMax').querySelectorAll('span').forEach(x => x.onclick = async () => { R.rg_max = +x.dataset.v; await A.imposta('rg_max', R.rg_max); disegnaRG(); });
+  $('rgProm').onclick = async () => { R.rg_promemoria = !R.rg_promemoria; $('rgProm').classList.toggle('on', R.rg_promemoria); await A.imposta('rg_promemoria', R.rg_promemoria); };
+  $('rgOra').onchange = async () => { R.rg_ora = $('rgOra').value || '18:00'; await A.imposta('rg_ora', R.rg_ora); };
+}
+async function iniziaRipassoGiorno(modo) {
+  let carte = RG.d.carte;
+  if (modo === 'lampo') { const r = await A.ripasso_giorno(true, false); if (r.ok) carte = r.carte; }
+  if (!carte.length) return;
+  if (modo === 'croc') {
+    $('rgVia').disabled = true; $('rgModoH').innerHTML = `<span class="spin" style="width:13px;height:13px;vertical-align:-2px"></span> ${esc(t('rg.croc.lav'))}`;
+    const r = await A.ripasso_giorno_crocette(carte.map(c => ({id: c.id, cartella: c.cartella, domanda: c.domanda, schema: c.schema})));
+    if ($('rgVia')) $('rgVia').disabled = false;
+    if (!r.ok) { if ($('rgModoH')) $('rgModoH').textContent = t('rg.h.croc'); await dialogo({titolo: t('rg.h'), testo: r.msg || ''}); return; }
+    const per = Object.fromEntries(r.carte.map(x => [x.id, x]));
+    carte = carte.map(c => ({...c, opzioni: (per[c.id] || {}).opzioni, giusta: (per[c.id] || {}).giusta}));
+  }
+  segnaUso('flashcard');
+  RP = {carte, i: 0, ok: 0, no: [], titolo: t('rg.m.' + modo), cartelle: [], giorno: true, modo};
+  $('rpH2').textContent = t('rg.h2');
+  mostraRip('rpCarte'); vai('rip'); cartaRip();
+}
+// la parte del ripasso del giorno di ogni carta (chiamata da cartaRip)
+function cartaGiorno(c) {
+  const g = !!RP.giorno, croc = g && RP.modo === 'croc' && c.opzioni && c.opzioni.length === 4, voce = g && RP.modo === 'voce';
+  $('rpAdesso').classList.toggle('hidden', !g);
+  if (g) $('rpAdesso').innerHTML = `<span class="mtag">${esc(c.materia || '')}</span><b>${esc(mvSenzaMateria(c.lezione, c.materia || ''))}</b>${c.argomento ? `<span class="hint">· ${esc(t('rg.arg', {a: c.argomento}))}</span>` : ''}`;
+  $('rpCroc').classList.toggle('hidden', !croc); $('rpVoce').classList.toggle('hidden', !voce);
+  $('voto').style.display = croc ? 'none' : '';
+  const dopo = rgDopo(c);
+  $('rpQuando').textContent = g && !croc ? t(dopo === 2 ? 'rg.quando1' : 'rg.quando', {g: dopo}) : '';
+  RP.risposto = false; RP.ascolto = false;
+  if (croc) {
+    $('rpCroc').innerHTML = c.opzioni.map((o, k) => `<button class="rgopz" data-k="${k}">${'ABCD'[k]} · ${esc(o)}</button>`).join('') + `<div class="hint" id="rgCrocEs"></div><div class="row hidden" id="rgAv" style="justify-content:center"><button class="btn b-main" id="rgAvB">${esc(t('rg.avanti'))}</button></div>`;
+    $('rpCroc').querySelectorAll('.rgopz').forEach(b => b.onclick = () => rgScegli(+b.dataset.k));
+    $('rgAvB').onclick = () => { RP.i++; if (RP.i >= RP.carte.length) fineRip(); else cartaRip(); };
+  }
+  if (voce) {
+    $('rgEsito').classList.add('hidden'); $('rgMic').textContent = t('rg.mic'); $('rgMic').disabled = false;
+    voceParla(c.domanda);
+  }
+}
+function rgScegli(k) {
+  if (RP.risposto) return;
+  RP.risposto = true;
+  const c = RP.carte[RP.i], ok = k === c.giusta;
+  $('rpCroc').querySelector(`[data-k="${c.giusta}"]`).classList.add('giusta');
+  if (!ok) $('rpCroc').querySelector(`[data-k="${k}"]`).classList.add('sbagliata');
+  $('carta').classList.add('giro');
+  $('rgCrocEs').textContent = ok ? t('rg.croc.si', {g: rgDopo(c)}) : t('rg.croc.no', {l: 'ABCD'[c.giusta]});
+  A.ripasso_voto(c.cartella, c.id, ok);
+  if (ok) RP.ok++; else RP.no.push(c);
+  $('rgAv').classList.remove('hidden');
+}
+const rgNorm = x => String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+function rgParole(c) {
+  const base = c.parole && c.parole.length ? c.parole : c.schema;
+  return base.slice(0, 5).map(x => String(x).split(/[:–(;]/)[0].trim().split(/\s+/).slice(0, 4).join(' ')).filter(Boolean);
+}
+function rgDetto(k, testo) {
+  const T = rgNorm(testo), ws = rgNorm(k).split(' ').filter(w => w.length > 3);
+  if (!ws.length) return T.includes(rgNorm(k));
+  return ws.filter(w => T.includes(w.slice(0, Math.max(4, w.length - 2)))).length >= Math.ceil(ws.length / 2);
+}
+async function rgMic() {
+  const b = $('rgMic'), c = RP.carte[RP.i];
+  if (RP.ascolto) {
+    RP.ascolto = false; b.disabled = true; b.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('dt.lav'))}`;
+    const r = await A.detta_fine();
+    b.disabled = false; b.textContent = t('rg.mic2');
+    if (!r.ok || !r.testo) { $('rgEsito').classList.remove('hidden'); $('rgEsito').textContent = t('rg.niente'); return; }
+    const kw = rgParole(c), si = kw.filter(k => rgDetto(k, r.testo)), no = kw.filter(k => !si.includes(k));
+    $('rgEsito').classList.remove('hidden');
+    $('rgEsito').innerHTML = `<div class="tu">«${esc(r.testo)}»</div><div><b>${esc(t('rg.detto', {k: si.length, n: kw.length}))}</b> ${si.map(k => `<span class="rgkw si">${esc(k)}</span>`).join('')}${no.length ? ` · <b>${esc(t('rg.manca'))}</b> ${no.map(k => `<span class="rgkw no">${esc(k)}</span>`).join('')}` : ''}</div>`;
+    $('carta').classList.add('giro'); $('voto').classList.add('on');
+    return;
+  }
+  voceFerma(); segnaUso('detta');
+  const r = await A.detta_avvia();
+  if (!r.ok) { toast(r.msg || ''); return; }
+  RP.ascolto = true; b.textContent = t('rg.micstop');
+}
+async function fineGiorno() {
+  // per lezione: quante sapute e cosa rivedere
+  const fatte = RP.carte.slice(0, RP.i), per = {};
+  fatte.forEach(c => { const p = per[c.cartella] = per[c.cartella] || {c, n: 0, ok: 0, riv: []}; p.n++; if (RP.no.includes(c)) { if (c.argomento && !p.riv.includes(c.argomento)) p.riv.push(c.argomento); } else p.ok++; });
+  let extra = `<div class="rgcosa" style="text-align:left;margin-top:12px">` + Object.values(per).map(p => `<div class="rgcr"><span class="mtag">${esc(p.c.materia || '')}</span><div class="sp"><b>${esc(mvSenzaMateria(p.c.lezione, p.c.materia || ''))}</b><span>${esc(t('rg.fine.lez', {ok: p.ok, n: p.n}) + (p.riv.length ? ' · ' + t('rg.fine.riv', {a: p.riv.join(', ')}) : ' ✓'))}</span></div></div>`).join('') + '</div>';
+  if (RP.i >= RP.carte.length) {
+    const r = await A.ripasso_giorno_fatto();
+    if (r.ok) extra = `<div class="hint" style="margin-top:8px">${esc(t(r.serie === 1 ? 'rg.fine.serie1' : 'rg.fine.serie', {n: r.serie}))} · ${esc(r.domani ? t(r.domani === 1 ? 'rg.fine.domani1' : 'rg.fine.domani', {n: r.domani}) : t('rg.fine.domani0'))}</div>` + extra;
+  }
+  $('rL').innerHTML = extra + $('rL').innerHTML;
 }
 /* ------------------------------------------------------------------ spazio DSA */
 // Con la Modalita' DSA accesa: la prima voce del menu. Gli strumenti per DSA in ordine di momento (in aula, dopo la
@@ -2127,7 +2270,7 @@ async function disegnaSpazioDsa() {
   $('sdBox').innerHTML =
     mom(1, t('sd.m1'), t('sd.m1.s'), [T('reg', '⏺', t('sd.reg'), t('sd.reg.s')), T('detta', '🎙', t('sd.detta'), t('sd.detta.s'))]) +
     mom(2, t('sd.m2'), t('sd.m2.s'), [T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
-      T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s'), '', t('sd.presto'))]) +
+      T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s'))]) +
     mom(3, t('sd.m3'), t('sd.m3.s'), [T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
       T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
     mom(4, t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s'))]) +
@@ -2141,7 +2284,7 @@ async function azioneDsa(a) {
   const l = SD.l, m = SD.mat;
   if (a === 'reg') return vai('reg');
   if (a === 'detta') return scriviParlando();
-  if (a === 'giorno') return toast(t('sd.presto.t'));
+  if (a === 'giorno') return apriRipassoGiorno();
   if (a === 'arch') return vai('arch');
   if (a === 'strumenti') return strumentiDsa();
   if (a === 'firma') return apriMappaVerifica(m);
@@ -3029,7 +3172,7 @@ function collegaNovita() {
 /* ------------------------------------------------------------------ ripasso (flashcard) */
 // Le domande sono quelle gia' negli appunti: niente Claude, niente costi.
 let materiaRip = null;
-let RP = {carte: [], i: 0, ok: 0, no: [], titolo: '', cartelle: []};
+var RP = {carte: [], i: 0, ok: 0, no: [], titolo: '', cartelle: []};
 function materieRip() {
   const M = [];
   (LZ ? LZ.lezioni : []).forEach(l => {
@@ -3103,8 +3246,9 @@ function cartaRip() {
   bF.onclick = e => { e.stopPropagation(); voceParla(c.domanda); };
   bR.onclick = e => { e.stopPropagation(); voceParla([...c.schema, ...(c.aggiunte || [])].join('. ')); };
   document.querySelector('#carta .fronte').appendChild(bF); document.querySelector('#carta .retro').appendChild(bR);
+  cartaGiorno(c);
 }
-function giraRip() { $('carta').classList.toggle('giro'); $('voto').classList.add('on'); }
+function giraRip() { if (RP.giorno && RP.modo === 'croc' && !RP.risposto && RP.carte[RP.i] && RP.carte[RP.i].opzioni) return; $('carta').classList.toggle('giro'); $('voto').classList.add('on'); }
 function votoRip(v) {
   if (RP.i >= RP.carte.length) return;
   const c = RP.carte[RP.i];
@@ -3115,18 +3259,20 @@ function votoRip(v) {
 }
 function fineRip() {
   const n = RP.i;
-  if (!n) { vai('arch'); return; }
+  if (!n) { if (RP.giorno) apriRipassoGiorno(); else vai('arch'); return; }
   $('rN').textContent = RP.ok + '/' + n; $('anello').style.setProperty('--p', (RP.ok / n * 100) + '%');
   $('rT').textContent = RP.ok === n ? t('rp.r.tutte') : RP.ok >= n / 2 ? t('rp.r.bene') : t('rp.r.dai');
   $('rL').innerHTML = RP.no.length ? `<div class="lbl">${t('rp.r.lista')}</div>` + RP.no.map(c => `<div>${esc(c.domanda)}<span class="hint" style="display:block">${esc(c.lezione)}${c.slide_n ? ' · slide ' + c.slide_n : ''}</span></div>`).join('') : '';
   $('rAncora').classList.toggle('hidden', !RP.no.length);
   mostraRip('rpRis');
+  if (RP.giorno) fineGiorno();
 }
 function collegaRipasso() {
   $('carta').onclick = giraRip;
   $('vNo').onclick = () => votoRip(0); $('vSi').onclick = () => votoRip(1);
   $('rpBasta').onclick = fineRip;
-  $('rFine').onclick = () => vai('arch');
+  $('rFine').onclick = () => RP.giorno ? apriRipassoGiorno() : vai('arch');
+  $('rgMic').onclick = rgMic; $('rgRileggi').onclick = () => { const c = RP.carte[RP.i]; if (c) voceParla(c.domanda); };
   $('rAncora').onclick = () => { RP = {...RP, carte: RP.no.slice(), i: 0, ok: 0, no: []}; mostraRip('rpCarte'); cartaRip(); };
   document.addEventListener('keydown', e => {
     if (pagina !== 'rip' || $('rpCarte').classList.contains('hidden') || document.querySelector('.velo')) return;

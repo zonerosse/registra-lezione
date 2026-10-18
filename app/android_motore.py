@@ -454,6 +454,19 @@ def _sveglie(m):
                 nuove[str(i)] = ms
                 if prima.get(str(i)) != ms:
                     Ponte.sveglia(i, ms, tr("and_cal_t", n=ev["titolo"]), tr("and_cal"))
+            # «Ripasso del giorno»: il promemoria dei prossimi 7 giorni all'ora scelta (non oggi se e' gia' fatto)
+            if m.cfg.get("rg_promemoria", True) and (m.cfg.get("rg_fatti") or m.cfg.get("rg_modo")):
+                hh, mm = (str(m.cfg.get("rg_ora") or "18:00").split(":") + ["0"])[:2]
+                fatto = datetime.date.today().isoformat() in (m.cfg.get("rg_fatti") or [])
+                for g in range(7):
+                    q = (ora.replace(hour=int(hh), minute=int(mm), second=0, microsecond=0) + datetime.timedelta(days=g))
+                    if q <= ora or (g == 0 and fatto):
+                        continue
+                    i = 0x3FFFFF00 + g
+                    ms = int(q.timestamp() * 1000)
+                    nuove[str(i)] = ms
+                    if prima.get(str(i)) != ms:
+                        Ponte.sveglia(i, ms, tr("and_rg_t"), tr("and_rg"))
             for i in set(prima) - set(nuove):
                 Ponte.togliSveglia(int(i))
             if nuove != prima:

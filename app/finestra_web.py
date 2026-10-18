@@ -253,6 +253,15 @@ class Api:
     def cambia_materia(self, cartella, materia):
         return self._m.cambia_materia(cartella, materia)
 
+    def ripasso_giorno(self, lampo=False, leggero=False):
+        return self._m.ripasso_giorno(lampo, leggero)
+
+    def ripasso_giorno_crocette(self, carte):
+        return self._m.ripasso_giorno_crocette(carte)
+
+    def ripasso_giorno_fatto(self):
+        return self._m.ripasso_giorno_fatto()
+
     def segna_uso(self, chiave):
         return self._m.segna_uso(chiave)
 

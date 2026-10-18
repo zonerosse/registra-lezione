@@ -141,10 +141,43 @@ def prepara(cartelle, modo="prima"):
     return carte
 
 
-def voto(cartella, cid, sapevo):
+INTERVALLI = [1, 2, 4, 8, 16, 30]       # «Ripasso del giorno»: dopo quanti giorni torna una carta, per scatola
+
+
+def stato_carta(s):
+    """(scatola, scadenza) di una carta; anche per quelle votate prima che ci fosse il ripasso del giorno."""
+    if not s:
+        return None, None
+    oggi = datetime.date.today()
+    try:
+        scad = datetime.date.fromisoformat(str(s.get("scad"))[:10]) if s.get("scad") else None
+    except ValueError:
+        scad = None
+    box = s.get("box")
+    if box is None:
+        try:
+            quando = datetime.date.fromisoformat(str(s.get("quando"))[:10])
+        except ValueError:
+            quando = oggi
+        box = 0 if s.get("ultimo") == 0 else 1
+        scad = quando + datetime.timedelta(days=INTERVALLI[box])
+    return int(box), scad or oggi
+
+
+def voto(cartella, cid, sapevo, esame=None):
+    """esame: la data dell'esame della materia (le carte tornano piu' spesso quando si avvicina)."""
     p = Path(cartella) / "ripasso.json"
     st = _stat(cartella)
     s = st.get(cid) or {"ok": 0, "no": 0}
+    box, _ = stato_carta(s if s.get("quando") else None)
+    box = min(len(INTERVALLI) - 1, (box or 0) + 1) if sapevo else 0
+    oggi = datetime.date.today()
+    giorni = INTERVALLI[box]
+    if esame and esame > oggi:
+        mancano = (esame - oggi).days
+        giorni = max(1, min(giorni, max(1, mancano // 3), max(1, mancano - 1)))
+    s["box"] = box
+    s["scad"] = (oggi + datetime.timedelta(days=giorni)).isoformat()
     s["ok" if sapevo else "no"] = s.get("ok" if sapevo else "no", 0) + 1
     s["ultimo"] = 1 if sapevo else 0
     s["quando"] = datetime.datetime.now().isoformat(timespec="seconds")

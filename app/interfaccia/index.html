@@ -292,6 +292,10 @@
     </section>
 
     <!-- KARAOKE DELLA LEZIONE -->
+    <section class="pg hidden" id="v-rg">
+      <div class="hd"><div><h2 data-t="rg.h2">🃏 Ripasso del giorno</h2><p data-t="rg.sub">Poche carte ogni giorno, scelte per te, fino all'esame.</p></div></div>
+      <div id="rgBox"></div>
+    </section>
     <section class="pg hidden" id="v-dsa">
       <div class="hd"><div><h2 data-t="sd.h">⭐ Spazio DSA</h2><p data-t="sd.sub">Tutto quello che ti serve, in ordine: in aula, dopo la lezione, per la verifica.</p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
       <div class="card"><div class="sdscegli" id="sdScegli"></div></div>
@@ -435,12 +439,19 @@
       </div>
       <div id="rpCarte" class="hidden">
         <div class="hd"><div><h2 id="rpH2"></h2><p id="rpSub"></p></div><button class="btn b-ghost b-sm" id="rpBasta" data-t="rp.basta">Basta così</button></div>
+        <div class="rgadesso hidden" id="rpAdesso"></div>
         <div class="rprog"><span id="rpN"></span><div class="bar"><i id="rpBar" style="width:0%"></i></div><span id="rpOk"></span></div>
         <div class="carta" id="carta"><div class="in2">
           <div class="faccia fronte"><div class="stelle" id="cSt"></div><div class="dom" id="cD"></div><div class="ori"><svg width="15" height="15"><use href="#i-doc"/></svg><span id="cO"></span></div><div class="tocca" data-t="rp.pensa">Pensa alla risposta, poi tocca la carta per girarla ↻</div></div>
           <div class="faccia retro"><h4 id="cTit"></h4><ol id="cSc"></ol><div id="cAv"></div><div id="cK"></div><div class="sl" id="cSl"></div><div class="err" id="cE"></div></div>
         </div></div>
+        <div class="rgcroc hidden" id="rpCroc"></div>
+        <div class="rgvoce hidden" id="rpVoce">
+          <div class="row" style="justify-content:center;gap:10px;flex-wrap:wrap"><button class="btn b-ghost" id="rgRileggi" data-t="rg.rileggi">🔊 Rileggi la domanda</button><button class="btn b-rec" id="rgMic" data-t="rg.mic">🎙 Rispondi a voce</button></div>
+          <div class="rgesito hidden" id="rgEsito"></div>
+        </div>
         <div class="voto" id="voto"><button class="btn b-no" id="vNo" data-t="rp.no">↺ Da rivedere</button><button class="btn b-si" id="vSi" data-t="rp.si">✓ La sapevo</button></div>
+        <div class="hint" style="text-align:center;margin-top:8px" id="rpQuando"></div>
         <div class="hint solo-pc" style="text-align:center;margin-top:10px" data-t="rp.tasti"></div>
       </div>
       <div id="rpRis" class="hidden">

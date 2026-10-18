@@ -545,6 +545,8 @@ class Motore:
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "nome_classe": self.cfg.get("nome_classe") or "",
+                "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
+                "rg_promemoria": bool(self.cfg.get("rg_promemoria", True)), "rg_ora": self.cfg.get("rg_ora") or "18:00",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
                 "ha_server": bool(self._server_dati()),
                 "app_codice": int(agg.versione_locale().get("codice") or 0),
@@ -609,9 +611,15 @@ class Motore:
                 return {"ok": False, "msg": "?"}
             self.cfg["lingua_lezione"] = valore
             self.cfg["lingua_lezione_scelta"] = True
+        elif campo == "rg_max":
+            self.cfg["rg_max"] = int(valore) if int(valore) in (10, 20, 30) else 20
+        elif campo == "rg_modo":
+            self.cfg["rg_modo"] = valore if valore in ("carte", "voce", "croc", "lampo") else "carte"
+        elif campo == "rg_ora":
+            self.cfg["rg_ora"] = valore if re.fullmatch(r"\d{2}:\d{2}", str(valore or "")) else "18:00"
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
+        elif campo in ("rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
             self.cfg[campo] = el.FACILITATA = bool(valore)
@@ -2862,9 +2870,56 @@ class Motore:
             log.exception("ripasso")
             return {"ok": False, "carte": []}
 
+    def _esame_di(self, cartella):
+        """La data dell'esame della materia di una lezione (o None)."""
+        import esame as es
+        info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
+        m = (info.get("materia") or materia_di(info.get("nome", Path(cartella).name))).strip()
+        try:
+            d = datetime.date.fromisoformat(str(es.leggi(BASE, m).get("data_esame") or "")[:10])
+            return d if d >= datetime.date.today() else None
+        except ValueError:
+            return None
+
+    # ------------------------------------------------------------------ ripasso del giorno
+
+    def ripasso_giorno(self, lampo=False, leggero=False):
+        import ripasso_giorno as rg_
+        try:
+            n = int(self.cfg.get("rg_max") or 20)
+            d = rg_.oggi(BASE, n, self.cfg.get("rg_fatti") or [], bool(lampo), not leggero)
+            if leggero:
+                d["carte"] = len(d["carte"])
+            return {"ok": True, **d}
+        except Exception:
+            log.exception("ripasso del giorno")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def ripasso_giorno_crocette(self, carte):
+        import ripasso_giorno as rg_
+        carte = [dict(c) for c in carte or [] if isinstance(c, dict) and c.get("id") and c.get("cartella")]
+        try:
+            spesa = rg_.crocette(carte, self.chiave(), testi.LINGUA)
+            return {"ok": True, "carte": [{"id": c["id"], "opzioni": c.get("opzioni"), "giusta": c.get("giusta")} for c in carte],
+                    "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("ripasso del giorno: crocette")
+            return {"ok": False, "msg": tr("rg_croc_err")}
+
+    def ripasso_giorno_fatto(self):
+        import ripasso_giorno as rg_
+        oggi = datetime.date.today().isoformat()
+        fatti = [x for x in (self.cfg.get("rg_fatti") or []) if x != oggi][-399:] + [oggi]
+        self.cfg["rg_fatti"] = fatti
+        salva_config(self.cfg)
+        n = int(self.cfg.get("rg_max") or 20)
+        return {"ok": True, "serie": rg_._serie(fatti), "domani": rg_.domani(BASE, n)}
+
     def ripasso_voto(self, cartella, cid, sapevo):
         try:
-            return rp.voto(cartella, cid, bool(sapevo))
+            return rp.voto(cartella, cid, bool(sapevo), self._esame_di(cartella))
         except Exception:
             log.exception("voto ripasso")
             return False
