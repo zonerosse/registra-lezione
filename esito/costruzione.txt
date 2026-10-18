@@ -1,0 +1,16 @@
+0.4.6
+
+********************************************************************************
+**                       WARNING: Invalid project name                        **
+********************************************************************************
+
+  'Verba Manent IA' is not a valid PEP 621 project name and cannot be
+  normalized. Briefcase currently accepts invalid `project_name` values in the
+  `[tool.briefcase]` configuration, but this may become an error in a future
+  version.
+
+  Update `project_name` to a valid PEP 621 project name.
+
+********************************************************************************
+
+Briefcase configuration error: Configuration for 'verbamanent' does not contain a valid PEP 639 license definition.
