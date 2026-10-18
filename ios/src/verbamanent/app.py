@@ -73,8 +73,13 @@ class VerbaManent(toga.App):
         if not f.exists():
             return
         import json
+        import logging
         import time
         import java
+        h = logging.FileHandler(Path.home() / "prova_comando.log", encoding="utf-8")
+        h.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+        logging.getLogger("registra_lezione").addHandler(h)
+        logging.getLogger("registra_lezione").setLevel(logging.INFO)
         try:
             nome, *arg = json.loads(f.read_text(encoding="utf-8"))
             f.unlink()

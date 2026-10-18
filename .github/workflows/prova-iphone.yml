@@ -107,8 +107,10 @@ jobs:
             finestra 05-anteprima apri "[\"$DATI/prova.pdf\"]"
             finestra 06-scegli scegli_pdf '[]'
             comando() { echo "$2" > "$DATI/prova_comando.json"; riapri; sleep 8; xcrun simctl io "$DEV" screenshot esito/$1.png
-                        cp "$DATI/prova_comando_errore.txt" esito/$1-errore.txt 2>/dev/null || true; }
+                        cp "$DATI/prova_comando_errore.txt" esito/$1-errore.txt 2>/dev/null || true
+                        mv "$DATI/prova_comando.log" esito/$1.log 2>/dev/null || true; }
             A=$(( $(date +%s) + 86400 ))000; B=$(( $(date +%s) + 90000 ))000; C=$(( $(date +%s) + 172800 ))000
+            rm -f "$DATI/prova_comando.log"
             comando 07-email "[\"email\", [\"sara@esempio.it\"], \"Verbale riunione\", \"Ecco il verbale.\", [\"$DATI/prova.pdf\"]]"
             comando 08-calendario "[\"eventi\", [\"Esame di diritto\", $C, $C, true, \"Portare il libretto\", \"\"], [\"Consegna tesina\", $A, $B, false, \"\", \"Aula 3\"]]"
             comando 09-notifica "[\"notifica\", \"Lezione pronta\", \"Gli appunti di Prova iPhone sono pronti.\"]"
