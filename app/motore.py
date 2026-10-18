@@ -1947,7 +1947,8 @@ class Motore:
         if not self.chiave():
             return {"ok": False, "msg": tr("manca_chiave")}
         try:
-            sim, spesa = es.correggi(BASE, materia, risposte or [], self.chiave(), testi.LINGUA)
+            sim, spesa = es.correggi(BASE, materia, risposte or [], self.chiave(), testi.LINGUA,
+                                     dsa=bool(self.cfg.get("lettura_facilitata")))
             return {"ok": True, "simulazione": sim, "spesa": spesa}
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
@@ -1984,12 +1985,13 @@ class Motore:
 
     # ------------------------------------------------------------------ test a crocette
 
-    def test_nuovo(self, materia, cartelle, solo_sbagliate=False):
+    def test_nuovo(self, materia, cartelle, solo_sbagliate=False, n=10, difficolta="media", esame_vero=False):
         import esame as es
         if not solo_sbagliate and not self.chiave():
             return {"ok": False, "msg": tr("manca_chiave")}
         try:
-            test, spesa = es.test_nuovo(BASE, materia, cartelle or [], self.chiave(), testi.LINGUA, bool(solo_sbagliate))
+            test, spesa = es.test_nuovo(BASE, materia, cartelle or [], self.chiave(), testi.LINGUA, bool(solo_sbagliate),
+                                        n, difficolta, bool(esame_vero))
             return {"ok": True, "test": test, "spesa": spesa}
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
@@ -2006,6 +2008,89 @@ class Motore:
         except Exception:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
+
+    # ------------------------------------------------------------------ studia (pagina della materia)
+
+    def studia_info(self, materia):
+        """Quello che serve alla pagina Studia senza chiamare Claude: data dell'esame, giorni, il piano di oggi, i voti."""
+        import esame as es
+        d = es.leggi(BASE, materia)
+        oggi = datetime.date.today()
+        giorni = (datetime.date.fromisoformat(d["data_esame"]) - oggi).days if d.get("data_esame") else None
+        piano = es.piano(d, L=testi.LINGUA) if d.get("classifica") else []
+        oggi_piano = next((g for g in piano if g["giorno"] == oggi.isoformat()), None)
+        voti = lambda lista: [x.get("voto") for x in lista or [] if x.get("voto") is not None]
+        return {"ok": True, "data_esame": d.get("data_esame") or "", "giorni": giorni, "oggi": oggi_piano,
+                "classifica": bool(d.get("classifica")), "voti_test": voti(d.get("test")),
+                "voti_orali": voti(d.get("orali")), "voti_scritti": voti(d.get("simulazioni"))}
+
+    # ------------------------------------------------------------------ dettatura (Modalità DSA)
+    # Come l'interrogazione: si registra dal microfono, si trascrive QUI e torna il testo. Niente Claude.
+
+    def detta_avvia(self):
+        if self.reg is not None or (getattr(self, "_detta", None) or {}).get("reg") is not None:
+            return {"ok": False, "msg": tr("or_occupato")}
+        cart = BASE / "esami" / "_detta"
+        shutil.rmtree(cart, ignore_errors=True)
+        cart.mkdir(parents=True, exist_ok=True)
+        try:
+            reg = rg.Registratore(cart, "detta", 3600, modo="aula", microfono=self.cfg.get("microfono") or None)
+            reg.avvia()
+            self._detta = {"reg": reg, "cart": cart}
+            return {"ok": True}
+        except Exception:
+            log.exception("dettatura: microfono")
+            self._detta = None
+            return {"ok": False, "msg": tr("or_mic")}
+
+    def detta_livello(self):
+        r = (getattr(self, "_detta", None) or {}).get("reg")
+        return {"ok": True, "livello": float(r.livello or 0), "sec": float(r.secondi())} if r is not None else {"ok": False}
+
+    def detta_fine(self):
+        d = getattr(self, "_detta", None) or {}
+        r = d.get("reg")
+        if r is None:
+            return {"ok": False, "msg": tr("es_err")}
+        self._detta = None
+        cart = d["cart"]
+        try:
+            r.ferma()
+            wav = cart / "audio_001.wav"
+            segs = []
+            if wav.exists() and wav.stat().st_size > 2000:
+                el.scrivi_json(cart / "info.json", {"lingua_lezione": testi.LINGUA, "precisa": True})
+                segs = el.trascrivi_campioni(el.audio_16k(wav), cart)
+            testo = " ".join(s["testo"] for s in segs if s.get("testo")).strip()
+            return {"ok": bool(testo), "testo": testo, **({} if testo else {"msg": tr("or_vuota")})}
+        except Exception:
+            log.exception("dettatura")
+            return {"ok": False, "msg": tr("es_err")}
+        finally:
+            shutil.rmtree(cart, ignore_errors=True)       # l'audio della dettatura non si tiene
+
+    # ------------------------------------------------------------------ appunti facili da leggere (Modalità DSA)
+
+    def appunti_dsa(self, cartella, formato=None):
+        """Il PDF degli appunti nel formato per DSA (carattere leggibile, piu' spazio, fondo crema), rifatto dai file
+        degli appunti gia' fatti: non costa niente."""
+        cart = Path(cartella)
+        info = el.leggi_json(cart / "info.json", {}) or {}
+        fatti = [f for f in ap.FORMATI if ap.parti_json(cart, f)]
+        if not fatti:
+            return {"ok": False, "msg": tr("cd_niente")}
+        formato = formato if formato in fatti else fatti[0]
+        prima = el.FACILITATA
+        try:
+            el.FACILITATA = True
+            dest = ap.pdf_dsa(cart, formato, Path(self.cfg["cartella_pacchetti"]))
+            apri(dest)
+            return {"ok": True, "file": str(dest), "formati": fatti}
+        except Exception:
+            log.exception("appunti DSA")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        finally:
+            el.FACILITATA = prima
 
     # ------------------------------------------------------------------ ascolta gli appunti (lettura ad alta voce)
 

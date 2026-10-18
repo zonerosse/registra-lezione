@@ -58,6 +58,7 @@
     <nav class="nav" id="nav">
       <a data-p="reg" class="on"><svg><use href="#i-rec"/></svg><span data-t="nav.reg">Registra</span><span class="recdot hidden" id="navRec"></span></a>
       <a data-p="arch"><svg><use href="#i-lib"/></svg><span data-t="nav.arch">Le mie registrazioni</span><span class="cnt hidden" id="navCnt"></span></a>
+      <a data-p="studia"><svg><use href="#i-cards"/></svg><span data-t="nav.studia">Studia</span></a>
       <a data-p="fare"><svg><use href="#i-check"/></svg><span data-t="nav.fare">Cose da fare</span><span class="cnt hidden" id="navFare"></span></a>
       <a data-p="imp"><svg><use href="#i-set"/></svg><span data-t="nav.imp">Impostazioni</span></a>
       <a data-p="guida"><svg><use href="#i-guida"/></svg><span data-t="nav.guida">Guida</span></a>
@@ -261,7 +262,7 @@
       <div class="hd"><div><h2 data-t="ch.h">Chiedi alla lezione</h2><p id="chSub"></p></div><div class="seg hidden" id="chSeg"></div></div>
       <div class="card">
         <div class="chat" id="chat"></div>
-        <div class="row" style="margin-top:12px;gap:8px"><input class="in sp" id="chIn" data-tp="ch.ph" placeholder="Scrivi cosa non hai capito…" autocomplete="off" maxlength="600"><button class="btn b-main" id="chVai" data-t="ch.vai">Chiedi</button></div>
+        <div class="row" style="margin-top:12px;gap:8px"><input class="in sp" id="chIn" data-tp="ch.ph" placeholder="Scrivi cosa non hai capito…" autocomplete="off" maxlength="600"><button class="btn b-ghost solo-dsa" id="chMic" title="🎤">🎤</button><button class="btn b-main" id="chVai" data-t="ch.vai">Chiedi</button></div>
         <div class="row" style="margin-top:8px"><span class="hint sp" data-t="ch.costo">Meno di 1 centesimo a domanda · risponde solo con quello che c'è nella lezione: se il docente non l'ha detto, te lo dice.</span><button class="lnk" id="chNuova" data-t="ch.nuova">Nuova conversazione</button></div>
       </div>
     </section>
@@ -273,13 +274,27 @@
       <div class="row mt"><span class="hint sp" data-t="mp.nota">Si crea una volta sola e resta con la lezione.</span><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
     </section>
 
+    <!-- PAGINA DELLA LEZIONE -->
+    <section class="pg hidden" id="v-lezione">
+      <div class="hd"><div><h2 id="lzTit"></h2><p id="lzSub"></p></div><div class="row" style="gap:8px"><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div><button class="btn b-ghost b-sm" id="lzAltro">⋯ <span data-t="ar.altro">Altro</span></button></div></div>
+      <div class="card" id="lzBox"></div>
+      <div class="hint mt" data-t="lz.altro">In «⋯ Altro»: rinomina, rifai gli appunti, slide del docente, cartella, elimina.</div>
+    </section>
+
+    <!-- STUDIA (la materia) -->
+    <section class="pg hidden" id="v-studia">
+      <div class="hd"><div><h2 data-t="st.h2">Studia</h2><p data-t="st.p">Scegli la materia</p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
+      <div class="seg stmat" id="stMat"></div>
+      <div id="stBox2"></div>
+    </section>
+
     <!-- ASCOLTA GLI APPUNTI (lettura ad alta voce) -->
     <section class="pg hidden" id="v-ascolta">
       <div class="hd"><div><h2 data-t="as.h">Ascolta gli appunti</h2><p id="asSub"></p></div></div>
       <div class="card"><div class="asbarra">
         <button class="btn b-main b-sm" id="asPlay"></button><button class="btn b-ghost b-sm" id="asStop" data-t="as.ferma">■ Ferma</button>
         <div class="seg" id="asVel"><span data-v="0.8" data-t="as.lenta">Lenta</span><span data-v="1" data-t="as.normale">Normale</span><span data-v="1.2" data-t="as.veloce">Veloce</span></div>
-        <span class="sp"></span><div class="asaa"><span data-t="as.fac">Aa Lettura facilitata</span><div class="sw" id="asFac"></div></div></div>
+        <span class="sp"></span><div class="asaa"><span data-t="dsa.nome">Modalità DSA</span><div class="sw" id="asFac"></div></div></div>
         <div class="hint" style="margin-top:8px" data-t="as.hint">Tocca una frase per far partire la lettura da lì. La frase che sto leggendo è evidenziata.</div></div>
       <div class="card mt"><div class="seg hidden" id="asFmt" style="margin-bottom:12px"></div><div class="ap" id="asBox"></div></div>
     </section>

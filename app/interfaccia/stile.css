@@ -522,6 +522,37 @@ html.dsa .ap h3{font-size:21px}
 html.dsa .asbl{grid-template-columns:1fr;gap:6px}
 html.dsa .asrias{background:#fef3c7}
 html.dsa .carta .faccia{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.03em;word-spacing:.14em;line-height:1.75;background:#fffbeb}
+/* pagina della lezione e Studia: riquadri per gruppi */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #e6edf5;border-radius:14px;padding:12px;cursor:pointer;text-align:left;font-family:inherit;box-shadow:0 1px 2px rgba(15,27,45,.05);min-width:0}
+.tile:hover{box-shadow:0 6px 18px -8px rgba(13,66,117,.35);border-color:#cfe0f1}
+.tile .ico{width:36px;height:36px;border-radius:11px;font-size:17px}
+.tile>span:nth-child(2){min-width:0;flex:1}
+.tile b{display:block;color:var(--ink);font-size:14px}
+.tile small{display:block;color:var(--mut);font-size:12px;margin-top:2px;line-height:1.35}
+.tile .num{display:inline-block;margin-top:5px;font-size:11.5px;font-weight:700;color:var(--navy);background:#eef3f9;border-radius:999px;padding:2px 8px}
+.grp{margin-top:18px}.grp:first-child{margin-top:2px}
+.stmat{flex-wrap:wrap;margin-bottom:14px}
+.stgg{display:flex;align-items:center;gap:14px}.stgg .gg{font-size:26px;font-weight:800;color:var(--navy)}
+.dsaint{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink);background:#fff;border:1.5px solid #cfe0f1;border-radius:10px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+.dsaint .sw{width:38px;height:22px}.dsaint .sw::after{width:16px;height:16px}.dsaint .sw.on::after{left:19px}
+.dsagr{display:none}html.dsa .dsagr{display:block}
+.altrihd{display:none;margin:18px 0 0;font-size:12px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px;border-top:1px dashed #cbd5e1;padding-top:14px}
+html.dsa .altrihd{display:block}
+html.dsa .altri .tile{background:#f8fafc;border-color:#e2e8f0;box-shadow:none}
+html.dsa .altri .tile .ico{background:linear-gradient(160deg,#cbd5e1,#64748b)}
+html.dsa .altri .tile b{color:#475569}
+html.dsa .altri .lbl{color:#94a3b8}
+html.dsa .altri .dup{display:none}
+.solo-dsa{display:none!important}html.dsa .solo-dsa{display:inline-flex!important}
+html.dsa #v-lezione,html.dsa #v-studia,html.dsa #esTestBox,html.dsa #esSimBox,html.dsa #chat,html.dsa .carta{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.02em;word-spacing:.1em}
+html.dsa #v-lezione .card,html.dsa #v-studia .card,html.dsa #esTestBox,html.dsa #esSimBox{background:#fffbeb}
+html.dsa .tile b{font-size:15.5px}html.dsa .tile small{font-size:13px;line-height:1.5}
+.btn.ascolta{padding:4px 9px;font-size:12px;border-radius:8px;font-weight:600}
+.lez.apri{cursor:pointer}
+.lez .chev{color:var(--mut);font-size:24px;padding:0 4px}
+@media(max-width:800px){.tiles{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.tiles{grid-template-columns:1fr}}
 /* test a crocette */
 .tcq{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .tcq:first-of-type{border-top:0;margin-top:6px;padding-top:0}

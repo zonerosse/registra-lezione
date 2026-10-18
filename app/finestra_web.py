@@ -247,8 +247,23 @@ class Api:
     def esame_pdf(self, materia):
         return self._m.esame_pdf(materia)
 
-    def test_nuovo(self, materia, cartelle, solo_sbagliate=False):
-        return self._m.test_nuovo(materia, cartelle, solo_sbagliate)
+    def test_nuovo(self, materia, cartelle, solo_sbagliate=False, n=10, difficolta="media", esame_vero=False):
+        return self._m.test_nuovo(materia, cartelle, solo_sbagliate, n, difficolta, esame_vero)
+
+    def studia_info(self, materia):
+        return self._m.studia_info(materia)
+
+    def detta_avvia(self):
+        return self._m.detta_avvia()
+
+    def detta_livello(self):
+        return self._m.detta_livello()
+
+    def detta_fine(self):
+        return self._m.detta_fine()
+
+    def appunti_dsa(self, cartella, formato=None):
+        return self._m.appunti_dsa(cartella, formato)
 
     def test_correggi(self, materia, risposte, sec=0):
         return self._m.test_correggi(materia, risposte, sec)

@@ -1753,6 +1753,49 @@ def appunti_lezione_completa(cartella, cartella_pacchetti, formato=None, chiave=
     return dest
 
 
+def parti_json(cartella, formato):
+    """I numeri delle parti che hanno gli appunti (.json) di quel formato."""
+    out = []
+    for f in Path(cartella).glob("appunti_*.json"):
+        pezzi = f.stem.split("_")
+        if not pezzi[-1].isdigit():
+            continue
+        fmt = "cornell" if len(pezzi) == 2 else "_".join(pezzi[1:-1])
+        if fmt == formato:
+            out.append(int(pezzi[-1]))
+    return sorted(out)
+
+
+def pdf_dsa(cartella, formato, cartella_pacchetti):
+    """Il PDF degli appunti di tutta la registrazione per la Modalita' DSA, rifatto dai file .json (senza Claude).
+    El.FACILITATA va accesa da chi chiama. Torna il percorso del PDF."""
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    pac = info.get("pacchetti") or {}
+    L = testi.lingua_di(info)
+    parti = []
+    for k in parti_json(cartella, formato):
+        dati = el.leggi_json(file_json(cartella, k, formato))
+        if not dati:
+            continue
+        base = Path(pac.get(str(k)) or "").stem
+        etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', L)} {k}"
+        mappa = el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or []
+        slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None, m.get("inizio", 0))
+                 for m in mappa}
+        parti.append((dati, etichetta, slide))
+    if not parti:
+        raise ErroreAppunti(tr("cd_niente", L))
+    dest = Path(cartella_pacchetti) / f"{_nome_file(L, formato)} – {el.nome_sicuro(info.get('nome') or cartella.name)} – DSA.pdf"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if len(parti) == 1:
+        pdf_appunti(parti[0][0], info, parti[0][1], str(dest), parti[0][2])
+    else:
+        unite = el.leggi_json(file_classifica(cartella)) if formato == "esame" else None
+        pdf_appunti_parti(parti, info, str(dest), unite=unite)
+    return dest
+
+
 def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
     """Crea gli appunti della parte k nel formato indicato (di serie: quello scelto per la lezione).
     Ritorna (percorso PDF, spesa in dollari)."""

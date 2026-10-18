@@ -198,7 +198,7 @@ def simulazione(base, materia, chiave, L="it"):
     return sim, ch._costo(r.get("usage", {}))
 
 
-def correggi(base, materia, risposte, chiave, L="it"):
+def correggi(base, materia, risposte, chiave, L="it", dsa=False):
     """Claude corregge l'ultima simulazione: punti per domanda, cosa va bene, cosa manca, voto in trentesimi."""
     d = leggi(base, materia)
     sim = (d.get("simulazioni") or [None])[-1]
@@ -206,7 +206,9 @@ def correggi(base, materia, risposte, chiave, L="it"):
         raise ap.ErroreAppunti(tr("es_err"))
     sim["risposte"] = [str(x or "")[:4000] for x in risposte]
     corpo = {"model": ch.MODELLO, "max_tokens": 2000,
-             "system": "Correggi questa simulazione d'esame come un docente giusto ma esigente. Per ogni risposta: \"punti\" "
+             "system": ("Lo studente ha un DSA e ha risposto anche dettando a voce: valuta SOLO il contenuto, MAI ortografia, "
+                        "punteggiatura o forma. " if dsa else "") +
+                       "Correggi questa simulazione d'esame come un docente giusto ma esigente. Per ogni risposta: \"punti\" "
                        "ottenuti su \"su\" (i punti della domanda), \"bene\" (cosa c'e' di giusto, una riga) e \"manca\" (cosa "
                        "manca o e' sbagliato, una riga, concreto). Risposta vuota = 0 punti. \"voto\" in trentesimi (somma), "
                        "\"consiglio\" = cosa ripassare prima di tutto. Scrivi in " + testi.nome_lingua(L, "it") +
@@ -268,7 +270,7 @@ def _mescola(q):
     return q
 
 
-def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False):
+def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False, n=10, difficolta="media", esame_vero=False):
     """Un test a crocette sulla materia (10 domande, 4 risposte). Con solo_sbagliate: di nuovo le domande sbagliate
     dell'ultimo test, con le risposte rimescolate (non costa niente). Torna (test, spesa)."""
     d = leggi(base, materia)
@@ -280,7 +282,8 @@ def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False):
         if not sbagliate:
             raise ap.ErroreAppunti(tr("tc_nessuna"))
         test = {"quando": datetime.datetime.now().isoformat(timespec="seconds"), "lezioni": ult.get("lezioni") or [],
-                "domande": [_mescola(q) for q in sbagliate], "risposte": None, "voto": None, "ripasso": True}
+                "domande": [_mescola(q) for q in sbagliate], "risposte": None, "voto": None, "ripasso": True,
+                "difficolta": ult.get("difficolta", "media"), "esame_vero": bool(esame_vero)}
         d.setdefault("test", []).append(test)
         d["test"] = d["test"][-20:]
         salva(base, materia, d)
@@ -295,8 +298,14 @@ def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False):
         raise ap.ErroreAppunti(tr("es_vuoto"))
     top = [q["domanda"] for q in ((d.get("classifica") or {}).get("domande") or []) if q.get("stelle", 1) >= 2]
     gia = [q["domanda"] for t in d.get("test") or [] for q in t.get("domande") or []][-40:]
-    corpo = {"model": ch.MODELLO, "max_tokens": 6000,
-             "system": "Sei il docente di questa materia e prepari un TEST A CROCETTE d'esame: " + str(N_TEST) + " domande, "
+    n = 30 if int(n or 10) >= 30 else 20 if int(n or 10) >= 20 else 10
+    difficolta = difficolta if difficolta in ("facile", "media", "difficile") else "media"
+    livello = {"facile": "FACILE: domande sui concetti principali e le definizioni, risposte sbagliate ben distinguibili",
+               "media": "MEDIA: come un normale test d'esame",
+               "difficile": "DIFFICILE: dettagli, valori precisi, collegamenti fra lezioni e risposte sbagliate molto simili alla giusta"}[difficolta]
+    corpo = {"model": ch.MODELLO, "max_tokens": 600 * n + 1000,
+             "system": "Sei il docente di questa materia e prepari un TEST A CROCETTE d'esame: " + str(n) + " domande, "
+                       "difficolta' " + livello + ", "
                        "ciascuna con ESATTAMENTE 4 risposte e una sola giusta. Prendi le domande soprattutto dagli argomenti "
                        "piu' importanti (\"domande_importanti\") ma copri piu' lezioni. Le risposte sbagliate devono essere "
                        "plausibili: gli errori tipici degli studenti (valori confusi, concetti scambiati), mai assurde, niente "
@@ -327,7 +336,7 @@ def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False):
     if len(domande) < 3:
         raise ap.ErroreAppunti(tr("es_err"))
     test = {"quando": datetime.datetime.now().isoformat(timespec="seconds"), "lezioni": lezioni,
-            "domande": domande[:N_TEST], "risposte": None, "voto": None}
+            "domande": domande[:n], "risposte": None, "voto": None, "difficolta": difficolta, "esame_vero": bool(esame_vero)}
     d.setdefault("test", []).append(test)
     d["test"] = d["test"][-20:]
     salva(base, materia, d)
@@ -353,8 +362,11 @@ def test_correggi(base, materia, risposte, sec=0, L="it"):
         ris.append(v if v in (0, 1, 2, 3) else None)
     giuste = sum(1 for q, r in zip(dom, ris) if r == q["giusta"])
     vuote = sum(1 for r in ris if r is None)
-    test.update(risposte=ris, giuste=giuste, sbagliate=len(dom) - giuste - vuote, vuote=vuote, sec=int(sec or 0),
-                voto=round(30 * giuste / max(1, len(dom))))
+    sbagliate = len(dom) - giuste - vuote
+    # «come all'esame vero»: ogni risposta sbagliata toglie 0,25 punti (le vuote no)
+    punti = giuste - (0.25 * sbagliate if test.get("esame_vero") else 0)
+    test.update(risposte=ris, giuste=giuste, sbagliate=sbagliate, vuote=vuote, sec=int(sec or 0), punti=punti,
+                voto=max(0, round(30 * punti / max(1, len(dom)))))
     # lezioni con piu' errori: da ripassare
     lez = {x["n"]: x for x in test.get("lezioni") or []}
     errori = {}

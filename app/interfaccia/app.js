@@ -117,7 +117,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -141,13 +141,14 @@ function vai(p, tornando = false) {
     else STORIA = [];
   }
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   if (INTERNE.includes(p)) frecciaIndietro(p);
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
+  if (p === 'studia') apriStudia();
   if (p === 'fare') apriCose();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') disegnaAgg();
@@ -917,7 +918,7 @@ async function caricaLezioni() {
 function disegnaLezioni() {
   if (!LZ) return;
   const q = $('cerca').value.trim().toLowerCase();
-  const L = LZ.lezioni.filter(l => !q || (l.nome + ' ' + l.quando).toLowerCase().includes(q));
+  const L = LZ.lezioni.filter(l => !q || (l.nome + ' ' + l.quando + ' ' + (l.materia || '')).toLowerCase().includes(q));
   const n = LZ.lezioni.length;
   $('aSub').textContent = n === 1 ? t('ar.sub1') : n ? t('ar.subn', {n}) : t('ar.sub0');
   $('aVid').textContent = LZ.video_testo;
@@ -935,7 +936,7 @@ function disegnaLezioni() {
     else if (l.stato === 'in_corso') pill = `<span class="pill p-blue"><span class="spin" style="width:12px;height:12px"></span>${t('ar.lav')}</span>`;
     else if (l.dopo) { pill = `<span class="pill p-vio">${t('and.datr')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('play')}${t('and.trascrivi')}</button>`; }
     else if (l.stato === 'da_completare') { pill = `<span class="pill p-warn">${t('ar.dacomp')}</span>`; prim = `<button class="btn b-main b-sm" data-a="completa">${ico('redo')}${t('ar.completa')}</button>`; }
-    else if (l.n_appunti) { pill = ''; prim = `<button class="btn b-main b-sm" data-a="appunti">${ico('doc')}${t('ar.apriap')}</button>`; }
+    else if (l.n_appunti) { pill = ''; prim = ''; }
     else if (l.crea_appunti) { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = `<button class="btn b-cor b-sm" data-a="crea">${ico('spark')}${t('ar.crea')}</button>`; }
     else { pill = `<span class="pill p-blue">${t('ar.pac')}</span>`; prim = ANDROID ? '' : `<button class="btn b-main b-sm" data-a="pacchetti">${ico('folder')}${t('ar.cartpac')}</button>`; }
     const rip = l.ripasso && l.ripasso.n && l.stato !== 'in_corso' ? `<button class="btn b-rip b-sm" data-a="ripassa">${ico('cards')}${t('ar.rip', {n: l.ripasso.n})}</button>` : '';
@@ -945,16 +946,18 @@ function disegnaLezioni() {
       (l.n_appunti && l.stato === 'pronta' ? `<button class="btn b-ghost b-sm" data-a="condividi">${ico('share')}${t('ar.cond')}</button>` : '');
     // (Chiedi, Capitoli, Chi parla, Condividi, Trascrizione, Video: nel menu «⋯ Altro»)
     const altro = l.stato !== 'in_corso' ? `<button class="btn b-ghost b-sm b-altro" data-a="menu" title="${t('ar.altre')}">⋯ ${t('ar.altro')}</button>` : '';
-    const sec = rip + altro;
+    const apre = l.stato === 'pronta' && l.n_appunti && !(APLAV && APLAV === l.cartella);
+    const sec = apre ? `<span class="hint">${esc(t('lz.apri'))}</span>` : rip + altro;
     const tags = l.n_appunti ? (l.formati || []).map(f => `<span class="ftag ${f}">${esc(nomeFormato(f, l.nome_mio))}</span>`).join('') : '';
     const badge = l.stato === 'pronta' ? (l.video ? t('ar.b.video') : t('ar.b.solo')) : l.stato === 'in_corso' ? t('ar.b.corso') : t('ar.b.finire');
-    return `<div class="lez" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
-      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b>${tags}<div class="meta">${meta}</div>${errL}<div class="acts">${pill}${prim}${sec}</div></div></div>`;
+    return `<div class="lez${apre ? ' apri' : ''}" data-i="${LZ.lezioni.indexOf(l)}"><div class="cov c${l.colore}">${esc(l.sigla)}<small>${badge}</small></div>
+      <div class="inf"><b title="${esc(l.nome)}">${esc(l.nome)}</b>${tags}<div class="meta">${meta}</div>${errL}<div class="acts">${pill}${prim}${sec}</div></div>${apre ? '<span class="chev">›</span>' : ''}</div>`;
   }).join('');
   disegnaBanda();
   if ($('lista').dataset.h === h) return;
   $('lista').dataset.h = h; $('lista').innerHTML = h;
   $('lista').querySelectorAll('[data-a]').forEach(b => b.onclick = e => azioneLezione(LZ.lezioni[+b.closest('.lez').dataset.i], b.dataset.a, e));
+  $('lista').querySelectorAll('.lez.apri').forEach(r => r.onclick = () => apriLezione(LZ.lezioni[+r.dataset.i]));
 }
 async function azioneLezione(l, a, e) {
   const c = l.cartella;
@@ -1017,27 +1020,29 @@ async function azioneLezione(l, a, e) {
   }
   if (a === 'menu') return menuLezione(l, e.currentTarget || e.target);
 }
-function menuLezione(l, btn) {
+function menuLezione(l, btn, servizio = false) {
   document.querySelectorAll('.menu').forEach(m => m.remove());
   const m = document.createElement('div'); m.className = 'menu';
   const voci = [];
   const pronta = l.stato === 'pronta';
+  if (!servizio) {
   if (l.trascritta && pronta) voci.push(['chiedi', 'chat', t('ar.m.chiedi')]);
   if (l.capitoli && pronta) voci.push(['capitoli', 'text', t('ar.cap')]);
   if (l.voci >= 2 && pronta) voci.push(['voci', 'chat', t('ar.voci')]);
   if (l.n_appunti && pronta) voci.push(['condividi', 'share', t('ar.cond')]);
   if (pronta) voci.push(['tras', 'text', t('ar.tras')]);
   if (l.video && pronta) voci.push(['video', 'play', t('ar.vid')]);
+  }
   if (voci.length) voci.push(['-']);
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
   (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
-  if (l.n_appunti) voci.push(['ascolta', 'play', t('ar.m.asc')]);
-  if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
+  if (l.n_appunti && !servizio) voci.push(['ascolta', 'play', t('ar.m.asc')]);
+  if (l.trascritta && l.stato === 'pronta' && !servizio) voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
-  if (l.trascritta && l.stato === 'pronta') voci.push(['stat', 'chat', t('ar.m.stat')]);
-  if (l.video && l.stato === 'pronta') voci.push(['spezzone', 'film', t('ar.m.sp')]);
+  if (l.trascritta && l.stato === 'pronta' && !servizio) voci.push(['stat', 'chat', t('ar.m.stat')]);
+  if (l.video && l.stato === 'pronta' && !servizio) voci.push(['spezzone', 'film', t('ar.m.sp')]);
   if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
@@ -1409,12 +1414,13 @@ function testoRisposta(x) {
 function disegnaChiedi() {
   const L = CH.lez;
   $('chSub').textContent = CH.tutta ? `${CH.materia} · ${t('ch.lezioni', {n: CH.cartelle.length})}` : `${L.nome} · ${L.quando}`;
-  const h = CH.storia.length ? CH.storia.map(m => m.chi === 'io' ? `<div class="msg io">${esc(m.testo)}</div>`
+  const h = CH.storia.length ? CH.storia.map((m, k) => m.chi === 'io' ? `<div class="msg io">${esc(m.testo)}</div>`
     : m.chi === 'att' ? `<div class="msg cl"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> ${esc(t('ch.pensa'))}</div>`
     : m.chi === 'err' ? `<div class="msg cl" style="color:#be123c">⚠ ${esc(m.testo)}</div>`
-    : `<div class="msg cl">${testoRisposta(m.testo)}</div>`).join('')
+    : `<div class="msg cl">${testoRisposta(m.testo)}<div class="solo-dsa" style="margin-top:6px"><button class="btn b-ghost ascolta" data-voce="${k}">${esc(t('ch.asc'))}</button></div></div>`).join('')
     : `<div class="msg vuoto">${esc(t('ch.vuoto'))}</div>`;
   $('chat').innerHTML = h;
+  $('chat').querySelectorAll('[data-voce]').forEach(b => b.onclick = () => voceParla(String(CH.storia[+b.dataset.voce].testo || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\*\*/g, '')));
   $('chat').querySelectorAll('.cita').forEach(b => b.onclick = () => mostraMomento(CH.cartelle[+b.dataset.i] || CH.cartelle[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, CH.nomi[+b.dataset.i] || ''));
   $('chat').scrollTop = $('chat').scrollHeight;
 }
@@ -1671,7 +1677,7 @@ function disegnaEsame() {
   $('esRifai').onclick = () => apriEsame(ES.m, true);
   $('esSim').onclick = () => nuovaSimulazione();
   $('esOrale').onclick = () => nuovaOrale();
-  $('esTest').onclick = () => nuovoTest(false);
+  $('esTest').onclick = () => sceltaTest();
   if (TC.test) disegnaTest();
   if (OR.orale) disegnaOrale();
   if ($('esCal')) $('esCal').onclick = () => dialogo({titolo: t('es.cal.t'), testo: t('es.cal.s'), bottoni: ANDROID ? [{t: t('annulla'), v: false},
@@ -1688,10 +1694,12 @@ function disegnaSimulazione(sim) {
     ${sim.voto == null ? `<div class="hint" style="margin:4px 0 8px">${esc(t('es.sim.s'))}</div>` : ''}
     ${sim.domande.map((q, i) => { const c = corr.find(x => x.n === i + 1);
       return `<div class="essim"><b>${i + 1}. ${esc(q.domanda)}</b> <span class="hint">(${q.punti})</span>
-        <textarea class="in" rows="4" data-i="${i}" placeholder="${esc(t('es.risp'))}"${sim.voto != null ? ' readonly' : ''}>${esc((sim.risposte || [])[i] || '')}</textarea>
+        <textarea class="in" rows="4" data-i="${i}" placeholder="${esc(t('es.risp'))}"${sim.voto != null ? ' readonly' : ''}>${esc((sim.risposte || [])[i] || '')}</textarea>${sim.voto == null ? `<div class="row solo-dsa" style="margin-top:6px;gap:6px"><button class="btn b-ghost b-sm" data-det="${i}">${esc(t('dt.detta'))}</button><button class="btn b-ghost b-sm" data-sasc="${i}">${esc(t('tc.ascolta'))}</button></div>` : ''}
         ${c ? `<div class="escorr"><b>${esc(t('es.punti', {p: num(c.punti), s: num(c.su)}))}</b>${c.bene ? `<div><span style="color:var(--ok)">✓</span> ${esc(c.bene)}</div>` : ''}${c.manca ? `<div><span style="color:#be123c">✗</span> ${esc(c.manca)}</div>` : ''}</div>` : ''}</div>`; }).join('')}
     ${sim.consiglio ? `<div class="avviso2 mt">${esc(sim.consiglio)}</div>` : ''}
     <div class="row mt" style="justify-content:flex-end;gap:8px">${sim.voto == null ? `<button class="btn b-main b-sm" id="esCorr">${esc(t('es.correggi'))}</button>` : `<button class="btn b-cor b-sm" id="esNuova">${esc(t('es.nuova'))}</button>`}</div>`;
+  box.querySelectorAll('[data-det]').forEach(b => b.onclick = () => detta(b, box.querySelector(`textarea[data-i="${b.dataset.det}"]`)));
+  box.querySelectorAll('[data-sasc]').forEach(b => b.onclick = () => voceParla(sim.domande[+b.dataset.sasc].domanda));
   if ($('esCorr')) $('esCorr').onclick = async () => {
     const b = $('esCorr'); b.disabled = true; b.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('es.corr.lav'))}`;
     const r = await A.esame_correggi(ES.m.m, [...box.querySelectorAll('textarea')].map(x => x.value));
@@ -1700,18 +1708,189 @@ function disegnaSimulazione(sim) {
   };
   if ($('esNuova')) $('esNuova').onclick = () => nuovaSimulazione();
 }
+/* ------------------------------------------------------------------ pagina della lezione */
+// Le funzioni della lezione in riquadri divisi per gruppi; con la Modalità DSA in cima «Per te», il resto in grigio.
+var LEZ = null;
+const tile = (a, icona, tit, sub, num, dup) => `<button class="tile${dup ? ' dup' : ''}" data-ta="${a}"><span class="ico i-blue">${icona}</span><span><b>${esc(tit)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}${num ? `<span class="num">${esc(num)}</span>` : ''}</span></button>`;
+const gruppo = (titolo, tiles) => tiles.filter(Boolean).length ? `<div class="grp"><div class="lbl">${esc(titolo)}</div><div class="tiles">${tiles.filter(Boolean).join('')}</div></div>` : '';
+function apriLezione(l) { LEZ = l; disegnaLezione(); vai('lezione'); }
+function disegnaLezione() {
+  const l = LZ && LZ.lezioni.find(x => x.cartella === LEZ.cartella) || LEZ; LEZ = l;
+  const pronta = l.stato === 'pronta', dsa = !!(R && R.facilitata);
+  $('lzTit').textContent = l.nome;
+  $('lzSub').textContent = [l.quando, l.durata, l.materia, ...(l.formati || []).map(f => nomeFormato(f, l.nome_mio))].filter(Boolean).join(' · ');
+  const rip = l.ripasso && l.ripasso.n ? (l.ripasso.no ? t('tl.flash.n', {n: l.ripasso.n, r: l.ripasso.no}) : t(l.ripasso.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: l.ripasso.n})) : '';
+  const ha = {ap: l.n_appunti, asc: l.n_appunti, tras: pronta, vid: l.video && pronta, chiedi: l.trascritta && pronta, mappa: l.trascritta && pronta, ig: l.trascritta && pronta,
+              cap: l.capitoli && pronta, voci: l.trascritta && pronta, flash: l.ripasso && l.ripasso.n, mat: l.materia && lezioniMateria(l).length, cond: l.n_appunti && pronta, sp: l.video && pronta};
+  const D = new Set(dsa ? ['ap', 'asc', 'mappa', 'cap', 'chiedi', 'flash'] : []);
+  const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
+      ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.dsa.asc.s')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.dsa.mappa.s')),
+      ha.ap && tile('appunti_dsa', '📄', t('tl.dsa.ap'), t('tl.dsa.ap.s')), ha.flash && tile('ripassa', '🃏', t('tl.dsa.flash'), t('tl.dsa.flash.s'), rip),
+      ha.chiedi && tile('chiedi', '💬', t('tl.dsa.chiedi'), t('tl.dsa.chiedi.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.dsa.cap.s'))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+  const d = k => D.has(k);
+  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
+      ha.tras && tile('tras', '📝', t('tl.tras'), t('tl.tras.s')), ha.vid && tile('video', '▶', t('tl.vid'), t('tl.vid.s'))]) +
+    gruppo(t('g.capisci'), [ha.chiedi && tile('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), '', d('chiedi')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.mappa.s'), '', d('mappa')),
+      ha.ig && tile('infografica', '🖼', t('tl.ig'), t('tl.ig.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), '', d('cap')),
+      ha.voci && tile(l.voci >= 2 ? 'voci' : 'stat', '👥', t('tl.voci'), t('tl.voci.s'))]) +
+    gruppo(t('g.ripassa'), [ha.flash && tile('ripassa', '🃏', t('tl.flash'), t('tl.flash.s'), rip, d('flash')), ha.mat && tile('studia_mat', '🎓', t('tl.mat', {m: l.materia}), t('tl.mat.s'))]) +
+    gruppo(t('g.condividi'), [ha.cond && tile('condividi', '📤', t('tl.cond'), t('tl.cond.s')), ha.sp && tile('spezzone', '✂', t('tl.sp'), t('tl.sp.s'))]);
+  $('lzBox').innerHTML = dsaGr + `<div class="altri">${resto}</div>`;
+  // un gruppo con tutto gia' in «Per te» non si mostra
+  $('lzBox').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
+  $('lzBox').querySelectorAll('[data-ta]').forEach(b => b.onclick = () => tileLezione(l, b.dataset.ta));
+}
+async function tileLezione(l, a) {
+  if (a === 'appunti_dsa') { toast(t('as.lav')); const r = await A.appunti_dsa(l.cartella); if (!r.ok) toast(r.msg || ''); return; }
+  if (a === 'studia_mat') return apriStudia(l.materia);
+  return azioneLezione(l, a);
+}
+
+/* ------------------------------------------------------------------ Studia: la materia */
+var STU = {m: null, info: null};
+function materieStudia() {
+  const M = [];
+  (LZ ? LZ.lezioni : []).forEach(l => {
+    if (!l.n_appunti || l.stato !== 'pronta' || !l.materia) return;
+    let m = M.find(x => x.m.toLowerCase() === l.materia.toLowerCase());
+    if (!m) M.push(m = {m: l.materia, cartelle: [], lez: [], n: 0, no: 0, tre: 0});
+    m.cartelle.push(l.cartella); m.lez.push(l);
+    if (l.ripasso) { m.n += l.ripasso.n || 0; m.no += l.ripasso.no || 0; m.tre += l.ripasso.tre || 0; }
+  });
+  return M;
+}
+async function apriStudia(materia) {
+  if (materia) STU.m = materia;
+  if (pagina !== 'studia') { vai('studia'); return; }       // vai() richiama apriStudia
+  if (!LZ) await caricaLezioni();
+  disegnaStudia();
+}
+async function disegnaStudia() {
+  const M = materieStudia();
+  if (!M.length) { $('stMat').innerHTML = ''; $('stBox2').innerHTML = `<div class="card"><div class="hint">${esc(t('st.vuoto'))}</div></div>`; return; }
+  const m = M.find(x => STU.m && x.m.toLowerCase() === STU.m.toLowerCase()) || M[0];
+  STU.m = m.m;
+  $('stMat').innerHTML = M.map(x => `<span data-m="${esc(x.m)}" class="${x === m ? 'on' : ''}">${esc(x.m)} · ${esc(x.lez.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: x.lez.length}))}</span>`).join('');
+  $('stMat').querySelectorAll('span').forEach(s => s.onclick = () => { STU.m = s.dataset.m; disegnaStudia(); });
+  const info = await A.studia_info(m.m);
+  if (STU.m !== m.m) return;
+  STU.info = info;
+  const dsa = !!(R && R.facilitata), ult = v => v && v.length ? t('tl.ultimo', {v: v[v.length - 1]}) : '';
+  let gg;
+  if (info.giorni == null || info.giorni < 0) gg = `<div class="card stgg"><div style="flex:1"><b style="color:var(--ink)">${esc(t('st.nodata', {m: m.m}))}</b><div class="hint">${esc(t('st.nodata.s'))}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.data'))}</button></div>`;
+  else gg = `<div class="card stgg">${info.giorni ? `<div class="gg">${info.giorni}</div>` : ''}<div style="flex:1"><b style="color:var(--ink)">${esc(info.giorni ? t(info.giorni === 1 ? 'st.gg1' : 'st.gg', {m: m.m}) : t('st.oggi.esame', {m: m.m}))}</b><div class="hint">${esc(fmtG(info.data_esame, {day: 'numeric', month: 'long'}))}${info.oggi && info.oggi.cose ? ' · ' + esc(t('st.oggi', {c: info.oggi.cose.join(', ')})) : ''}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.piano'))}</button></div>`;
+  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso'] : []), d = k => D.has(k);
+  const fl = m.n ? (m.no ? t('tl.flash.n', {n: m.n, r: m.no}) : t(m.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: m.n})) : '';
+  const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
+      tile('orale', '🎤', t('tl.orale'), t('tl.dsa.orale.s'), ult(info.voti_orali)), tile('test', '☑', t('tl.dsa.test'), t('tl.dsa.test.s'), ult(info.voti_test)),
+      tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s')), m.n && tile('fcorso', '🃏', t('tl.dsa.flash'), t('tl.dsa.flc.s'), fl),
+      tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+  const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
+      tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto'))]) +
+    gruppo(t('g.ripassa'), [tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
+    gruppo(t('g.capisci'), [tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
+  const v = x => x && x.length ? x.join(' · ') : '—';
+  const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
+  $('stBox2').innerHTML = gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
+  $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
+}
+async function tileStudia(m, a) {
+  const esame = {m: m.m, cartelle: m.cartelle};
+  if (a === 'piano' || a === 'prob') { await apriEsame(esame); return; }
+  if (a === 'test' || a === 'orale' || a === 'scritto') {
+    await apriEsame(esame);
+    if (!ES.d) return;
+    if (a === 'test') sceltaTest(); else if (a === 'orale') nuovaOrale(); else nuovaSimulazione();
+    return;
+  }
+  if (a === 'fcorso') return iniziaRipasso(m.cartelle, m.m, 'prima');
+  if (a === 'ascm') return apriAscoltaMateria(m);
+  if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
+  if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
+  if (a === 'mappe') {
+    const lz = m.lez.filter(l => l.trascritta);
+    const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
+    if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
+  }
+}
+async function apriAscoltaMateria(m) {
+  asFerma(true);
+  const finta = {cartella: '', nome: m.m, quando: m.lez.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: m.lez.length}), nome_mio: ''};
+  AS = {lez: finta, d: null, f: 0, frasi: [], i: 0, attivo: false, vel: AS.vel || 1};
+  $('asSub').textContent = `${m.m} · ${finta.quando}`;
+  $('asFmt').classList.add('hidden');
+  $('asBox').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('as.lav'))}</div>`;
+  disegnaVel(); disegnaPlay(); disegnaFacilitata(); vai('ascolta');
+  const sezioni = [];
+  for (const l of m.lez) {
+    const r = await A.ascolta_appunti(l.cartella);
+    if (AS.lez !== finta) return;
+    const f = r.ok && r.formati[0];
+    if (!f) continue;
+    sezioni.push({titolo: l.nome, punti: f.riassunto ? [f.riassunto] : []}, ...f.sezioni);
+  }
+  if (!sezioni.length) { $('asBox').innerHTML = `<div class="hint">${esc(t('as.vuoto'))}</div>`; return; }
+  AS.d = {formati: [{formato: 'cornell', titolo: m.m, sezioni, riassunto: ''}]};
+  disegnaAscolta();
+}
+
+/* ------------------------------------------------------------------ dettatura (Modalità DSA) */
+// Si registra dal microfono, si trascrive sul PC o sul telefono e il testo va nel campo. Niente Claude.
+var DT = null;
+async function detta(btn, campo) {
+  if (DT && DT.btn !== btn) return;
+  if (DT) {                                   // secondo tocco: fine
+    const d = DT; DT = null; clearInterval(d.poll);
+    btn.disabled = true; btn.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('dt.lav'))}`;
+    const r = await A.detta_fine();
+    btn.disabled = false; btn.textContent = d.testo; btn.classList.remove('b-rec');
+    if (r.ok) { campo.value = (campo.value.trim() ? campo.value.trim() + ' ' : '') + r.testo; campo.dispatchEvent(new Event('input')); } else toast(r.msg || '');
+    return;
+  }
+  voceFerma();
+  const r = await A.detta_avvia();
+  if (!r.ok) { toast(r.msg || ''); return; }
+  DT = {btn, testo: btn.textContent};
+  btn.classList.add('b-rec'); btn.textContent = t('dt.ferma');
+  DT.poll = setInterval(async () => { const l = await A.detta_livello(); if (DT && l.ok) btn.style.boxShadow = `0 0 0 ${2 + Math.round((l.livello || 0) * 10)}px rgba(225,29,72,.15)`; }, 300);
+}
+
 /* ------------------------------------------------------------------ test a crocette */
 // 10 domande a 4 risposte su tutta la materia; si corregge sul PC (gratis): voto, perche' era sbagliata, dove ripassare.
 var TC = {test: null};   // var: apriEsame() lo guarda subito
+var TCS = {n: 10, diff: 'media', vero: false};      // le scelte dell'ultimo test
+function sceltaTest() {
+  clearInterval(TC.timer); TC = {test: null};
+  const box = $('esTestBox'); box.classList.remove('hidden');
+  const seg = (id, vals, cur) => `<div class="seg" id="${id}">${vals.map(([v, n]) => `<span data-v="${v}" class="${String(v) === String(cur) ? 'on' : ''}">${esc(n)}</span>`).join('')}</div>`;
+  const dsa = !!(R && R.facilitata);
+  box.innerHTML = `<div class="lbl">${esc(t('tc.come'))}</div>
+    <div class="set"><div class="t"><b>${esc(t('tc.quante'))}</b></div>${seg('tcN', [[10, '10'], [20, '20'], [30, '30']], TCS.n)}</div>
+    <div class="set"><div class="t"><b>${esc(t('tc.diff'))}</b></div>${seg('tcD', [['facile', t('tc.facile')], ['media', t('tc.media')], ['difficile', t('tc.difficile')]], TCS.diff)}</div>
+    <div class="set"><div class="t"><b>${esc(t('tc.vero'))}</b><span>${esc(t('tc.vero.s'))}${dsa ? ' ' + esc(t('tc.vero.dsa')) : ''}</span></div><div class="sw${TCS.vero ? ' on' : ''}" id="tcV"></div></div>
+    <div class="row mt" style="justify-content:flex-end"><button class="btn b-cor b-sm" id="tcVia">${esc(t('tc.inizia'))}</button></div>`;
+  [['tcN', v => TCS.n = +v], ['tcD', v => TCS.diff = v]].forEach(([id, f]) => $(id).querySelectorAll('span').forEach(x => x.onclick = () => {
+    $(id).querySelectorAll('span').forEach(y => y.classList.toggle('on', y === x)); f(x.dataset.v); }));
+  $('tcV').onclick = () => { TCS.vero = !TCS.vero; $('tcV').classList.toggle('on', TCS.vero); };
+  $('tcVia').onclick = () => nuovoTest(false);
+  box.scrollIntoView({block: 'start'});
+}
 async function nuovoTest(soloSbagliate) {
   clearInterval(TC.timer);
   const box = $('esTestBox'); box.classList.remove('hidden');
   box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('tc.lav'))}</div>`;
   box.scrollIntoView({block: 'start'});
-  const r = await A.test_nuovo(ES.m.m, ES.m.cartelle, !!soloSbagliate);
+  const r = await A.test_nuovo(ES.m.m, ES.m.cartelle, !!soloSbagliate, TCS.n, TCS.diff, TCS.vero);
   if (!r.ok) { box.innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
   TC = {test: r.test, scelte: [], sec: 0, corretto: false};
-  TC.timer = setInterval(() => { TC.sec++; if ($('tcT')) $('tcT').textContent = mmss(TC.sec); }, 1000);
+  // «come all'esame vero»: 1 minuto a domanda (30% in piu' con la Modalita' DSA), poi si corregge da solo
+  TC.limite = r.test.esame_vero ? Math.round(r.test.domande.length * 60 * (R && R.facilitata ? 1.3 : 1)) : 0;
+  TC.timer = setInterval(() => {
+    TC.sec++;
+    if ($('tcT')) $('tcT').textContent = TC.limite ? '⏱ ' + mmss(Math.max(0, TC.limite - TC.sec)) : mmss(TC.sec);
+    if (TC.limite && TC.sec >= TC.limite && $('tcCorr')) $('tcCorr').click();
+  }, 1000);
   disegnaTest();
 }
 const mmss = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
@@ -1722,8 +1901,9 @@ function disegnaTest() {
   const fatto = T.voto != null && T.risposte;
   const sc = fatto ? T.risposte : TC.scelte;
   let h = `<div class="row"><div class="lbl sp" style="margin:0">${esc(t(T.ripasso ? 'tc.h.rip' : 'tc.h', {n: T.domande.length}))}</div>${fatto
-    ? `<span class="pill ${T.voto >= 18 ? 'p-ok' : 'p-red'}" style="font-size:14px">${esc(t('es.voto', {v: T.voto}))}</span>` : `<span class="tctempo" id="tcT">${mmss(TC.sec || 0)}</span>`}</div>`;
-  if (fatto) h += `<div class="tcris"><div><b>${T.giuste}</b>${esc(t('tc.giuste'))}</div><div><b>${T.sbagliate}</b>${esc(t('tc.sbagliate'))}</div><div><b>${T.vuote}</b>${esc(t('tc.vuote'))}</div><div><b>${mmss(T.sec || 0)}</b>${esc(t('tc.tempo'))}</div></div>`;
+    ? `<span class="pill ${T.voto >= 18 ? 'p-ok' : 'p-red'}" style="font-size:14px">${esc(t('es.voto', {v: T.voto}))}</span>` : `<span class="tctempo" id="tcT">${TC.limite ? '⏱ ' + mmss(Math.max(0, TC.limite - (TC.sec || 0))) : mmss(TC.sec || 0)}</span>`}</div>`;
+  if (fatto) h += `<div class="tcris"><div><b>${T.giuste}</b>${esc(t('tc.giuste'))}</div><div><b>${T.sbagliate}</b>${esc(t('tc.sbagliate'))}</div><div><b>${T.vuote}</b>${esc(t('tc.vuote'))}</div><div><b>${mmss(T.sec || 0)}</b>${esc(t('tc.tempo'))}</div></div>` +
+    (T.esame_vero ? `<div class="hint" style="margin-top:6px">${esc(t('tc.calc', {g: T.giuste, s: T.sbagliate, p: num(T.punti), n: T.domande.length}))}</div>` : '');
   h += T.domande.map((q, i) => {
     const lz = tcLezione(q.lezione);
     const dove = fatto && lz ? `<div class="tcdove">${q.sec != null ? `<button class="lnk" data-mom="${i}">${esc(t('tc.dove.min', {n: lz.n, d: lz.data, m: Math.floor(q.sec / 60)}))}</button>` : esc(t('tc.dove', {n: lz.n, d: lz.data}))}</div>` : '';
@@ -1733,7 +1913,8 @@ function disegnaTest() {
       return `<button data-i="${i}" data-j="${j}" class="${c}"><span class="l">${'ABCD'[j]}</span><span>${esc(o)}</span></button>`;
     }).join('');
     const spieg = fatto && sc[i] !== q.giusta ? `<div class="tcspieg"><b>${esc(sc[i] == null ? t('tc.vuota') : t('tc.perche'))}</b> ${esc(q.spiegazione)}${lz ? ` <button class="lnk" data-ch="${i}">${esc(t('tc.chiedi'))}</button>` : ''}</div>` : '';
-    return `<div class="tcq"><b>${i + 1}. ${esc(q.domanda)}</b>${dove}<div class="tcopz${fatto ? ' chiusa' : ''}">${opz}</div>${spieg}</div>`;
+    const asc = `<button class="btn b-ghost ascolta solo-dsa" data-asc="${i}">${esc(t('tc.ascolta'))}</button>`;
+    return `<div class="tcq"><b>${i + 1}. ${esc(q.domanda)}</b>${asc}${dove}<div class="tcopz${fatto ? ' chiusa' : ''}">${opz}</div>${spieg}</div>`;
   }).join('');
   if (fatto) {
     const consigli = [(T.da_ripassare || []).length ? t('tc.ripassa', {l: T.da_ripassare.join(', ')}) : '', T.flashcard ? t('tc.flash') : ''].filter(Boolean).join(' ');
@@ -1745,6 +1926,7 @@ function disegnaTest() {
     TC.scelte[+b.dataset.i] = +b.dataset.j;
     box.querySelectorAll(`.tcopz button[data-i="${b.dataset.i}"]`).forEach(x => x.classList.toggle('sc', x === b));
   });
+  box.querySelectorAll('[data-asc]').forEach(b => b.onclick = () => { const q = T.domande[+b.dataset.asc]; voceParla(q.domanda + '. ' + q.opzioni.map((o, j) => 'ABCD'[j] + ': ' + o).join('. ')); });
   box.querySelectorAll('[data-mom]').forEach(b => b.onclick = () => { const q = T.domande[+b.dataset.mom], lz = tcLezione(q.lezione); mostraMomento(lz.cartella, q.sec, null, lz.nome); });
   box.querySelectorAll('[data-ch]').forEach(b => b.onclick = async () => {
     const q = T.domande[+b.dataset.ch], lz = tcLezione(q.lezione);
@@ -1763,7 +1945,7 @@ function disegnaTest() {
     caricaLezioni();     // i numeri «da rivedere» delle flashcard cambiano
   };
   if ($('tcSolo')) $('tcSolo').onclick = () => nuovoTest(true);
-  if ($('tcNuovo')) $('tcNuovo').onclick = () => nuovoTest(false);
+  if ($('tcNuovo')) $('tcNuovo').onclick = () => sceltaTest();
 }
 
 /* ------------------------------------------------------------------ la voce (lettura ad alta voce) */
@@ -1803,9 +1985,12 @@ function voceFerma() {
 /* ------------------------------------------------------------------ ascolta gli appunti + lettura facilitata */
 var AS = {lez: null, d: null, f: 0, frasi: [], i: 0, attivo: false, vel: 1};   // var: vai() lo guarda subito
 function disegnaFacilitata() {
-  document.documentElement.classList.toggle('dsa', !!(R && R.facilitata));
-  ['swFac', 'asFac'].forEach(id => { if ($(id)) $(id).classList.toggle('on', !!(R && R.facilitata)); });
+  const on = !!(R && R.facilitata);
+  document.documentElement.classList.toggle('dsa', on);
+  ['swFac', 'asFac'].forEach(id => { if ($(id)) $(id).classList.toggle('on', on); });
+  document.querySelectorAll('[data-dsa] .sw').forEach(x => x.classList.toggle('on', on));
 }
+async function cambiaDsa() { await A.imposta('lettura_facilitata', !R.facilitata); await rileggi(); if (pagina === 'lezione' && LEZ) disegnaLezione(); if (pagina === 'studia') disegnaStudia(); if (TC.test && !TC.test.voto && TC.test.risposte == null) disegnaTest(); }
 const disegnaVel = () => $('asVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === AS.vel));
 const disegnaPlay = () => { $('asPlay').textContent = t(AS.attivo ? 'as.pausa' : AS.i > 0 ? 'as.continua' : 'as.leggi'); };
 async function apriAscolta(l) {
@@ -2329,7 +2514,10 @@ function collegaNovita() {
   $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
   $('swVoci').onclick = async () => { await A.imposta('chi_parla', !R.chi_parla); await rileggi(); };
-  $('swFac').onclick = $('asFac').onclick = async () => { await A.imposta('lettura_facilitata', !R.facilitata); await rileggi(); };
+  $('swFac').onclick = $('asFac').onclick = cambiaDsa;
+  document.querySelectorAll('[data-dsa]').forEach(x => x.onclick = cambiaDsa);
+  $('lzAltro').onclick = e => LEZ && menuLezione(LEZ, e.currentTarget, true);
+  $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
   $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });
   $('swRap').onclick = async () => { await A.imposta('rapporti_errori', !R.rapporti); await rileggi(); };
@@ -2427,6 +2615,12 @@ function cartaRip() {
   $('cE').style.display = c.errore ? '' : 'none'; $('cE').textContent = t('rp.err', {e: c.errore});
   $('rpN').textContent = t('rp.n', {i: RP.i + 1, n}); $('rpBar').style.width = (RP.i / n * 100) + '%'; $('rpOk').textContent = '✓ ' + RP.ok;
   $('rpSub').textContent = t('rp.sub', {n});
+  document.querySelectorAll('#carta .ascolta').forEach(b => b.remove());
+  const bF = document.createElement('button'), bR = document.createElement('button');
+  [bF, bR].forEach(b => { b.className = 'btn b-ghost ascolta solo-dsa'; b.textContent = t('tc.ascolta'); b.style.marginTop = '10px'; });
+  bF.onclick = e => { e.stopPropagation(); voceParla(c.domanda); };
+  bR.onclick = e => { e.stopPropagation(); voceParla([...c.schema, ...(c.aggiunte || [])].join('. ')); };
+  document.querySelector('#carta .fronte').appendChild(bF); document.querySelector('#carta .retro').appendChild(bR);
 }
 function giraRip() { $('carta').classList.toggle('giro'); $('voto').classList.add('on'); }
 function votoRip(v) {

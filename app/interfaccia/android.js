@@ -296,6 +296,10 @@ if (ANDROID) {
     "<b>Simulazione scritta</b>: rispondi come allo scritto, poi <b>Correggi</b>: punti, cosa manca e voto. Pochi centesimi.",
     "<b>🎤 Interrogazione a voce</b>: rispondi parlando, come all'orale; se manca qualcosa arriva una domanda in più. Alla fine voto e come hai parlato.",
     "<b>☑ Test a crocette</b>: 10 domande a 4 risposte; alla fine il voto e perché ogni errore era sbagliato. Puoi rifare solo le sbagliate.",
+    "<b>La pagina della lezione</b>: tocca una lezione in «Le mie registrazioni» e trovi tutto in riquadri: <b>Leggi</b>, <b>Capisci</b>, <b>Ripassa</b>, <b>Condividi</b>. In «⋯ Altro» restano rinomina, rifai gli appunti, slide del docente, cartella, elimina.",
+    "<b>🎓 Studia</b> (menu a sinistra): scegli la materia e hai i giorni all'esame, il piano di oggi, test a crocette, interrogazione, simulazione scritta, flashcard e Chiedi su tutto il corso, e i tuoi voti.",
+    "<b>Test a crocette</b>: scegli 10, 20 o 30 domande, la difficoltà e, se vuoi, <b>come all'esame vero</b> (1 minuto a domanda, −0,25 per ogni risposta sbagliata).",
+    "<b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima gli strumenti più utili per chi ha un DSA (ascolto, mappe, appunti facili da leggere, flashcard e test letti a voce, Chiedi e scritto dettati a voce), il resto in grigio sotto; carattere leggibile, più spazio, fondo crema e 30% di tempo in più nei test.",
     "In alto la freccia <b>←</b> (o il tasto Indietro) ti riporta alla pagina da cui sei arrivato."
    ],
    "g": "studio"
@@ -644,6 +648,10 @@ if (ANDROID) {
     "<b>Written mock exam</b>: answer as in the written exam, then <b>Correct</b>: points, what is missing and the mark. A few cents.",
     "<b>🎤 Oral exam</b>: answer out loud, as in an oral exam; if something is missing you get a follow-up question. At the end the mark and how you spoke.",
     "<b>☑ Multiple-choice test</b>: 10 questions with 4 answers; at the end the mark and why each mistake was wrong. You can redo only the wrong ones.",
+    "<b>The lecture page</b>: tap a lecture in «My recordings» and find everything in tiles: <b>Read</b>, <b>Understand</b>, <b>Review</b>, <b>Share</b>. «⋯ More» keeps rename, redo the notes, lecturer slides, folder, delete.",
+    "<b>🎓 Study</b> (menu on the left): choose the course and get the days to the exam, today's plan, multiple-choice test, oral exam, written mock exam, flashcards and Ask on the whole course, and your marks.",
+    "<b>Multiple-choice test</b>: choose 10, 20 or 30 questions, the difficulty and, if you want, <b>like the real exam</b> (1 minute per question, −0.25 for each wrong answer).",
+    "<b>Dyslexia mode</b> (at the top of the lecture and Study pages, or in Settings): the most useful tools first (listening, maps, easy-to-read notes, flashcards and tests read aloud, dictated Ask and written answers), everything else in grey below; legible font, more space, cream background and 30% more time in tests.",
     "At the top the <b>←</b> arrow (or the Back key) takes you back to the page you came from."
    ],
    "g": "studio"

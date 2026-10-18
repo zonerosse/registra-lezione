@@ -189,6 +189,10 @@ const GUIDA = {
      "<b>✍ Simulazione scritta</b>: domande nuove su tutto il corso. Rispondi come all'esame scritto, senza guardare gli appunti, poi tocca <b>Correggi</b>: punti per ogni domanda, cosa va bene, cosa manca, voto in trentesimi e cosa ripassare prima.",
      "<b>🎤 Interrogazione a voce</b>: come all'orale. Il docente fa 3 domande, tu tocchi il microfono e rispondi parlando; se manca qualcosa ti fa una <b>domanda in più</b>. Alla fine: voto, cosa va bene e cosa manca, e <b>come hai parlato</b> (tempo, «cioè» ed «ehm», pause). La voce si trascrive sul PC: a Claude va solo il testo.",
      "<b>☑ Test a crocette</b>: 10 domande a 4 risposte su tutta la materia, come i test d'esame. <b>Correggi</b>: voto, risposte giuste e sbagliate, e per ogni errore <b>perché era sbagliata</b>, con la lezione e il minuto (tocca per rivederlo) e «Chiedi alla lezione». Le sbagliate vanno nelle flashcard «da rivedere»; puoi rifare <b>solo le sbagliate</b> (gratis).",
+     "<b>La pagina della lezione</b>: tocca una lezione in «Le mie registrazioni» e trovi tutto in riquadri: <b>Leggi</b>, <b>Capisci</b>, <b>Ripassa</b>, <b>Condividi</b>. In «⋯ Altro» restano rinomina, rifai gli appunti, slide del docente, cartella, elimina.",
+     "<b>🎓 Studia</b> (menu a sinistra): scegli la materia e hai i giorni all'esame, il piano di oggi, test a crocette, interrogazione, simulazione scritta, flashcard e Chiedi su tutto il corso, e i tuoi voti.",
+     "<b>Test a crocette</b>: scegli 10, 20 o 30 domande, la difficoltà e, se vuoi, <b>come all'esame vero</b> (1 minuto a domanda, −0,25 per ogni risposta sbagliata).",
+     "<b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima gli strumenti più utili per chi ha un DSA (ascolto, mappe, appunti facili da leggere, flashcard e test letti a voce, Chiedi e scritto dettati a voce), il resto in grigio sotto; carattere leggibile, più spazio, fondo crema e 30% di tempo in più nei test.",
      "In alto a sinistra la freccia <b>←</b> ti riporta alla pagina da cui sei arrivato."
     ],
     "g": "studio"
@@ -567,6 +571,10 @@ const GUIDA = {
      "<b>✍ Written mock exam</b>: new questions on the whole course. Answer as in the written exam, without looking at the notes, then tap <b>Correct</b>: points for each question, what is right, what is missing, mark out of 30 and what to review first.",
      "<b>🎤 Oral exam</b>: as in an oral exam. The examiner asks 3 questions, you tap the microphone and answer out loud; if something is missing you get a <b>follow-up question</b>. At the end: mark, what is right and what is missing, and <b>how you spoke</b> (time, «um» and «uh», pauses). Your voice is transcribed on the PC: Claude only receives the text.",
      "<b>☑ Multiple-choice test</b>: 10 questions with 4 answers on the whole course, like exam tests. <b>Correct</b>: mark, right and wrong answers and, for every mistake, <b>why it was wrong</b>, with the lecture and minute (tap to see it again) and «Ask the lecture». Wrong ones go to the «to review» flashcards; you can redo <b>only the wrong ones</b> (free).",
+     "<b>The lecture page</b>: tap a lecture in «My recordings» and find everything in tiles: <b>Read</b>, <b>Understand</b>, <b>Review</b>, <b>Share</b>. «⋯ More» keeps rename, redo the notes, lecturer slides, folder, delete.",
+     "<b>🎓 Study</b> (menu on the left): choose the course and get the days to the exam, today's plan, multiple-choice test, oral exam, written mock exam, flashcards and Ask on the whole course, and your marks.",
+     "<b>Multiple-choice test</b>: choose 10, 20 or 30 questions, the difficulty and, if you want, <b>like the real exam</b> (1 minute per question, −0.25 for each wrong answer).",
+     "<b>Dyslexia mode</b> (at the top of the lecture and Study pages, or in Settings): the most useful tools first (listening, maps, easy-to-read notes, flashcards and tests read aloud, dictated Ask and written answers), everything else in grey below; legible font, more space, cream background and 30% more time in tests.",
      "At the top left the <b>←</b> arrow takes you back to the page you came from."
     ],
     "g": "studio"
