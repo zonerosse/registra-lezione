@@ -46,6 +46,7 @@ async function avvio() {
   R = await A.riepilogo();
   LINGUA = R.lingua || LINGUA;
   traduciPagina();
+  disegnaFacilitata();
   inizializza();
   $('splash').classList.add('via');
   setTimeout(() => $('splash').remove(), 500);
@@ -116,7 +117,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -134,13 +135,14 @@ function frecciaIndietro(p) {
 }
 function vai(p, tornando = false) {
   if (p !== 'esame' && OR && OR.orale) orChiudi();
+  if (p !== 'ascolta' && AS && AS.attivo) asFerma();
   if (!tornando) {
     if (INTERNE.includes(p)) { if (pagina && pagina !== p && STORIA[STORIA.length - 1] !== pagina) STORIA.push(pagina); if (STORIA.length > 12) STORIA.shift(); }
     else STORIA = [];
   }
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   if (INTERNE.includes(p)) frecciaIndietro(p);
@@ -960,6 +962,7 @@ async function azioneLezione(l, a, e) {
   if (a === 'ripassa') return iniziaRipasso([c], l.nome, 'prima');
   if (a === 'chiedi') return apriChiedi(l);
   if (a === 'mappa') return apriMappa(l);
+  if (a === 'ascolta') return apriAscolta(l);
   if (a === 'capitoli') return apriCapitoli(l);
   if (a === 'infografica') return apriInfografica(l);
   if (a === 'voci') return apriVoci(l);
@@ -1030,6 +1033,7 @@ function menuLezione(l, btn) {
   (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
+  if (l.n_appunti) voci.push(['ascolta', 'play', t('ar.m.asc')]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['mappa', 'map', t('ar.m.mappa')], ['infografica', 'sli', t('ar.m.ig')]);
   if (l.trascritta && l.stato === 'pronta' && l.voci < 2) voci.push(['voci_rifai', 'chat', t('ar.m.voci')]);
   if (l.trascritta && l.stato === 'pronta') voci.push(['stat', 'chat', t('ar.m.stat')]);
@@ -1188,6 +1192,7 @@ function disegnaImpostazioni() {
   $('swDir').classList.toggle('on', !!R.diretta);
   $('swPrec').classList.toggle('on', !!R.precisa);
   $('swVoci').classList.toggle('on', !!R.chi_parla);
+  disegnaFacilitata();
   $('swRap').classList.toggle('on', !!R.rapporti);
   disegnaDove();
   if (ANDROID) {
@@ -1691,25 +1696,118 @@ function disegnaSimulazione(sim) {
   };
   if ($('esNuova')) $('esNuova').onclick = () => nuovaSimulazione();
 }
+/* ------------------------------------------------------------------ la voce (lettura ad alta voce) */
+// Sul PC (e su Mac e iPhone) parla la finestra con la voce del sistema; sul telefono Android la finestra
+// non ha voce e parla l'app (A.voce_*). voceParla() finisce quando la frase e' detta (true) o fermata (false).
+let VOCE_GIRO = 0;
+const voceDisponibile = () => ANDROID || !!window.speechSynthesis;
+const perLaVoce = s => String(s || '').replace(/[★•]/g, '').replace(/−/g, '-').replace(/→/g, ', ').replace(/\s+/g, ' ').trim();
+function voceParla(testo, vel = 1) {
+  const giro = ++VOCE_GIRO;
+  testo = perLaVoce(testo);
+  return new Promise(async fatto => {
+    if (!testo) return fatto(true);
+    if (ANDROID) {
+      const r = await A.voce_parla(testo, vel, LINGUA);
+      if (!r || !r.ok) return fatto(false);
+      while (giro === VOCE_GIRO) { await pausa(200); const o = await A.voce_occupata(); if (!o.occupata) break; }
+      return fatto(giro === VOCE_GIRO);
+    }
+    try {
+      if (!window.speechSynthesis) return fatto(false);
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(testo); u.lang = LINGUA === 'en' ? 'en-GB' : 'it-IT'; u.rate = vel;
+      const v = speechSynthesis.getVoices().find(x => (x.lang || '').toLowerCase().startsWith(LINGUA === 'en' ? 'en' : 'it'));
+      if (v) u.voice = v;
+      u.onend = () => fatto(giro === VOCE_GIRO); u.onerror = () => fatto(false);
+      speechSynthesis.speak(u);
+    } catch (e) { fatto(false); }
+  });
+}
+function voceFerma() {
+  VOCE_GIRO++;
+  if (ANDROID) { try { A.voce_ferma(); } catch (e) {} return; }
+  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+}
+
+/* ------------------------------------------------------------------ ascolta gli appunti + lettura facilitata */
+var AS = {lez: null, d: null, f: 0, frasi: [], i: 0, attivo: false, vel: 1};   // var: vai() lo guarda subito
+function disegnaFacilitata() {
+  document.documentElement.classList.toggle('dsa', !!(R && R.facilitata));
+  ['swFac', 'asFac'].forEach(id => { if ($(id)) $(id).classList.toggle('on', !!(R && R.facilitata)); });
+}
+const disegnaVel = () => $('asVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === AS.vel));
+const disegnaPlay = () => { $('asPlay').textContent = t(AS.attivo ? 'as.pausa' : AS.i > 0 ? 'as.continua' : 'as.leggi'); };
+async function apriAscolta(l) {
+  asFerma(true);
+  AS = {lez: l, d: null, f: 0, frasi: [], i: 0, attivo: false, vel: AS.vel || 1};
+  $('asSub').textContent = `${l.nome} · ${l.quando}`;
+  $('asFmt').classList.add('hidden');
+  $('asBox').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('as.lav'))}</div>`;
+  disegnaVel(); disegnaPlay(); disegnaFacilitata();
+  vai('ascolta');
+  const r = await A.ascolta_appunti(l.cartella);
+  if (AS.lez !== l) return;
+  if (!r.ok) { $('asBox').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  AS.d = r;
+  if (!r.formati.length) { $('asBox').innerHTML = `<div class="hint">${esc(t('as.vuoto'))}</div>`; return; }
+  disegnaAscolta();
+}
+function disegnaAscolta() {
+  const F = AS.d.formati, f = F[AS.f] || F[0];
+  const fmt = $('asFmt');
+  fmt.classList.toggle('hidden', F.length < 2);
+  fmt.innerHTML = F.map((x, i) => `<span data-i="${i}" class="${i === AS.f ? 'on' : ''}">${esc(nomeFormato(x.formato, AS.lez.nome_mio))}</span>`).join('');
+  fmt.querySelectorAll('span').forEach(s => s.onclick = () => { asFerma(true); AS.f = +s.dataset.i; disegnaAscolta(); });
+  // ogni frase e' uno <span> da evidenziare e toccare
+  let n = 0;
+  const frasi = x => String(x || '').split(/(?<=[.?!;])\s+/).filter(p => p.trim()).map(p => `<span class="fr" data-n="${n++}">${esc(p)}</span>`).join(' ');
+  $('asBox').innerHTML = `<h3>${frasi(f.titolo)}</h3>` +
+    f.sezioni.map(s => `<div class="asbl"><div class="k">${frasi(s.titolo)}</div><div>${s.punti.length ? '<ul>' + s.punti.map(p => `<li>${frasi(p)}</li>`).join('') + '</ul>' : ''}</div></div>`).join('') +
+    (f.riassunto ? `<div class="asrias"><b>${esc(t('as.rias'))}</b> ${frasi(f.riassunto)}</div>` : '');
+  AS.frasi = [...$('asBox').querySelectorAll('.fr')];
+  AS.frasi.forEach((x, k) => x.onclick = () => asLeggi(k));
+  AS.i = 0; disegnaPlay();
+}
+function asEvidenzia(k) {
+  AS.frasi.forEach((x, j) => x.classList.toggle('ora', j === k));
+  if (AS.frasi[k]) AS.frasi[k].scrollIntoView({block: 'center', behavior: 'smooth'});
+}
+async function asLeggi(k) {
+  if (!voceDisponibile()) { toast(t('as.novoce')); return; }
+  voceFerma();
+  const giro = {};
+  AS.giro = giro; AS.attivo = true; AS.i = Math.max(0, k); disegnaPlay();
+  while (AS.giro === giro && AS.i < AS.frasi.length) {
+    asEvidenzia(AS.i);
+    const ok = await voceParla(AS.frasi[AS.i].textContent, AS.vel);
+    if (AS.giro !== giro) return;
+    if (!ok) { AS.attivo = false; disegnaPlay(); if (AS.i === k) toast(t('as.novoce')); return; }
+    AS.i++;
+  }
+  if (AS.giro === giro) { AS.attivo = false; AS.i = 0; asEvidenzia(-1); disegnaPlay(); }
+}
+function asPlay() {
+  if (!AS.frasi.length) return;
+  if (AS.attivo) { asFerma(false); return; }          // pausa: si riprende dalla stessa frase
+  asLeggi(AS.i);
+}
+function asFerma(daCapo) {
+  AS.giro = null; AS.attivo = false; voceFerma();
+  if (daCapo) { AS.i = 0; if (AS.frasi && AS.frasi.length) asEvidenzia(-1); }
+  if ($('asPlay')) disegnaPlay();
+}
+
 /* ------------------------------------------------------------------ interrogazione a voce */
 // Il docente fa la domanda (scritta e, se il sistema ha una voce, letta ad alta voce); lo studente risponde al
 // microfono; la risposta si trascrive sul PC e Claude decide se fare una «domanda in più». Alla fine il voto.
 var OR = {orale: null};   // var: vai() lo guarda anche prima che arrivi qui
-function orLeggi(testo) {
-  try {
-    if (!window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(testo); u.lang = LINGUA === 'en' ? 'en-GB' : 'it-IT'; u.rate = 1;
-    const v = speechSynthesis.getVoices().find(x => (x.lang || '').toLowerCase().startsWith(LINGUA === 'en' ? 'en' : 'it'));
-    if (v) u.voice = v;
-    speechSynthesis.speak(u);
-  } catch (e) {}
-}
-const orVoce = () => { try { return !!(window.speechSynthesis && speechSynthesis.getVoices().length); } catch (e) { return false; } };
+function orLeggi(testo) { voceParla(testo); }
+const orVoce = () => voceDisponibile() && (ANDROID || (() => { try { return speechSynthesis.getVoices().length > 0; } catch (e) { return false; } })());
 function orStop() {
   if (OR.poll) clearInterval(OR.poll); OR.poll = null;
   if (OR.audio) { try { OR.audio.pause(); } catch (e) {} OR.audio = null; }
-  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  voceFerma();
 }
 function orChiudi() {
   const c = !!OR.orale; orStop(); OR = {orale: null};
@@ -1753,7 +1851,7 @@ function disegnaOrale() {
   if ($('orMic')) $('orMic').onclick = OR.fase === 'ascolto' ? orFine : orAscolta;
 }
 async function orAscolta() {
-  try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
+  voceFerma();
   const r = await A.orale_ascolta();
   if (!r.ok) { OR.msg = r.msg || ''; return disegnaOrale(); }
   OR.fase = 'ascolto'; disegnaOrale();
@@ -2161,6 +2259,9 @@ function collegaNovita() {
   $('andAgg').onclick = () => { vai('info'); A.cerca_aggiornamenti(); };
   $('swPrec').onclick = async () => { await A.imposta('trascrizione_precisa', !R.precisa); await rileggi(); };
   $('swVoci').onclick = async () => { await A.imposta('chi_parla', !R.chi_parla); await rileggi(); };
+  $('swFac').onclick = $('asFac').onclick = async () => { await A.imposta('lettura_facilitata', !R.facilitata); await rileggi(); };
+  $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
+  $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });
   $('swRap').onclick = async () => { await A.imposta('rapporti_errori', !R.rapporti); await rileggi(); };
   $('vcNomi').onclick = () => nomiVoci();
   $('vcRifai').onclick = () => VC.lez && apriVoci(VC.lez, true);

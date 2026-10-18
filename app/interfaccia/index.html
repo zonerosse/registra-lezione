@@ -273,6 +273,17 @@
       <div class="row mt"><span class="hint sp" data-t="mp.nota">Si crea una volta sola e resta con la lezione.</span><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
     </section>
 
+    <!-- ASCOLTA GLI APPUNTI (lettura ad alta voce) -->
+    <section class="pg hidden" id="v-ascolta">
+      <div class="hd"><div><h2 data-t="as.h">Ascolta gli appunti</h2><p id="asSub"></p></div></div>
+      <div class="card"><div class="asbarra">
+        <button class="btn b-main b-sm" id="asPlay"></button><button class="btn b-ghost b-sm" id="asStop" data-t="as.ferma">■ Ferma</button>
+        <div class="seg" id="asVel"><span data-v="0.8" data-t="as.lenta">Lenta</span><span data-v="1" data-t="as.normale">Normale</span><span data-v="1.2" data-t="as.veloce">Veloce</span></div>
+        <span class="sp"></span><div class="asaa"><span data-t="as.fac">Aa Lettura facilitata</span><div class="sw" id="asFac"></div></div></div>
+        <div class="hint" style="margin-top:8px" data-t="as.hint">Tocca una frase per far partire la lettura da lì. La frase che sto leggendo è evidenziata.</div></div>
+      <div class="card mt"><div class="seg hidden" id="asFmt" style="margin-bottom:12px"></div><div class="ap" id="asBox"></div></div>
+    </section>
+
     <!-- CAPITOLI -->
     <section class="pg hidden" id="v-cap">
       <div class="hd"><div><h2 data-t="cp.h">Capitoli</h2><p id="cpSub"></p></div></div>
@@ -363,6 +374,7 @@
       <div class="card">
         <div class="lbl" data-t="im.lingua">Lingua</div>
         <div class="set"><div class="t"><b data-t="im.lingua.t">Lingua del programma e degli appunti</b><span data-t="im.lingua.s">Menu, pulsanti, appunti Cornell e PDF.</span></div><div class="seg" id="segLingua"><span data-l="it">Italiano</span><span data-l="en">English</span></div></div>
+        <div class="set"><div class="t"><b data-t="fa.t">Lettura facilitata (DSA)</b><span data-t="fa.s">Carattere ad alta leggibilità, lettere e righe più distanziate, fondo color crema: in «Ascolta gli appunti», nelle flashcard e nei PDF degli appunti nuovi.</span></div><div class="sw" id="swFac"></div></div>
       </div>
       <div class="card mt">
         <div class="lbl" data-t="im.ai">Intelligenza artificiale</div>

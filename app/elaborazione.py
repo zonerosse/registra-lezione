@@ -694,10 +694,16 @@ big.onclick=function(){{big.style.display='none';}};
 CARTELLA_FONT = Path(os.environ.get("RL_FONT_DIR") or "/usr/share/fonts/truetype/dejavu")
 
 
-def _font_pdf(pdf):
-    """Usa Arial di Windows (accenti e simboli ok); altrimenti un font di base."""
+FACILITATA = False      # «Lettura facilitata» (Impostazioni): negli appunti il carattere ad alta leggibilita'
+FONT_FACILE = Path(__file__).resolve().parent / "interfaccia" / "font"
+
+
+def _font_pdf(pdf, facile=False):
+    """Usa Arial di Windows (accenti e simboli ok); altrimenti un font di base.
+    facile=True e «Lettura facilitata» accesa: Atkinson Hyperlegible (dentro il programma)."""
     windir = Path(os.environ.get("WINDIR", r"C:\Windows"))
-    candidati = [
+    candidati = ([(FONT_FACILE / "AtkinsonHyperlegible-Regular.ttf", FONT_FACILE / "AtkinsonHyperlegible-Bold.ttf")]
+                 if facile and FACILITATA else []) + [
         (windir / "Fonts" / "arial.ttf", windir / "Fonts" / "arialbd.ttf"),
         (CARTELLA_FONT / "DejaVuSans.ttf", CARTELLA_FONT / "DejaVuSans-Bold.ttf"),
     ]

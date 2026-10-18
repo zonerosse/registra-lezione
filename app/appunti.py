@@ -639,6 +639,12 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
     parti = [(ripara(d), e, sl) for d, e, sl in parti]
 
     class PDF(FPDF):
+        def header(self):
+            """«Lettura facilitata»: fondo color crema su tutta la pagina (stanca meno gli occhi)."""
+            if getattr(self, "_crema", False):
+                self.set_fill_color(255, 251, 235)
+                self.rect(0, 0, self.w, self.h, style="F")
+
         def footer(self):
             """A pie' di ogni pagina: marchio e numero di pagina."""
             if not getattr(self, "_f", None):
@@ -662,7 +668,11 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
     pdf = PDF(format="A4")
     pdf.set_auto_page_break(True, margin=16)
     pdf.set_margins(16, 15, 16)
-    font, solo_latin = el._font_pdf(pdf)
+    font, solo_latin = el._font_pdf(pdf, facile=True)
+    facile = bool(el.FACILITATA)
+    pdf._crema = facile
+    if facile:
+        pdf.set_char_spacing(0.15)          # lettere un po' piu' distanziate
     # simboli matematici che Arial non ha (es. ᵢ, ∮): li prende da Segoe UI Symbol / DejaVu
     for extra in (Path(r"C:\Windows\Fonts\seguisym.ttf"),
                   el.CARTELLA_FONT / "DejaVuSans.ttf"):
@@ -695,7 +705,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
         pdf.set_font(font, "", 10.5)
 
     def testo(s, h=5.4):
-        pdf.multi_cell(0, h, t(s), new_x="LMARGIN", new_y="NEXT")
+        pdf.multi_cell(0, h * (1.3 if facile else 1), t(s), new_x="LMARGIN", new_y="NEXT")
 
     def immagine(n):
         try:

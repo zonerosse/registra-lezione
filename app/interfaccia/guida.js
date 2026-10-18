@@ -198,6 +198,7 @@ const GUIDA = {
     "t": "Chiedi, mappa e infografica",
     "p": [
      "<b>Chiedi alla lezione</b> (sulla registrazione: <b>⋯ Altro → Chiedi alla lezione</b>): scrivi cosa non hai capito. La risposta usa solo quello che si è detto e indica slide e minuto: tocca il minuto e rivedi quel punto. Puoi chiedere anche su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.",
+     "<b>🔊 Ascolta gli appunti</b> (⋯ Altro): il programma legge gli appunti ad alta voce ed evidenzia la frase; tocca una frase per ripartire da lì. Con <b>Aa Lettura facilitata</b> (anche in Impostazioni) il carattere è più leggibile, con più spazio e fondo crema: utile per chi ha un DSA.",
      "<b>Mappa mentale</b> (⋯ Altro): lo schema ad albero, da salvare in PDF o stampare. <b>Infografica</b> (⋯ Altro): tutta la registrazione in una pagina. Circa 1 centesimo, una volta sola.",
      "Da queste pagine torni indietro con la freccia <b>←</b> in alto: ti riporta alla pagina da cui eri arrivato."
     ],
@@ -574,6 +575,7 @@ const GUIDA = {
     "t": "Ask, map and infographic",
     "p": [
      "<b>Ask the lecture</b> (on the recording: <b>⋯ More → Ask the lecture</b>): write what you didn't understand. The answer uses only what was said and shows slide and minute: tap the minute to see that point again. You can also ask about the <b>whole subject</b>. Less than 1 cent per question.",
+     "<b>🔊 Listen to the notes</b> (⋯ More): the program reads the notes aloud and highlights the sentence; tap a sentence to start from there. With <b>Aa Easy reading</b> (also in Settings) the font is more legible, with more space and a cream background: helpful with dyslexia.",
      "<b>Mind map</b> (⋯ More): the tree outline, to save as PDF or print. <b>Infographic</b> (⋯ More): the whole recording on one page. About 1 cent, once.",
      "From these pages go back with the <b>←</b> arrow at the top: it takes you to the page you came from."
     ],

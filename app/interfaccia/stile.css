@@ -501,6 +501,27 @@ html.android .dove.tre{grid-template-columns:1fr}
 .esd.esame{background:#fff1f2;border:1px solid #fecdd3}.esd.esame div{color:#be123c;font-weight:800}
 .essim{margin-top:12px}.essim textarea{margin-top:6px;resize:vertical}
 .escorr{background:#f8fafc;border-radius:10px;padding:8px 10px;margin-top:6px;font-size:13px;line-height:1.5}
+/* lettura facilitata (DSA): carattere Atkinson Hyperlegible (Braille Institute, SIL OFL), dentro il programma */
+@font-face{font-family:"Atkinson Hyperlegible";src:url("font/AtkinsonHyperlegible-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Atkinson Hyperlegible";src:url("font/AtkinsonHyperlegible-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+/* ascolta gli appunti */
+.asbarra{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.asaa{display:flex;align-items:center;gap:10px;font-size:13.5px;color:var(--ink);font-weight:600}
+.ap{font-size:14.5px;line-height:1.6;color:var(--txt);-webkit-user-select:text;user-select:text}
+.ap h3{margin:0 0 4px;color:var(--ink);font-size:17px}
+.asbl{display:grid;grid-template-columns:200px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line)}
+.asbl:first-of-type{border-top:0}
+.asbl .k{font-weight:700;color:var(--navy)}
+.asbl ul{margin:0;padding-left:18px}
+.asrias{background:#f8fafc;border-radius:12px;padding:12px 14px;margin-top:10px}
+.ap .fr{cursor:pointer}
+.ap .fr.ora{background:#fde68a;border-radius:4px;box-shadow:0 0 0 2px #fde68a}
+@media(max-width:700px){.asbl{grid-template-columns:1fr;gap:6px}}
+html.dsa .ap{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;font-size:18px;line-height:1.95;letter-spacing:.03em;word-spacing:.14em;background:#fffbeb;border-radius:12px;padding:6px 16px;color:#1f2937}
+html.dsa .ap h3{font-size:21px}
+html.dsa .asbl{grid-template-columns:1fr;gap:6px}
+html.dsa .asrias{background:#fef3c7}
+html.dsa .carta .faccia{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.03em;word-spacing:.14em;line-height:1.75;background:#fffbeb}
 /* interrogazione a voce */
 .orprof{display:flex;gap:12px;align-items:flex-start;margin-top:10px}
 .orprof .av{width:42px;height:42px;border-radius:50%;flex:none;background:#e0f2fe;color:var(--navy);display:grid;place-items:center;font-size:20px}

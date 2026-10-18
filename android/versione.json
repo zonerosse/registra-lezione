@@ -1,7 +1,7 @@
 {
- "versione": "0.10.25",
- "codice": 10,
- "novita": "Mappa mentale e infografica: Claude ora le prepara sempre nel formato giusto (prima a volte, soprattutto sul telefono, chiedeva di riprovare). Se la risposta arriva incompleta riprova da solo.",
- "novita_en": "Mind map and infographic: Claude now always prepares them in the right format (before, especially on the phone, it sometimes asked to try again). If the reply arrives incomplete it retries by itself.",
- "contenuto": 56
+ "versione": "0.11.0",
+ "codice": 11,
+ "novita": "Nuovo: «🔊 Ascolta gli appunti» (⋯ Altro sulla lezione): il programma legge gli appunti ad alta voce ed evidenzia la frase. E «Aa Lettura facilitata» (anche in Impostazioni): carattere più leggibile, più spazio e fondo crema, utile per chi ha un DSA.",
+ "novita_en": "New: «🔊 Listen to the notes» (⋯ More on the lecture): the program reads the notes aloud and highlights the sentence. And «Aa Easy reading» (also in Settings): more legible font, more space and a cream background, helpful with dyslexia.",
+ "contenuto": 57
 }

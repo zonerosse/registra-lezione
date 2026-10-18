@@ -49,6 +49,7 @@ GRUPPI = [
         ("fpdf2", "Crea i PDF degli appunti", "Creates the notes PDFs", "LGPL", ["fpdf2"]),
         ("fontTools", "Prepara i caratteri dei PDF", "Prepares the PDF fonts", "MIT", ["fonttools"]),
         ("Caratteri DejaVu (solo Android)", "Simboli matematici negli appunti", "Math symbols in the notes", "Libera", ["a:LICENZA-DejaVu.txt"]),
+        ("Carattere Atkinson Hyperlegible (Braille Institute)", "Il carattere della «Lettura facilitata»", "The «Easy reading» font", "SIL OFL 1.1", ["f:OFL.txt"]),
         ("pypdf", "Legge le slide in PDF del docente", "Reads the lecturer's PDF slides", "BSD", ["v:pypdf-LICENSE.txt"]),
         ("icalendar", "Legge i calendari Google e Outlook", "Reads Google and Outlook calendars", "BSD", ["v:licenze/icalendar-7.3.0-LICENSE.rst"]),
         ("recurring-ical-events", "Gli impegni che si ripetono", "Recurring events", "LGPL", ["v:licenze/recurring_ical_events-3.8.2-LICENSE"]),
@@ -105,6 +106,8 @@ def testo_di(rif, ruote):
         return (EXTRA / (rif[2:] + ".txt")).read_text(encoding="utf8").strip()
     if rif.startswith("v:"):
         return (VENDOR / rif[2:]).read_text(encoding="utf8").strip()
+    if rif.startswith("f:"):
+        return (RADICE / "app" / "interfaccia" / "font" / rif[2:]).read_text(encoding="utf8").strip()
     if rif.startswith("a:"):
         return (RADICE / "android" / "risorse" / "font" / rif[2:]).read_text(encoding="utf8", errors="replace").strip()
     r = ruote[chiave(rif)]

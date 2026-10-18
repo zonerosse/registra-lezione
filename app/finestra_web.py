@@ -247,6 +247,18 @@ class Api:
     def esame_pdf(self, materia):
         return self._m.esame_pdf(materia)
 
+    def ascolta_appunti(self, cartella):
+        return self._m.ascolta_appunti(cartella)
+
+    def voce_parla(self, testo, velocita=1.0, lingua="it"):
+        return self._m.voce_parla(testo, velocita, lingua)
+
+    def voce_occupata(self):
+        return self._m.voce_occupata()
+
+    def voce_ferma(self):
+        return self._m.voce_ferma()
+
     def orale_nuova(self, materia):
         return self._m.orale_nuova(materia)
 

@@ -306,6 +306,7 @@ def _hhmm(sec):
 class Motore:
     def __init__(self):
         self.cfg = leggi_config()
+        el.FACILITATA = bool(self.cfg.get("lettura_facilitata"))     # «Lettura facilitata»: anche nei PDF
         self._blocco_cloud = threading.Lock()
         try:
             rapporti.installa(agg.versione_locale().get("versione", "?"))
@@ -540,6 +541,7 @@ class Motore:
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
+                "facilitata": bool(self.cfg.get("lettura_facilitata")),
                 "dove": self.cfg.get("trascrivi_dove") or "qui", "server_endpoint": (self._server_dati() or {}).get("endpoint", ""),
                 "modello": self.cfg.get("modello") or "generica", "modelli_nome": self.cfg.get("modelli_nome") or {},
                 "modello_mio": self.cfg.get("modello_mio") or None,
@@ -595,6 +597,8 @@ class Motore:
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
         elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
             self.cfg[campo] = bool(valore)
+        elif campo == "lettura_facilitata":
+            self.cfg[campo] = el.FACILITATA = bool(valore)
         elif campo == "quando":
             self.cfg["quando"] = "dopo" if valore == "dopo" else "durante"
         elif campo == "modo":
@@ -1977,6 +1981,27 @@ class Motore:
         except Exception:
             log.exception("pdf esame")
             return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    # ------------------------------------------------------------------ ascolta gli appunti (lettura ad alta voce)
+
+    def ascolta_appunti(self, cartella):
+        import ascolta
+        try:
+            return {"ok": True, **ascolta.appunti(cartella)}
+        except Exception:
+            log.exception("ascolta gli appunti")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    # La voce: sul PC (e su Mac e iPhone) parla la pagina con la voce del sistema; sul telefono Android la
+    # finestra non ha voce e parla l'app (android_motore cambia queste tre funzioni).
+    def voce_parla(self, testo, velocita=1.0, lingua="it"):
+        return {"ok": False}
+
+    def voce_occupata(self):
+        return {"occupata": False}
+
+    def voce_ferma(self):
+        return {"ok": True}
 
     # ------------------------------------------------------------------ interrogazione a voce
     # Le risposte si registrano dal microfono (come una lezione «In aula», ma in una cartella a parte), si trascrivono

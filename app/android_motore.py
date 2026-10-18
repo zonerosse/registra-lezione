@@ -641,6 +641,62 @@ def _prepara(cartella_app, lingua_tel):
     return mt
 
 
+# ----------------------------------------------------------------------------- voce (lettura ad alta voce)
+# La finestra del telefono (WebView) non ha la voce del browser: parla la sintesi vocale di Android.
+_VOCE = {"tts": None, "pronta": None, "da": 0.0}
+
+
+def _tts():
+    if _VOCE["tts"] is None:
+        from java import dynamic_proxy
+        TTS = jclass("android.speech.tts.TextToSpeech")
+
+        class Pronta(dynamic_proxy(TTS.OnInitListener)):
+            def onInit(self, stato):
+                _VOCE["pronta"] = (stato == TTS.SUCCESS)
+        _VOCE["ascolta"] = Pronta()                     # tengo il riferimento, se no Java lo perde
+        _VOCE["tts"] = TTS(_ctx(), _VOCE["ascolta"])
+    return _VOCE["tts"]
+
+
+def voce_parla(testo, velocita=1.0, lingua="it"):
+    try:
+        t = _tts()
+        for _ in range(50):                             # la prima volta la voce si prepara (al massimo 5 s)
+            if _VOCE["pronta"] is not None:
+                break
+            time.sleep(0.1)
+        if not _VOCE["pronta"]:
+            return {"ok": False}
+        TTS, Locale = jclass("android.speech.tts.TextToSpeech"), jclass("java.util.Locale")
+        t.setLanguage(Locale("it", "IT") if lingua == "it" else Locale("en", "GB"))
+        t.setSpeechRate(float(velocita or 1.0))
+        t.speak(str(testo or ""), TTS.QUEUE_FLUSH, None, "rl")
+        _VOCE["da"] = time.monotonic()
+        return {"ok": True}
+    except Exception:
+        log.exception("voce")
+        return {"ok": False}
+
+
+def voce_occupata():
+    t = _VOCE["tts"]
+    try:
+        # appena dopo speak() la voce non e' ancora partita: per un attimo la conto come occupata
+        return {"occupata": bool(t is not None and (t.isSpeaking() or time.monotonic() - _VOCE["da"] < 0.8))}
+    except Exception:
+        return {"occupata": False}
+
+
+def voce_ferma():
+    try:
+        if _VOCE["tts"] is not None:
+            _VOCE["tts"].stop()
+    except Exception:
+        log.exception("voce: stop")
+    return {"ok": True}
+
+
 def _api_android(api, mt):
     """Le scelte di file del telefono (non ci sono le finestre di Windows)."""
     from testi import tr
@@ -680,6 +736,9 @@ def _api_android(api, mt):
     api._apri_mini = lambda: None
     api.apri_finestra = lambda: None
     api.condividi = lambda percorso: bool(Ponte.condividi(str(percorso)))
+    api.voce_parla = voce_parla
+    api.voce_occupata = voce_occupata
+    api.voce_ferma = voce_ferma
 
 
 def _stato_android(m):
