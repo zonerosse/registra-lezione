@@ -251,16 +251,65 @@ class _Ponte:
         return base64.b64decode(dati).decode()
 
     def email(self, dest, oggetto, testo, allegati):
-        return False
+        """Mail dell'iPhone gia' scritta (destinatari, oggetto, testo, allegati): si tocca Invia.
+        Senza un account in Mail: la finestra per mandare (Gmail, Outlook, WhatsApp...) con testo e allegati."""
+        file = [Path(str(a)) for a in allegati if a and Path(str(a)).exists()]
+
+        def fai():
+            try:
+                from rubicon.objc.runtime import load_library
+                load_library("MessageUI")
+                M = _objc("MFMailComposeViewController")
+                vc = _in_cima()
+                if M.canSendMail():
+                    m = M.alloc().init()
+                    d = _delegati()["posta"].alloc().init()
+                    m.mailComposeDelegate = d
+                    _TIENI["posta"] = (m, d)
+                    m.setToRecipients_([str(x) for x in dest])
+                    m.setSubject_(str(oggetto))
+                    m.setMessageBody_isHTML_(str(testo), False)
+                    for f in file:
+                        m.addAttachmentData_mimeType_fileName_(_objc("NSData").dataWithContentsOfFile_(str(f)),
+                                                               _tipo_mime(f), f.name)
+                    vc.presentViewController_animated_completion_(m, True, None)
+                else:
+                    _condividi_ora(*file, testo=f"{oggetto}\n\n{testo}")
+            except Exception:
+                log.exception("iphone: email")
+        _sul_principale(fai)
+        return True
 
     def evento(self, titolo, inizio, fine, tutto, descrizione, luogo):
-        return False
+        """Impegno gia' scritto nel calendario dell'iPhone: si tocca Aggiungi. Arrivano a gruppi (uno ogni 0,4 s):
+        li mostro uno dopo l'altro, nell'ordine delle date."""
+        _EVENTI.append((str(titolo), float(inizio) / 1000, float(fine) / 1000, bool(tutto), str(descrizione), str(luogo)))
+        _EVENTI_ORA[0] = time.monotonic()
+        if not _TIENI.get("eventi_attesa"):
+            _TIENI["eventi_attesa"] = True
+
+            def aspetta():
+                while time.monotonic() - _EVENTI_ORA[0] < 1.0:
+                    time.sleep(0.2)
+                _TIENI["eventi_attesa"] = False
+                _sul_principale(_prossimo_evento)
+            threading.Thread(target=aspetta, daemon=True).start()
+        return True
 
     def sveglia(self, i, quando, titolo, testo):
-        pass
+        """Avviso all'ora di un impegno, anche con l'app chiusa (notifica programmata di iOS)."""
+        try:
+            sec = max(1.0, float(quando) / 1000 - time.time())
+            T = _objc("UNTimeIntervalNotificationTrigger").triggerWithTimeInterval_repeats_(sec, False)
+            _notifica(f"vm{int(i)}", titolo, testo, T)
+        except Exception:
+            log.exception("iphone: sveglia")
 
     def togliSveglia(self, i):
-        pass
+        try:
+            _centro().removePendingNotificationRequestsWithIdentifiers_([f"vm{int(i)}"])
+        except Exception:
+            log.exception("iphone: togli sveglia")
 
     def tagliaAudio(self, sorgente, uscita, da, a):
         """Un pezzo dell'audio (da..a millisecondi) in un altro file .m4a."""
@@ -333,7 +382,10 @@ class _Ponte:
         return list(np.resize(v, 256))
 
     def notifica(self, titolo, testo):
-        log.info("iphone: notifica %s", titolo)
+        try:
+            _notifica("vm-pronta", titolo, testo, None)
+        except Exception:
+            log.exception("iphone: notifica")
 
 
 _TIENI = {}          # finestre e delegati aperti: restano vivi finche' servono
@@ -358,20 +410,98 @@ def _in_cima():
     return vc
 
 
-def _condividi_ora(f):
+def _condividi_ora(*file, testo=""):
     vc = _in_cima()
-    a = _objc("UIActivityViewController").alloc().initWithActivityItems_applicationActivities_([_url(f)], None)
+    cose = ([str(testo)] if testo else []) + [_url(f) for f in file]
+    a = _objc("UIActivityViewController").alloc().initWithActivityItems_applicationActivities_(cose, None)
     pop = a.popoverPresentationController             # sull'iPad la finestra deve avere un punto di partenza
     if pop is not None:
         pop.sourceView = vc.view
     vc.presentViewController_animated_completion_(a, True, None)
 
 
+def _tipo_mime(f):
+    import mimetypes
+    return mimetypes.guess_type(str(f))[0] or "application/octet-stream"
+
+
+_EVENTI = []
+_EVENTI_ORA = [0.0]
+
+
+def _prossimo_evento():
+    """Mostra il prossimo impegno da aggiungere (l'ultimo arrivato e' il primo per data)."""
+    if not _EVENTI or _TIENI.get("evento"):
+        return
+    titolo, a, b, tutto, descr, luogo = _EVENTI.pop()
+    try:
+        from rubicon.objc.runtime import load_library
+        load_library("EventKit")
+        load_library("EventKitUI")
+        st = _TIENI.get("calendario") or _objc("EKEventStore").alloc().init()
+        _TIENI["calendario"] = st
+        e = _objc("EKEvent").eventWithEventStore_(st)
+        e.title = titolo
+        D = _objc("NSDate")
+        e.startDate = D.dateWithTimeIntervalSince1970_(a)
+        e.endDate = D.dateWithTimeIntervalSince1970_(b)
+        e.allDay = tutto
+        if tutto:                               # tutto il giorno: la mezzanotte UTC arriva da Android, qui va la data locale
+            import datetime
+            g = datetime.datetime.fromtimestamp(a, datetime.timezone.utc).date()
+            loc = datetime.datetime(g.year, g.month, g.day).timestamp()
+            e.startDate = D.dateWithTimeIntervalSince1970_(loc)
+            e.endDate = D.dateWithTimeIntervalSince1970_(loc + 3600)
+        if descr:
+            e.notes = descr
+        if luogo:
+            e.location = luogo
+        v = _objc("EKEventEditViewController").alloc().init()
+        v.eventStore = st
+        v.event = e
+        d = _delegati()["evento"].alloc().init()
+        v.editViewDelegate = d
+        _TIENI["evento"] = (v, d)
+        _in_cima().presentViewController_animated_completion_(v, True, None)
+    except Exception:
+        log.exception("iphone: calendario")
+        _TIENI.pop("evento", None)
+
+
+def _centro():
+    """Le notifiche di iOS: la prima volta si chiede il permesso; si vedono anche con l'app aperta."""
+    c = _TIENI.get("notifiche")
+    if c is None:
+        from rubicon.objc import Block
+        from rubicon.objc.runtime import load_library, objc_id
+        import ctypes
+        load_library("UserNotifications")
+        c = _objc("UNUserNotificationCenter").currentNotificationCenter()
+        d = _delegati()["notifiche"].alloc().init()
+        c.delegate = d
+        risposta = Block(lambda ok, err: log.info("iphone: permesso notifiche %s", bool(ok)), None, ctypes.c_bool, objc_id)
+        c.requestAuthorizationWithOptions_completionHandler_(4 | 2 | 1, risposta)    # avvisi, suono, numerino
+        _TIENI["notifiche"] = c
+        _TIENI["notifiche_extra"] = (d, risposta)
+    return c
+
+
+def _notifica(ident, titolo, testo, quando):
+    c = _centro()
+    n = _objc("UNMutableNotificationContent").alloc().init()
+    n.title = str(titolo)
+    n.body = str(testo)
+    suono = _objc("UNNotificationSound").defaultSound
+    n.sound = suono() if callable(suono) else suono
+    r = _objc("UNNotificationRequest").requestWithIdentifier_content_trigger_(ident, n, quando)
+    c.addNotificationRequest_withCompletionHandler_(r, None)
+
+
 def _delegati():
     """Le classi Objective-C che ricevono le risposte di iOS (create una volta sola)."""
     if _DEL:
         return _DEL
-    from rubicon.objc import NSObject, objc_method, ObjCInstance
+    from rubicon.objc import NSObject, objc_method, ObjCInstance, ObjCBlock
 
     class VMAnteprima(NSObject):
         @objc_method
@@ -395,7 +525,29 @@ def _delegati():
         def documentPickerWasCancelled_(self, p) -> None:
             _TIENI.get("risposta", ({}, threading.Event()))[1].set()
 
-    _DEL.update(anteprima=VMAnteprima, scelta=VMScelta)
+    class VMPosta(NSObject):
+        @objc_method
+        def mailComposeController_didFinishWithResult_error_(self, m, r: int, e) -> None:
+            m.dismissViewControllerAnimated_completion_(True, None)
+            _TIENI.pop("posta", None)
+
+    class VMEvento(NSObject):
+        @objc_method
+        def eventEditViewController_didCompleteWithAction_(self, v, azione: int) -> None:
+            def dopo():
+                _TIENI.pop("evento", None)
+                _prossimo_evento()
+            from rubicon.objc import Block
+            b = Block(dopo, None)
+            _TIENI["evento_chiudi"] = b
+            v.dismissViewControllerAnimated_completion_(True, b)
+
+    class VMNotifiche(NSObject):
+        @objc_method
+        def userNotificationCenter_willPresentNotification_withCompletionHandler_(self, c, n, fatto: ObjCBlock) -> None:
+            fatto(16 | 8 | 2)                   # anche con l'app aperta: striscia, elenco, suono
+
+    _DEL.update(anteprima=VMAnteprima, scelta=VMScelta, posta=VMPosta, evento=VMEvento, notifiche=VMNotifiche)
     return _DEL
 
 

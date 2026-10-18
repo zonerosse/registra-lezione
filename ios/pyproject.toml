@@ -26,3 +26,5 @@ requires = ["toga-iOS"]
 UIBackgroundModes = ["audio"]
 UIFileSharingEnabled = true
 LSSupportsOpeningDocumentsInPlace = true
+NSCalendarsWriteOnlyAccessUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."
+NSCalendarsUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."

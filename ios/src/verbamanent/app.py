@@ -56,6 +56,7 @@ class VerbaManent(toga.App):
             porta = avvio_android.avvia(str(cartella), _lingua())
             url = f"http://127.0.0.1:{porta}/index.html?android=1&iphone=1"
             self.loop.call_soon_threadsafe(self._mostra, url)
+            self._prova_comando()
             self._prova_whisper()
         except Exception:
             err = traceback.format_exc()
@@ -65,6 +66,27 @@ class VerbaManent(toga.App):
             except OSError:
                 pass
             self.loop.call_soon_threadsafe(lambda: setattr(self.attesa, "text", "Verba Manent IA\n\n⚠ " + err[-600:]))
+
+    def _prova_comando(self):
+        """Solo per la prova automatica: prova_comando.json = ["funzione del ponte", argomenti...]."""
+        f = Path.home() / "prova_comando.json"
+        if not f.exists():
+            return
+        import json
+        import time
+        import java
+        try:
+            nome, *arg = json.loads(f.read_text(encoding="utf-8"))
+            f.unlink()
+            time.sleep(5)
+            if nome == "eventi":
+                for e in arg:
+                    java._P.evento(*e)
+                    time.sleep(0.4)
+            else:
+                getattr(java._P, nome)(*arg)
+        except Exception:
+            (Path.home() / "prova_comando_errore.txt").write_text(traceback.format_exc(), encoding="utf-8")
 
     def _prova_whisper(self):
         """Solo per la prova automatica sull'iPhone simulato: se c'e' prova_whisper.wav lo trascrive."""
