@@ -1,6 +1,6 @@
 {
- "versione": "3.70",
+ "versione": "3.71",
  "librerie": 2,
- "novita": "Nuovo: «🔊 Ascolta gli appunti» (⋯ Altro sulla lezione): il programma legge gli appunti ad alta voce ed evidenzia la frase. E «Aa Lettura facilitata» (anche in Impostazioni): carattere più leggibile, più spazio e fondo crema, utile per chi ha un DSA.",
- "novita_en": "New: «🔊 Listen to the notes» (⋯ More on the lecture): the program reads the notes aloud and highlights the sentence. And «Aa Easy reading» (also in Settings): more legible font, more space and a cream background, helpful with dyslexia."
+ "novita": "«Ascolta gli appunti» legge anche le sezioni del modello di riunione (per esempio le delibere dell'assemblea di condominio).",
+ "novita_en": "«Listen to the notes» also reads the sections of the meeting template (for example the resolutions of a condominium meeting)."
 }

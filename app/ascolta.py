@@ -39,6 +39,9 @@ def _sezioni(d, formato, L):
         for chiave, punti in (("vb_decisioni", dec), ("vb_azioni", az), ("vb_da_decidere", aperte)):
             if _lista(punti):
                 sez.append({"titolo": tr(chiave, L), "punti": _lista(punti)})
+        for p in d.get("sezioni_extra") or []:          # le sezioni del modello di riunione (es. condominio)
+            if isinstance(p, dict) and _lista(p.get("punti")):
+                sez.append({"titolo": str(p.get("titolo", "")), "punti": _lista(p.get("punti"))})
         for p in d.get("punti_discussi") or []:
             if isinstance(p, dict):
                 sez.append({"titolo": str(p.get("titolo", "")), "punti": _lista(p.get("punti")) + _lista(p.get("aggiunte"))})
