@@ -262,6 +262,15 @@ class Api:
     def ripasso_giorno_fatto(self):
         return self._m.ripasso_giorno_fatto()
 
+    def tutor(self, materia, cartelle):
+        return self._m.tutor(materia, cartelle)
+
+    def tutor_fatto(self, chiave, si):
+        return self._m.tutor_fatto(chiave, si)
+
+    def tutor_chiedi(self, materia, cartelle, storia, testo):
+        return self._m.tutor_chiedi(materia, cartelle, storia, testo)
+
     def glossario(self, materia, cartelle=None, rifai=False, solo_salvato=False):
         return self._m.glossario(materia, cartelle, rifai, solo_salvato)
 

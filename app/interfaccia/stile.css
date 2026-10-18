@@ -946,3 +946,26 @@ html.android .lmgrid{grid-template-columns:1fr}
 @media (max-width:900px){.glgrid{grid-template-columns:1fr}.gllista{max-height:240px}.glimg{grid-template-columns:1fr}}
 html.android .glgrid{grid-template-columns:1fr}html.android .gllista{max-height:240px}html.android .glimg{grid-template-columns:1fr}
 html.dsa .glsch{font-family:var(--dsa-font)}html.dsa .glsch .def{font-size:var(--dsa-size);line-height:var(--dsa-lh);letter-spacing:var(--dsa-ls);word-spacing:var(--dsa-ws);background:var(--dsa-rbg);color:var(--dsa-rfg);border-radius:12px;padding:10px 14px}
+/* ===== il tuo tutor ===== */
+.tugrid{display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start}
+.tuoggi{display:flex;gap:14px;align-items:center}
+.tuoggi .gg{font-size:46px;font-weight:800;color:var(--navy);line-height:1}
+.tuoggi b{display:block;font-size:17px;color:var(--ink)}.tuoggi span{color:var(--mut);font-size:13.5px}
+.tucosa{display:grid;gap:8px;margin-top:12px}
+.tuc{display:flex;gap:10px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px;cursor:pointer}
+.tuc:hover{background:#e6f0fa}
+.tuc .ck{width:24px;height:24px;border-radius:7px;border:2px solid #94a3b8;flex:none;display:grid;place-items:center;font-size:13px;color:#fff;background:#fff}
+.tuc.ok .ck{background:#059669;border-color:#059669}.tuc.ok b{text-decoration:line-through;color:var(--mut)}
+.tuc .sp{min-width:0}.tuc b{display:block;font-size:14px;color:var(--ink)}.tuc small{color:var(--mut);font-size:12px}
+.tuc .min{margin-left:auto;font-size:12px;font-weight:700;color:var(--navy);white-space:nowrap}
+.tudeb{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid #edf2f7;font-size:13.5px}
+.tudeb:last-child{border-bottom:0}.tudeb b{color:var(--ink)}.tudeb .sp{min-width:0}.tudeb .hint{display:block}
+.chips2{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip2{border:1px solid #cfe0f1;background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;color:var(--navy);cursor:pointer;font-weight:600;font-family:inherit}
+.chip2:hover{background:#eaf4fd}
+.tuchat{min-height:160px;max-height:440px}
+.tuin{display:flex;gap:8px}.tuin .in{flex:1;min-width:0}
+.tustudia{display:flex;gap:12px;align-items:center;cursor:pointer}
+.tustudia .gr{font-size:28px}
+@media (max-width:980px){.tugrid{grid-template-columns:1fr}}
+html.android .tugrid{grid-template-columns:1fr}

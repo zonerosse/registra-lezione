@@ -2064,6 +2064,43 @@ class Motore:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
 
+    # ------------------------------------------------------------------ il tuo tutor
+
+    def tutor(self, materia, cartelle):
+        import tutor as tu
+        try:
+            cartelle = [c for c in cartelle or [] if Path(c).is_dir()]
+            return {"ok": True, **tu.stato(BASE, materia, cartelle, self.cfg, testi.LINGUA)}
+        except Exception:
+            log.exception("tutor")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def tutor_fatto(self, chiave, si):
+        oggi = datetime.date.today().isoformat()
+        tf = {k: v for k, v in (self.cfg.get("tutor_fatti") or {}).items() if k >= (datetime.date.today() - datetime.timedelta(days=7)).isoformat()}
+        f = [x for x in tf.get(oggi, []) if x != chiave] + ([chiave] if si else [])
+        tf[oggi] = f
+        self.cfg["tutor_fatti"] = tf
+        salva_config(self.cfg)
+        return {"ok": True}
+
+    def tutor_chiedi(self, materia, cartelle, storia, testo):
+        import tutor as tu
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        cartelle = [c for c in cartelle or [] if Path(c).is_dir()]
+        if not cartelle or not (testo or "").strip():
+            return {"ok": False, "msg": tr("ch_vuoto")}
+        try:
+            st = tu.stato(BASE, materia, cartelle, self.cfg, testi.LINGUA)
+            # le lezioni in ordine di data: L1, L2... come le vede il tutor
+            return {"ok": True, **ch.domanda(self.chiave(), st["cartelle"] or cartelle, storia, testo.strip(), extra=tu.contesto(st, materia))}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("tutor: chiedi")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
     # ------------------------------------------------------------------ glossario della materia
 
     def glossario(self, materia, cartelle=None, rifai=False, solo_salvato=False):

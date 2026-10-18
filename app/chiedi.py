@@ -176,7 +176,7 @@ Lo studente ti fa domande su cio' che non ha capito. Regole:
 - Scrivi in {lingua}.{parole}"""
 
 
-def domanda(chiave, cartelle, storia, testo_domanda, lingua=None):
+def domanda(chiave, cartelle, storia, testo_domanda, lingua=None, extra=""):
     """Ritorna {"testo", "spesa"}. storia = [{"chi": "io"|"cl", "testo"}] (le ultime domande)."""
     lingua = lingua or testi.LINGUA
     ctx, tipo = contesto(cartelle)
@@ -189,7 +189,7 @@ def domanda(chiave, cartelle, storia, testo_domanda, lingua=None):
         segni = "[[L2 00:18:02]] per un momento della lezione L2, [[L2 slide 4]] per una slide della lezione L2."
     parole = el.parole_lezione(cartelle[0])
     sistema = ISTRUZIONI.format(cosa=cosa, segni=segni, lingua=testi.nome_lingua(lingua, "it"),
-                                parole=("\n- Termini corretti della materia: " + ", ".join(parole)) if parole else "")
+                                parole=("\n- Termini corretti della materia: " + ", ".join(parole)) if parole else "") + (extra or "")
     messaggi = [{"role": "user", "content": [
         {"type": "text", "text": ctx, "cache_control": {"type": "ephemeral"}},
         {"type": "text", "text": "Ecco il materiale. Ora le domande dello studente."}]},

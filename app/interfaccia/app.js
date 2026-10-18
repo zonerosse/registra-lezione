@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -139,6 +139,7 @@ function nomePagina(p) {
   if (p === 'rg') return t('rg.h');
   if (p === 'lm') return t('lm.nome');
   if (p === 'gl') return t('gl.nome');
+  if (p === 'tu') return t('tu.nome');
   if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
@@ -171,7 +172,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -1475,13 +1476,14 @@ async function apriChiedi(l) {
   vai('chiedi'); disegnaChiedi();
   setTimeout(() => $('chIn').focus(), 50);
 }
-function testoRisposta(x) {
+function testoRisposta(x, nomi) {
+  nomi = nomi || CH.nomi || [];
   let h = esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
   return h.replace(/\[\[\s*(?:L(\d+)\s+)?(?:slide\s*(\d+)|(\d{1,2}:\d{2}(?::\d{2})?))\s*\]\]/gi, (m, li, sl, tm) => {
     const i = li ? +li - 1 : 0;
     let sec = 0;
     if (tm) { const p = tm.split(':').map(Number); sec = p.length === 3 ? p[0] * 3600 + p[1] * 60 + p[2] : p[0] * 60 + p[1]; }
-    const nome = li && CH.nomi[i] ? '«' + (CH.nomi[i].split(' – ').slice(-1)[0]) + '» · ' : '';
+    const nome = li && nomi[i] ? '«' + (nomi[i].split(' – ').slice(-1)[0]) + '» · ' : '';
     const et = sl ? 'slide ' + sl : sec >= 60 ? t('ch.min', {m: Math.floor(sec / 60)}) : ms(sec);
     return `<button class="cita" data-i="${i}" data-s="${sl || ''}" data-t="${sec}">▶ ${esc(nome)}${et}</button>`;
   });
@@ -2066,22 +2068,25 @@ async function disegnaStudia() {
   let gg;
   if (info.giorni == null || info.giorni < 0) gg = `<div class="card stgg"><div style="flex:1"><b style="color:var(--ink)">${esc(t('st.nodata', {m: m.m}))}</b><div class="hint">${esc(t('st.nodata.s'))}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.data'))}</button></div>`;
   else gg = `<div class="card stgg">${info.giorni ? `<div class="gg">${info.giorni}</div>` : ''}<div style="flex:1"><b style="color:var(--ink)">${esc(info.giorni ? t(info.giorni === 1 ? 'st.gg1' : 'st.gg', {m: m.m}) : t('st.oggi.esame', {m: m.m}))}</b><div class="hint">${esc(fmtG(info.data_esame, {day: 'numeric', month: 'long'}))}${info.oggi && info.oggi.cose ? ' · ' + esc(t('st.oggi', {c: info.oggi.cose.join(', ')})) : ''}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.piano'))}</button></div>`;
-  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif', 'rgiorno', 'glos'] : []), d = k => D.has(k);
+  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif', 'rgiorno', 'glos', 'tutor'] : []), d = k => D.has(k);
   const fl = m.n ? (m.no ? t('tl.flash.n', {n: m.n, r: m.no}) : t(m.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: m.n})) : '';
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
       tile('orale', '🎤', t('tl.orale'), t('tl.dsa.orale.s'), ult(info.voti_orali)), tile('test', '☑', t('tl.dsa.test'), t('tl.dsa.test.s'), ult(info.voti_test)),
       tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s')), m.n && tile('fcorso', '🃏', t('tl.dsa.flash'), t('tl.dsa.flc.s'), fl),
-      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s')), tile('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s')), tile('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s')), tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
       tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto')), tile('mverif', '🗺', t('tl.mv'), t('tl.mv.s'), '', d('mverif'))]) +
     gruppo(t('g.ripassa'), [tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s'), '', d('rgiorno')), tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
-    gruppo(t('g.capisci'), [tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
+    gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
-  $('stBox2').innerHTML = `<div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').innerHTML = `<div class="card tustudia" id="tuStudia"><span class="gr">🧑‍🏫</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
   $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
   $('rgStudia').onclick = () => apriRipassoGiorno();
+  $('tuStudia').onclick = () => apriTutor(m);
+  A.tutor(m.m, m.cartelle).then(r => { if (!r.ok || !$('tuStudiaT')) return; const n = r.cose.filter(c => !c.fatto).length;
+    $('tuStudiaT').textContent = [r.giorni != null ? t('tu.studia.gg', {g: r.giorni}) : '', n ? t('tu.studia', {n, m: r.minuti}) : t('tu.studia0')].filter(Boolean).join(' · '); });
   A.ripasso_giorno(false, true).then(r => { if (!r.ok || !$('rgStudiaT')) return;
     $('rgStudiaT').textContent = r.carte ? `${r.carte} ${t(r.carte === 1 ? 'rg.studia1' : r.minuti === 1 ? 'rg.studia' : 'rg.studia', {m: r.minuti})}` : r.totale ? t('rg.studia0') : t('tl.rg.s'); });
 }
@@ -2099,6 +2104,7 @@ async function tileStudia(m, a) {
   if (a === 'mverif') return apriMappaVerifica(m);
   if (a === 'rgiorno') return apriRipassoGiorno();
   if (a === 'glos') return apriGlossario(m);
+  if (a === 'tutor') return apriTutor(m);
   if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
   if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
   if (a === 'mappe') {
@@ -2106,6 +2112,90 @@ async function tileStudia(m, a) {
     const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
+}
+/* ------------------------------------------------------------------ il tuo tutor */
+// Sa la data dell'esame, cosa e' stato studiato e dove si sbaglia (tutor.py, gratis); la chat usa Claude con queste
+// informazioni in piu' (come «Chiedi» su tutta la materia).
+var TU = {m: null, d: null, storia: [], ascolto: false};
+async function apriTutor(m) {
+  if (!TU.m || TU.m.m !== m.m) TU = {m, d: null, storia: [], ascolto: false}; else TU.m = m;
+  $('tuH').textContent = t('tu.h', {m: m.m});
+  $('tuIn').placeholder = t('tu.ph');
+  $('tuOggi').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('tu.lav'))}</div>`;
+  $('tuDeb').innerHTML = ''; $('tuVa').innerHTML = '';
+  vai('tu');
+  disegnaTuChat();
+  const r = await A.tutor(m.m, m.cartelle);
+  if (TU.m !== m) return;
+  if (!r.ok) { $('tuOggi').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  TU.d = r;
+  disegnaTutor();
+}
+function disegnaTutor() {
+  const r = TU.d, m = TU.m;
+  const testa = r.giorni == null ? `<div class="tuoggi"><div><b>${esc(t('tu.nodata', {m: m.m}))}</b><span>${esc(t('tu.info', {p: r.pronto}))}${r.serie ? ' · ' + esc(t('tu.serie', {n: r.serie})) : ''}</span></div></div>`
+    : `<div class="tuoggi">${r.giorni ? `<div class="gg">${r.giorni}</div>` : ''}<div><b>${esc(r.giorni ? t(r.giorni === 1 ? 'tu.gg1' : 'tu.gg', {m: m.m}) : t('tu.gg0', {m: m.m}))}</b><span>${esc(fmtG(r.data_esame, {weekday: 'long', day: 'numeric', month: 'long'}))} · ${esc(t('tu.info', {p: r.pronto}))}${r.serie ? ' · ' + esc(t('tu.serie', {n: r.serie})) : ''}</span></div></div>`;
+  const resta = r.cose.filter(c => !c.fatto).reduce((a, c) => a + c.min, 0);
+  $('tuOggi').innerHTML = testa + `<div class="lbl" style="margin-top:16px">${esc(resta ? t('tu.oggi', {m: resta}) : t('tu.oggi0'))}</div>
+    <div class="tucosa">${r.cose.map((c, i) => `<div class="tuc${c.fatto ? ' ok' : ''}" data-i="${i}"><span class="ck">${c.fatto ? '✓' : ''}</span><div class="sp"><b>${esc(c.t)}</b><small>${esc(c.s)}</small></div><span class="min">${esc(t('tu.min', {m: c.min}))}</span></div>`).join('')}</div>`;
+  $('tuOggi').querySelectorAll('.tuc').forEach(x => {
+    const c = r.cose[+x.dataset.i];
+    x.querySelector('.ck').onclick = async e => { e.stopPropagation(); c.fatto = !c.fatto; await A.tutor_fatto(c.k, c.fatto); disegnaTutor(); };
+    x.onclick = () => tuAzione(c);
+  });
+  $('tuDeb').innerHTML = `<div class="lbl">${esc(t('tu.deb'))}</div>` + (r.deboli.length ? r.deboli.map(x => x.mai
+      ? `<div class="tudeb"><span class="pill p-warn">${esc(t('tu.mai'))}</span><div class="sp"><b>${esc(x.argomento)}</b><span class="hint">${esc(t('tu.mai.s'))}</span></div></div>`
+      : `<div class="tudeb"><span class="pill ${x.bene ? 'p-ok' : 'p-red'}">${x.ok}/${x.tot}</span><div class="sp"><b>${esc(x.argomento)}</b><span class="hint">${esc(x.fonte)}</span></div></div>`).join('')
+    : `<div class="hint">${esc(t('tu.deb0'))}</div>`);
+  const v = a => a.join(' · ');
+  $('tuVa').innerHTML = `<div class="lbl">${esc(t('tu.va'))}</div>` + (r.voti_test.length || r.voti_orali.length
+      ? (r.voti_test.length ? `<div class="hint">${esc(t('tu.vt', {v: v(r.voti_test)}))}</div>` : '') + (r.voti_orali.length ? `<div class="hint" style="margin-top:4px">${esc(t('tu.vo', {v: v(r.voti_orali)}))}</div>` : '')
+      : `<div class="hint">${esc(t('tu.nov'))}</div>`) +
+    `<div class="bar" style="margin-top:10px"><i style="width:${r.pronto}%"></i></div><div class="hint" style="margin-top:6px">${esc(t('tu.pronto', {p: r.pronto}) + (r.obiettivo ? t('tu.obiettivo', {o: r.obiettivo}) : ''))}</div>`;
+  const deb = r.deboli.find(x => !x.mai && !x.bene);
+  const q = [t('tu.q1'), deb ? t('tu.q2', {a: deb.argomento}) : t('tu.q2b'), t('tu.q3'), r.giorni != null ? t('tu.q4', {d: fmtG(r.data_esame, {day: 'numeric', month: 'long'})}) : t('tu.q4b'), t('tu.q5')];
+  $('tuChips').innerHTML = q.map(x => `<button class="chip2">${esc(x)}</button>`).join('');
+  $('tuChips').querySelectorAll('.chip2').forEach(b => b.onclick = () => tuInvia(b.textContent));
+}
+async function tuAzione(c) {
+  const m = TU.m;
+  if (c.k === 'rg') return apriRipassoGiorno();
+  if (c.k === 'piano' || c.k === 'data') return tileStudia(m, 'piano');
+  if (c.k === 'orale') return tileStudia(m, 'orale');
+  const l = (LZ ? LZ.lezioni : []).find(x => x.cartella === c.cartella);
+  if (!l) return;
+  if (c.k === 'lezione') return apriLezione(l);
+  if (c.k === 'riascolta') { await apriKaraoke(l); if (KK.lez === l && KK.au) kkVai(c.sec); }
+}
+function disegnaTuChat() {
+  const h = [`<div class="msg cl">${esc(t('tu.ciao'))}</div>`, ...TU.storia.map((x, k) => x.chi === 'io' ? `<div class="msg io">${esc(x.testo)}</div>`
+    : x.chi === 'att' ? `<div class="msg cl"><span class="spin" style="width:14px;height:14px;vertical-align:-2px"></span> ${esc(t('tu.pensa'))}</div>`
+    : x.chi === 'err' ? `<div class="msg cl" style="color:#be123c">⚠ ${esc(x.testo)}</div>`
+    : `<div class="msg cl">${testoRisposta(x.testo, (TU.d && TU.d.nomi) || [])}<div class="solo-dsa" style="margin-top:6px"><button class="btn b-ghost ascolta" data-voce="${k}">${esc(t('ch.asc'))}</button></div></div>`)];
+  $('tuChat').innerHTML = h.join('');
+  $('tuChat').querySelectorAll('[data-voce]').forEach(b => b.onclick = () => voceParla(String(TU.storia[+b.dataset.voce].testo || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\*\*/g, '')));
+  $('tuChat').querySelectorAll('.cita').forEach(b => b.onclick = () => { const cs = (TU.d && TU.d.cartelle) || TU.m.cartelle; mostraMomento(cs[+b.dataset.i] || cs[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, ((TU.d && TU.d.nomi) || [])[+b.dataset.i] || ''); });
+  $('tuChat').scrollTop = $('tuChat').scrollHeight;
+  silabizza($('tuChat'));
+}
+async function tuInvia(testo) {
+  const q = String(testo || '').trim();
+  if (!q || TU.storia.some(x => x.chi === 'att')) return;
+  $('tuIn').value = '';
+  const prima = TU.storia.filter(x => x.chi === 'io' || x.chi === 'cl');
+  TU.storia = [...prima, {chi: 'io', testo: q}, {chi: 'att'}];
+  disegnaTuChat();
+  const m = TU.m;
+  const r = await A.tutor_chiedi(m.m, m.cartelle, prima, q);
+  if (TU.m !== m) return;
+  TU.storia = TU.storia.filter(x => x.chi !== 'att');
+  TU.storia.push(r.ok ? {chi: 'cl', testo: r.testo} : {chi: 'err', testo: r.msg});
+  disegnaTuChat();
+}
+function collegaTutor() {
+  $('tuVai').onclick = () => tuInvia($('tuIn').value);
+  $('tuIn').addEventListener('keydown', e => { if (e.key === 'Enter') tuInvia($('tuIn').value); });
+  $('tuMic').onclick = () => detta($('tuMic'), $('tuIn'));
 }
 /* ------------------------------------------------------------------ glossario della materia */
 // Le parole difficili di tutte le lezioni (glossario.py: le prende dagli appunti, Claude unisce i doppioni), con la
@@ -2468,7 +2558,7 @@ async function disegnaSpazioDsa() {
     mom(1, t('sd.m1'), t('sd.m1.s'), [T('reg', '⏺', t('sd.reg'), t('sd.reg.s')), T('detta', '🎙', t('sd.detta'), t('sd.detta.s'))]) +
     mom(2, t('sd.m2'), t('sd.m2.s'), [T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
       T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s')), T('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s'), mt)]) +
-    mom(3, t('sd.m3'), t('sd.m3.s'), [T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
+    mom(3, t('sd.m3'), t('sd.m3.s'), [T('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), mt), T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
       T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
     mom(4, t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s'))]) +
     `<button class="sdaltro" id="sdAltroB">${esc(t(SD.altro ? 'sd.altro.su' : 'sd.altro'))}<span style="font-weight:400">${esc(t('sd.altro.s'))}</span></button>
@@ -2485,7 +2575,7 @@ async function azioneDsa(a) {
   if (a === 'arch') return vai('arch');
   if (a === 'strumenti') return strumentiDsa();
   if (a === 'firma') return apriMappaVerifica(m);
-  if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob', 'glos'].includes(a)) return tileStudia(m, a);
+  if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob', 'glos', 'tutor'].includes(a)) return tileStudia(m, a);
   return tileLezione(l, a);
 }
 async function scriviParlando() {
@@ -3341,6 +3431,7 @@ function collegaNovita() {
   collegaKaraoke();
   collegaVerifica();
   collegaGlossario();
+  collegaTutor();
   collegaHoPronto();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
