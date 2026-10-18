@@ -130,7 +130,7 @@ jobs:
           js() { echo "$2" > "$DATI/prova_js.txt"; sleep ${3:-4}; xcrun simctl io "$DEV" screenshot esito/giro-$1.png; }
           mkdir -p esito
           js 01-benvenuto ""
-          js 02-prima-di-iniziare "document.querySelector('[data-l=it]').click()"
+          js 02-prima-di-iniziare "document.querySelector('.velo [data-l=it]').click()"
           js 03-prima-spuntata "$(giu 1) var c=document.querySelector('#pvCk'); c.checked=true; c.onchange();"
           js 04-registra "document.querySelector('#pvOk').click()"
           js 05-registra-meta "$(giu 0.5)"

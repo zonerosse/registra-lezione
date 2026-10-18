@@ -534,9 +534,17 @@ def _prossimo_evento():
         _TIENI.pop("evento", None)
 
 
-def _centro():
-    """Le notifiche di iOS: la prima volta si chiede il permesso; si vedono anche con l'app aperta."""
+def _centro(chiedi=False):
+    """Le notifiche di iOS; si vedono anche con l'app aperta. Il permesso si chiede solo quando serve davvero
+    (il primo avviso da mandare), non all'apertura dell'app."""
     c = _TIENI.get("notifiche")
+    if c is not None and chiedi and not _TIENI.get("notifiche_chiesto"):
+        from rubicon.objc import Block
+        from rubicon.objc.runtime import objc_id
+        import ctypes
+        risposta = Block(lambda ok, err: log.info("iphone: permesso notifiche %s", bool(ok)), None, ctypes.c_bool, objc_id)
+        c.requestAuthorizationWithOptions_completionHandler_(4 | 2 | 1, risposta)    # avvisi, suono, numerino
+        _TIENI["notifiche_chiesto"] = risposta
     if c is None:
         from rubicon.objc import Block
         from rubicon.objc.runtime import load_library, objc_id
@@ -545,15 +553,14 @@ def _centro():
         c = _objc("UNUserNotificationCenter").currentNotificationCenter()
         d = _delegati()["notifiche"].alloc().init()
         c.delegate = d
-        risposta = Block(lambda ok, err: log.info("iphone: permesso notifiche %s", bool(ok)), None, ctypes.c_bool, objc_id)
-        c.requestAuthorizationWithOptions_completionHandler_(4 | 2 | 1, risposta)    # avvisi, suono, numerino
         _TIENI["notifiche"] = c
-        _TIENI["notifiche_extra"] = (d, risposta)
+        _TIENI["notifiche_extra"] = d
+        return _centro(chiedi)
     return c
 
 
 def _notifica(ident, titolo, testo, quando):
-    c = _centro()
+    c = _centro(chiedi=True)
     n = _objc("UNMutableNotificationContent").alloc().init()
     n.title = str(titolo)
     n.body = str(testo)
@@ -765,6 +772,10 @@ class _Reg:
             self.errore = str(e)
             return False
         self.attiva = True
+        try:
+            _centro(chiedi=True)        # prima registrazione: il permesso per avvisare quando la lezione e' pronta
+        except Exception:
+            log.exception("iphone: permesso notifiche")
         self._th = threading.Thread(target=self._guarda, daemon=True)
         self._th.start()
         return True
