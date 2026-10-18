@@ -47,10 +47,10 @@ Installing app requirements for iPhone device... started
 Looking in indexes: https://pypi.org/simple, https://pypi.anaconda.org/beeware/simple
 Collecting numpy
   Downloading numpy-1.26.2-cp312-cp312-ios_13_0_arm64_iphoneos.whl (20.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 76.4 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 106.5 MB/s  0:00:00
 Collecting pillow
   Downloading pillow-11.0.0-cp312-cp312-ios_13_0_arm64_iphoneos.whl (1.0 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 70.5 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 52.3 MB/s  0:00:00
 Collecting fpdf2==2.8.9
   Downloading fpdf2-2.8.9-py3-none-any.whl.metadata (88 kB)
 Collecting toga-iOS
@@ -70,7 +70,7 @@ Downloading toga_ios-0.5.7-py3-none-any.whl (446 kB)
 Downloading toga_core-0.5.7-py3-none-any.whl (170 kB)
 Downloading travertino-0.5.7-py3-none-any.whl (26 kB)
 Downloading fonttools-4.67.0-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 28.3 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 125.1 MB/s  0:00:00
 Downloading rubicon_objc-0.5.7-py3-none-any.whl (64 kB)
 Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
 Installing collected packages: travertino, rubicon-objc, pillow, numpy, fonttools, defusedxml, toga-core, fpdf2, toga-iOS
@@ -83,12 +83,12 @@ Installing app requirements for iPhone simulator... started
 Looking in indexes: https://pypi.org/simple, https://pypi.anaconda.org/beeware/simple
 Collecting numpy
   Downloading numpy-1.26.2-cp312-cp312-ios_13_0_arm64_iphonesimulator.whl (20.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.3/20.3 MB 150.8 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.3/20.3 MB 97.4 MB/s  0:00:00
 WARNING: Cache entry deserialization failed, entry ignored
 WARNING: Cache entry deserialization failed, entry ignored
 Collecting pillow
   Downloading pillow-11.0.0-cp312-cp312-ios_13_0_arm64_iphonesimulator.whl (1.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 25.5 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 41.7 MB/s  0:00:00
 Collecting fpdf2==2.8.9
   Using cached fpdf2-2.8.9-py3-none-any.whl.metadata (88 kB)
 Collecting toga-iOS
