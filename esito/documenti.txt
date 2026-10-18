@@ -1,0 +1,9 @@
+Documents
+ggml-small-q5_1.bin
+porta.txt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/DAFC3487-41EF-4684-AE32-AE05CB3477DA/Documents/Documents:
+Recorded lectures
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/DAFC3487-41EF-4684-AE32-AE05CB3477DA/Documents/Documents/Recorded lectures:
+registra_lezione.log
