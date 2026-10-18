@@ -1813,7 +1813,13 @@ class Motore:
         if not cartelle or not (testo or "").strip():
             return {"ok": False, "msg": tr("ch_vuoto")}
         try:
-            r = ch.domanda(self.chiave(), cartelle, storia, testo.strip())
+            import libro as lb
+            extra = ""
+            try:
+                extra = lb.contesto_domanda(BASE, self._materia_lezione(cartelle[0]), testo)
+            except Exception:
+                log.exception("chiedi: pagine del libro")
+            r = ch.domanda(self.chiave(), cartelle, storia, testo.strip(), extra=extra)
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
         except Exception:
@@ -2071,6 +2077,133 @@ class Motore:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
 
+    # ------------------------------------------------------------------ libro di testo della materia
+
+    def _materia_lezione(self, cartella):
+        info = el.leggi_json(Path(cartella) / "info.json", {}) or {}
+        return (info.get("materia") or materia_scritta(info.get("nome", Path(cartella).name))).strip()
+
+    def libro_info(self, materia, cartelle):
+        import libro as lb
+        try:
+            docs = lb.documenti(BASE, materia)
+            out = {"ok": True, "documenti": docs, "nascosto": materia.lower() in [x.lower() for x in self.cfg.get("libro_no") or []]}
+            if docs:
+                cartelle = [c for c in cartelle or [] if Path(c).is_dir()]
+                gia = el.leggi_json(lb.cartella(BASE, materia) / "collegamenti.json", {}) or {}
+                out["lezioni"] = lb.pagine_per_lezione(BASE, materia, cartelle)
+                out["mancano"] = gia.get("mancano")
+                import esame as es
+                out["mancano_vecchi"] = gia.get("mancano") is not None and gia.get("firma") != [es._firma(sorted(cartelle)), [[d["k"], d["pagine"]] for d in docs]]
+            return out
+        except Exception:
+            log.exception("libro: info")
+            return {"ok": False, "msg": tr("lb_err")}
+
+    def libro_aggiungi(self, materia, percorso, sostituisci=False):
+        import libro as lb
+        if getattr(self, "_libro", None) and self._libro.get("stato") == "lavoro":
+            return {"ok": False, "msg": tr("lb_lavoro")}
+        self._libro = {"stato": "lavoro", "f": 0.0}
+
+        def lavoro():
+            try:
+                docs = lb.aggiungi(BASE, materia, percorso, bool(sostituisci), lambda f: self._libro.update(f=f))
+                self._libro.update(f=0.85)
+                lb.indice(BASE, materia)
+                self._libro = {"stato": "fatto", "f": 1.0, "documenti": docs}
+            except ap.ErroreAppunti as e:
+                self._libro = {"stato": "errore", "msg": str(e)}
+            except Exception:
+                log.exception("libro: aggiungi")
+                self._libro = {"stato": "errore", "msg": tr("lb_err")}
+        threading.Thread(target=lavoro, daemon=True).start()
+        return {"ok": True}
+
+    def libro_avanzamento(self):
+        return dict(getattr(self, "_libro", None) or {"stato": "niente"})
+
+    def libro_togli(self, materia, k):
+        import libro as lb
+        return {"ok": True, "documenti": lb.togli(BASE, materia, int(k))}
+
+    def libro_nascondi(self, materia):
+        no = [x for x in self.cfg.get("libro_no") or [] if x.lower() != materia.lower()] + [materia]
+        self.cfg["libro_no"] = no[-50:]
+        salva_config(self.cfg)
+        return {"ok": True}
+
+    def libro_mancano(self, materia, cartelle, rifai=False):
+        import libro as lb
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            d, spesa = lb.mancano(BASE, materia, [c for c in cartelle or [] if Path(c).is_dir()], self.chiave(), bool(rifai), testi.LINGUA)
+            return {"ok": True, "mancano": d.get("mancano", []), "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("libro: mancano")
+            return {"ok": False, "msg": tr("lb_err")}
+
+    def libro_pagina(self, materia, k=None, n=None, et=None, q=""):
+        """Il testo di una pagina (per numero o per numero stampato), con le frasi da evidenziare."""
+        import libro as lb
+        docs = lb.documenti(BASE, materia)
+        if not docs:
+            return {"ok": False}
+        if et is not None and k is None:
+            for d in docs:
+                for p in lb.pagine(BASE, materia, d["k"]):
+                    if str(p["et"]) == str(et):
+                        k, n = d["k"], p["n"]
+                        break
+                if k is not None:
+                    break
+        k = int(k if k is not None else docs[0]["k"])
+        pag = lb.pagine(BASE, materia, k)
+        if not pag:
+            return {"ok": False}
+        n = max(1, min(len(pag), int(n or 1)))
+        p = pag[n - 1]
+        frasi = [f for f in re.split(r"(?<=[.!?;:])\s+", p["t"]) if f.strip()]
+        if q and len(q) < 400 and Path(q).is_dir():          # una lezione: le sue parole chiave
+            q = lb._testo_lezione_per_ricerca(q)
+        qp = set(lb._parole(q))
+        serve = 1 if len(qp) <= 6 else 2
+        evid = [i for i, f in enumerate(frasi) if qp and len(qp & set(lb._parole(f))) >= serve]
+        doc = next((d for d in docs if d["k"] == k), docs[0])
+        return {"ok": True, "k": k, "n": n, "et": p["et"], "cap": p.get("cap", ""), "frasi": frasi, "evid": evid,
+                "tot": len(pag), "doc": doc["nome"]}
+
+    def libro_cerca(self, materia, testo):
+        import libro as lb
+        try:
+            if not materia or not lb.documenti(BASE, materia):
+                return {"ok": False}
+            r = lb.indice(BASE, materia).cerca(testo, 1)
+            return {"ok": bool(r and r[0]["punti"] >= 1.5), **(r[0] if r else {})}
+        except Exception:
+            log.exception("libro: cerca")
+            return {"ok": False}
+
+    def libro_lezione(self, cartella):
+        import libro as lb
+        try:
+            m = self._materia_lezione(cartella)
+            if not m or not lb.documenti(BASE, m):
+                return {"ok": False}
+            t = lb.indice(BASE, m).tratto(lb._testo_lezione_per_ricerca(cartella))
+            return {"ok": bool(t), "materia": m, "tratto": t}
+        except Exception:
+            log.exception("libro: lezione")
+            return {"ok": False}
+
+    def apri_pdf_libro(self, materia, k):
+        import libro as lb
+        d = next((x for x in lb.documenti(BASE, materia) if x["k"] == int(k)), None)
+        return {"ok": bool(d and Path(d["percorso"]).exists() and apri(d["percorso"]))}
+
     # ------------------------------------------------------------------ il tuo tutor
 
     def tutor(self, materia, cartelle):
@@ -2101,7 +2234,12 @@ class Motore:
         try:
             st = tu.stato(BASE, materia, cartelle, self.cfg, testi.LINGUA)
             # le lezioni in ordine di data: L1, L2... come le vede il tutor
-            return {"ok": True, **ch.domanda(self.chiave(), st["cartelle"] or cartelle, storia, testo.strip(), extra=tu.contesto(st, materia))}
+            import libro as lb
+            try:
+                extra_libro = lb.contesto_domanda(BASE, materia, testo)
+            except Exception:
+                extra_libro = ""
+            return {"ok": True, **ch.domanda(self.chiave(), st["cartelle"] or cartelle, storia, testo.strip(), extra=tu.contesto(st, materia) + extra_libro)}
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
         except Exception:

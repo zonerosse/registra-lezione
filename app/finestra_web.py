@@ -262,6 +262,36 @@ class Api:
     def ripasso_giorno_fatto(self):
         return self._m.ripasso_giorno_fatto()
 
+    def libro_info(self, materia, cartelle):
+        return self._m.libro_info(materia, cartelle)
+
+    def libro_aggiungi(self, materia, percorso, sostituisci=False):
+        return self._m.libro_aggiungi(materia, percorso, sostituisci)
+
+    def libro_avanzamento(self):
+        return self._m.libro_avanzamento()
+
+    def libro_togli(self, materia, k):
+        return self._m.libro_togli(materia, k)
+
+    def libro_nascondi(self, materia):
+        return self._m.libro_nascondi(materia)
+
+    def libro_mancano(self, materia, cartelle, rifai=False):
+        return self._m.libro_mancano(materia, cartelle, rifai)
+
+    def libro_pagina(self, materia, k=None, n=None, et=None, q=""):
+        return self._m.libro_pagina(materia, k, n, et, q)
+
+    def libro_cerca(self, materia, testo):
+        return self._m.libro_cerca(materia, testo)
+
+    def libro_lezione(self, cartella):
+        return self._m.libro_lezione(cartella)
+
+    def apri_pdf_libro(self, materia, k):
+        return self._m.apri_pdf_libro(materia, k)
+
     def tutor(self, materia, cartelle):
         return self._m.tutor(materia, cartelle)
 

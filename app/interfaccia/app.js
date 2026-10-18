@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'tu', 'lb', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -140,6 +140,7 @@ function nomePagina(p) {
   if (p === 'lm') return t('lm.nome');
   if (p === 'gl') return t('gl.nome');
   if (p === 'tu') return t('tu.nome');
+  if (p === 'lb') return t('lb.nome');
   if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
@@ -161,6 +162,7 @@ function vai(p, tornando = false) {
   if (p !== 'podcast' && PCS && PCS.attivo) pcFerma();
   if (p !== 'karaoke' && KK && KK.au) KK.au.pause();
   if (p !== 'gl' && GL && GL.au) GL.au.pause();
+  if (p !== 'lb' && LB && LB.poll) { clearInterval(LB.poll); LB.poll = null; }
   if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
@@ -172,7 +174,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'tu', 'lb', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -1479,6 +1481,7 @@ async function apriChiedi(l) {
 function testoRisposta(x, nomi) {
   nomi = nomi || CH.nomi || [];
   let h = esc(x).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+  h = h.replace(/\[\[\s*libro\s*p\.?\s*([\w-]+)\s*\]\]/gi, (m, p) => `<button class="cita lbcita" data-lbp="${esc(p)}">📘 ${esc(t('lb.p', {a: p}))}</button>`);
   return h.replace(/\[\[\s*(?:L(\d+)\s+)?(?:slide\s*(\d+)|(\d{1,2}:\d{2}(?::\d{2})?))\s*\]\]/gi, (m, li, sl, tm) => {
     const i = li ? +li - 1 : 0;
     let sec = 0;
@@ -1498,7 +1501,8 @@ function disegnaChiedi() {
     : `<div class="msg vuoto">${esc(t('ch.vuoto'))}</div>`;
   $('chat').innerHTML = h;
   $('chat').querySelectorAll('[data-voce]').forEach(b => b.onclick = () => voceParla(String(CH.storia[+b.dataset.voce].testo || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\*\*/g, '')));
-  $('chat').querySelectorAll('.cita').forEach(b => b.onclick = () => mostraMomento(CH.cartelle[+b.dataset.i] || CH.cartelle[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, CH.nomi[+b.dataset.i] || ''));
+  $('chat').querySelectorAll('.lbcita').forEach(b => b.onclick = () => lbApriEt(CH.materia, b.dataset.lbp));
+  $('chat').querySelectorAll('.cita:not(.lbcita)').forEach(b => b.onclick = () => mostraMomento(CH.cartelle[+b.dataset.i] || CH.cartelle[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, CH.nomi[+b.dataset.i] || ''));
   $('chat').scrollTop = $('chat').scrollHeight;
 }
 async function inviaDomanda() {
@@ -1821,6 +1825,14 @@ function disegnaLezione() {
   // un gruppo con tutto gia' in «Per te» non si mostra
   $('lzBox').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('lzBox').querySelectorAll('[data-ta]').forEach(b => b.onclick = () => tileLezione(l, b.dataset.ta));
+  if (pronta && l.materia) A.libro_lezione(l.cartella).then(r => {
+    if (!r.ok || LEZ !== l || $('lzLibro')) return;
+    const tr_ = r.tratto, pp = tr_.da === tr_.a ? t('lb.p', {a: tr_.et_da}) : t('lb.pp', {a: tr_.et_da, b: tr_.et_a});
+    const g = $('lzBox').querySelector('.altri .grp .tiles');
+    if (!g) return;
+    g.insertAdjacentHTML('beforeend', tile('libro', '📘', t('tl.lb.lez'), t('tl.lb.lez.s', {p: pp, c: tr_.cap || ''}).replace(/ · $/, '')).replace('<button class="tile"', '<button class="tile" id="lzLibro"'));
+    $('lzLibro').onclick = () => { const m = materieStudia().find(x => x.m.toLowerCase() === r.materia.toLowerCase()); if (m) apriLibro(m, {k: tr_.k, n: tr_.da, q: l.cartella}); };
+  });
 }
 async function cambiaMateria(l) {
   const mie = [...new Set([...(R.recenti || []), ...materieStudia().map(x => x.m)])];
@@ -2080,7 +2092,7 @@ async function disegnaStudia() {
   const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
       tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto')), tile('mverif', '🗺', t('tl.mv'), t('tl.mv.s'), '', d('mverif'))]) +
     gruppo(t('g.ripassa'), [tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s'), '', d('rgiorno')), tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
-    gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
+    gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('libro', '📘', t('tl.lb'), t('tl.lb.s')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
   $('stBox2').innerHTML = `<div class="card tustudia" id="tuStudia"><span class="gr">🧑‍🏫</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
@@ -2088,6 +2100,12 @@ async function disegnaStudia() {
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
   $('rgStudia').onclick = () => apriRipassoGiorno();
   $('tuStudia').onclick = () => apriTutor(m);
+  if (m.lez.length >= 2) A.libro_info(m.m, []).then(r => {
+    if (!r.ok || r.documenti.length || r.nascosto || STU.m !== m.m || !$('stBox2') || $('lbInv')) return;
+    $('stBox2').insertAdjacentHTML('afterbegin', `<div class="card lbinv" id="lbInv" style="margin-bottom:14px"><span style="font-size:26px">📘</span><div class="sp"><b style="color:var(--ink)">${esc(t('lb.inv.t', {m: m.m}))}</b><div class="hint">${esc(t('lb.inv.s'))}</div></div><button class="btn b-ghost b-sm" id="lbInvSi">${esc(t('lb.inv.b'))}</button><button class="btn b-ghost b-sm" id="lbInvNo">✕</button></div>`);
+    $('lbInvSi').onclick = () => apriLibro(m);
+    $('lbInvNo').onclick = async () => { $('lbInv').remove(); await A.libro_nascondi(m.m); };
+  });
   A.tutor(m.m, m.cartelle).then(r => { if (!r.ok || !$('tuStudiaT')) return; const n = r.cose.filter(c => !c.fatto).length;
     $('tuStudiaT').textContent = [r.giorni != null ? t('tu.studia.gg', {g: r.giorni}) : '', n ? t('tu.studia', {n, m: r.minuti}) : t('tu.studia0')].filter(Boolean).join(' · '); });
   A.ripasso_giorno(false, true).then(r => { if (!r.ok || !$('rgStudiaT')) return;
@@ -2108,6 +2126,7 @@ async function tileStudia(m, a) {
   if (a === 'rgiorno') return apriRipassoGiorno();
   if (a === 'glos') return apriGlossario(m);
   if (a === 'tutor') return apriTutor(m);
+  if (a === 'libro') return apriLibro(m);
   if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
   if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
   if (a === 'mappe') {
@@ -2115,6 +2134,135 @@ async function tileStudia(m, a) {
     const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
+}
+/* ------------------------------------------------------------------ libro di testo */
+// Il PDF del libro letto sul dispositivo (libro.py): le pagine di ogni lezione, cosa c'e' nel libro ma non a lezione,
+// la pagina da leggere con le frasi della lezione evidenziate.
+var LB = {m: null, d: null, pag: null, poll: null, q: ''};
+async function apriLibro(m, pagina) {
+  if (LB.poll) clearInterval(LB.poll);
+  LB = {m, d: null, pag: null, poll: null, q: ''};
+  $('lbH').textContent = t('lb.h', {m: m.m});
+  $('lbBox').innerHTML = `<div class="card"><span class="spin"></span></div>`;
+  vai('lb');
+  await lbCarica(pagina);
+}
+async function lbCarica(pagina) {
+  const m = LB.m;
+  const r = await A.libro_info(m.m, m.cartelle);
+  if (LB.m !== m) return;
+  if (!r.ok) { $('lbBox').innerHTML = `<div class="card"><div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div></div>`; return; }
+  LB.d = r;
+  if (!r.documenti.length) return lbVuoto();
+  disegnaLibro();
+  const l0 = r.lezioni.find(x => x.tratto);
+  if (pagina) lbPagina(pagina.k, pagina.n, pagina.q || '');
+  else if (l0) lbPagina(l0.tratto.k, l0.tratto.da, l0.cartella);
+  else lbPagina(r.documenti[0].k, 1, '');
+}
+function lbVuoto() {
+  $('lbBox').innerHTML = `<div class="card lbvuoto"><div class="ic">📘</div><b style="display:block;font-size:19px;color:var(--ink);margin:6px 0 4px">${esc(t('lb.v.t', {m: LB.m.m}))}</b>
+    <div class="hint" style="max-width:520px;margin:0 auto">${esc(t('lb.v.s'))}</div>
+    <div class="row" style="justify-content:center;margin-top:16px"><button class="btn b-main" id="lbScegli">${esc(t('lb.v.b'))}</button></div>
+    <div class="hint" style="margin-top:10px">${esc(t('lb.v.n'))}</div></div>`;
+  $('lbScegli').onclick = () => lbAggiungi(true);
+}
+async function lbAggiungi(sostituisci) {
+  const f = await A.scegli_pdf();
+  if (!f.ok) { if (f.msg) await dialogo({titolo: t('lb.nome'), testo: f.msg}); return; }
+  const m = LB.m;
+  const r = await A.libro_aggiungi(m.m, f.percorso, !!sostituisci);
+  if (!r.ok) { await dialogo({titolo: t('lb.nome'), testo: r.msg || ''}); return; }
+  $('lbBox').innerHTML = `<div class="card" style="padding:22px"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('lb.lav'))} <b>${esc(f.nome || '')}</b></div><div class="bar" style="margin-top:12px"><i id="lbBar" style="width:2%"></i></div></div>`;
+  LB.poll = setInterval(async () => {
+    const a = await A.libro_avanzamento();
+    if (LB.m !== m) return;
+    if ($('lbBar')) $('lbBar').style.width = Math.max(2, Math.round((a.f || 0) * 100)) + '%';
+    if (a.stato === 'fatto' || a.stato === 'errore') {
+      clearInterval(LB.poll); LB.poll = null;
+      if (a.stato === 'errore') { await dialogo({titolo: t('lb.nome'), testo: a.msg || ''}); }
+      lbCarica();
+    }
+  }, 700);
+}
+function disegnaLibro() {
+  const r = LB.d, m = LB.m;
+  const tot = r.documenti.reduce((a, d) => a + d.pagine, 0);
+  const docs = r.documenti.map(d => `<div class="lbdoc">${d.tipo === 'libro' ? '📘' : '📄'} <b>${esc(d.nome)}</b> · ${d.pagine} p. <button class="lnk" data-apri="${d.k}">${esc(t('lb.apri'))}</button> · <button class="lnk" data-togli="${d.k}">${esc(t('lb.togli'))}</button></div>`).join('');
+  const lez = r.lezioni.map(l => {
+    const tr_ = l.tratto, pp = tr_ ? (tr_.da === tr_.a ? t('lb.p', {a: tr_.et_da}) : t('lb.pp', {a: tr_.et_da, b: tr_.et_a})) : t('lb.nolez');
+    return `<div class="lbr" data-k="${tr_ ? tr_.k : ''}" data-n="${tr_ ? tr_.da : ''}" data-q="${esc(l.cartella)}"><span class="pill p-vio">L${l.n}</span><div class="sp"><b>${esc(mvSenzaMateria(l.nome, m.m))}</b><small>${esc(l.data)}${tr_ && tr_.cap ? ' · ' + esc(tr_.cap) : ''}</small></div><span class="pg2">${esc(pp)}${tr_ ? ' ›' : ''}</span></div>`;
+  }).join('');
+  $('lbBox').innerHTML = `<div class="lbgrid"><div>
+      <div class="card"><div class="lbfile"><span class="ic">📘</span><div class="sp"><b style="color:var(--ink)">${esc(r.documenti[0].nome)}</b><div class="hint">${esc(t('lb.info', {p: tot}))}</div></div>
+        <button class="btn b-ghost b-sm" id="lbDisp">${esc(t('lb.disp'))}</button><button class="btn b-ghost b-sm" id="lbCambia">${esc(t('lb.cambia'))}</button></div>
+        ${docs}<div class="hint" style="margin-top:10px">${esc(t('lb.dove'))}</div></div>
+      <div class="card mt"><div class="lbl">${esc(t('lb.lez'))}</div>${lez}</div>
+      <div class="card mt" id="lbManc"></div></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><div class="lbl" style="margin:0" id="lbNum"></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="lbPrima">‹</button><button class="btn b-ghost b-sm" id="lbDopo">›</button><button class="btn b-ghost b-sm" id="lbVoce">🔊</button></div></div>
+      <div class="lbpag mt" id="lbPag"></div></div></div>`;
+  $('lbDisp').onclick = () => lbAggiungi(false);
+  $('lbCambia').onclick = () => lbAggiungi(true);
+  $('lbBox').querySelectorAll('[data-apri]').forEach(b => b.onclick = () => A.apri_pdf_libro(m.m, +b.dataset.apri));
+  $('lbBox').querySelectorAll('[data-togli]').forEach(b => b.onclick = async () => {
+    const d = r.documenti.find(x => x.k === +b.dataset.togli);
+    if (!await conferma(t('lb.nome'), t('lb.togli.q', {n: d.nome}), t('lb.togli'), t('annulla'), 'b-rec')) return;
+    await A.libro_togli(m.m, d.k); lbCarica();
+  });
+  $('lbBox').querySelectorAll('.lbr[data-k]').forEach(x => x.onclick = () => { if (!x.dataset.k) return; $('lbBox').querySelectorAll('.lbr').forEach(y => y.classList.toggle('on', y === x)); lbPagina(+x.dataset.k, +x.dataset.n, x.dataset.q); });
+  $('lbPrima').onclick = () => LB.pag && lbPagina(LB.pag.k, LB.pag.n - 1, LB.q);
+  $('lbDopo').onclick = () => LB.pag && lbPagina(LB.pag.k, LB.pag.n + 1, LB.q);
+  $('lbVoce').onclick = () => LB.pag && voceParla(LB.pag.frasi.join(' '));
+  lbMancano();
+}
+function lbMancano() {
+  const r = LB.d, box = $('lbManc');
+  const testa = `<div class="lbl">${esc(t('lb.manc'))}</div><div class="hint">${esc(t('lb.manc.s'))}</div>`;
+  if (r.mancano == null) { box.innerHTML = testa + `<div class="row mt"><button class="btn b-main b-sm" id="lbTrova">${esc(t('lb.manc.b'))}</button></div>`; $('lbTrova').onclick = () => lbTrova(false); return; }
+  const lista = r.mancano.map((x, i) => `<div class="lbm" data-i="${i}"><span style="font-size:20px">⚠</span><div class="sp"><b>${esc(x.argomento)}</b><small>${esc(x.nominato ? t('lb.nom', {p: x.et, l: x.nominato.lezione, m: Math.floor(x.nominato.sec / 60)}) : t('lb.mai', {p: x.et}))}</small></div>
+      <button class="btn b-ghost b-sm" data-sp="${i}">${esc(t('lb.spiega'))}</button><button class="btn b-ghost b-sm" data-in="${i}">${esc(t('lb.interr'))}</button></div>`).join('');
+  box.innerHTML = testa + (r.mancano_vecchi ? `<div class="avviso row mt"><span class="sp">${esc(t('lb.manc.vecchio'))}</span><button class="btn b-ghost b-sm" id="lbAgg">${esc(t('lb.manc.agg'))}</button></div>` : '') +
+    (lista || `<div class="hint mt">${esc(t('lb.manc0'))}</div>`);
+  if ($('lbAgg')) $('lbAgg').onclick = () => lbTrova(true);
+  box.querySelectorAll('.lbm').forEach(x => x.onclick = e => { if (e.target.closest('button')) return; const v = r.mancano[+x.dataset.i]; if (v.k) lbPagina(v.k, v.n, v.argomento); });
+  const chiedi = (v, q) => { apriTutor(LB.m).then(() => tuInvia(q)); };
+  box.querySelectorAll('[data-sp]').forEach(b => b.onclick = () => { const v = r.mancano[+b.dataset.sp]; chiedi(v, t('lb.spiega.q', {a: v.argomento, p: v.et})); });
+  box.querySelectorAll('[data-in]').forEach(b => b.onclick = () => { const v = r.mancano[+b.dataset.in]; chiedi(v, t('lb.interr.q', {a: v.argomento, p: v.et})); });
+}
+async function lbTrova(rifai) {
+  const m = LB.m;
+  $('lbManc').innerHTML = `<div class="lbl">${esc(t('lb.manc'))}</div><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('lb.manc.lav'))}</div>`;
+  const r = await A.libro_mancano(m.m, m.cartelle, !!rifai);
+  if (LB.m !== m) return;
+  if (!r.ok) { $('lbManc').innerHTML = `<div class="lbl">${esc(t('lb.manc'))}</div><div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  LB.d.mancano = r.mancano; LB.d.mancano_vecchi = false;
+  lbMancano();
+}
+async function lbPagina(k, n, q) {
+  LB.q = q || '';
+  const r = await A.libro_pagina(LB.m.m, k, n, null, LB.q);
+  if (!r.ok || !$('lbPag')) return;
+  LB.pag = r;
+  $('lbNum').textContent = t('lb.pag', {p: r.et}) + (r.cap ? ' · ' + r.cap : '');
+  $('lbPag').innerHTML = `<h4>${esc(r.doc)}</h4>` + r.frasi.map((f, i) => r.evid.includes(i) ? `<mark>${esc(f)}</mark>` : esc(f)).join(' ');
+  $('lbPag').scrollTop = 0;
+  const e = $('lbPag').querySelector('mark'); if (e) e.scrollIntoView({block: 'center'});
+  $('lbPrima').disabled = r.n <= 1; $('lbDopo').disabled = r.n >= r.tot;
+  silabizza($('lbPag'));
+}
+async function lbApriEt(materia, et) {
+  const m = materieStudia().find(x => x.m.toLowerCase() === String(materia || '').toLowerCase()); if (!m) return;
+  const r = await A.libro_pagina(m.m, null, null, et, '');
+  if (r.ok) apriLibro(m, {k: r.k, n: r.n, q: ''});
+}
+// «📘 Libro p. N» sotto una flashcard o nel glossario: la pagina piu' adatta (ricerca fatta sul dispositivo)
+async function lbRif(box, materia, testo) {
+  if (!box || !materia) return;
+  const r = await A.libro_cerca(materia, testo);
+  if (!r.ok || !document.body.contains(box)) return;
+  const b = document.createElement('button'); b.className = 'lbref'; b.textContent = t('lb.ref', {p: r.et});
+  b.onclick = e => { e.stopPropagation(); const m = materieStudia().find(x => x.m.toLowerCase() === materia.toLowerCase()); if (m) apriLibro(m, {k: r.k, n: r.n, q: testo}); };
+  box.appendChild(b);
 }
 /* ------------------------------------------------------------------ il tuo tutor */
 // Sa la data dell'esame, cosa e' stato studiato e dove si sbaglia (tutor.py, gratis); la chat usa Claude con queste
@@ -2177,7 +2325,8 @@ function disegnaTuChat() {
     : `<div class="msg cl">${testoRisposta(x.testo, (TU.d && TU.d.nomi) || [])}<div class="solo-dsa" style="margin-top:6px"><button class="btn b-ghost ascolta" data-voce="${k}">${esc(t('ch.asc'))}</button></div></div>`)];
   $('tuChat').innerHTML = h.join('');
   $('tuChat').querySelectorAll('[data-voce]').forEach(b => b.onclick = () => voceParla(String(TU.storia[+b.dataset.voce].testo || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\*\*/g, '')));
-  $('tuChat').querySelectorAll('.cita').forEach(b => b.onclick = () => { const cs = (TU.d && TU.d.cartelle) || TU.m.cartelle; mostraMomento(cs[+b.dataset.i] || cs[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, ((TU.d && TU.d.nomi) || [])[+b.dataset.i] || ''); });
+  $('tuChat').querySelectorAll('.lbcita').forEach(b => b.onclick = () => lbApriEt(TU.m.m, b.dataset.lbp));
+  $('tuChat').querySelectorAll('.cita:not(.lbcita)').forEach(b => b.onclick = () => { const cs = (TU.d && TU.d.cartelle) || TU.m.cartelle; mostraMomento(cs[+b.dataset.i] || cs[0], +b.dataset.t, b.dataset.s ? +b.dataset.s : null, ((TU.d && TU.d.nomi) || [])[+b.dataset.i] || ''); });
   $('tuChat').scrollTop = $('tuChat').scrollHeight;
   silabizza($('tuChat'));
 }
@@ -2267,6 +2416,7 @@ function glScheda() {
         ${v.collegate.length ? `<div class="lbl" style="margin-top:14px">${esc(t('gl.coll'))}</div><div class="glrel">${v.collegate.map(c => `<span>${esc(c)}</span>`).join('')}</div>` : ''}</div>
     </div>`;
   silabizza($('glDef'));
+  lbRif($('glDef'), GL.m.m, v.termine + ' ' + v.definizione);
   $('glAsc').onclick = () => voceParla(v.termine + '. ' + v.definizione);
   $('glDr').onclick = async () => { const r = await A.glossario_ripassa(GL.m.m, v.termine, !rip); if (r.ok) { GL.d.ripassa = r.ripassa; glScheda(); } };
   box.querySelectorAll('.glrel span').forEach(x => x.onclick = () => { const y = GL.d.voci.find(z => rgNorm(z.termine) === rgNorm(x.textContent)); if (y) { GL.cur = y; GL.q = ''; if ($('glCerca')) $('glCerca').value = ''; disegnaGlossario(); } });
@@ -3542,6 +3692,8 @@ function cartaRip() {
   document.querySelector('#carta .fronte').appendChild(bF); document.querySelector('#carta .retro').appendChild(bR);
   cartaGiorno(c);
   silabizza($('carta'));
+  const mat = c.materia || (LZ && (LZ.lezioni.find(x => x.cartella === c.cartella) || {}).materia) || (RP.glossario && GL.m && GL.m.m) || '';
+  lbRif(document.querySelector('#carta .retro'), mat, c.domanda + ' ' + (c.schema || []).join(' '));
 }
 function giraRip() { if (RP.giorno && RP.modo === 'croc' && !RP.risposto && RP.carte[RP.i] && RP.carte[RP.i].opzioni) return; $('carta').classList.toggle('giro'); $('voto').classList.add('on'); }
 function votoRip(v) {

@@ -1,7 +1,7 @@
 {
- "versione": "0.11.15",
+ "versione": "0.11.16",
  "codice": 11,
- "novita": "Nella pagina della lezione ora si vede il formato degli appunti: «📄 Appunti Cornell» e, se c'è, «⭐ Appunti Formato Esame», ognuno con il suo PDF. «Crea anche in…» è una piastrella, non più nascosta in «Altro». Se manca la materia il programma lo dice e te la chiede, invece di usare il nome della lezione.",
- "novita_en": "On the lecture page you now see the notes format: «📄 Cornell notes» and, if present, «⭐ Exam Format notes», each with its own PDF. «Also create in…» is a tile, no longer hidden in «More». If the subject is missing the program says so and asks for it, instead of using the lecture name.",
- "contenuto": 72
+ "novita": "Nuovo: «📘 Libro di testo» in Studia. Aggiungi il PDF del tuo libro (resta sul tuo dispositivo): per ogni lezione le pagine giuste, cosa c'è nel libro ma a lezione non si è detto, e la pagina con le frasi della lezione evidenziate. Il libro compare anche nella lezione, nelle flashcard, nel glossario, in Chiedi e nel tutor.",
+ "novita_en": "New: «📘 Textbook» in Study. Add the PDF of your book (it stays on your device): for each lecture the right pages, what is in the book but was not said in class, and the page with the lecture sentences highlighted. The book also shows in the lecture, flashcards, glossary, Ask and the tutor.",
+ "contenuto": 73
 }
