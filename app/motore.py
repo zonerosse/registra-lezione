@@ -3336,6 +3336,54 @@ class Motore:
             log.exception("ripasso")
             return {"ok": False, "carte": []}
 
+    def anki(self, cartelle, titolo="", modo="tutte"):
+        """«⬇ Esporta per Anki»: le stesse carte scelte nella pagina delle flashcard, in un file .apkg (vedi anki.py)."""
+        import esporta_anki as ak
+        import tempfile
+        from PIL import Image
+        carte = []
+        for c in [c for c in cartelle or [] if Path(c).is_dir()]:
+            st = rp._stat(c)
+            for x in rp.carte_lezione(c):
+                x["ultimo"] = (st.get(x["id"]) or {}).get("ultimo")
+                carte.append(x)
+        if modo == "stelle":
+            carte = [c for c in carte if c["stelle"] >= 3]
+        elif modo == "no":
+            carte = [c for c in carte if c["ultimo"] == 0]
+        if not carte:
+            return {"ok": False, "msg": tr("rp_vuoto_anki")}
+        tmp = Path(tempfile.mkdtemp(prefix="vmia_anki_"))
+
+        def immagine(c):           # la slide ritagliata, piccola (JPEG 1280 px): il file resta leggero
+            if not c.get("slide_file"):
+                return None
+            try:
+                src = el.immagine_slide(c["cartella"], c["slide_file"])
+                dest = tmp / (hashlib.sha1(str(src).encode()).hexdigest()[:16] + ".jpg")
+                if not dest.exists():
+                    with Image.open(src) as im:
+                        im.thumbnail((1280, 1280))
+                        im.convert("RGB").save(dest, "JPEG", quality=80)
+                return dest
+            except Exception:
+                log.exception("anki: slide")
+                return None
+        dest_dir = self.pacchetti()
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / f"{el.nome_sicuro(titolo or 'Verba Manent IA')} – {tr('anki_file')}.apkg"
+        try:
+            n = ak.crea(carte, lambda c: self._materia_lezione(c) or titolo, dest, immagine, testi.LINGUA)
+        except Exception:
+            log.exception("anki")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+        aperto = apri(dest)
+        if not aperto:
+            mostra_file(dest)
+        return {"ok": True, "n": n, "file": str(dest), "aperto": bool(aperto)}
+
     def _esame_di(self, cartella):
         """La data dell'esame della materia di una lezione (o None)."""
         import esame as es

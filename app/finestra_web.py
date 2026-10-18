@@ -383,6 +383,9 @@ class Api:
     def nuvola_adesso(self):
         return self._m.nuvola_adesso()
 
+    def anki(self, cartelle, titolo="", modo="tutte"):
+        return self._m.anki(cartelle, titolo, modo)
+
     def sync_stato(self):
         return self._m.sync_stato()
 

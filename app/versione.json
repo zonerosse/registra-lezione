@@ -1,6 +1,6 @@
 {
- "versione": "3.90",
+ "versione": "3.91",
  "librerie": 2,
- "novita": "Nuovo: «🔄 Sincronizza» anche fuori casa (Impostazioni › Sincronizza): le lezioni passano dal tuo cloud, ognuna in uno zip chiuso con una password. Il collegamento con Google Drive e OneDrive si attiva con il prossimo aggiornamento.",
- "novita_en": "New: «🔄 Sync» away from home too (Settings › Sync): lessons go through your cloud, each one in a password-locked zip. The link to Google Drive and OneDrive is switched on with the next update."
+ "novita": "Nuovo: «⬇ Esporta per Anki» nella pagina delle flashcard. Le carte scelte vanno in un file per Anki (PC, Mac, AnkiDroid, iPhone), con la slide e il minuto della lezione e un mazzo per materia. Se esporti di nuovo dopo nuove lezioni, Anki aggiorna le carte senza doppioni e senza perdere i ripassi.",
+ "novita_en": "New: «⬇ Export for Anki» on the flashcards page. The chosen cards go into a file for Anki (PC, Mac, AnkiDroid, iPhone), with the slide and minute of the lesson and one deck per subject. If you export again after new lessons, Anki updates the cards with no duplicates and without losing your reviews."
 }

@@ -4015,8 +4015,18 @@ function sceltaRipasso(m) {
   $('rpModi').innerHTML = modi.map(x => `<div class="aiopt${x[0] === modoRip ? ' on' : ''}${x[3] ? ' off' : ''}" data-m="${x[0]}"><span class="rd"></span><b>${esc(x[1])}</b><small>${esc(x[2])}</small></div>`).join('');
   $('rpModi').querySelectorAll('.aiopt').forEach(o => o.onclick = () => { modoRip = o.dataset.m; $('rpModi').querySelectorAll('.aiopt').forEach(x => x.classList.toggle('on', x === o)); });
   $('rpVia').onclick = () => iniziaRipasso(m.cartelle, m.m, modoRip);
+  $('rpAnki').onclick = () => esportaAnki(m.cartelle, m.m, modoRip);
   $('rpAnnulla').onclick = () => vai('arch');
   mostraRip('rpScelta'); vai('rip');
+}
+// «⬇ Esporta per Anki»: le carte scelte in un file .apkg (anki.py); si riesporta e Anki aggiorna, senza doppioni
+async function esportaAnki(cartelle, titolo, modo) {
+  const b = $('rpAnki'); b.disabled = true;
+  let r;
+  try { r = await A.anki(cartelle, titolo, modo); } finally { b.disabled = false; }
+  if (!r.ok) { dialogo({titolo: t('rp.anki'), testo: r.msg || ''}); return; }
+  if (ANDROID) toast(t('rp.anki.tel', {n: r.n}));
+  else dialogo({titolo: '✓ ' + t('rp.anki.ok', {n: r.n}), testo: t(r.aperto ? 'rp.anki.aperto' : 'rp.anki.manca')});
 }
 function mostraRip(id) { ['rpScelta', 'rpCarte', 'rpRis'].forEach(x => $(x).classList.toggle('hidden', x !== id)); }
 async function iniziaRipasso(cartelle, titolo, modo) {
