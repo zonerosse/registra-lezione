@@ -176,36 +176,57 @@ class _Ponte:
 
 
 class _Reg:
+    """Registrazione dal microfono dell'iPhone (AVAudioRecorder): audio_001.wav, audio_002.wav... a 16 kHz mono,
+    una parte ogni N secondi, come su Android. Con «UIBackgroundModes: audio» continua a schermo spento."""
+    RATE = 16000
+
     def __init__(self):
         self.attiva = False
+        self.inPausa = False
+        self.livello = 0.0
+        self.partiChiuse = 0
         self.errore = ""
+        self.richiestaFine = False
+        self._fatti = 0.0          # secondi delle parti gia' chiuse
+        self._rec = None
+        self._th = None
 
     def getPartiChiuse(self):
-        return 0
+        return self.partiChiuse
 
     def getErrore(self):
         return self.errore
 
     def getRichiestaFine(self):
-        return False
+        return self.richiestaFine
 
     def setRichiestaFine(self, v):
-        pass
+        self.richiestaFine = bool(v)
 
     def getLivello(self):
-        return 0.0
+        return self.livello
 
     def getInPausa(self):
-        return False
+        return self.inPausa
 
     def secondi(self):
-        return 0.0
+        try:
+            return self._fatti + (float(self._rec.currentTime) if self._rec is not None else 0.0)
+        except Exception:
+            return self._fatti
 
     def pausa(self, si):
-        pass
+        self.inPausa = bool(si)
+        try:
+            if self._rec is not None:
+                self._rec.pause() if si else self._rec.record()
+        except Exception:
+            log.exception("iphone: pausa")
+        if si:
+            self.livello = 0.0
 
     def livelloAdesso(self):
-        return 0.0
+        return self.livello if self.attiva else 0.3
 
     def tieniSveglio(self, ctx, si):
         def fai():
@@ -215,12 +236,90 @@ class _Reg:
                 log.exception("iphone: schermo acceso")
         _sul_principale(fai)
 
+    def _sessione(self):
+        from rubicon.objc.runtime import load_library
+        load_library("AVFoundation")
+        s = _objc("AVAudioSession").sharedInstance()
+        # registrare e, se serve, sentire; Bluetooth e altoparlante ammessi
+        s.setCategory_mode_options_error_("AVAudioSessionCategoryPlayAndRecord", "AVAudioSessionModeDefault", 4 | 8, None)
+        s.setActive_error_(True, None)
+
+    def _nuovo(self, k):
+        from rubicon.objc import ns_from_py
+        url = _objc("NSURL").fileURLWithPath_(f"{self._cartella}/audio_{k:03d}.wav")
+        imp = ns_from_py({"AVFormatIDKey": 1819304813, "AVSampleRateKey": 16000.0, "AVNumberOfChannelsKey": 1,
+                          "AVLinearPCMBitDepthKey": 16, "AVLinearPCMIsFloatKey": False, "AVLinearPCMIsBigEndianKey": False})
+        r = _objc("AVAudioRecorder").alloc().initWithURL_settings_error_(url, imp, None)
+        if r is None:
+            raise RuntimeError("microfono non disponibile")
+        r.meteringEnabled = True
+        r.prepareToRecord()
+        if not r.record():
+            raise RuntimeError("il microfono non parte (permesso negato?)")
+        return r
+
     def avvia(self, ctx, cartella, parte, nome):
-        self.errore = "La registrazione sull'iPhone arriva nel prossimo passo."
-        return False
+        if self.attiva:
+            return False
+        self._cartella, self._parte = str(cartella), int(parte)
+        self.partiChiuse, self._fatti, self.errore, self.richiestaFine, self.inPausa = 0, 0.0, "", False, False
+        try:
+            self._sessione()
+            self._k = 1
+            self._rec = self._nuovo(1)
+        except Exception as e:
+            log.exception("iphone: registrazione")
+            self.errore = str(e)
+            return False
+        self.attiva = True
+        self._th = threading.Thread(target=self._guarda, daemon=True)
+        self._th.start()
+        return True
+
+    def _guarda(self):
+        import math
+        while self.attiva:
+            time.sleep(0.2)
+            r = self._rec
+            if r is None or self.inPausa:
+                continue
+            try:
+                r.updateMeters()
+                db = float(r.averagePowerForChannel_(0))
+                self.livello = max(0.0, min(1.0, math.pow(10, db / 20) * 4))
+                if float(r.currentTime) >= self._parte:            # parte piena: chiudo e ne apro un'altra
+                    durata = float(r.currentTime)
+                    r.stop()
+                    self._fatti += durata
+                    self.partiChiuse = self._k
+                    self._k += 1
+                    self._rec = self._nuovo(self._k)
+            except Exception as e:
+                log.exception("iphone: registrazione in corso")
+                self.errore = str(e)
 
     def ferma(self, ctx):
-        return 0.0
+        self.attiva = False
+        if self._th is not None:
+            self._th.join(5)
+        r, self._rec = self._rec, None
+        try:
+            if r is not None:
+                durata = float(r.currentTime)
+                r.stop()
+                self._fatti += durata
+                f = Path(f"{self._cartella}/audio_{self._k:03d}.wav")
+                if durata >= 0.5:
+                    self.partiChiuse = self._k
+                elif f.exists():
+                    f.unlink()
+        except Exception:
+            log.exception("iphone: fine registrazione")
+        try:
+            _objc("AVAudioSession").sharedInstance().setActive_error_(False, None)
+        except Exception:
+            pass
+        return self._fatti
 
 
 class _Whisper:

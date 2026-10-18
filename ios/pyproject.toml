@@ -1,12 +1,14 @@
 # Verba Manent IA per iPhone (prova): lo costruisce GitHub con Briefcase (BeeWare).
 # Le pagine e il motore sono quelli del programma (cartella app), copiati in src/verbamanent/rl durante la costruzione.
 [tool.briefcase]
-project_name = "Verba Manent IA"
+project_name = "verbamanent"
 bundle = "it.puntowebferrara"
 version = "0.1.0"
 url = "https://verbamanent.app/"
 author = "Punto Web Ferrara"
 author_email = "info@puntowebferrara.com"
+license = "LicenseRef-Proprietary"
+license-files = ["LICENSE"]
 
 [tool.briefcase.app.verbamanent]
 formal_name = "Verba Manent IA"
@@ -18,3 +20,9 @@ permission.microphone = "Serve per registrare la lezione o la riunione."
 
 [tool.briefcase.app.verbamanent.iOS]
 requires = ["toga-iOS"]
+
+# registrare a schermo spento; i file dell'app visibili nell'app «File»
+[tool.briefcase.app.verbamanent.iOS.info]
+UIBackgroundModes = ["audio"]
+UIFileSharingEnabled = true
+LSSupportsOpeningDocumentsInPlace = true
