@@ -501,7 +501,8 @@ def _delegati():
     """Le classi Objective-C che ricevono le risposte di iOS (create una volta sola)."""
     if _DEL:
         return _DEL
-    from rubicon.objc import NSObject, objc_method, ObjCInstance, ObjCBlock
+    from rubicon.objc import NSObject, objc_method, ObjCInstance, ObjCBlock, NSUInteger
+    from rubicon.objc.runtime import objc_block
 
     class VMAnteprima(NSObject):
         @objc_method
@@ -544,8 +545,8 @@ def _delegati():
 
     class VMNotifiche(NSObject):
         @objc_method
-        def userNotificationCenter_willPresentNotification_withCompletionHandler_(self, c, n, fatto: ObjCBlock) -> None:
-            fatto(16 | 8 | 2)                   # anche con l'app aperta: striscia, elenco, suono
+        def userNotificationCenter_willPresentNotification_withCompletionHandler_(self, c, n, fatto: objc_block) -> None:
+            ObjCBlock(fatto, None, NSUInteger)(16 | 8 | 2)      # anche con l'app aperta: striscia, elenco, suono
 
     _DEL.update(anteprima=VMAnteprima, scelta=VMScelta, posta=VMPosta, evento=VMEvento, notifiche=VMNotifiche)
     return _DEL
