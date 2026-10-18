@@ -815,3 +815,23 @@ html.android .banda.corta .btn{flex:1 1 40%;justify-content:center;order:3}
 #gvVelo video{width:100%;height:100%;object-fit:contain;background:#000}
 #gvVelo .gvchiudi{position:absolute;top:14px;right:14px;z-index:1;background:rgba(255,255,255,.92);color:var(--ink);border:0;border-radius:999px;padding:9px 16px;font:600 14px "Segoe UI",Roboto,system-ui,sans-serif;cursor:pointer}
 html.android .cap .gvint{margin-left:16px}
+/* ===== mappa per la verifica ===== */
+.mvgrid{display:grid;grid-template-columns:280px 1fr;gap:14px;align-items:start}
+.mvck{display:flex;gap:8px;align-items:center;padding:6px 0;font-size:14px;color:var(--ink);cursor:pointer}
+.mvck input{width:18px;height:18px;accent-color:var(--blue);flex:none}
+.mvck small{color:var(--mut)}
+.mvset{display:flex;gap:10px;align-items:center;padding:6px 0}.mvset b{font-size:14px;color:var(--ink)}
+.foglio{background:#fff;border:1px solid #cbd5e1;box-shadow:0 8px 24px -12px rgba(13,66,117,.35);aspect-ratio:297/210;padding:2.2% 2.6% 1.6%;font-family:"Atkinson Hyperlegible",Verdana,sans-serif;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.foglio .testa{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:#475569;border-bottom:1px solid #e2e8f0;padding-bottom:5px}
+.foglio .testa span:last-child{white-space:nowrap}
+.foglio svg{flex:1;min-height:0;width:100%}
+.foglio .mvfo{background:#fffbeb;border:1px solid #f59e0b;border-radius:8px;padding:5px 10px;font-size:12px;color:#1f2937;margin-top:4px}
+.foglio .mvfo b{color:#92400e;font-size:10.5px;margin-right:8px}
+.foglio .mvfo span{margin-right:14px;white-space:nowrap;display:inline-block}
+.foglio .piede{display:flex;justify-content:space-between;font-size:9.5px;color:#64748b;margin-top:5px}
+.foglio .vuoto{margin:auto;font-family:inherit}
+.foglio.mod [data-k]{cursor:pointer}
+.foglio [data-k].no rect{fill:#fee2e2!important;stroke:#be123c!important;stroke-width:1.5}
+.foglio [data-k].no text{fill:#be123c!important;text-decoration:line-through}
+.foglio .mvfo span.no{color:#be123c;text-decoration:line-through}
+@media (max-width:900px){.mvgrid{grid-template-columns:1fr}}

@@ -289,6 +289,29 @@
     </section>
 
     <!-- KARAOKE DELLA LEZIONE -->
+    <section class="pg hidden" id="v-verifica">
+      <div class="hd"><div><h2 data-t="mv.h">🗺 Mappa per la verifica</h2><p data-t="mv.sub">Un foglio A4 con le parole chiave, da portare alla verifica (strumento compensativo, legge 170/2010)</p></div></div>
+      <div class="mvgrid">
+        <div class="card">
+          <div class="lbl" data-t="mv.lez">Di quali lezioni?</div><div id="mvLez"></div>
+          <div class="lbl" style="margin-top:14px" data-t="mv.foglio">Il foglio</div>
+          <div class="mvset"><div class="sp"><b data-t="mv.parole">Solo parole chiave</b><div class="hint" data-t="mv.parole.s">Niente frasi: come chiedono molti docenti</div></div><div class="sw on" id="mvParole"></div></div>
+          <div class="mvset"><div class="sp"><b data-t="mv.formule">Riquadro formule e valori</b></div><div class="sw on" id="mvFormule"></div></div>
+          <div class="lbl" style="margin-top:14px" data-t="mv.alto">In alto sul foglio</div>
+          <input class="in sm" id="mvNome" maxlength="60" data-ph="mv.nome.ph" placeholder="Nome e classe (es. Marco Rossi – 3ªB)">
+          <div class="row mt" style="gap:8px;flex-wrap:wrap">
+            <button class="btn b-main b-sm" id="mvCrea" data-t="mv.crea">Fai la mappa</button>
+            <button class="btn b-ghost b-sm" id="mvMod" data-t="mv.mod">✎ Modifica</button>
+            <button class="btn b-ghost b-sm" id="mvPdf" data-t="mv.pdf">⬇ PDF</button>
+            <button class="btn b-main b-sm" id="mvStampa" data-t="mv.stampa">🖨 Stampa</button>
+          </div>
+          <div class="hint mt" id="mvModH" data-t="mv.modh"></div>
+          <div class="hint mt" data-t="mv.firma">Molti docenti vogliono vedere la mappa prima della verifica: stampala e falla firmare.</div>
+          <button class="lnk mt" id="mvRifai" data-t="mv.rifai">↻ Nuova mappa</button>
+        </div>
+        <div class="foglio" id="mvFoglio"></div>
+      </div>
+    </section>
     <section class="pg hidden" id="v-karaoke">
       <div class="hd"><div><h2 data-t="kk.h">🎤 Karaoke della lezione</h2><p id="kkSub"></p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
       <div class="card"><div class="kkplayer">

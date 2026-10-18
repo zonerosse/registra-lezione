@@ -117,7 +117,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -127,12 +127,13 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
   if (p === 'podcast') return t('tl.pc');
   if (p === 'karaoke') return t('tl.kk');
+  if (p === 'verifica') return t('tl.mv');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
 }
@@ -162,7 +163,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'karaoke', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -2020,14 +2021,14 @@ async function disegnaStudia() {
   let gg;
   if (info.giorni == null || info.giorni < 0) gg = `<div class="card stgg"><div style="flex:1"><b style="color:var(--ink)">${esc(t('st.nodata', {m: m.m}))}</b><div class="hint">${esc(t('st.nodata.s'))}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.data'))}</button></div>`;
   else gg = `<div class="card stgg">${info.giorni ? `<div class="gg">${info.giorni}</div>` : ''}<div style="flex:1"><b style="color:var(--ink)">${esc(info.giorni ? t(info.giorni === 1 ? 'st.gg1' : 'st.gg', {m: m.m}) : t('st.oggi.esame', {m: m.m}))}</b><div class="hint">${esc(fmtG(info.data_esame, {day: 'numeric', month: 'long'}))}${info.oggi && info.oggi.cose ? ' · ' + esc(t('st.oggi', {c: info.oggi.cose.join(', ')})) : ''}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.piano'))}</button></div>`;
-  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso'] : []), d = k => D.has(k);
+  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif'] : []), d = k => D.has(k);
   const fl = m.n ? (m.no ? t('tl.flash.n', {n: m.n, r: m.no}) : t(m.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: m.n})) : '';
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
       tile('orale', '🎤', t('tl.orale'), t('tl.dsa.orale.s'), ult(info.voti_orali)), tile('test', '☑', t('tl.dsa.test'), t('tl.dsa.test.s'), ult(info.voti_test)),
       tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s')), m.n && tile('fcorso', '🃏', t('tl.dsa.flash'), t('tl.dsa.flc.s'), fl),
-      tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
-      tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto'))]) +
+      tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto')), tile('mverif', '🗺', t('tl.mv'), t('tl.mv.s'), '', d('mverif'))]) +
     gruppo(t('g.ripassa'), [tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
     gruppo(t('g.capisci'), [tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
@@ -2047,6 +2048,7 @@ async function tileStudia(m, a) {
   }
   if (a === 'fcorso') return iniziaRipasso(m.cartelle, m.m, 'prima');
   if (a === 'ascm') return apriAscoltaMateria(m);
+  if (a === 'mverif') return apriMappaVerifica(m);
   if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
   if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
   if (a === 'mappe') {
@@ -2054,6 +2056,121 @@ async function tileStudia(m, a) {
     const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
+}
+/* ------------------------------------------------------------------ mappa per la verifica */
+// Un foglio A4 con le parole chiave di una o piu' lezioni, da portare alla verifica (strumento compensativo).
+// La disposizione e' uguale a mappa_verifica.disposizione in Python (cosi' il PDF e' come quello che si vede).
+var MV = {m: null, d: null, scelte: [], parole: true, formule: true, mod: false, tolte: new Set()};
+function mvDisposizione(d) {
+  const W = 900, H = 520, rami = d.rami || [], su = Math.ceil(rami.length / 2), out = [];
+  [[0, rami.slice(0, su)], [1, rami.slice(su)]].forEach(([riga, g]) => {
+    const cw = W / (g.length || 1);
+    g.forEach((r, i) => {
+      const y = riga === 0 ? 158 : H - 158;
+      out.push({x: cw * (i + 0.5), y, su: riga === 0, bw: Math.min(cw - 30, 220), fw: Math.min(cw - 14, 280), titolo: r.titolo, r: r.r,
+        foglie: r.foglie.map((f, j) => ({t: f.t, k: f.k, y: riga === 0 ? y - 46 - (r.foglie.length - 1 - j) * 32 : y + 46 + j * 32}))});
+    });
+  });
+  return {W, H, cx: W / 2, cy: H / 2, rami: out};
+}
+const MV_COL = ['#0369a1', '#0d4275', '#0891b2', '#475569', '#1e5fbf', '#0f766e'];
+async function apriMappaVerifica(m) {
+  const lz = m.lez;
+  MV = {m, lz, d: null, scelte: lz.map(l => l.cartella), parole: MV.parole !== false, formule: MV.formule !== false, mod: false, tolte: new Set()};
+  vai('verifica');
+  $('mvNome').placeholder = t('mv.nome.ph');
+  $('mvLez').innerHTML = lz.length ? lz.map((l, i) => `<label class="mvck"><input type="checkbox" data-i="${i}" checked><span>${esc(l.nome)} <small>${esc(l.quando || '')}</small></span></label>`).join('')
+    : `<div class="hint">${esc(t('mv.nessuna'))}</div>`;
+  $('mvParole').classList.toggle('on', MV.parole); $('mvFormule').classList.toggle('on', MV.formule);
+  const r = await A.mappa_verifica(m.m, null);
+  if (MV.m !== m) return;
+  $('mvNome').value = r.nome_classe || '';
+  if (r.mv && r.mv.dati) {
+    const ok = r.mv.cartelle.filter(c => lz.some(l => l.cartella === c));
+    if (ok.length) {
+      MV.scelte = ok; MV.parole = !!r.mv.parole; MV.d = r.mv.dati; MV.tolte = new Set(r.mv.tolte || []);
+      $('mvLez').querySelectorAll('input').forEach(x => x.checked = ok.includes(lz[+x.dataset.i].cartella));
+      $('mvParole').classList.toggle('on', MV.parole);
+    }
+  }
+  mvDisegna();
+}
+function mvDisegna() {
+  const f = $('mvFoglio'), d = MV.d, m = MV.m;
+  $('mvMod').textContent = t(MV.mod ? 'mv.fatto' : 'mv.mod');
+  f.classList.toggle('mod', MV.mod); $('mvModH').classList.toggle('hidden', !MV.mod);
+  ['mvMod', 'mvPdf', 'mvStampa'].forEach(id => $(id).disabled = !d);
+  $('mvCrea').classList.toggle('hidden', !!d && !MV.sporca); $('mvRifai').classList.toggle('hidden', !d || MV.sporca);
+  $('mvCrea').disabled = !MV.scelte.length;
+  const scelte = MV.lz.filter(l => MV.scelte.includes(l.cartella));
+  const lezioni = t(scelte.length === 1 ? 'mv.lez1' : 'mv.lezn', {n: scelte.map(l => mvSenzaMateria(l.nome, m.m)).join(', ')});
+  const testa = `<div class="testa"><span><b>${esc(m.m)}</b> · ${esc(lezioni)}</span><span>${esc(t('mv.nome'))}: ${$('mvNome').value.trim() ? esc($('mvNome').value.trim()) : '____________________'} &nbsp; ${esc(t('mv.data'))}: ________</span></div>`;
+  const piede = `<div class="piede"><span>${esc(t('mv.piede'))}</span><span>${esc(t('mv.fatta'))}</span></div>`;
+  if (!d) { f.innerHTML = testa + `<div class="vuoto hint">${esc(t(MV.lz.length ? 'mv.vuoto' : 'mv.nessuna'))}</div>` + piede; return; }
+  // in modifica si vedono anche le parole tolte (in rosso), altrimenti spariscono
+  const vis = k => MV.mod || !MV.tolte.has(k);
+  const rami = d.rami.map((r, i) => ({titolo: r.titolo, r: i, foglie: r.foglie.map((x, j) => ({t: x, k: `${i}:${j}`})).filter(x => vis(x.k))}));
+  const D = mvDisposizione({rami});
+  const fit = (s, w, base) => Math.max(9, Math.min(base, w / (String(s).length * 0.56)));
+  const g = [`<svg viewBox="0 0 ${D.W} ${D.H}" preserveAspectRatio="xMidYMid meet">`];
+  D.rami.forEach(r => g.push(`<line x1="${D.cx}" y1="${D.cy}" x2="${r.x}" y2="${r.y + (r.su ? 24 : -24)}" stroke="#94a3b8" stroke-width="3"/>`));
+  const cen = String(d.centro || '').toUpperCase();
+  g.push(`<rect x="${D.cx - 150}" y="${D.cy - 30}" width="300" height="60" rx="30" fill="#0d4275"/><text x="${D.cx}" y="${D.cy + 7}" text-anchor="middle" fill="#fff" font-size="${fit(cen, 280, 21)}" font-weight="700">${esc(cen)}</text>`);
+  D.rami.forEach(r => {
+    const c = MV_COL[r.r % MV_COL.length];
+    r.foglie.forEach(fo => g.push(`<g data-k="${fo.k}" class="${MV.tolte.has(fo.k) ? 'no' : ''}"><rect x="${r.x - r.fw / 2}" y="${fo.y - 14}" width="${r.fw}" height="28" rx="14" fill="${mvChiaro(c)}"/><text x="${r.x}" y="${fo.y + 6}" text-anchor="middle" fill="#1f2937" font-size="${fit(fo.t, r.fw - 8, 17.5)}">${esc(fo.t)}</text></g>`));
+    const tt = String(r.titolo).toUpperCase();
+    g.push(`<rect x="${r.x - r.bw / 2}" y="${r.y - 24}" width="${r.bw}" height="48" rx="12" fill="#fff" stroke="${c}" stroke-width="3"/><text x="${r.x}" y="${r.y + 7}" text-anchor="middle" fill="${c}" font-size="${fit(tt, r.bw - 10, 19)}" font-weight="700">${esc(tt)}</text>`);
+  });
+  g.push('</svg>');
+  const fo = (d.formule || []).map((x, k) => ({x, k: 'f:' + k})).filter(x => vis(x.k));
+  const formule = MV.formule && fo.length ? `<div class="mvfo"><b>${esc(t('mv.formule.t'))}</b>${fo.map(x => `<span data-k="${x.k}" class="${MV.tolte.has(x.k) ? 'no' : ''}">${esc(x.x)}</span>`).join('')}</div>` : '';
+  f.innerHTML = testa + g.join('') + formule + piede;
+  if (MV.mod) f.querySelectorAll('[data-k]').forEach(x => x.onclick = () => {
+    const k = x.dataset.k;
+    if (MV.tolte.has(k)) MV.tolte.delete(k); else MV.tolte.add(k);
+    x.classList.toggle('no', MV.tolte.has(k));
+  });
+}
+// «Fisiologia – Lezione 3» sotto «Fisiologia» diventa «Lezione 3»
+function mvSenzaMateria(n, m) { const r = new RegExp('^' + m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*[–\\-:·]\\s*', 'i'); return String(n).replace(r, '') || n; }
+function mvChiaro(h) {
+  const v = [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).map(x => Math.round(x + (255 - x) * 0.88));
+  return `rgb(${v.join(',')})`;
+}
+async function mvSalva() { await A.mappa_verifica_salva(MV.m.m, [...MV.tolte], $('mvNome').value.trim()); }
+async function mvCrea(rifai) {
+  if (!MV.scelte.length) return;
+  const m = MV.m;
+  MV.mod = false;
+  $('mvFoglio').innerHTML = `<div class="vuoto row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('mv.lav'))}</div>`;
+  ['mvCrea', 'mvMod', 'mvPdf', 'mvStampa'].forEach(id => $(id).disabled = true);
+  const r = await A.mappa_verifica(m.m, MV.scelte, MV.parole, !!rifai);
+  if (MV.m !== m) return;
+  if (!r.ok) { MV.d = null; MV.sporca = true; mvDisegna(); $('mvFoglio').querySelector('.vuoto').innerHTML = `<span style="color:#be123c">⚠ ${esc(r.msg || '')}</span>`; return; }
+  MV.d = r.mv.dati; MV.tolte = new Set(r.mv.tolte || []); MV.sporca = false;
+  mvDisegna();
+}
+async function mvPdf(stampa) {
+  if (MV.mod) { MV.mod = false; mvDisegna(); }
+  await mvSalva();
+  const r = await A.mappa_verifica_pdf(MV.m.m, MV.formule, !!stampa);
+  if (!r.ok) await dialogo({titolo: t('tl.mv'), testo: r.msg || ''});
+}
+function collegaVerifica() {
+  $('mvLez').onchange = () => {
+    MV.scelte = [...$('mvLez').querySelectorAll('input:checked')].map(x => MV.lz[+x.dataset.i].cartella);
+    MV.sporca = true; mvDisegna();
+  };
+  $('mvParole').onclick = () => { MV.parole = !MV.parole; $('mvParole').classList.toggle('on', MV.parole); if (MV.d) { MV.sporca = true; mvDisegna(); } };
+  $('mvFormule').onclick = () => { MV.formule = !MV.formule; $('mvFormule').classList.toggle('on', MV.formule); if (MV.m) mvDisegna(); };
+  $('mvNome').oninput = () => { if (MV.m) mvDisegna(); };
+  $('mvNome').onchange = () => { if (MV.m && MV.d) mvSalva(); };
+  $('mvCrea').onclick = () => mvCrea(false);
+  $('mvRifai').onclick = () => mvCrea(true);
+  $('mvMod').onclick = () => { MV.mod = !MV.mod; mvDisegna(); if (!MV.mod) mvSalva(); };
+  $('mvPdf').onclick = () => mvPdf(false);
+  $('mvStampa').onclick = () => mvPdf(true);
 }
 async function apriAscoltaMateria(m) {
   asFerma(true);
@@ -2761,6 +2878,7 @@ function collegaNovita() {
   $('lzAltro').onclick = e => LEZ && menuLezione(LEZ, e.currentTarget, true);
   collegaPodcast();
   collegaKaraoke();
+  collegaVerifica();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
   $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });

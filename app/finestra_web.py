@@ -253,6 +253,15 @@ class Api:
     def cambia_materia(self, cartella, materia):
         return self._m.cambia_materia(cartella, materia)
 
+    def mappa_verifica(self, materia, cartelle, parole=True, rifai=False):
+        return self._m.mappa_verifica(materia, cartelle, parole, rifai)
+
+    def mappa_verifica_salva(self, materia, tolte, nome_classe=""):
+        return self._m.mappa_verifica_salva(materia, tolte, nome_classe)
+
+    def mappa_verifica_pdf(self, materia, formule=True, stampa=False):
+        return self._m.mappa_verifica_pdf(materia, formule, stampa)
+
     def karaoke(self, cartella):
         return self._m.karaoke(cartella)
 

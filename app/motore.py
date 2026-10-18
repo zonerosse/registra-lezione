@@ -2011,6 +2011,55 @@ class Motore:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
 
+    # ------------------------------------------------------------------ mappa per la verifica (strumento compensativo)
+
+    def mappa_verifica(self, materia, cartelle=None, parole=True, rifai=False):
+        """Senza cartelle: solo quella salvata (se c'e'). Con le cartelle: la fa (o la prende dalla cache)."""
+        import mappa_verifica as vf
+        if not cartelle:
+            d = vf.leggi(BASE, materia)
+            return {"ok": True, "mv": d or None, "nome_classe": (d or {}).get("nome_classe") or self.cfg.get("nome_classe", "")}
+        try:
+            d, spesa = vf.crea(BASE, materia, cartelle, self.chiave(), bool(parole), bool(rifai), testi.LINGUA)
+            return {"ok": True, "mv": d, "spesa": spesa, "nome_classe": d.get("nome_classe") or self.cfg.get("nome_classe", "")}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("mappa per la verifica")
+            return {"ok": False, "msg": tr("mv_err")}
+
+    def mappa_verifica_salva(self, materia, tolte, nome_classe=""):
+        import mappa_verifica as vf
+        vf.salva_modifiche(BASE, materia, tolte, nome_classe)
+        if (nome_classe or "").strip() and nome_classe != self.cfg.get("nome_classe"):
+            self.cfg["nome_classe"] = str(nome_classe).strip()[:80]
+            salva_config(self.cfg)
+        return {"ok": True}
+
+    def mappa_verifica_pdf(self, materia, formule=True, stampa=False):
+        import esame as es
+        import mappa_verifica as vf
+        d = vf.leggi(BASE, materia)
+        if not d.get("dati"):
+            return {"ok": False, "msg": tr("mv_err")}
+        dati = vf.senza_tolte(d["dati"], d.get("tolte"))
+        if not formule:
+            dati["formule"] = []
+        lez = [x for x in es._lezioni_test(d.get("cartelle") or []) if Path(x["cartella"]).exists()]
+        pre = re.compile(r"^" + re.escape(materia) + r"\s*[–\-:·]\s*", re.I)
+        nomi = ", ".join(pre.sub("", x["nome"]) or x["nome"] for x in lez)
+        lezioni = tr("mv_lez1" if len(lez) == 1 else "mv_lezn").format(n=nomi)
+        dest_dir = Path(self.cfg["cartella_pacchetti"])
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / f"{tr('mv_titolo')} – {el.nome_sicuro(materia)}.pdf"
+        try:
+            vf.pdf(dati, materia, lezioni, d.get("nome_classe", ""), dest, testi.LINGUA)
+        except Exception:
+            log.exception("PDF mappa per la verifica")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        (apri if stampa else mostra_file)(dest)
+        return {"ok": True, "file": str(dest)}
+
     # ------------------------------------------------------------------ karaoke della lezione
 
     def karaoke(self, cartella):
