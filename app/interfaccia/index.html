@@ -99,12 +99,18 @@
         </div>
       </div>
       <div class="card">
-        <div class="lbl" data-t="pr.nome">Nome</div>
+        <div id="matBox">
+          <div class="lbl" data-t="mt.h">Materia</div>
+          <input class="in" id="materia" data-tp="mt.ph" placeholder="Es. Fisiologia" maxlength="60" autocomplete="off">
+          <div class="chips" id="recenti"></div>
+          <div class="hint" style="margin-top:6px" data-t="mt.s">Serve a raggruppare le lezioni in «Studia» (esame, test, flashcard della materia).</div>
+          <div class="lbl" style="margin-top:16px" data-t="pr.nome">Nome</div>
+        </div>
+        <div class="lbl hidden" id="nomeLbl" data-t="pr.nome">Nome</div>
         <input class="in" id="nome" data-tp="pr.ph" placeholder="Es. Analisi 1 – Limiti" maxlength="90" autocomplete="off">
         <div class="nmsg" id="nomeMsg"></div>
         <div class="hint" id="nomeAnt" style="margin-top:7px"></div>
         <div class="calora hidden" id="calOra"></div>
-        <div class="chips" id="recenti"></div>
         <div id="modBox" class="hidden" style="margin-top:14px">
           <div class="lbl" style="margin:0 0 6px" data-t="md.h">Che riunione è?</div>
           <div class="chips" id="modChips"></div>

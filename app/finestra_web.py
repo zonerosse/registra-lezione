@@ -250,6 +250,9 @@ class Api:
     def test_nuovo(self, materia, cartelle, solo_sbagliate=False, n=10, difficolta="media", esame_vero=False):
         return self._m.test_nuovo(materia, cartelle, solo_sbagliate, n, difficolta, esame_vero)
 
+    def cambia_materia(self, cartella, materia):
+        return self._m.cambia_materia(cartella, materia)
+
     def studia_info(self, materia):
         return self._m.studia_info(materia)
 

@@ -793,8 +793,8 @@ class Motore:
         salva_config(self.cfg)
         return {"ok": True}
 
-    def ricorda_materia(self, nome):
-        m = materia_di(nome)
+    def ricorda_materia(self, nome, materia=None):
+        m = (materia or "").strip() or materia_di(nome)
         if not m or m == "Lezione":
             return
         rec = [x for x in (self.cfg.get("materie_recenti") or []) if x != m]
@@ -914,7 +914,8 @@ class Motore:
             if self.occupato:
                 return {"ok": False}
             nome = (nome or "").strip() or "Lezione"
-            self.ricorda_materia(nome)
+            materia = str((opzioni or {}).get("materia") or "").strip()[:60]
+            self.ricorda_materia(nome, materia)
             cart = BASE / f"{datetime.datetime.now():%Y-%m-%d %H%M} - {el.nome_sicuro(nome)}"
             cart.mkdir(parents=True, exist_ok=True)
             self.parte_sec = int(os.environ.get("RL_PARTE_SECONDI") or int(self.cfg.get("parte_minuti", 30)) * 60)
@@ -926,6 +927,7 @@ class Motore:
                                                 "formato_appunti": self._formato(tipo),
                                                 "lingua_lezione": self.cfg.get("lingua_lezione") or testi.LINGUA,
                                                 "modo": modo, "parole": self.parole_di(nome),
+                                                **({"materia": materia} if materia else {}),
                                                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                                                 "quando": "dopo" if dopo else "durante",
                                                 "tipo": tipo, "partecipanti": partecipanti,
@@ -1537,7 +1539,7 @@ class Motore:
                             "n_appunti": 0, "n_pacchetti": 0, "formati": [], "crea_appunti": False, "crea_anche": [],
                             "completa_appunti": [], "rifai": [], "rifai_appunti": False, "formato_serie": "cornell",
                             "tipo": info.get("tipo") or "lezione", "nome_mio": "", "capitoli": False, "infografica": False,
-                            "voci": 0, "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
+                            "voci": 0, "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_di(nome),
                             "docente": False, "mappa": False, "aula": False, "trascritta": False,
                             "ripasso": {"n": 0, "no": 0, "tre": 0}, "formato": "cornell", "importata": False, "dopo": False,
                             "lingua_lezione": None, "errore": f"{type(e).__name__}: {e} [{_dove_errore(e)}]"[:300]})
@@ -1610,7 +1612,7 @@ class Motore:
                 "capitoli": any(ap.capitoli_di(cart)),
                 "infografica": (cart / "infografica.json").exists(),
                 "voci": len((el.leggi_json(cart / "voci.json", {}) or {}).get("voci") or []),
-                "sigla": sigla(nome), "colore": colore_materia(nome), "materia": materia_di(nome),
+                "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_di(nome),
                 "docente": (cart / "docente.json").exists(), "mappa": (cart / "mappa.json").exists(),
                 "aula": info.get("modo") == "aula", "trascritta": any(cart.glob("trascrizione_*.json")),
                 "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
@@ -2699,6 +2701,17 @@ class Motore:
         except Exception:
             log.exception("voto ripasso")
             return False
+
+    def cambia_materia(self, cartella, materia):
+        """La materia di una registrazione (raggruppa le lezioni in Studia). Vuota = si ricava dal nome."""
+        cart = Path(cartella)
+        m = str(materia or "").strip()[:60]
+        if not (cart / "info.json").exists():
+            return {"ok": False}
+        el.aggiorna_info(cart, materia=m or None)
+        if m:
+            self.ricorda_materia("", m)
+        return {"ok": True, "materia": m}
 
     def rinomina(self, cartella, nuovo):
         cart = Path(cartella)

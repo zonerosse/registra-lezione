@@ -1,7 +1,7 @@
 {
- "versione": "0.11.4",
+ "versione": "0.11.5",
  "codice": 11,
- "novita": "In tutte le pagine interne c'è la barra del percorso: «← Indietro» e da dove sei arrivato (es. Le mie registrazioni › Lezione › Mappa); tocca una parte per tornarci. In Registra c'è l'interruttore «Modalità DSA»: accendilo prima di registrare e gli appunti escono già facili da leggere.",
- "novita_en": "Every inner page has the path bar: «← Back» and where you came from (e.g. My recordings › Lecture › Map); tap a part to go back there. Record has the «Dyslexia mode» switch: turn it on before recording and the notes come out easy to read straight away.",
- "contenuto": 61
+ "novita": "In Registra c'è il campo «Materia» (con le tue materie da toccare): la lezione finisce nella materia giusta in «Studia». Nella pagina della lezione «🎓 Materia ✎ Cambia» sistema anche le registrazioni vecchie.",
+ "novita_en": "Record has the «Course» field (tap one of your courses): the lecture goes to the right course in «Study». On the lecture page «🎓 Course ✎ Change» also fixes old recordings.",
+ "contenuto": 62
 }

@@ -210,6 +210,7 @@ function inizializza() {
   $('licIndietro').onclick = () => vai('info');
   // pronto
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); controllaNomeRec(); });
+  $('materia').addEventListener('input', () => { anteprimaNome(); controllaNomeRec(); $('recenti').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.m.toLowerCase() === $('materia').value.trim().toLowerCase())); });
   $('ivNome').addEventListener('input', () => controllaNome('ivNome', 'ivNomeMsg', 'ivVai'));
   $('itNome').addEventListener('input', () => controllaNome('itNome', 'itNomeMsg', 'itVai'));
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter' && nomeOk('nome')) inizia(); });
@@ -431,11 +432,16 @@ function disegnaStato() {
 // Ogni campo «nome»: controlla (con un attimo di pausa) che il nome non sia vuoto né già usato;
 // sotto scrive il motivo e propone nomi liberi; finché non va, il bottone resta spento.
 const NOMI = {};
+function nomeCompleto() {
+  const m = ($('materia') && R && (R.tipo || 'lezione') === 'lezione') ? $('materia').value.trim() : '', n = $('nome').value.trim();
+  if (!m || !n || n.toLowerCase().startsWith(m.toLowerCase())) return n;
+  return m + ' – ' + n;
+}
 function controllaNome(id, msgId, btnId, ok2 = null) {
   const st = NOMI[id] || (NOMI[id] = {ok: false, t: null, n: 0});
   clearTimeout(st.t);
   st.t = setTimeout(async () => {
-    const n = ++st.n, val = $(id).value;
+    const n = ++st.n, val = id === 'nome' ? nomeCompleto() : $(id).value;
     let v; try { v = await A.nome_libero(val, null); } catch (e) { v = {ok: true}; }
     if (n !== st.n) return;
     st.ok = !!v.ok;
@@ -447,7 +453,7 @@ function controllaNome(id, msgId, btnId, ok2 = null) {
     else {
       m.className = 'nmsg err';
       m.innerHTML = esc(t('nm.usato', {n: v.nome, d: v.data ? ` (${v.data})` : ''})) + '<div>' + (v.proposte || []).map(p => `<span class="chip" data-p="${esc(p)}">${esc(p)}</span>`).join('') + '</div>';
-      m.querySelectorAll('.chip').forEach(c => c.onclick = () => { inp.value = c.dataset.p; inp.dispatchEvent(new Event('input')); });
+      m.querySelectorAll('.chip').forEach(c => c.onclick = () => { let v2 = c.dataset.p; const mt = id === 'nome' && $('materia') ? $('materia').value.trim() : ''; if (mt && v2.startsWith(mt + ' – ')) v2 = v2.slice(mt.length + 3); inp.value = v2; inp.dispatchEvent(new Event('input')); });
     }
     if ($(btnId)) $(btnId).disabled = !v.ok;
     if (ok2) ok2(v);
@@ -461,7 +467,7 @@ function controllaNomeRec() {
 /* ------------------------------------------------------------------ pronto */
 function anteprimaNome() {
   const k = (R && R.tipo) || 'lezione';
-  const n = $('nome').value.trim();
+  const n = nomeCompleto();
   if (!n) { $('nomeAnt').textContent = ''; return; }        // senza nome niente anteprima (il nome serve)
   const d = new Date();
   const ora = LINGUA === 'it' ? `ore ${due(d.getHours())}.${due(d.getMinutes())}` : `${due(d.getHours())}:${due(d.getMinutes())}`;
@@ -471,9 +477,12 @@ function disegnaPronto() {
   if (ANDROID && (R.app_codice || 0) >= 10) { const h = $('btnImportaTesto').querySelector('.hint'); if (h) h.textContent = t('it.b10'); }
   $('pillAI').innerHTML = R.appunti_on ? `<span class="pill p-calma">${ico('spark', 13)}${t(R.formato === 'esame' ? 'pr.pill.ai.e' : 'pr.pill.ai')}</span>`
     : `<span class="pill p-calma">${ico('zip', 13)}${t('pr.pill.pac')}</span>`;
-  $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('pr.recenti')}</span>` +
-    R.recenti.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('') : '';
-  $('recenti').querySelectorAll('.chip').forEach(c => c.onclick = () => { const i = $('nome'); i.value = c.dataset.m + ' – '; i.focus(); i.setSelectionRange(i.value.length, i.value.length); anteprimaNome(); controllaNomeRec(); });
+  const lez = (R.tipo || 'lezione') === 'lezione';
+  $('matBox').classList.toggle('hidden', !lez); $('nomeLbl').classList.toggle('hidden', lez);
+  const mt = $('materia').value.trim().toLowerCase();
+  $('recenti').innerHTML = (R.recenti || []).length ? `<span class="hint">${t('mt.tue')}</span>` +
+    R.recenti.map(m => `<span class="chip${m.toLowerCase() === mt ? ' on' : ''}" data-m="${esc(m)}">${esc(m)}</span>`).join('') : '';
+  $('recenti').querySelectorAll('.chip').forEach(c => c.onclick = () => { $('materia').value = c.dataset.m; disegnaPronto(); anteprimaNome(); controllaNomeRec(); $('nome').focus(); });
   $('srcScr').textContent = t('src.scr.ok') + (R.schermo ? ' · ' + R.schermo : '');
   disegnaLingue();
   anteprimaNome();
@@ -589,7 +598,7 @@ async function inizia() {
       if (r.ck) { await A.imposta('promemoria_dnd', false); R.dnd = false; }
       if (r.v !== 'si') return;
     }
-    const r = await A.avvia($('nome').value, {modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
+    const r = await A.avvia(nomeCompleto(), {materia: (R.tipo || 'lezione') === 'lezione' ? $('materia').value.trim() : '', modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
                                 tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : [], modello: R.tipo === 'riunione' ? (MOD || R.modello || 'generica') : ''});
     if (!r.ok && r.msg) { await dialogo({titolo: t('nm.prima2'), testo: r.msg}); return; }
     if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; MOD = null; MOD_RICORDO = false; R = await A.riepilogo(); disegnaModo(); await aggiorna(); }
@@ -1735,7 +1744,9 @@ function disegnaLezione() {
   const l = LZ && LZ.lezioni.find(x => x.cartella === LEZ.cartella) || LEZ; LEZ = l;
   const pronta = l.stato === 'pronta', dsa = !!(R && R.facilitata);
   $('lzTit').textContent = l.nome;
-  $('lzSub').textContent = [l.quando, l.durata, l.materia, ...(l.formati || []).map(f => nomeFormato(f, l.nome_mio))].filter(Boolean).join(' · ');
+  $('lzSub').innerHTML = esc([l.quando, l.durata, ...(l.formati || []).map(f => nomeFormato(f, l.nome_mio))].filter(Boolean).join(' · ')) +
+    ((l.tipo || 'lezione') === 'lezione' ? `<br><span class="matlez">${esc(t('mt.lez', {m: l.materia || t('mt.nessuna')}))}<button id="lzMat">${esc(t('mt.cambia'))}</button></span>` : '');
+  if ($('lzMat')) $('lzMat').onclick = () => cambiaMateria(l);
   const rip = l.ripasso && l.ripasso.n ? (l.ripasso.no ? t('tl.flash.n', {n: l.ripasso.n, r: l.ripasso.no}) : t(l.ripasso.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: l.ripasso.n})) : '';
   const ha = {ap: l.n_appunti, asc: l.n_appunti, tras: pronta, vid: l.video && pronta, chiedi: l.trascritta && pronta, mappa: l.trascritta && pronta, ig: l.trascritta && pronta,
               cap: l.capitoli && pronta, voci: l.trascritta && pronta, flash: l.ripasso && l.ripasso.n, mat: l.materia && lezioniMateria(l).length, cond: l.n_appunti && pronta, sp: l.video && pronta};
@@ -1756,6 +1767,21 @@ function disegnaLezione() {
   // un gruppo con tutto gia' in «Per te» non si mostra
   $('lzBox').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('lzBox').querySelectorAll('[data-ta]').forEach(b => b.onclick = () => tileLezione(l, b.dataset.ta));
+}
+async function cambiaMateria(l) {
+  const mie = [...new Set([...(R.recenti || []), ...materieStudia().map(x => x.m)])];
+  const html = `<div class="chips" style="margin-top:0">${mie.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('')}</div>
+    <input class="in" id="mtNuova" placeholder="${esc(t('mt.nuova'))}" maxlength="60" style="margin-top:10px"><div class="hint" style="margin-top:6px">${esc(t('mt.dopo'))}</div>`;
+  let scelta = null;
+  const p = dialogo({titolo: t('mt.q'), html, bottoni: [{t: t('annulla'), v: false}, {t: t('mt.salva'), cls: 'b-main', v: true}]});
+  setTimeout(() => document.querySelectorAll('.velo .chip[data-m]').forEach(c => c.onclick = () => { scelta = c.dataset.m; const i = $('mtNuova'); if (i) i.value = scelta; document.querySelectorAll('.velo .chip[data-m]').forEach(x => x.classList.toggle('on', x === c)); }), 50);
+  const ok = await p;
+  const m = (dialogo.valore || scelta || '').trim();
+  if (ok !== true || !m) return;
+  const r = await A.cambia_materia(l.cartella, m);
+  if (!r.ok) return;
+  toast(t('mt.ok', {m}));
+  R = await A.riepilogo(); await caricaLezioni(); disegnaLezione();
 }
 async function tileLezione(l, a) {
   if (a === 'appunti_dsa') { toast(t('as.lav')); const r = await A.appunti_dsa(l.cartella); if (!r.ok) toast(r.msg || ''); return; }
