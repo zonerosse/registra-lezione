@@ -698,12 +698,33 @@ FACILITATA = False      # «Lettura facilitata» (Impostazioni): negli appunti i
 FONT_FACILE = Path(__file__).resolve().parent / "interfaccia" / "font"
 
 
+# «Come leggo meglio» (Modalita' DSA): carattere e sfondo scelti dallo studente, anche nei PDF
+LETTURA = {"f": "atkinson", "b": "crema"}
+FONT_DSA = {"atkinson": ("AtkinsonHyperlegible-Regular.ttf", "AtkinsonHyperlegible-Bold.ttf"),
+            "opendyslexic": ("OpenDyslexic-Regular.otf", "OpenDyslexic-Bold.otf"),
+            "lexend": ("Lexend-Regular.ttf", "Lexend-Bold.ttf")}
+SFONDI_PDF = {"crema": (255, 251, 235), "azzurro": (232, 243, 252), "verde": (234, 246, 234), "rosa": (251, 239, 244),
+              "scuro": (255, 251, 235)}     # lo sfondo scuro non si stampa: nel PDF crema
+
+
+def font_dsa():
+    """(regular, bold) del carattere scelto in «Come leggo meglio» (Atkinson se manca)."""
+    for k in (LETTURA.get("f"), "atkinson"):
+        r, b = FONT_DSA.get(k or "", FONT_DSA["atkinson"])
+        if (FONT_FACILE / r).exists() and (FONT_FACILE / b).exists():
+            return FONT_FACILE / r, FONT_FACILE / b
+    return FONT_FACILE / FONT_DSA["atkinson"][0], FONT_FACILE / FONT_DSA["atkinson"][1]
+
+
+def sfondo_pdf():
+    return SFONDI_PDF.get(LETTURA.get("b") or "crema", SFONDI_PDF["crema"])
+
+
 def _font_pdf(pdf, facile=False):
     """Usa Arial di Windows (accenti e simboli ok); altrimenti un font di base.
     facile=True e «Lettura facilitata» accesa: Atkinson Hyperlegible (dentro il programma)."""
     windir = Path(os.environ.get("WINDIR", r"C:\Windows"))
-    candidati = ([(FONT_FACILE / "AtkinsonHyperlegible-Regular.ttf", FONT_FACILE / "AtkinsonHyperlegible-Bold.ttf")]
-                 if facile and FACILITATA else []) + [
+    candidati = ([font_dsa()] if facile and FACILITATA else []) + [
         (windir / "Fonts" / "arial.ttf", windir / "Fonts" / "arialbd.ttf"),
         (CARTELLA_FONT / "DejaVuSans.ttf", CARTELLA_FONT / "DejaVuSans-Bold.ttf"),
     ]

@@ -292,6 +292,13 @@
     </section>
 
     <!-- KARAOKE DELLA LEZIONE -->
+    <section class="pg hidden" id="v-lm">
+      <div class="hd"><div><h2 data-t="lm.h">👓 Come leggo meglio</h2><p data-t="lm.sub">Scegli come vuoi vedere il testo: vale per appunti, Ascolta, Karaoke, flashcard e PDF.</p></div></div>
+      <div class="lmgrid">
+        <div class="card" id="lmBox"></div>
+        <div><div class="lmprova" id="lmProva"></div><div class="hint mt" data-t="lm.nota">Così vedrai gli appunti, «Ascolta», il Karaoke, le flashcard e i PDF per DSA. Le sillabe colorate solo in italiano.</div></div>
+      </div>
+    </section>
     <section class="pg hidden" id="v-rg">
       <div class="hd"><div><h2 data-t="rg.h2">🃏 Ripasso del giorno</h2><p data-t="rg.sub">Poche carte ogni giorno, scelte per te, fino all'esame.</p></div></div>
       <div id="rgBox"></div>
@@ -471,6 +478,7 @@
         <div class="lbl" data-t="im.lingua">Lingua</div>
         <div class="set"><div class="t"><b data-t="im.lingua.t">Lingua del programma e degli appunti</b><span data-t="im.lingua.s">Menu, pulsanti, appunti Cornell e PDF.</span></div><div class="seg" id="segLingua"><span data-l="it">Italiano</span><span data-l="en">English</span></div></div>
         <div class="set"><div class="t"><b data-t="fa.t">Lettura facilitata (DSA)</b><span data-t="fa.s">Carattere ad alta leggibilità, lettere e righe più distanziate, fondo color crema: in «Ascolta gli appunti», nelle flashcard e nei PDF degli appunti nuovi.</span></div><div class="sw" id="swFac"></div></div>
+        <div class="set" id="lmImp"><div class="t"><b data-t="lm.t">👓 Come leggo meglio</b><span data-t="lm.s">Carattere, grandezza, colore dello sfondo, sillabe colorate, righello di lettura.</span></div><button class="btn b-ghost b-sm" id="lmApri" data-t="lm.apri">Scegli…</button></div>
       </div>
       <div class="card mt">
         <div class="lbl" data-t="im.ai">Intelligenza artificiale</div>
@@ -687,5 +695,6 @@
 <script src="guida.js"></script>
 <script src="android.js"></script>
 <script src="app.js"></script>
+<div class="rghd" id="rghd"></div>
 </body>
 </html>

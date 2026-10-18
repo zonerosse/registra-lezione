@@ -50,6 +50,8 @@ GRUPPI = [
         ("fontTools", "Prepara i caratteri dei PDF", "Prepares the PDF fonts", "MIT", ["fonttools"]),
         ("Caratteri DejaVu (solo Android)", "Simboli matematici negli appunti", "Math symbols in the notes", "Libera", ["a:LICENZA-DejaVu.txt"]),
         ("Carattere Atkinson Hyperlegible (Braille Institute)", "Il carattere della «Lettura facilitata»", "The «Easy reading» font", "SIL OFL 1.1", ["f:OFL.txt"]),
+        ("Carattere OpenDyslexic (Abbie Gonzalez)", "Carattere a scelta in «Come leggo meglio»", "Font to choose in «How I read best»", "SIL OFL 1.1", ["f:OFL-OpenDyslexic.txt"]),
+        ("Carattere Lexend (The Lexend Project)", "Carattere a scelta in «Come leggo meglio»", "Font to choose in «How I read best»", "SIL OFL 1.1", ["f:OFL-Lexend.txt"]),
         ("pypdf", "Legge le slide in PDF del docente", "Reads the lecturer's PDF slides", "BSD", ["v:pypdf-LICENSE.txt"]),
         ("icalendar", "Legge i calendari Google e Outlook", "Reads Google and Outlook calendars", "BSD", ["v:licenze/icalendar-7.3.0-LICENSE.rst"]),
         ("recurring-ical-events", "Gli impegni che si ripetono", "Recurring events", "LGPL", ["v:licenze/recurring_ical_events-3.8.2-LICENSE"]),

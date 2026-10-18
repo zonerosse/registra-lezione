@@ -642,7 +642,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
         def header(self):
             """«Lettura facilitata»: fondo color crema su tutta la pagina (stanca meno gli occhi)."""
             if getattr(self, "_crema", False):
-                self.set_fill_color(255, 251, 235)
+                self.set_fill_color(*el.sfondo_pdf())
                 self.rect(0, 0, self.w, self.h, style="F")
 
         def footer(self):

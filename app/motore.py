@@ -321,6 +321,7 @@ class Motore:
     def __init__(self):
         self.cfg = leggi_config()
         el.FACILITATA = bool(self.cfg.get("lettura_facilitata"))     # «Lettura facilitata»: anche nei PDF
+        el.LETTURA = self._lettura()
         self._blocco_cloud = threading.Lock()
         try:
             rapporti.installa(agg.versione_locale().get("versione", "?"))
@@ -545,6 +546,7 @@ class Motore:
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "nome_classe": self.cfg.get("nome_classe") or "",
+                "lettura": self._lettura(),
                 "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
                 "rg_promemoria": bool(self.cfg.get("rg_promemoria", True)), "rg_ora": self.cfg.get("rg_ora") or "18:00",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
@@ -570,6 +572,15 @@ class Motore:
                                          else "velocita_trascrizione")}
 
     # ------------------------------------------------------------------ impostazioni
+
+    def _lettura(self):
+        """«Come leggo meglio»: carattere, grandezza, spazio, sfondo, sillabe colorate, righello."""
+        d = self.cfg.get("lettura") or {}
+        return {"f": d.get("f") if d.get("f") in el.FONT_DSA else "atkinson",
+                "g": d.get("g") if d.get("g") in (17, 20, 24, 28) else 20,
+                "s": d.get("s") if d.get("s") in (1, 2, 3) else 2,
+                "b": d.get("b") if d.get("b") in el.SFONDI_PDF else "crema",
+                "sil": bool(d.get("sil")), "rig": bool(d.get("rig"))}
 
     def imposta(self, campo, valore):
         if campo == "privacy_ok":
@@ -611,6 +622,9 @@ class Motore:
                 return {"ok": False, "msg": "?"}
             self.cfg["lingua_lezione"] = valore
             self.cfg["lingua_lezione_scelta"] = True
+        elif campo == "lettura":
+            self.cfg["lettura"] = {**self._lettura(), **(valore if isinstance(valore, dict) else {})}
+            self.cfg["lettura"] = el.LETTURA = self._lettura()
         elif campo == "rg_max":
             self.cfg["rg_max"] = int(valore) if int(valore) in (10, 20, 30) else 20
         elif campo == "rg_modo":

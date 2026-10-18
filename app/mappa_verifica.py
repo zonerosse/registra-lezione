@@ -159,7 +159,7 @@ def pdf(dati, materia, lezioni, nome_classe, dest, L="it"):
     p = FPDF(orientation="L", unit="mm", format="A4")
     p.set_auto_page_break(False)
     p.add_page()
-    reg, bold = el.FONT_FACILE / "AtkinsonHyperlegible-Regular.ttf", el.FONT_FACILE / "AtkinsonHyperlegible-Bold.ttf"
+    reg, bold = el.font_dsa()
     if reg.exists() and bold.exists():
         p.add_font("A", "", str(reg))
         p.add_font("A", "B", str(bold))

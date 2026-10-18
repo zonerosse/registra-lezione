@@ -22,7 +22,7 @@ def pdf(dest, nome_classe, materia, usati, ha_lezioni, L="it"):
     p.set_auto_page_break(False)
     p.set_margins(16, 14, 16)
     p.add_page()
-    reg, bold = el.FONT_FACILE / "AtkinsonHyperlegible-Regular.ttf", el.FONT_FACILE / "AtkinsonHyperlegible-Bold.ttf"
+    reg, bold = el.font_dsa()
     if reg.exists() and bold.exists():
         p.add_font("A", "", str(reg))
         p.add_font("A", "B", str(bold))
