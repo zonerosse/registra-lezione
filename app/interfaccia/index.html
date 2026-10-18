@@ -76,6 +76,7 @@
     <section class="pg" id="v-pronto">
       <div class="hd"><div><h2 data-t="pr.h">Pronto a registrare</h2><p id="prP" data-t="pr.p">Schermo, audio del PC e slide: penso a tutto io.</p></div><div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-end"><span id="pillAI"></span><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div></div>
       <div class="dsabanda"><div data-t="dsa.banda">Modalità DSA accesa. Gli appunti di questa lezione escono già facili da leggere (carattere grande, più spazio, fondo crema). Quando è pronta, nella pagina della lezione trovi in cima Ascolta, Mappa e Flashcard con la voce.</div></div>
+      <div class="hopronto hidden" id="hoPronto"><span class="sp" data-t="ho.pronto">🎟 Hai ricevuto un invito?</span><button class="btn b-ghost b-sm" id="hoPrB" data-t="ho.pronto.b">Incollalo qui</button><button class="x" id="hoPrX" title="×">✕</button></div>
       <div class="card" style="margin-bottom:14px">
         <div class="lbl" data-t="tp.h">Che cosa registri?</div>
         <div class="dove tre" id="tipoBox">
@@ -601,11 +602,6 @@
         <div class="set solo-pc"><div class="t"><b data-t="im.cart">Dove salvo le lezioni</b><span id="impCart"></span></div><button class="btn b-ghost b-sm" id="btnCart" data-t="im.cambia">Cambia…</button></div>
         <div class="set solo-pc"><div class="t"><b data-t="im.base">Le registrazioni sono in</b><span id="impBase"></span></div><button class="btn b-ghost b-sm" id="btnBase" data-t="im.apri">Apri</button></div>
       </div>
-      <div class="card mt">
-        <div class="lbl" data-t="im.pv.h">Privacy</div>
-        <div class="set"><div class="t"><b data-t="im.pv.t">Privacy</b><span data-t="im.pv.s"></span></div><button class="btn b-ghost b-sm" id="btnPrivacy" data-t="im.pv.b">Rileggi</button></div>
-        <div class="set"><div class="t"><b data-t="im.rap.t">Rapporti sugli errori</b><span data-t="im.rap.s"></span></div><div class="sw" id="swRap"></div></div>
-      </div>
       <div class="card mt hidden" id="invCard">
         <div class="lbl" data-t="inv.h">Inviti</div>
         <div class="hint" style="margin-bottom:10px" data-t="inv.s">Per dare il programma già pronto a qualcuno di cui ti fidi (Sara, Lorenzo…): riceve le tue chiavi senza vederle. Quello che usa lo paghi tu.</div>
@@ -643,6 +639,11 @@
           <div style="text-align:left"><b style="color:var(--navy)">Punto Web Ferrara</b><div class="hint">puntowebferrara.com</div></div>
         </div>
         <div class="row" style="justify-content:center;margin-top:14px"><button class="btn b-main b-sm" id="btnAss" data-t="in.ass">Assistenza</button><button class="btn b-ghost b-sm" id="btnCercaAgg" data-t="in.cerca">Cerca aggiornamenti</button><button class="btn b-ghost b-sm" id="btnLic" data-t="in.lic">Licenze</button></div>
+      </div>
+      <div class="card mt">
+        <div class="lbl" data-t="im.pv.h">Privacy</div>
+        <div class="set"><div class="t"><b data-t="im.pv.t">Privacy</b><span data-t="im.pv.s"></span></div><button class="btn b-ghost b-sm" id="btnPrivacy" data-t="im.pv.b">Rileggi</button></div>
+        <div class="set"><div class="t"><b data-t="im.rap.t">Rapporti sugli errori</b><span data-t="im.rap.s"></span></div><div class="sw" id="swRap"></div></div>
       </div>
     </section>
 

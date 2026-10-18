@@ -48,11 +48,13 @@ async function avvio() {
   traduciPagina();
   disegnaFacilitata();
   inizializza();
+  disegnaHoPronto();
   $('splash').classList.add('via');
   setTimeout(() => $('splash').remove(), 500);
   if (!R.lingua_scelta) benvenuto();
   else if (!R.privacy_ok) primaDiIniziare();
   else if (!R.rapporti_chiesto) chiediRapporti();
+  else invitoCopiato();
   contaFare();
   ciclo();
   setTimeout(() => { try { if (!S || !S.registro) A.cerca_aggiornamenti(true); } catch (e) {} }, 4000);   // avviso all'apertura, se c'e' una versione nuova
@@ -173,7 +175,7 @@ function vai(p, tornando = false) {
   if (p === 'studia') apriStudia();
   if (p === 'fare') apriCose();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
-  if (p === 'info') disegnaAgg();
+  if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); }
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
@@ -265,7 +267,7 @@ function inizializza() {
   controllaNomeRec();
   vai('reg');
 }
-async function rileggi() { R = await A.riepilogo(); disegnaImpostazioni(); disegnaInviti(); disegnaPronto(); }
+async function rileggi() { R = await A.riepilogo(); disegnaImpostazioni(); disegnaInviti(); disegnaPronto(); disegnaHoPronto(); }
 function scriviVersione() {
   $('footVer').textContent = t('ver', {v: R.versione});
   $('infoVer').textContent = t('ver', {v: R.versione});
@@ -322,6 +324,7 @@ function primaDiIniziare(rileggi) {
       await A.imposta('rapporti_errori', si); R.rapporti = si; R.rapporti_chiesto = true;
     }
     v.remove();
+    if (!rileggi) invitoCopiato();
   };
   if (rileggi) v.onclick = e => { if (e.target === v) v.remove(); };
 }
@@ -1134,6 +1137,37 @@ function avanzate(apri) {
   $('imAvanzate').classList.toggle('hidden', !a); $('imAvz').classList.toggle('aperto', !!a);
   const l = $('imAvz').querySelector('[data-t="im.avz.apri"]'); if (l) l.textContent = t(a ? 'im.avz.chiudi' : 'im.avz.apri');
   try { localStorage.setItem('vm_avanzate', a ? '1' : '0'); } catch (e) {}
+}
+// chi riceve un invito: se ha appena copiato il messaggio (WhatsApp), il programma lo riconosce e chiede «lo attivo?»
+function senzaChiavi() { return !R.chiave && !R.ha_server && !R.da_invito; }
+async function invitoCopiato() {
+  disegnaHoPronto();
+  if (!senzaChiavi()) return;
+  const r = await A.invito_negli_appunti();
+  if (!r || !r.ok) return;
+  const si = await dialogo({titolo: t('ho.trovato.t'), testo: r.da ? t('ho.trovato', {d: r.da}) : t('ho.trovato.anon'),
+    bottoni: [{t: t('annulla'), v: false}, {t: t('ho.trovato.si'), cls: 'b-main', v: true}]});
+  if (si) await attivaInvito(r.testo);
+}
+async function attivaInvito(testo) {
+  const r = await A.invito_attiva(testo);
+  if (!r.ok) { await dialogo({titolo: t('ho.h'), testo: r.msg || ''}); return false; }
+  await rileggi();
+  disegnaHoPronto();
+  await dialogo({titolo: t('ho.h'), testo: t('ho.ok', {c: [r.claude ? t('ho.ok.cl') : '', r.server ? t('ho.ok.srv') : ''].filter(Boolean).join(' ' + t('ho.e') + ' ')})});
+  return true;
+}
+function disegnaHoPronto() {
+  $('hoPronto').classList.toggle('hidden', !senzaChiavi() || !!R.invito_nascosto);
+}
+function collegaHoPronto() {
+  $('hoPrX').onclick = async () => { R.invito_nascosto = true; disegnaHoPronto(); await A.imposta('invito_nascosto', true); };
+  $('hoPrB').onclick = async () => {
+    const v = await dialogo({titolo: t('ho.pronto.t'), testo: t('ho.s'), html: '<input class="in" style="margin-top:10px" placeholder="VMIA-INVITO-1:…">',
+      bottoni: [{t: t('annulla'), v: false}, {t: t('ho.vai'), cls: 'b-main', v: true}]});
+    const testo = dialogo.valore;
+    if (v && testo) await attivaInvito(testo);
+  };
 }
 function disegnaInviti() {
   $('invCard').classList.toggle('hidden', !R.puo_invitare);
@@ -2879,6 +2913,7 @@ function collegaNovita() {
   collegaPodcast();
   collegaKaraoke();
   collegaVerifica();
+  collegaHoPronto();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
   $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });

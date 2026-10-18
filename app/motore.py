@@ -288,6 +288,20 @@ def rinomina_collegamenti():
         log.exception("collegamenti col nome nuovo")
 
 
+def testo_appunti():
+    """Il testo copiato (per riconoscere un invito appena incollato). Sul telefono lo sostituisce android_motore."""
+    try:
+        if sys.platform == "win32":
+            r = subprocess.run(["powershell", "-NoProfile", "-Command", "Get-Clipboard -Raw"], capture_output=True,
+                               timeout=8, creationflags=el.NO_WINDOW)
+            return r.stdout.decode("utf-8", "replace") if r.returncode == 0 else ""
+        if sys.platform == "darwin":
+            return subprocess.run(["pbpaste"], capture_output=True, timeout=5).stdout.decode("utf-8", "replace")
+    except Exception:
+        log.exception("appunti di sistema")
+    return ""
+
+
 def apri_non_disturbare():
     try:
         if sys.platform == "win32":
@@ -530,7 +544,8 @@ class Motore:
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
-                "da_invito": self.cfg.get("da_invito") or "",
+                "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
+                "ha_server": bool(self._server_dati()),
                 "app_codice": int(agg.versione_locale().get("codice") or 0),
                 "puo_invitare": bool(ha_chiave or self._server_dati()) and not self.cfg.get("da_invito"),
                 "mini": bool(self.cfg.get("mini_finestra", True)), "dnd": bool(self.cfg.get("promemoria_dnd", True)),
@@ -595,7 +610,7 @@ class Motore:
             self.cfg["lingua_lezione_scelta"] = True
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
+        elif campo in ("invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
             self.cfg[campo] = el.FACILITATA = bool(valore)
@@ -758,17 +773,32 @@ class Motore:
         msg = tr("inv_msg", n=per or "", c="VMIA-INVITO-1:" + codice).replace("  ", " ")
         return {"ok": True, "messaggio": msg, "claude": "claude" in dati, "server": "srv" in dati}
 
-    def invito_attiva(self, testo):
-        """Incolla del messaggio d'invito: mette la chiave di Claude e il server."""
+    def _leggi_invito(self, testo):
         import base64
         import zlib
         m = re.search(r"VMIA-INVITO-1:([A-Za-z0-9_\-]+)", str(testo or ""))
         if not m:
-            return {"ok": False, "msg": tr("inv_err")}
+            return None
         c = m.group(1)
         try:
-            dati = json.loads(zlib.decompress(self._mescola(base64.urlsafe_b64decode(c + "=" * (-len(c) % 4)))).decode("utf-8"))
+            return json.loads(zlib.decompress(self._mescola(base64.urlsafe_b64decode(c + "=" * (-len(c) % 4)))).decode("utf-8"))
         except Exception:
+            return None
+
+    def invito_negli_appunti(self):
+        """Al primo avvio: se e' stato appena copiato un messaggio d'invito, chi lo manda (per chiedere «lo attivo?»)."""
+        if self.cfg.get("da_invito") or self.chiave() or self._server_dati():
+            return {"ok": False}
+        testo = testo_appunti() or ""
+        d = self._leggi_invito(testo)
+        if not d or not (d.get("claude") or d.get("srv")):
+            return {"ok": False}
+        return {"ok": True, "da": d.get("da") or "", "testo": testo}
+
+    def invito_attiva(self, testo):
+        """Incolla del messaggio d'invito: mette la chiave di Claude e il server."""
+        dati = self._leggi_invito(testo)
+        if not dati:
             return {"ok": False, "msg": tr("inv_err")}
         fatto = []
         if dati.get("claude"):

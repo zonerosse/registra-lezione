@@ -641,6 +641,19 @@ def _prepara(cartella_app, lingua_tel):
     return mt
 
 
+def testo_appunti():
+    """Il testo copiato sul telefono (per riconoscere un invito appena copiato da WhatsApp)."""
+    try:
+        cm = _ctx().getSystemService(jclass("android.content.Context").CLIPBOARD_SERVICE)
+        clip = cm.getPrimaryClip()
+        if clip is None or clip.getItemCount() == 0:
+            return ""
+        t = clip.getItemAt(0).coerceToText(_ctx())
+        return str(t) if t is not None else ""
+    except Exception:
+        return ""
+
+
 # ----------------------------------------------------------------------------- voce (lettura ad alta voce)
 # La finestra del telefono (WebView) non ha la voce del browser: parla la sintesi vocale di Android.
 _VOCE = {"tts": None, "pronta": None, "da": 0.0}
@@ -737,6 +750,7 @@ def _api_android(api, mt):
     api.apri_finestra = lambda: None
     api.condividi = lambda percorso: bool(Ponte.condividi(str(percorso)))
     api.voce_parla = voce_parla
+    mt.testo_appunti = testo_appunti
     api.voce_occupata = voce_occupata
     api.voce_ferma = voce_ferma
 

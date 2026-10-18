@@ -1,7 +1,7 @@
 {
- "versione": "0.11.8",
+ "versione": "0.11.9",
  "codice": 11,
- "novita": "Nuovo: «🗺 Mappa per la verifica» in Studia. Un foglio A4 con le parole chiave delle lezioni che scegli e il riquadro di formule e valori, da stampare e portare alla verifica (strumento compensativo, L. 170/2010). Puoi togliere le parole che non vuoi e scrivere nome e classe.",
- "novita_en": "New: «🗺 Test map» in Study. An A4 sheet with the key words of the lectures you choose and a formulas and values box, to print and bring to the test (compensatory tool, Italian Law 170/2010). You can remove the words you don't want and write name and class.",
- "contenuto": 65
+ "novita": "Inviti più semplici: nel messaggio ci sono i link per scaricare il programma (PC e Android) e chi lo riceve non deve cercare niente, perché il programma riconosce da solo l'invito copiato e chiede «Lo attivo?». In Registra c'è anche «🎟 Hai ricevuto un invito?». La Privacy ora è in Informazioni.",
+ "novita_en": "Simpler invitations: the message has the links to download the program (PC and Android) and whoever receives it has nothing to look for, because the program recognises the copied invitation by itself and asks «Shall I activate it?». Record also shows «🎟 Did you receive an invitation?». Privacy is now in About.",
+ "contenuto": 66
 }

@@ -489,6 +489,9 @@ class Api:
     def invito_prepara(self, per, claude=True, server=True):
         return self._m.invito_prepara(per, claude, server)
 
+    def invito_negli_appunti(self):
+        return self._m.invito_negli_appunti()
+
     def invito_attiva(self, testo):
         return self._m.invito_attiva(testo)
 

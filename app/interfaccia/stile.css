@@ -835,3 +835,6 @@ html.android .cap .gvint{margin-left:16px}
 .foglio [data-k].no text{fill:#be123c!important;text-decoration:line-through}
 .foglio .mvfo span.no{color:#be123c;text-decoration:line-through}
 @media (max-width:900px){.mvgrid{grid-template-columns:1fr}}
+/* invito: «Hai ricevuto un invito?» in Registra per chi parte senza chiavi */
+.hopronto{display:flex;align-items:center;gap:10px;background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:8px 10px 8px 14px;margin-bottom:14px;font-size:14px;color:var(--ink);font-weight:600}
+.hopronto .x{border:0;background:none;color:var(--mut);font-size:15px;padding:4px 6px;cursor:pointer}
