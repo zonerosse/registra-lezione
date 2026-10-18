@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -165,13 +165,15 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
   if (STORIA.length) barraPercorso(p);
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
+  if (p === 'dsa') disegnaSpazioDsa();
+  segnaUso(p);
   if (p === 'studia') apriStudia();
   if (p === 'fare') apriCose();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
@@ -2091,6 +2093,86 @@ async function tileStudia(m, a) {
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
 }
+/* ------------------------------------------------------------------ spazio DSA */
+// Con la Modalita' DSA accesa: la prima voce del menu. Gli strumenti per DSA in ordine di momento (in aula, dopo la
+// lezione, per la verifica, per il docente); il resto in «Altro». Le funzioni sono quelle di sempre: cambia la porta.
+var SD = {m: null, c: null, altro: false};
+const SD_USO = {ascolta: 'voce', karaoke: 'karaoke', podcast: 'podcast', mappa: 'mappe', verifica: 'mappa_verifica', rip: 'flashcard'};
+function segnaUso(k) {
+  if (!R || !R.facilitata) return;
+  k = SD_USO[k] || k;
+  if (['voce', 'karaoke', 'podcast', 'mappe', 'mappa_verifica', 'flashcard', 'detta', 'orale', 'test', 'scritto'].includes(k)) { try { A.segna_uso(k); } catch (e) {} }
+}
+const lezioniDsa = () => (LZ ? LZ.lezioni : []).filter(l => l.stato === 'pronta' && (l.n_appunti || l.trascritta));
+async function disegnaSpazioDsa() {
+  if (!LZ) await caricaLezioni();
+  if (pagina !== 'dsa') return;
+  const lz = lezioniDsa();
+  const mats = [...new Set(lz.map(l => l.materia || ''))];
+  if (SD.m === null || !mats.includes(SD.m)) SD.m = mats.length ? mats[0] : '';
+  const lm = lz.filter(l => (l.materia || '') === SD.m);
+  if (!lm.some(l => l.cartella === SD.c)) SD.c = lm.length ? lm[0].cartella : null;
+  const l = lm.find(x => x.cartella === SD.c) || null;
+  const m = SD.m ? materieStudia().find(x => x.m.toLowerCase() === SD.m.toLowerCase()) : null;
+  SD.l = l; SD.mat = m;
+  $('sdScegli').innerHTML = lz.length ? `<label for="sdM">${esc(t('sd.materia'))}</label><select id="sdM">${mats.map(x => `<option value="${esc(x)}"${x === SD.m ? ' selected' : ''}>${esc(x || t('sd.senza'))}</option>`).join('')}</select>
+    <label for="sdL" style="margin-left:6px">${esc(t('sd.lezione'))}</label><select id="sdL">${lm.map(x => `<option value="${esc(x.cartella)}"${x.cartella === SD.c ? ' selected' : ''}>${esc((SD.m ? mvSenzaMateria(x.nome, SD.m) : x.nome) + (x.quando ? ' · ' + x.quando : ''))}</option>`).join('')}</select>`
+    : `<div class="hint">${esc(t('sd.nessuna'))}</div>`;
+  if ($('sdM')) { $('sdM').onchange = () => { SD.m = $('sdM').value; SD.c = null; disegnaSpazioDsa(); }; $('sdL').onchange = () => { SD.c = $('sdL').value; disegnaSpazioDsa(); }; }
+  // perche' uno strumento non si puo' usare ancora (la piastrella resta, in chiaro, e al tocco lo dice)
+  const nl = !l && 'sd.no.lez', tr = nl || (!l.trascritta && 'sd.no.tr'), ap = nl || (!l.n_appunti && 'sd.no.ap'), cap = nl || (!l.capitoli && 'sd.no.cap');
+  const mt = !lz.length ? 'sd.no.lez' : !m && 'sd.no.mat';
+  const T = (a, ico, tit, sub, no, bd) => `<button class="tile${no ? ' no' : ''}" data-sd="${a}"${no ? ` data-no="${no}"` : ''}><span class="ico i-blue">${ico}</span><span><b>${esc(tit)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}${bd ? `<span class="bd">${esc(bd)}</span>` : ''}</span></button>`;
+  const mom = (n, tit, sub, tiles) => `<div class="sdmom"><h3><span class="n">${n}</span>${esc(tit)} <small>${esc(sub)}</small></h3><div class="tiles">${tiles.join('')}</div></div>`;
+  $('sdBox').innerHTML =
+    mom(1, t('sd.m1'), t('sd.m1.s'), [T('reg', '⏺', t('sd.reg'), t('sd.reg.s')), T('detta', '🎙', t('sd.detta'), t('sd.detta.s'))]) +
+    mom(2, t('sd.m2'), t('sd.m2.s'), [T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
+      T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s'), '', t('sd.presto'))]) +
+    mom(3, t('sd.m3'), t('sd.m3.s'), [T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
+      T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
+    mom(4, t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s'))]) +
+    `<button class="sdaltro" id="sdAltroB">${esc(t(SD.altro ? 'sd.altro.su' : 'sd.altro'))}<span style="font-weight:400">${esc(t('sd.altro.s'))}</span></button>
+    <div class="sdaltri${SD.altro ? '' : ' hidden'}" id="sdAltri"><div class="tiles" style="margin-top:12px">${[T('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), tr), T('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), cap),
+      T('infografica', '🖼', t('tl.ig'), t('tl.ig.s'), tr), T('piano', '📅', t('st.piano').replace(/^📅\s*/, ''), t('sd.piano.s'), mt), T('prob', '⭐', t('tl.prob'), t('tl.prob.s'), mt), T('arch', '📚', t('sd.tutte'), t('sd.tutte.s'))].join('')}</div></div>`;
+  $('sdAltroB').onclick = () => { SD.altro = !SD.altro; disegnaSpazioDsa(); };
+  $('sdBox').querySelectorAll('[data-sd]').forEach(b => b.onclick = () => b.dataset.no ? toast(t(b.dataset.no)) : azioneDsa(b.dataset.sd));
+}
+async function azioneDsa(a) {
+  const l = SD.l, m = SD.mat;
+  if (a === 'reg') return vai('reg');
+  if (a === 'detta') return scriviParlando();
+  if (a === 'giorno') return toast(t('sd.presto.t'));
+  if (a === 'arch') return vai('arch');
+  if (a === 'strumenti') return strumentiDsa();
+  if (a === 'firma') return apriMappaVerifica(m);
+  if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob'].includes(a)) return tileStudia(m, a);
+  return tileLezione(l, a);
+}
+async function scriviParlando() {
+  const html = `<textarea class="in" id="spTx" rows="7" style="margin-top:10px;resize:vertical"></textarea>
+    <div class="row" style="margin-top:8px;gap:8px;flex-wrap:wrap"><button class="btn b-ghost b-sm" id="spMic">${esc(t('sd.sp.detta'))}</button><button class="btn b-ghost b-sm" id="spCopia">${esc(t('sd.sp.copia'))}</button><span class="hint" id="spOk"></span></div>`;
+  const p = dialogo({titolo: t('sd.sp.t'), testo: t('sd.sp.s'), html, bottoni: [{t: t('chiudi'), cls: 'b-main', v: true}]});
+  setTimeout(() => {
+    const tx = $('spTx'); if (!tx) return;
+    $('spMic').onclick = () => detta($('spMic'), tx);
+    $('spCopia').onclick = () => {
+      const fatto = () => { $('spOk').textContent = t('sd.sp.copiato'); };
+      try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(tx.value).then(fatto, () => { tx.focus(); tx.select(); document.execCommand('copy'); fatto(); }); return; } } catch (e) {}
+      tx.focus(); tx.select(); try { document.execCommand('copy'); } catch (e) {} fatto();
+    };
+  }, 30);
+  await p;
+  if (DT && DT.btn && !document.body.contains(DT.btn)) { const d = DT; DT = null; clearInterval(d.poll); try { await A.detta_fine(); } catch (e) {} }
+}
+async function strumentiDsa() {
+  const ok = await dialogo({titolo: t('sd.str.t'), testo: t('sd.str.q'), html: `<input class="in" style="margin-top:10px" maxlength="60" placeholder="${esc(t('mv.nome.ph'))}" value="${esc(R.nome_classe || '')}">`,
+    bottoni: [{t: t('annulla'), v: false}, {t: t('sd.str.si'), cls: 'b-main', v: true}]});
+  if (!ok) return;
+  const nome = (dialogo.valore || '').trim();
+  R.nome_classe = nome || R.nome_classe;
+  const r = await A.strumenti_dsa_pdf(SD.m || '', nome, lezioniDsa().length > 0);
+  if (!r.ok) dialogo({titolo: t('sd.str.t'), testo: r.msg || ''});
+}
 /* ------------------------------------------------------------------ mappa per la verifica */
 // Un foglio A4 con le parole chiave di una o piu' lezioni, da portare alla verifica (strumento compensativo).
 // La disposizione e' uguale a mappa_verifica.disposizione in Python (cosi' il PDF e' come quello che si vede).
@@ -2240,7 +2322,7 @@ async function detta(btn, campo) {
     if (r.ok) { campo.value = (campo.value.trim() ? campo.value.trim() + ' ' : '') + r.testo; campo.dispatchEvent(new Event('input')); } else toast(r.msg || '');
     return;
   }
-  voceFerma();
+  voceFerma(); segnaUso('detta');
   const r = await A.detta_avvia();
   if (!r.ok) { toast(r.msg || ''); return; }
   DT = {btn, testo: btn.textContent};
@@ -2269,6 +2351,7 @@ function sceltaTest() {
   box.scrollIntoView({block: 'start'});
 }
 async function nuovoTest(soloSbagliate) {
+  segnaUso('test');
   clearInterval(TC.timer);
   const box = $('esTestBox'); box.classList.remove('hidden');
   box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('tc.lav'))}</div>`;
@@ -2383,7 +2466,7 @@ function disegnaFacilitata() {
   ['swFac', 'asFac'].forEach(id => { if ($(id)) $(id).classList.toggle('on', on); });
   document.querySelectorAll('[data-dsa] .sw').forEach(x => x.classList.toggle('on', on));
 }
-async function cambiaDsa() { await A.imposta('lettura_facilitata', !R.facilitata); await rileggi(); if (pagina === 'lezione' && LEZ) disegnaLezione(); if (pagina === 'studia') disegnaStudia(); if (TC.test && !TC.test.voto && TC.test.risposte == null) disegnaTest(); }
+async function cambiaDsa() { await A.imposta('lettura_facilitata', !R.facilitata); await rileggi(); if (pagina === 'dsa' && !R.facilitata) { vai('reg'); return; } if (pagina === 'lezione' && LEZ) disegnaLezione(); if (pagina === 'studia') disegnaStudia(); if (TC.test && !TC.test.voto && TC.test.risposte == null) disegnaTest(); }
 const disegnaVel = () => $('asVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === AS.vel));
 const disegnaPlay = () => { $('asPlay').textContent = t(AS.attivo ? 'as.pausa' : AS.i > 0 ? 'as.continua' : 'as.leggi'); };
 async function apriAscolta(l) {
@@ -2463,6 +2546,7 @@ function orChiudi() {
   if (c) A.orale_chiudi();
 }
 async function nuovaOrale() {
+  segnaUso('orale');
   orChiudi();
   const box = $('esOrBox'); box.classList.remove('hidden');
   box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('or.prep'))}</div>`;
@@ -2550,6 +2634,7 @@ function disegnaOrRisultato() {
   };
 }
 async function nuovaSimulazione() {
+  segnaUso('scritto');
   const box = $('esSimBox'); box.classList.remove('hidden');
   box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.sim.lav'))}</div>`;
   box.scrollIntoView({block: 'start'});

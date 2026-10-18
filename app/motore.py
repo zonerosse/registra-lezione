@@ -544,6 +544,7 @@ class Motore:
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
+                "nome_classe": self.cfg.get("nome_classe") or "",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
                 "ha_server": bool(self._server_dati()),
                 "app_codice": int(agg.versione_locale().get("codice") or 0),
@@ -2040,6 +2041,31 @@ class Motore:
         except Exception:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
+
+    # ------------------------------------------------------------------ spazio DSA
+
+    def segna_uso(self, chiave):
+        """Uno strumento compensativo usato (per il foglio «Gli strumenti che uso»)."""
+        import strumenti_dsa as sd
+        if chiave in sd.STRUMENTI and chiave not in (self.cfg.get("dsa_usati") or {}):
+            self.cfg.setdefault("dsa_usati", {})[chiave] = datetime.date.today().isoformat()
+            salva_config(self.cfg)
+        return {"ok": True}
+
+    def strumenti_dsa_pdf(self, materia="", nome_classe="", ha_lezioni=True):
+        import strumenti_dsa as sd
+        if (nome_classe or "").strip() and nome_classe.strip() != self.cfg.get("nome_classe"):
+            self.cfg["nome_classe"] = nome_classe.strip()[:80]
+            salva_config(self.cfg)
+        dest_dir = Path(self.cfg["cartella_pacchetti"])
+        dest = dest_dir / f"{tr('sd_pdf_file')}{' – ' + el.nome_sicuro(materia) if materia else ''}.pdf"
+        try:
+            sd.pdf(dest, nome_classe, materia, set((self.cfg.get("dsa_usati") or {}).keys()), bool(ha_lezioni), testi.LINGUA)
+        except Exception:
+            log.exception("PDF strumenti compensativi")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        apri(dest)
+        return {"ok": True, "file": str(dest)}
 
     # ------------------------------------------------------------------ mappa per la verifica (strumento compensativo)
 

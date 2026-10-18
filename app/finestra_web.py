@@ -253,6 +253,12 @@ class Api:
     def cambia_materia(self, cartella, materia):
         return self._m.cambia_materia(cartella, materia)
 
+    def segna_uso(self, chiave):
+        return self._m.segna_uso(chiave)
+
+    def strumenti_dsa_pdf(self, materia="", nome_classe="", ha_lezioni=True):
+        return self._m.strumenti_dsa_pdf(materia, nome_classe, ha_lezioni)
+
     def mappa_verifica(self, materia, cartelle, parole=True, rifai=False):
         return self._m.mappa_verifica(materia, cartelle, parole, rifai)
 

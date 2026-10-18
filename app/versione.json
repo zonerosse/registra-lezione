@@ -1,6 +1,6 @@
 {
- "versione": "3.79",
+ "versione": "3.80",
  "librerie": 2,
- "novita": "Inviti più semplici: nel messaggio ci sono i link per scaricare il programma (PC e Android) e chi lo riceve non deve cercare niente, perché il programma riconosce da solo l'invito copiato e chiede «Lo attivo?». In Registra c'è anche «🎟 Hai ricevuto un invito?». La Privacy ora è in Informazioni.",
- "novita_en": "Simpler invitations: the message has the links to download the program (PC and Android) and whoever receives it has nothing to look for, because the program recognises the copied invitation by itself and asks «Shall I activate it?». Record also shows «🎟 Did you receive an invitation?». Privacy is now in About."
+ "novita": "Nuovo: «⭐ Spazio DSA», la prima voce del menu quando la Modalità DSA è accesa. Scegli materia e lezione e trovi gli strumenti in ordine: in aula, dopo la lezione, per la verifica, per il docente. «Gli strumenti che uso» prepara il foglio per il PDP; «Scrivi parlando» per dettare. Il resto è in «Altro».",
+ "novita_en": "New: «⭐ DSA space», the first menu item when DSA mode is on. Choose subject and lecture and find the tools in order: in class, after the lecture, for the test, for the teacher. «The tools I use» prepares the sheet for the learning plan; «Write by speaking» to dictate. Everything else is under «More»."
 }
