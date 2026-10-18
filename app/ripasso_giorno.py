@@ -56,7 +56,7 @@ def lezioni(base):
         if info.get("stato") != "pronta" or (info.get("tipo") or "lezione") != "lezione":
             continue
         nome = info.get("nome", c.name)
-        materia = (info.get("materia") or nome.split(" – ")[0].split(" - ")[0]).strip()
+        materia = (info.get("materia") or (nome.split(" – ")[0].split(" - ")[0] if (" – " in nome or " - " in nome) else "")).strip()
         out.append({"cartella": str(c), "nome": nome, "materia": materia, "inizio": info.get("inizio", "")})
     return out
 
@@ -171,7 +171,7 @@ def oggi(base, n=20, fatti=None, lampo=False, immagini=True):
     fatto_oggi = giorno.isoformat() in (fatti or [])
     scelte = _scelta(carte, n, lampo)
     materie = []
-    for m in sorted({c["materia"] for c in carte}):
+    for m in sorted({c["materia"] for c in carte if c["materia"]}):
         cm = [c for c in carte if c["materia"] == m]
         materie.append({"materia": m, "carte": len(cm), "oggi": sum(1 for c in scelte if c["materia"] == m),
                         "giorni": (esami[m] - giorno).days if m in esami else None, "pronto": pronto(cm)})

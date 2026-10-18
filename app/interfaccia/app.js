@@ -1080,7 +1080,7 @@ function menuLezione(l, btn, servizio = false) {
   }
   if (voci.length) voci.push(['-']);
   if (l.crea_appunti) voci.push(['crea', 'spark', t('ar.m.crea')]);
-  (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
+  if (!servizio) (l.crea_anche || []).forEach(f => voci.push(['anche:' + f, 'spark', t('ar.m.anche', {f: nomeFormato(f, l.nome_mio)})]));
   (l.completa_appunti || []).forEach(f => voci.push(['compl:' + f, 'spark', t('ar.m.compl', {f: nomeFormato(f, l.nome_mio)})]));
   if (l.rifai_appunti) voci.push(['rifai', 'redo', t('ar.m.rifai.x', {f: nomeFormato(l.formato_serie || R.formato, l.nome_mio)})]);
   if (l.n_appunti && !servizio) voci.push(['ascolta', 'play', t('ar.m.asc')]);
@@ -1796,7 +1796,7 @@ function disegnaLezione() {
   const pronta = l.stato === 'pronta', dsa = !!(R && R.facilitata);
   $('lzTit').textContent = l.nome;
   $('lzSub').innerHTML = esc([l.quando, l.durata, ...(l.formati || []).map(f => nomeFormato(f, l.nome_mio))].filter(Boolean).join(' · ')) +
-    ((l.tipo || 'lezione') === 'lezione' ? `<br><span class="matlez">${esc(t('mt.lez', {m: l.materia || t('mt.nessuna')}))}<button id="lzMat">${esc(t('mt.cambia'))}</button></span>` : '');
+    ((l.tipo || 'lezione') === 'lezione' ? `<br><span class="matlez${l.materia ? '' : ' manca'}">${esc(l.materia ? t('mt.lez', {m: l.materia}) : t('mt.manca'))}<button id="lzMat">${esc(t(l.materia ? 'mt.cambia' : 'mt.metti'))}</button></span>` : '');
   if ($('lzMat')) $('lzMat').onclick = () => cambiaMateria(l);
   const rip = l.ripasso && l.ripasso.n ? (l.ripasso.no ? t('tl.flash.n', {n: l.ripasso.n, r: l.ripasso.no}) : t(l.ripasso.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: l.ripasso.n})) : '';
   const ha = {ap: l.n_appunti, asc: l.n_appunti, tras: pronta, vid: l.video && pronta, chiedi: l.trascritta && pronta, mappa: l.trascritta && pronta, ig: l.trascritta && pronta,
@@ -1808,7 +1808,9 @@ function disegnaLezione() {
       ha.ap && tile('appunti_dsa', '📄', t('tl.dsa.ap'), t('tl.dsa.ap.s')), ha.flash && tile('ripassa', '🃏', t('tl.dsa.flash'), t('tl.dsa.flash.s'), rip),
       ha.chiedi && tile('chiedi', '💬', t('tl.dsa.chiedi'), t('tl.dsa.chiedi.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.dsa.cap.s'))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const d = k => D.has(k);
-  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.kk.s'), '', d('kk')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
+  const fmtTiles = ha.ap ? (l.formati || []).map(f => tile('apf:' + f, f === 'esame' ? '⭐' : '📄', t('tl.appunti.f', {f: nomeFormato(f, l.nome_mio)}), t('tl.appunti.s'), '', d('ap'))) : [];
+  const ancheTiles = pronta ? (l.crea_anche || []).map(f => tile('anche:' + f, '＋', t('tl.anche', {f: nomeFormato(f, l.nome_mio)}), t('tl.anche.s')).replace('class="tile', 'class="tile da')) : [];
+  const resto = gruppo(t('g.leggi'), [...(fmtTiles.length ? fmtTiles : [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap'))]), ...ancheTiles, ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.kk.s'), '', d('kk')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
       ha.tras && tile('tras', '📝', t('tl.tras'), t('tl.tras.s')), ha.vid && tile('video', '▶', t('tl.vid'), t('tl.vid.s'))]) +
     gruppo(t('g.capisci'), [ha.chiedi && tile('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), '', d('chiedi')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.mappa.s'), '', d('mappa')),
       ha.ig && tile('infografica', '🖼', t('tl.ig'), t('tl.ig.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), '', d('cap')),
@@ -1836,6 +1838,7 @@ async function cambiaMateria(l) {
   R = await A.riepilogo(); await caricaLezioni(); disegnaLezione();
 }
 async function tileLezione(l, a) {
+  if (a.startsWith('apf:')) { const f = a.slice(4), x = (await A.appunti_di(l.cartella)).find(y => y.formato === f); if (x) A.apri(x.file); else apriAppunti(l.cartella); return; }
   if (a === 'appunti_dsa') { toast(t('as.lav')); const r = await A.appunti_dsa(l.cartella); if (!r.ok) toast(r.msg || ''); return; }
   if (a === 'studia_mat') return apriStudia(l.materia);
   if (a === 'podcast') return apriPodcast(l);
@@ -2404,7 +2407,7 @@ async function disegnaRG() {
   const serie = r.serie ? `<div class="rgserie">${esc(r.serie === 1 ? t('rg.serie1') : t('rg.serie', {n: r.serie}))}<small>${esc(t('rg.serie.s'))}</small></div>` : '';
   const righe = r.lezioni.map(l => {
     const pill = l.rivedere ? `<span class="pill p-red">${esc(t('rg.p.riv', {n: l.rivedere}))}</span>` : l.esame ? `<span class="pill p-warn">${esc(t('rg.p.esame'))}</span>` : l.nuove ? `<span class="pill p-blue">${esc(t('rg.p.nuove'))}</span>` : '';
-    return `<div class="rgcr"><span class="mtag">${esc(l.materia)}</span><div class="sp"><b>${esc(mvSenzaMateria(l.lezione, l.materia))}</b><span>${esc(l.argomenti.join(' · '))}</span></div><span class="nc">${esc(l.n === 1 ? t('rg.ncarta') : t('rg.ncarte', {n: l.n}))}</span>${pill}</div>`;
+    return `<div class="rgcr">${l.materia ? `<span class="mtag">${esc(l.materia)}</span>` : ''}<div class="sp"><b>${esc(mvSenzaMateria(l.lezione, l.materia))}</b><span>${esc(l.argomenti.join(' · '))}</span></div><span class="nc">${esc(l.n === 1 ? t('rg.ncarta') : t('rg.ncarte', {n: l.n}))}</span>${pill}</div>`;
   }).join('');
   const modi = ['carte', 'voce', 'croc', 'lampo'].map(k => `<div class="aiopt${k === modo ? ' on' : ''}" data-m="${k}"><span class="rd"></span><span class="ico i-blue">${{carte: '🃏', voce: '🎙', croc: '☑', lampo: '⚡'}[k]}</span><b>${esc(t('rg.m.' + k))}</b><small>${esc(t('rg.m.' + k + '.s'))}</small></div>`).join('');
   const oggi = n ? `<div class="rgoggi"><div class="gr">${n}</div><div class="tx"><b>${esc(t(n === 1 ? 'rg.carta' : 'rg.carte'))}</b><span>${esc(t(r.minuti === 1 ? 'rg.min1' : 'rg.min', {m: r.minuti}))}</span></div>${serie}</div>
@@ -2454,7 +2457,7 @@ async function iniziaRipassoGiorno(modo) {
 function cartaGiorno(c) {
   const g = !!RP.giorno, croc = g && RP.modo === 'croc' && c.opzioni && c.opzioni.length === 4, voce = g && RP.modo === 'voce';
   $('rpAdesso').classList.toggle('hidden', !g);
-  if (g) $('rpAdesso').innerHTML = `<span class="mtag">${esc(c.materia || '')}</span><b>${esc(mvSenzaMateria(c.lezione, c.materia || ''))}</b>${c.argomento ? `<span class="hint">· ${esc(t('rg.arg', {a: c.argomento}))}</span>` : ''}`;
+  if (g) $('rpAdesso').innerHTML = `${c.materia ? `<span class="mtag">${esc(c.materia)}</span>` : ''}<b>${esc(mvSenzaMateria(c.lezione, c.materia || ''))}</b>${c.argomento ? `<span class="hint">· ${esc(t('rg.arg', {a: c.argomento}))}</span>` : ''}`;
   $('rpCroc').classList.toggle('hidden', !croc); $('rpVoce').classList.toggle('hidden', !voce);
   $('voto').style.display = croc ? 'none' : '';
   const dopo = rgDopo(c);
@@ -2514,7 +2517,7 @@ async function fineGiorno() {
   // per lezione: quante sapute e cosa rivedere
   const fatte = RP.carte.slice(0, RP.i), per = {};
   fatte.forEach(c => { const p = per[c.cartella] = per[c.cartella] || {c, n: 0, ok: 0, riv: []}; p.n++; if (RP.no.includes(c)) { if (c.argomento && !p.riv.includes(c.argomento)) p.riv.push(c.argomento); } else p.ok++; });
-  let extra = `<div class="rgcosa" style="text-align:left;margin-top:12px">` + Object.values(per).map(p => `<div class="rgcr"><span class="mtag">${esc(p.c.materia || '')}</span><div class="sp"><b>${esc(mvSenzaMateria(p.c.lezione, p.c.materia || ''))}</b><span>${esc(t('rg.fine.lez', {ok: p.ok, n: p.n}) + (p.riv.length ? ' · ' + t('rg.fine.riv', {a: p.riv.join(', ')}) : ' ✓'))}</span></div></div>`).join('') + '</div>';
+  let extra = `<div class="rgcosa" style="text-align:left;margin-top:12px">` + Object.values(per).map(p => `<div class="rgcr">${p.c.materia ? `<span class="mtag">${esc(p.c.materia)}</span>` : ''}<div class="sp"><b>${esc(mvSenzaMateria(p.c.lezione, p.c.materia || ''))}</b><span>${esc(t('rg.fine.lez', {ok: p.ok, n: p.n}) + (p.riv.length ? ' · ' + t('rg.fine.riv', {a: p.riv.join(', ')}) : ' ✓'))}</span></div></div>`).join('') + '</div>';
   if (RP.i >= RP.carte.length) {
     const r = await A.ripasso_giorno_fatto();
     if (r.ok) extra = `<div class="hint" style="margin-top:8px">${esc(t(r.serie === 1 ? 'rg.fine.serie1' : 'rg.fine.serie', {n: r.serie}))} · ${esc(r.domani ? t(r.domani === 1 ? 'rg.fine.domani1' : 'rg.fine.domani', {n: r.domani}) : t('rg.fine.domani0'))}</div>` + extra;

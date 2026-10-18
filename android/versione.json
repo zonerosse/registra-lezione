@@ -1,7 +1,7 @@
 {
- "versione": "0.11.14",
+ "versione": "0.11.15",
  "codice": 11,
- "novita": "Nuovo: «🧑‍🏫 Il tuo tutor» in Studia e nello Spazio DSA. Sa quando hai l'esame, quanto sei pronto e dove sbagli; ogni giorno ti dice cosa fare (ripasso, il punto da riascoltare, il piano, l'interrogazione) e in chat risponde sapendo tutto questo.",
- "novita_en": "New: «🧑‍🏫 Your tutor» in Study and in the DSA space. It knows when your exam is, how ready you are and where you go wrong; every day it tells you what to do (review, the point to listen to again, the plan, oral practice) and the chat answers knowing all this.",
- "contenuto": 71
+ "novita": "Nella pagina della lezione ora si vede il formato degli appunti: «📄 Appunti Cornell» e, se c'è, «⭐ Appunti Formato Esame», ognuno con il suo PDF. «Crea anche in…» è una piastrella, non più nascosta in «Altro». Se manca la materia il programma lo dice e te la chiede, invece di usare il nome della lezione.",
+ "novita_en": "On the lecture page you now see the notes format: «📄 Cornell notes» and, if present, «⭐ Exam Format notes», each with its own PDF. «Also create in…» is a tile, no longer hidden in «More». If the subject is missing the program says so and asks for it, instead of using the lecture name.",
+ "contenuto": 72
 }

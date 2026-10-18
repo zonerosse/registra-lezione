@@ -969,3 +969,4 @@ html.dsa .glsch{font-family:var(--dsa-font)}html.dsa .glsch .def{font-size:var(-
 .tustudia .gr{font-size:28px}
 @media (max-width:980px){.tugrid{grid-template-columns:1fr}}
 html.android .tugrid{grid-template-columns:1fr}
+.matlez.manca{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}.matlez.manca button{background:#c2410c;color:#fff}

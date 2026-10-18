@@ -231,6 +231,13 @@ def video_di(cart):
     return None
 
 
+def materia_scritta(nome):
+    """La materia presa dal nome solo se c'e' il trattino («Fisiologia – Lezione 3»); altrimenti nessuna
+    (meglio chiederla che usare il nome intero della lezione come materia)."""
+    nome = str(nome or "")
+    return materia_di(nome) if (" – " in nome or " - " in nome) else ""
+
+
 def materia_di(nome):
     return nome.split(" – ")[0].split(" - ")[0].strip()
 
@@ -1592,7 +1599,7 @@ class Motore:
                             "n_appunti": 0, "n_pacchetti": 0, "formati": [], "crea_appunti": False, "crea_anche": [],
                             "completa_appunti": [], "rifai": [], "rifai_appunti": False, "formato_serie": "cornell",
                             "tipo": info.get("tipo") or "lezione", "nome_mio": "", "capitoli": False, "infografica": False,
-                            "voci": 0, "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_di(nome),
+                            "voci": 0, "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_scritta(nome),
                             "docente": False, "mappa": False, "aula": False, "trascritta": False,
                             "ripasso": {"n": 0, "no": 0, "tre": 0}, "formato": "cornell", "importata": False, "dopo": False,
                             "lingua_lezione": None, "errore": f"{type(e).__name__}: {e} [{_dove_errore(e)}]"[:300]})
@@ -1665,7 +1672,7 @@ class Motore:
                 "capitoli": any(ap.capitoli_di(cart)),
                 "infografica": (cart / "infografica.json").exists(),
                 "voci": len((el.leggi_json(cart / "voci.json", {}) or {}).get("voci") or []),
-                "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_di(nome),
+                "sigla": sigla(info.get("materia") or nome), "colore": colore_materia(info.get("materia") or nome), "materia": info.get("materia") or materia_scritta(nome),
                 "docente": (cart / "docente.json").exists(), "mappa": (cart / "mappa.json").exists(),
                 "aula": info.get("modo") == "aula", "trascritta": any(cart.glob("trascrizione_*.json")),
                 "ripasso": rp.conta(cart) if appunti or any(cart.glob("appunti_*.json")) else {"n": 0, "no": 0, "tre": 0},
