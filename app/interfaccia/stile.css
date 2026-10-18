@@ -916,3 +916,33 @@ html.android .rgsett{gap:4px}html.android .rgsett div{padding:6px 2px}
 .rghd{position:fixed;left:0;right:0;pointer-events:none;z-index:30;box-shadow:0 0 0 100vmax rgba(15,27,45,.25);border-top:2px solid #f59e0b;border-bottom:2px solid #f59e0b;display:none}
 @media (max-width:900px){.lmgrid{grid-template-columns:1fr}}
 html.android .lmgrid{grid-template-columns:1fr}
+/* ===== glossario ===== */
+.glbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.glbar .in{flex:1;min-width:180px}
+.glbar select{font:inherit;font-size:13px;border:1.5px solid #d5e1ee;border-radius:10px;padding:7px 8px;background:#fbfdff;color:var(--ink)}
+.glaz{display:flex;flex-wrap:wrap;gap:4px;margin-top:12px}
+.glaz span{min-width:28px;height:28px;padding:0 4px;border-radius:8px;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--navy);background:var(--soft);cursor:pointer}
+.glaz span.no{color:#cbd5e1;cursor:default}.glaz span.on{background:#0d4275;color:#fff}
+.glgrid{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start;margin-top:14px}
+.gllista{max-height:600px;overflow:auto;padding:6px}
+.glv{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:10px;cursor:pointer;font-size:14.5px;color:var(--ink)}
+.glv:hover{background:var(--soft)}.glv.on{background:#e0f2fe;font-weight:700}
+.glv .st{color:#f59e0b;font-size:12px}.glv small{margin-left:auto;color:var(--mut);font-size:11.5px;white-space:nowrap}
+.gllet{font-size:12px;font-weight:800;color:#94a3b8;padding:10px 10px 2px}
+.glsch h3{margin:0;font-size:26px;color:var(--ink)}
+.glsch .def{font-size:17px;line-height:1.6;color:var(--txt);margin:10px 0 14px}
+.glsch .ugu{font-size:13px;color:var(--mut);margin-top:4px}
+.glimg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.glimg.solo{grid-template-columns:1fr}
+.glslide{border-radius:12px;overflow:hidden;border:1px solid #e2e8f0;background:#f8fafc}
+.glslide img{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#0b1a2e}
+.glslide div{padding:8px 10px;font-size:12.5px;color:var(--mut)}
+.glprof{background:#f0f9ff;border:1px solid #bae6fd;border-radius:12px;padding:12px;font-size:14.5px;color:var(--ink)}
+.glprof i{color:var(--mut)}
+.gltag{display:inline-flex;gap:6px;align-items:center;background:#fff;border:1px solid #d5e1ee;border-radius:999px;padding:6px 12px;font-size:13px;color:var(--navy);cursor:pointer;margin-top:10px;font-family:inherit}
+.glrel{display:flex;gap:6px;flex-wrap:wrap}
+.glrel span{background:var(--soft);border-radius:999px;padding:4px 10px;font-size:13px;color:var(--navy);cursor:pointer}
+.btn.b-ghost.on{background:#e0f2fe;border-color:#7dd3fc}
+@media (max-width:900px){.glgrid{grid-template-columns:1fr}.gllista{max-height:240px}.glimg{grid-template-columns:1fr}}
+html.android .glgrid{grid-template-columns:1fr}html.android .gllista{max-height:240px}html.android .glimg{grid-template-columns:1fr}
+html.dsa .glsch{font-family:var(--dsa-font)}html.dsa .glsch .def{font-size:var(--dsa-size);line-height:var(--dsa-lh);letter-spacing:var(--dsa-ls);word-spacing:var(--dsa-ws);background:var(--dsa-rbg);color:var(--dsa-rfg);border-radius:12px;padding:10px 14px}

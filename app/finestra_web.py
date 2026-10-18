@@ -262,6 +262,15 @@ class Api:
     def ripasso_giorno_fatto(self):
         return self._m.ripasso_giorno_fatto()
 
+    def glossario(self, materia, cartelle=None, rifai=False, solo_salvato=False):
+        return self._m.glossario(materia, cartelle, rifai, solo_salvato)
+
+    def glossario_ripassa(self, materia, termine, si):
+        return self._m.glossario_ripassa(materia, termine, si)
+
+    def glossario_pdf(self, materia):
+        return self._m.glossario_pdf(materia)
+
     def segna_uso(self, chiave):
         return self._m.segna_uso(chiave)
 

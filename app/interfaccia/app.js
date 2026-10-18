@@ -119,7 +119,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'gl', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -129,7 +129,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -138,6 +138,7 @@ function nomePagina(p) {
   if (p === 'verifica') return t('tl.mv');
   if (p === 'rg') return t('rg.h');
   if (p === 'lm') return t('lm.nome');
+  if (p === 'gl') return t('gl.nome');
   if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
@@ -158,6 +159,7 @@ function vai(p, tornando = false) {
   if (p !== 'ascolta' && AS && AS.attivo) asFerma();
   if (p !== 'podcast' && PCS && PCS.attivo) pcFerma();
   if (p !== 'karaoke' && KK && KK.au) KK.au.pause();
+  if (p !== 'gl' && GL && GL.au) GL.au.pause();
   if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
@@ -169,7 +171,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'gl', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -2064,16 +2066,16 @@ async function disegnaStudia() {
   let gg;
   if (info.giorni == null || info.giorni < 0) gg = `<div class="card stgg"><div style="flex:1"><b style="color:var(--ink)">${esc(t('st.nodata', {m: m.m}))}</b><div class="hint">${esc(t('st.nodata.s'))}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.data'))}</button></div>`;
   else gg = `<div class="card stgg">${info.giorni ? `<div class="gg">${info.giorni}</div>` : ''}<div style="flex:1"><b style="color:var(--ink)">${esc(info.giorni ? t(info.giorni === 1 ? 'st.gg1' : 'st.gg', {m: m.m}) : t('st.oggi.esame', {m: m.m}))}</b><div class="hint">${esc(fmtG(info.data_esame, {day: 'numeric', month: 'long'}))}${info.oggi && info.oggi.cose ? ' · ' + esc(t('st.oggi', {c: info.oggi.cose.join(', ')})) : ''}</div></div><button class="btn b-ghost b-sm" data-sa="piano">${esc(t('st.piano'))}</button></div>`;
-  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif', 'rgiorno'] : []), d = k => D.has(k);
+  const D = new Set(dsa ? ['test', 'orale', 'scritto', 'ascm', 'fcorso', 'mverif', 'rgiorno', 'glos'] : []), d = k => D.has(k);
   const fl = m.n ? (m.no ? t('tl.flash.n', {n: m.n, r: m.no}) : t(m.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: m.n})) : '';
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
       tile('orale', '🎤', t('tl.orale'), t('tl.dsa.orale.s'), ult(info.voti_orali)), tile('test', '☑', t('tl.dsa.test'), t('tl.dsa.test.s'), ult(info.voti_test)),
       tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s')), m.n && tile('fcorso', '🃏', t('tl.dsa.flash'), t('tl.dsa.flc.s'), fl),
-      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
+      tile('mverif', '🗺', t('tl.mv'), t('tl.dsa.mv.s')), tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s')), tile('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s')), tile('mappe', '🗺', t('tl.dsa.mappe'), t('tl.dsa.mappe.s')), tile('scritto', '✍', t('tl.dsa.scr'), t('tl.dsa.scr.s'), ult(info.voti_scritti))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const resto = gruppo(t('g.prova'), [tile('test', '☑', t('tl.test'), t('tl.test.s'), ult(info.voti_test), d('test')), tile('orale', '🎤', t('tl.orale'), t('tl.orale.s'), ult(info.voti_orali), d('orale')),
       tile('scritto', '✍', t('tl.scritto'), t('tl.scritto.s'), ult(info.voti_scritti), d('scritto')), tile('mverif', '🗺', t('tl.mv'), t('tl.mv.s'), '', d('mverif'))]) +
     gruppo(t('g.ripassa'), [tile('rgiorno', '🃏', t('tl.rg'), t('tl.rg.s'), '', d('rgiorno')), tile('prob', '⭐', t('tl.prob'), t('tl.prob.s')), m.n && tile('fcorso', '🃏', t('tl.fcorso'), t('tl.fcorso.s'), fl, d('fcorso')), tile('ascm', '🔊', t('tl.ascm'), t('tl.ascm.s'), '', d('ascm'))]) +
-    gruppo(t('g.capisci'), [tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
+    gruppo(t('g.capisci'), [tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
   $('stBox2').innerHTML = `<div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
@@ -2096,6 +2098,7 @@ async function tileStudia(m, a) {
   if (a === 'ascm') return apriAscoltaMateria(m);
   if (a === 'mverif') return apriMappaVerifica(m);
   if (a === 'rgiorno') return apriRipassoGiorno();
+  if (a === 'glos') return apriGlossario(m);
   if (a === 'chm') { await apriChiedi(m.lez[0]); const b = $('chSeg').querySelector('[data-x="1"]'); if (b && !$('chSeg').classList.contains('hidden')) b.click(); return; }
   if (a === 'lezioni') { $('cerca').value = m.m; vai('arch'); return; }
   if (a === 'mappe') {
@@ -2103,6 +2106,105 @@ async function tileStudia(m, a) {
     const v = await dialogo({titolo: t('st.mappe.t', {m: m.m}), bottoni: [{t: t('annulla'), v: null}, ...lz.map((l, i) => ({t: esc(l.nome), cls: 'b-main', v: i}))]});
     if (v !== null && v !== false && lz[v]) apriMappa(lz[v]);
   }
+}
+/* ------------------------------------------------------------------ glossario della materia */
+// Le parole difficili di tutte le lezioni (glossario.py: le prende dagli appunti, Claude unisce i doppioni), con la
+// slide e la frase vera del prof nel punto in cui ne parla.
+var GL = {m: null, d: null, cur: null, f: 'tutte', lez: '', q: '', au: null};
+const glMin = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = String(s % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${x}` : `${m}:${x}`; };
+const glIniz = x => (String(x).normalize('NFD').replace(/[̀-ͯ]/g, '').match(/[A-Za-z0-9]/) || ['#'])[0].toUpperCase();
+async function apriGlossario(m, rifai) {
+  if (GL.au) GL.au.pause();
+  GL = {m, d: null, cur: null, f: 'tutte', lez: '', q: '', au: null};
+  $('glH').textContent = t('gl.h', {m: m.m});
+  $('glBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('gl.lav'))}</div></div>`;
+  ['glPdf', 'glRip'].forEach(id => $(id).disabled = true);
+  vai('gl');
+  const r = await A.glossario(m.m, m.cartelle, !!rifai, false);
+  if (GL.m !== m) return;
+  if (!r.ok) { $('glBox').innerHTML = `<div class="card"><div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div></div>`; return; }
+  GL.d = r; GL.cur = r.voci.find(v => v.importante) || r.voci[0] || null;
+  ['glPdf', 'glRip'].forEach(id => $(id).disabled = !r.voci.length);
+  disegnaGlossario();
+}
+function glFiltrate() {
+  const q = rgNorm(GL.q);
+  return GL.d.voci.filter(v => (GL.f !== 'imp' || v.importante) && (!GL.lez || v.lezioni.includes(GL.lez)) &&
+    (!q || rgNorm([v.termine, ...v.uguali].join(' ')).includes(q)));
+}
+function disegnaGlossario() {
+  const d = GL.d, imp = d.voci.filter(v => v.importante).length;
+  if (!$('glLista')) {
+    $('glBox').innerHTML = (d.vecchio ? `<div class="avviso row" style="margin-bottom:12px"><span class="sp">${esc(t('gl.vecchio'))}</span><button class="btn b-ghost b-sm" id="glAgg">${esc(t('gl.aggiorna'))}</button></div>` : '') +
+      `<div class="card"><div class="glbar"><input class="in sm" id="glCerca" placeholder="${esc(t('gl.cerca'))}">
+        <div class="seg" id="glF"><span data-v="tutte" class="on">${esc(t('gl.tutte', {n: d.voci.length}))}</span><span data-v="imp">${esc(t('gl.imp', {n: imp}))}</span></div>
+        ${d.lezioni.length > 1 ? `<select id="glLez"><option value="">${esc(t('gl.ognilez'))}</option>${d.lezioni.map(l => `<option value="L${l.n}">L${l.n} · ${esc(mvSenzaMateria(l.nome, GL.m.m))}</option>`).join('')}</select>` : ''}</div>
+        <div class="glaz" id="glAz"></div></div>
+      <div class="glgrid"><div class="card gllista" id="glLista"></div><div class="card glsch" id="glScheda"></div></div>`;
+    if ($('glAgg')) $('glAgg').onclick = () => apriGlossario(GL.m, true);
+    $('glCerca').oninput = () => { GL.q = $('glCerca').value; disegnaGlossario(); };
+    $('glF').querySelectorAll('span').forEach(x => x.onclick = () => { GL.f = x.dataset.v; $('glF').querySelectorAll('span').forEach(y => y.classList.toggle('on', y === x)); disegnaGlossario(); });
+    if ($('glLez')) $('glLez').onchange = () => { GL.lez = $('glLez').value; disegnaGlossario(); };
+  }
+  const vv = glFiltrate();
+  let h = '', l0 = '';
+  vv.forEach((v, i) => {
+    const L = glIniz(v.termine);
+    if (L !== l0) { h += `<div class="gllet" data-l="${L}">${L}</div>`; l0 = L; }
+    h += `<div class="glv${v === GL.cur ? ' on' : ''}" data-i="${d.voci.indexOf(v)}">${v.importante ? '<span class="st">★</span>' : ''}${esc(v.termine)}<small>${esc(v.lezioni.join(' '))}</small></div>`;
+  });
+  $('glLista').innerHTML = h || `<div class="hint" style="padding:10px">${esc(t('gl.niente'))}</div>`;
+  $('glLista').querySelectorAll('.glv').forEach(x => x.onclick = () => { GL.cur = d.voci[+x.dataset.i]; disegnaGlossario(); });
+  const ci = new Set(vv.map(v => glIniz(v.termine)));
+  $('glAz').innerHTML = [...new Set([...'ABCDEFGHILMNOPQRSTUVZ', ...ci])].sort().map(c => `<span data-l="${c}" class="${ci.has(c) ? '' : 'no'}${GL.cur && glIniz(GL.cur.termine) === c ? ' on' : ''}">${c}</span>`).join('');
+  $('glAz').querySelectorAll('span:not(.no)').forEach(x => x.onclick = () => { const e = $('glLista').querySelector(`.gllet[data-l="${x.dataset.l}"]`); if (e) e.scrollIntoView({block: 'start', behavior: 'smooth'}); });
+  glScheda();
+}
+function glScheda() {
+  const v = GL.cur, box = $('glScheda');
+  if (!v) { box.innerHTML = ''; return; }
+  const dv = v.dove, rip = GL.d.ripassa.includes(v.termine);
+  box.innerHTML = `<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h3>${esc(v.termine)} ${v.importante ? `<span class="pill p-warn">${esc(t('gl.importante'))}</span>` : ''}</h3>
+      <div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="glAsc">${esc(t('gl.ascolta'))}</button><button class="btn b-ghost b-sm${rip ? ' on' : ''}" id="glDr">${esc(t(rip ? 'gl.darip.on' : 'gl.darip'))}</button></div></div>
+    ${v.uguali.length ? `<div class="ugu">${esc(t('gl.ugu', {u: v.uguali.join(', ')}))}</div>` : ''}
+    <div class="def" id="glDef">${esc(v.definizione)}</div>
+    <div class="glimg${dv && dv.slide ? '' : ' solo'}">
+      ${dv && dv.slide ? `<div class="glslide"><img src="${dv.slide}" alt=""><div>${esc(t('gl.slide', {n: dv.slide_n, l: dv.lezione}))}</div></div>` : ''}
+      <div>${dv ? `<div class="lbl">${esc(t('gl.prof'))}</div><div class="glprof"><i>«${esc(dv.frase)}»</i>${dv.media ? `<div><button class="gltag" id="glSenti">${esc(t('gl.senti', {l: dv.lezione, m: glMin(dv.sec)}))}</button></div>` : ''}</div>` : `<div class="hint">${esc(t('gl.nodove'))}</div>`}
+        ${v.collegate.length ? `<div class="lbl" style="margin-top:14px">${esc(t('gl.coll'))}</div><div class="glrel">${v.collegate.map(c => `<span>${esc(c)}</span>`).join('')}</div>` : ''}</div>
+    </div>`;
+  silabizza($('glDef'));
+  $('glAsc').onclick = () => voceParla(v.termine + '. ' + v.definizione);
+  $('glDr').onclick = async () => { const r = await A.glossario_ripassa(GL.m.m, v.termine, !rip); if (r.ok) { GL.d.ripassa = r.ripassa; glScheda(); } };
+  box.querySelectorAll('.glrel span').forEach(x => x.onclick = () => { const y = GL.d.voci.find(z => rgNorm(z.termine) === rgNorm(x.textContent)); if (y) { GL.cur = y; GL.q = ''; if ($('glCerca')) $('glCerca').value = ''; disegnaGlossario(); } });
+  if ($('glSenti')) $('glSenti').onclick = () => {
+    const b = $('glSenti');
+    if (GL.au && !GL.au.paused) { GL.au.pause(); return; }
+    voceFerma();
+    if (!GL.au || GL.au.dataset_src !== dv.media) { if (GL.au) GL.au.pause(); GL.au = new Audio(dv.media); GL.au.dataset_src = dv.media; }
+    const au = GL.au, fine = dv.fine + 1.5;
+    au.currentTime = Math.max(0, dv.sec - 0.5);
+    au.ontimeupdate = () => { if (au.currentTime >= fine) au.pause(); };
+    au.onplay = () => { b.textContent = t('gl.ferma'); };
+    au.onpause = au.onended = () => { if ($('glSenti')) $('glSenti').textContent = t('gl.senti', {l: dv.lezione, m: glMin(dv.sec)}); };
+    au.play().catch(() => {});
+  };
+}
+function glRipassa() {
+  const d = GL.d; if (!d) return;
+  let vv = d.voci.filter(v => d.ripassa.includes(v.termine));
+  if (!vv.length) vv = glFiltrate();
+  const carte = vv.map((v, i) => ({id: 'gl' + i, cartella: '', lezione: GL.m.m, formato: 'cornell', domanda: t('gl.q', {t: v.termine}), stelle: 0,
+    schema: [v.definizione], parole: [], errore: '', aggiunte: [], avvisi: [], dove: '', slide_n: v.dove && v.dove.slide ? v.dove.slide_n : 0, minuto: null,
+    img: v.dove && v.dove.slide ? v.dove.slide : ''})).sort(() => Math.random() - .5);
+  if (!carte.length) return;
+  RP = {carte, i: 0, ok: 0, no: [], titolo: t('gl.nome'), cartelle: [], glossario: true};
+  $('rpH2').textContent = t('rp.h', {m: GL.m.m});
+  mostraRip('rpCarte'); vai('rip'); cartaRip();
+}
+function collegaGlossario() {
+  $('glPdf').onclick = async () => { const r = await A.glossario_pdf(GL.m.m); if (!r.ok) dialogo({titolo: t('gl.nome'), testo: r.msg || ''}); };
+  $('glRip').onclick = glRipassa;
 }
 /* ------------------------------------------------------------------ come leggo meglio */
 // Carattere, grandezza, spazio, sfondo, sillabe colorate e righello per la Modalita' DSA (R.lettura, salvato in cfg).
@@ -2365,7 +2467,7 @@ async function disegnaSpazioDsa() {
   $('sdBox').innerHTML =
     mom(1, t('sd.m1'), t('sd.m1.s'), [T('reg', '⏺', t('sd.reg'), t('sd.reg.s')), T('detta', '🎙', t('sd.detta'), t('sd.detta.s'))]) +
     mom(2, t('sd.m2'), t('sd.m2.s'), [T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
-      T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s'))]) +
+      T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s')), T('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s'), mt)]) +
     mom(3, t('sd.m3'), t('sd.m3.s'), [T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
       T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
     mom(4, t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s'))]) +
@@ -2383,7 +2485,7 @@ async function azioneDsa(a) {
   if (a === 'arch') return vai('arch');
   if (a === 'strumenti') return strumentiDsa();
   if (a === 'firma') return apriMappaVerifica(m);
-  if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob'].includes(a)) return tileStudia(m, a);
+  if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob', 'glos'].includes(a)) return tileStudia(m, a);
   return tileLezione(l, a);
 }
 async function scriviParlando() {
@@ -3238,6 +3340,7 @@ function collegaNovita() {
   collegaPodcast();
   collegaKaraoke();
   collegaVerifica();
+  collegaGlossario();
   collegaHoPronto();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
@@ -3350,14 +3453,14 @@ function giraRip() { if (RP.giorno && RP.modo === 'croc' && !RP.risposto && RP.c
 function votoRip(v) {
   if (RP.i >= RP.carte.length) return;
   const c = RP.carte[RP.i];
-  A.ripasso_voto(c.cartella, c.id, !!v);
+  if (c.cartella) A.ripasso_voto(c.cartella, c.id, !!v);
   if (v) RP.ok++; else RP.no.push(c);
   RP.i++;
   if (RP.i >= RP.carte.length) fineRip(); else cartaRip();
 }
 function fineRip() {
   const n = RP.i;
-  if (!n) { if (RP.giorno) apriRipassoGiorno(); else vai('arch'); return; }
+  if (!n) { if (RP.giorno) apriRipassoGiorno(); else if (RP.glossario) vai('gl'); else vai('arch'); return; }
   $('rN').textContent = RP.ok + '/' + n; $('anello').style.setProperty('--p', (RP.ok / n * 100) + '%');
   $('rT').textContent = RP.ok === n ? t('rp.r.tutte') : RP.ok >= n / 2 ? t('rp.r.bene') : t('rp.r.dai');
   $('rL').innerHTML = RP.no.length ? `<div class="lbl">${t('rp.r.lista')}</div>` + RP.no.map(c => `<div>${esc(c.domanda)}<span class="hint" style="display:block">${esc(c.lezione)}${c.slide_n ? ' · slide ' + c.slide_n : ''}</span></div>`).join('') : '';
@@ -3369,7 +3472,7 @@ function collegaRipasso() {
   $('carta').onclick = giraRip;
   $('vNo').onclick = () => votoRip(0); $('vSi').onclick = () => votoRip(1);
   $('rpBasta').onclick = fineRip;
-  $('rFine').onclick = () => RP.giorno ? apriRipassoGiorno() : vai('arch');
+  $('rFine').onclick = () => RP.giorno ? apriRipassoGiorno() : RP.glossario ? vai('gl') : vai('arch');
   $('rgMic').onclick = rgMic; $('rgRileggi').onclick = () => { const c = RP.carte[RP.i]; if (c) voceParla(c.domanda); };
   $('rAncora').onclick = () => { RP = {...RP, carte: RP.no.slice(), i: 0, ok: 0, no: []}; mostraRip('rpCarte'); cartaRip(); };
   document.addEventListener('keydown', e => {

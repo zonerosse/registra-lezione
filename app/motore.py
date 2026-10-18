@@ -2064,6 +2064,64 @@ class Motore:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
 
+    # ------------------------------------------------------------------ glossario della materia
+
+    def glossario(self, materia, cartelle=None, rifai=False, solo_salvato=False):
+        import glossario as gl
+        try:
+            if solo_salvato:
+                d = gl.leggi(BASE, materia)
+                spesa = 0.0
+            else:
+                d, spesa = gl.crea(BASE, materia, cartelle or [], self.chiave(), bool(rifai), testi.LINGUA)
+            voci = []
+            media = {}
+            for v in d.get("voci") or []:
+                v = dict(v)
+                dv = dict(v.get("dove") or {}) or None
+                if dv:
+                    cart = Path(dv["cartella"])
+                    if cart.exists():
+                        if str(cart) not in media:
+                            vid = video_di(cart)
+                            media[str(cart)] = servi_video.registra(vid) if vid else None
+                        dv["media"] = media[str(cart)]
+                        try:
+                            dv["slide"] = servi_video.registra(el.immagine_slide(cart, dv["slide_file"])) if dv.get("slide_file") else None
+                        except Exception:
+                            dv["slide"] = None
+                    v["dove"] = dv
+                voci.append(v)
+            import esame as es
+            vecchio = bool(d.get("voci")) and bool(cartelle) and d.get("firma") != es._firma(sorted(str(c) for c in cartelle))
+            return {"ok": True, "voci": voci, "lezioni": d.get("lezioni", []), "ripassa": d.get("ripassa", []),
+                    "spesa": spesa, "vecchio": vecchio}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("glossario")
+            return {"ok": False, "msg": tr("gl_err")}
+
+    def glossario_ripassa(self, materia, termine, si):
+        import glossario as gl
+        return {"ok": True, "ripassa": gl.segna_ripassa(BASE, materia, termine, bool(si))}
+
+    def glossario_pdf(self, materia):
+        import glossario as gl
+        d = gl.leggi(BASE, materia)
+        if not d.get("voci"):
+            return {"ok": False, "msg": tr("gl_err")}
+        dest_dir = Path(self.cfg["cartella_pacchetti"])
+        dest_dir.mkdir(parents=True, exist_ok=True)
+        dest = dest_dir / f"{tr('gl_file')} – {el.nome_sicuro(materia)}.pdf"
+        try:
+            gl.pdf(d, materia, dest, testi.LINGUA)
+        except Exception:
+            log.exception("PDF glossario")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+        apri(dest)
+        return {"ok": True, "file": str(dest)}
+
     # ------------------------------------------------------------------ spazio DSA
 
     def segna_uso(self, chiave):
@@ -2932,6 +2990,8 @@ class Motore:
         return {"ok": True, "serie": rg_._serie(fatti), "domani": rg_.domani(BASE, n)}
 
     def ripasso_voto(self, cartella, cid, sapevo):
+        if not cartella or not Path(cartella).is_dir():
+            return False
         try:
             return rp.voto(cartella, cid, bool(sapevo), self._esame_di(cartella))
         except Exception:
