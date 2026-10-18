@@ -117,7 +117,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -127,10 +127,11 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
+  if (p === 'podcast') return t('tl.pc');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
 }
@@ -148,6 +149,7 @@ function barraPercorso(p) {
 function vai(p, tornando = false) {
   if (p !== 'esame' && OR && OR.orale) orChiudi();
   if (p !== 'ascolta' && AS && AS.attivo) asFerma();
+  if (p !== 'podcast' && PCS && PCS.attivo) pcFerma();
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
     STU.dentro = false;
@@ -157,8 +159,8 @@ function vai(p, tornando = false) {
   pagina = p;
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -1750,13 +1752,14 @@ function disegnaLezione() {
   const rip = l.ripasso && l.ripasso.n ? (l.ripasso.no ? t('tl.flash.n', {n: l.ripasso.n, r: l.ripasso.no}) : t(l.ripasso.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: l.ripasso.n})) : '';
   const ha = {ap: l.n_appunti, asc: l.n_appunti, tras: pronta, vid: l.video && pronta, chiedi: l.trascritta && pronta, mappa: l.trascritta && pronta, ig: l.trascritta && pronta,
               cap: l.capitoli && pronta, voci: l.trascritta && pronta, flash: l.ripasso && l.ripasso.n, mat: l.materia && lezioniMateria(l).length, cond: l.n_appunti && pronta, sp: l.video && pronta};
-  const D = new Set(dsa ? ['ap', 'asc', 'mappa', 'cap', 'chiedi', 'flash'] : []);
+  ha.pc = l.trascritta && pronta;
+  const D = new Set(dsa ? ['ap', 'asc', 'mappa', 'cap', 'chiedi', 'flash', 'pc'] : []);
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
-      ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.dsa.asc.s')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.dsa.mappa.s')),
+      ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.dsa.pc.s')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.dsa.asc.s')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.dsa.mappa.s')),
       ha.ap && tile('appunti_dsa', '📄', t('tl.dsa.ap'), t('tl.dsa.ap.s')), ha.flash && tile('ripassa', '🃏', t('tl.dsa.flash'), t('tl.dsa.flash.s'), rip),
       ha.chiedi && tile('chiedi', '💬', t('tl.dsa.chiedi'), t('tl.dsa.chiedi.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.dsa.cap.s'))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const d = k => D.has(k);
-  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
+  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
       ha.tras && tile('tras', '📝', t('tl.tras'), t('tl.tras.s')), ha.vid && tile('video', '▶', t('tl.vid'), t('tl.vid.s'))]) +
     gruppo(t('g.capisci'), [ha.chiedi && tile('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), '', d('chiedi')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.mappa.s'), '', d('mappa')),
       ha.ig && tile('infografica', '🖼', t('tl.ig'), t('tl.ig.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), '', d('cap')),
@@ -1786,7 +1789,116 @@ async function cambiaMateria(l) {
 async function tileLezione(l, a) {
   if (a === 'appunti_dsa') { toast(t('as.lav')); const r = await A.appunti_dsa(l.cartella); if (!r.ok) toast(r.msg || ''); return; }
   if (a === 'studia_mat') return apriStudia(l.materia);
+  if (a === 'podcast') return apriPodcast(l);
   return azioneLezione(l, a);
+}
+
+/* ------------------------------------------------------------------ podcast della lezione */
+// Voce narrante (voce del sistema) + pezzi veri della lezione (il video/audio dal minuto giusto). Mentre ascolti la
+// parola si illumina: per la voce narrante con le parole che dice la voce, per il prof con gli orari della trascrizione.
+var PCS = {lez: null, d: null, i: 0, attivo: false, vel: 1.25, dur: 'breve', media: null, audio: null};
+const parole = s => String(s || '').split(/\s+/).filter(Boolean);
+function pcDurata(p) { return p.tipo === 'prof' ? p.a - p.da : Math.max(3, parole(p.testo).length * 0.42); }
+async function apriPodcast(l, rifai = false) {
+  pcFerma();
+  PCS = {...PCS, lez: l, d: null, i: 0, attivo: false};
+  if (R && R.facilitata && !rifai) PCS.vel = 0.8; else if (PCS.vel === 0.8 && !(R && R.facilitata)) PCS.vel = 1.25;
+  $('pcSub').textContent = l.nome;
+  $('pcLista').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('pc.lav'))}</div>`;
+  $('pcTl').innerHTML = ''; $('pcMp3Box').classList.add('hidden');
+  $('pcDur').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.v === PCS.dur));
+  pcVel(); disegnaFacilitata();
+  if (pagina !== 'podcast') vai('podcast');
+  const r = await A.podcast(l.cartella, PCS.dur, rifai);
+  if (PCS.lez !== l) return;
+  if (!r.ok) { $('pcLista').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  PCS.d = r.podcast; PCS.media = r.media;
+  const tot = PCS.d.pezzi.reduce((a, p) => a + pcDurata(p), 0);
+  $('pcSub').textContent = t('pc.sub', {n: l.nome, m: Math.max(1, Math.round(tot / 60))});
+  $('pcT1').textContent = mmss(Math.round(tot));
+  $('pcMp3Box').classList.toggle('hidden', !r.mp3);
+  disegnaPodcast();
+}
+function pcVel() { $('pcVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === PCS.vel)); }
+function disegnaPodcast() {
+  const P = PCS.d.pezzi, tot = P.reduce((a, p) => a + pcDurata(p), 0);
+  $('pcTl').innerHTML = P.map((p, i) => `<span class="${p.tipo === 'prof' ? 'p' : 'n'}" data-i="${i}" style="width:${pcDurata(p) / tot * 100}%"></span>`).join('');
+  const testo = p => p.tipo === 'prof' ? p.frasi.map(f => f.testo).join(' ') : p.testo;
+  $('pcLista').innerHTML = (PCS.media ? '' : `<div class="hint" style="margin-bottom:6px">${esc(t('pc.novideo'))}</div>`) + P.map((p, i) => `<div class="pz ${p.tipo === 'prof' ? 'p' : 'n'}" data-i="${i}"><div class="chi">${p.tipo === 'prof' ? '🎓' : '🎙'}</div><div>
+    <b>${esc(p.tipo === 'prof' ? t('pc.prof') : t('pc.narr'))}${p.tipo === 'prof' ? ` <span class="min">· ${esc(t('pc.min', {m: Math.floor(p.da / 60)}))}</span> <button class="lnk" data-riv="${i}">${esc(t('pc.rivedi'))}</button>` : ''}</b>
+    <div class="tx">${p.tipo === 'prof' ? '«' : ''}${parole(testo(p)).map(w => `<span class="w">${esc(w)}</span>`).join(' ')}${p.tipo === 'prof' ? '»' : ''}</div></div></div>`).join('');
+  document.querySelectorAll('#v-podcast [data-i]').forEach(e => e.onclick = ev => { if (ev.target.closest('[data-riv]')) return; pcSuona(+e.dataset.i); });
+  document.querySelectorAll('#v-podcast [data-riv]').forEach(b => b.onclick = () => { const p = PCS.d.pezzi[+b.dataset.riv]; pcFerma(); mostraMomento(PCS.lez.cartella, p.da, null, PCS.lez.nome); });
+  pcSegna(-1);
+}
+function pcSegna(k, w = -1) {
+  document.querySelectorAll('#v-podcast [data-i]').forEach(e => e.classList.toggle('ora', +e.dataset.i === k));
+  document.querySelectorAll('#v-podcast .pz .w.on').forEach(x => x.classList.remove('on'));
+  if (k >= 0 && w >= 0) { const x = document.querySelectorAll(`#v-podcast .pz[data-i="${k}"] .w`)[w]; if (x) x.classList.add('on'); }
+  const P = PCS.d ? PCS.d.pezzi : [], fatto = P.slice(0, Math.max(0, k)).reduce((a, p) => a + pcDurata(p), 0);
+  if (k >= 0) $('pcT0').textContent = mmss(Math.round(fatto));
+}
+function pcProf(p, k, giro) {
+  // il pezzo vero della lezione, dal video/audio; le parole si illuminano con gli orari della trascrizione
+  return new Promise(fatto => {
+    const au = PCS.audio || (PCS.audio = new Audio(PCS.media));
+    au.playbackRate = PCS.vel;
+    const parti = p.frasi.map(f => ({...f, n: parole(f.testo).length}));
+    const fine = () => { au.ontimeupdate = null; au.onended = null; au.pause(); fatto(PCS.giro === giro); };
+    au.ontimeupdate = () => {
+      if (PCS.giro !== giro) return fine();
+      const tt = au.currentTime - p.da;
+      if (au.currentTime >= p.a) return fine();
+      let base = 0;
+      for (const f of parti) { if (tt < f.fine) { const q = Math.max(0, Math.min(f.n - 1, Math.floor((tt - f.inizio) / Math.max(0.5, f.fine - f.inizio) * f.n))); pcSegna(k, base + q); break; } base += f.n; }
+    };
+    au.onended = fine;
+    const via = () => { au.currentTime = p.da; au.play().catch(() => fatto(false)); };
+    if (au.readyState >= 1) via(); else au.addEventListener('loadedmetadata', via, {once: true});
+  });
+}
+async function pcSuona(k) {
+  if (!PCS.d) return;
+  pcFerma(true);
+  const giro = {}; PCS.giro = giro; PCS.attivo = true; PCS.i = k; $('pcPlay').textContent = '⏸';
+  const dsa = !!(R && R.facilitata);
+  while (PCS.giro === giro && PCS.i < PCS.d.pezzi.length) {
+    const p = PCS.d.pezzi[PCS.i], kk = PCS.i;
+    pcSegna(kk, 0);
+    const el = document.querySelector(`#v-podcast .pz[data-i="${kk}"]`); if (el) el.scrollIntoView({block: 'center', behavior: 'smooth'});
+    let ok;
+    if (p.tipo === 'prof' && PCS.media) ok = await pcProf(p, kk, giro);
+    else {
+      const testo = p.tipo === 'prof' ? p.frasi.map(f => f.testo).join(' ') : p.testo;
+      const pos = []; let c = 0; parole(testo).forEach(w => { const j = testo.indexOf(w, c); pos.push(j); c = j + w.length; });
+      let stima = null;
+      if (ANDROID) { let w = 0; stima = setInterval(() => { if (PCS.giro === giro) pcSegna(kk, Math.min(pos.length - 1, w++)); }, 420 / PCS.vel); }
+      ok = await voceParla(testo, PCS.vel, ci => { let w = 0; while (w + 1 < pos.length && pos[w + 1] <= ci) w++; pcSegna(kk, w); });
+      if (stima) clearInterval(stima);
+    }
+    if (PCS.giro !== giro) return;
+    if (!ok) { pcFerma(); toast(t('as.novoce')); return; }
+    if (dsa && p.tipo === 'prof') await pausa(2000);
+    PCS.i++;
+  }
+  if (PCS.giro === giro) { PCS.attivo = false; PCS.i = 0; $('pcPlay').textContent = '▶'; pcSegna(-1); $('pcT0').textContent = '0:00'; }
+}
+function pcFerma(tieni) {
+  PCS.giro = null; PCS.attivo = false;
+  if (PCS.audio) { try { PCS.audio.pause(); PCS.audio.ontimeupdate = null; } catch (e) {} }
+  voceFerma();
+  if ($('pcPlay')) $('pcPlay').textContent = '▶';
+}
+function collegaPodcast() {
+  $('pcPlay').onclick = () => { if (PCS.attivo) pcFerma(); else pcSuona(PCS.i || 0); };
+  $('pcVel').querySelectorAll('span').forEach(s => s.onclick = () => { PCS.vel = +s.dataset.v; pcVel(); if (PCS.audio) PCS.audio.playbackRate = PCS.vel; if (PCS.attivo && PCS.d.pezzi[PCS.i].tipo !== 'prof') pcSuona(PCS.i); });
+  $('pcDur').querySelectorAll('span').forEach(s => s.onclick = () => { if (PCS.dur === s.dataset.v || !PCS.lez) return; PCS.dur = s.dataset.v; apriPodcast(PCS.lez); });
+  $('pcRifai').onclick = async () => { if (PCS.lez && await conferma(t('pc.rifai.t'), t('pc.rifai.c'))) apriPodcast(PCS.lez, true); };
+  $('pcMp3').onclick = async () => { const b = $('pcMp3'); b.disabled = true; toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel); b.disabled = false; toast(r.ok ? t('pc.mp3.ok') : r.msg || ''); PCS.mp3 = r.ok ? r.file : null; };
+  $('pcManda').onclick = async () => {
+    if (!PCS.mp3) { toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel); if (!r.ok) return toast(r.msg || ''); PCS.mp3 = r.file; }
+    A.spezzone_email(PCS.mp3);
+  };
 }
 
 /* ------------------------------------------------------------------ Studia: la materia */
@@ -1998,7 +2110,7 @@ function disegnaTest() {
 let VOCE_GIRO = 0;
 const voceDisponibile = () => ANDROID || !!window.speechSynthesis;
 const perLaVoce = s => String(s || '').replace(/[★•]/g, '').replace(/−/g, '-').replace(/→/g, ', ').replace(/\s+/g, ' ').trim();
-function voceParla(testo, vel = 1) {
+function voceParla(testo, vel = 1, onParola = null) {
   const giro = ++VOCE_GIRO;
   testo = perLaVoce(testo);
   return new Promise(async fatto => {
@@ -2015,6 +2127,7 @@ function voceParla(testo, vel = 1) {
       const u = new SpeechSynthesisUtterance(testo); u.lang = LINGUA === 'en' ? 'en-GB' : 'it-IT'; u.rate = vel;
       const v = speechSynthesis.getVoices().find(x => (x.lang || '').toLowerCase().startsWith(LINGUA === 'en' ? 'en' : 'it'));
       if (v) u.voice = v;
+      if (onParola) u.onboundary = e => { if (e.name === 'word' || e.name === undefined) onParola(e.charIndex); };
       u.onend = () => fatto(giro === VOCE_GIRO); u.onerror = () => fatto(false);
       speechSynthesis.speak(u);
     } catch (e) { fatto(false); }
@@ -2561,6 +2674,7 @@ function collegaNovita() {
   $('swFac').onclick = $('asFac').onclick = cambiaDsa;
   document.querySelectorAll('[data-dsa]').forEach(x => x.onclick = cambiaDsa);
   $('lzAltro').onclick = e => LEZ && menuLezione(LEZ, e.currentTarget, true);
+  collegaPodcast();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
   $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });

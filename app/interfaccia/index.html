@@ -288,6 +288,23 @@
       <div class="hint mt" data-t="lz.altro">In «⋯ Altro»: rinomina, rifai gli appunti, slide del docente, cartella, elimina.</div>
     </section>
 
+    <!-- PODCAST DELLA LEZIONE -->
+    <section class="pg hidden" id="v-podcast">
+      <div class="hd"><div><h2 data-t="pc.h">🎧 Podcast della lezione</h2><p id="pcSub"></p></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap;justify-content:flex-end"><div class="seg" id="pcDur"><span data-v="breve" data-t="pc.breve">Breve · 8 min</span><span data-v="completo" data-t="pc.completo">Completo · 20 min</span></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div></div>
+      <div class="avviso2 solo-dsa-b" style="margin-bottom:14px" data-t="pc.dsa">⭐ Modalità DSA: il podcast parte più lento, la voce narrante usa frasi corte e semplici e mentre ascolti la parola che senti si illumina. Pausa di 2 secondi dopo ogni pezzo del prof.</div>
+      <div class="card"><div class="pcplayer">
+        <button class="pcplay" id="pcPlay">▶</button>
+        <div class="pcbarra"><div class="pctl" id="pcTl"></div><div class="pctempo"><span id="pcT0">0:00</span><span id="pcT1"></span></div>
+          <div class="pcleg"><span><i style="background:#cbd5e1"></i><span data-t="pc.narr">Voce narrante</span></span><span><i style="background:#0d4275"></i><span data-t="pc.prof">Il prof, dalla registrazione</span></span></div></div>
+        <div class="seg" id="pcVel"><span data-v="0.8" class="solo-dsa">0,8×</span><span data-v="1">1×</span><span data-v="1.25">1,25×</span><span data-v="1.5">1,5×</span></div>
+      </div>
+      <div class="row mt hidden" id="pcMp3Box" style="gap:8px;justify-content:flex-end"><button class="btn b-ghost b-sm" id="pcMp3" data-t="pc.mp3">⬇ Salva in MP3</button><button class="btn b-ghost b-sm" id="pcManda" data-t="pc.manda">📤 Manda sul telefono</button></div></div>
+      <div class="card mt"><div class="lbl" data-t="pc.scaletta">Scaletta</div><div id="pcLista"></div>
+        <div class="hint mt" data-t="pc.hint">Tocca un pezzo per ascoltarlo da lì. Nei pezzi del prof, «Rivedi» apre la lezione a quel minuto.</div>
+        <div class="row mt"><span class="sp"></span><button class="lnk" id="pcRifai" data-t="pc.rifai">Rifallo</button></div></div>
+    </section>
+
     <!-- STUDIA (la materia) -->
     <section class="pg hidden" id="v-studia">
       <div class="hd"><div><h2 data-t="st.h2">Studia</h2><p data-t="st.p">Scegli la materia</p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>

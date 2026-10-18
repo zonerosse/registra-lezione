@@ -253,6 +253,12 @@ class Api:
     def cambia_materia(self, cartella, materia):
         return self._m.cambia_materia(cartella, materia)
 
+    def podcast(self, cartella, durata="breve", rifai=False):
+        return self._m.podcast(cartella, durata, rifai)
+
+    def podcast_mp3(self, cartella, durata="breve", velocita=1.0):
+        return self._m.podcast_mp3(cartella, durata, velocita)
+
     def studia_info(self, materia):
         return self._m.studia_info(materia)
 

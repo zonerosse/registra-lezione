@@ -1,7 +1,7 @@
 {
- "versione": "0.11.5",
+ "versione": "0.11.6",
  "codice": 11,
- "novita": "In Registra c'è il campo «Materia» (con le tue materie da toccare): la lezione finisce nella materia giusta in «Studia». Nella pagina della lezione «🎓 Materia ✎ Cambia» sistema anche le registrazioni vecchie.",
- "novita_en": "Record has the «Course» field (tap one of your courses): the lecture goes to the right course in «Study». On the lecture page «🎓 Course ✎ Change» also fixes old recordings.",
- "contenuto": 62
+ "novita": "Nuovo: «🎧 Podcast della lezione» nella pagina della lezione. I punti importanti in 8 o 20 minuti, con una voce narrante e la voce vera del prof nei momenti chiave; la parola che senti si illumina. Sul PC si salva in MP3.",
+ "novita_en": "New: «🎧 Lecture podcast» on the lecture page. The key points in 8 or 20 minutes, with a narrator and the lecturer's real voice at the key moments; the word you hear lights up. On the PC you can save it as MP3.",
+ "contenuto": 63
 }

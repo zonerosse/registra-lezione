@@ -522,6 +522,30 @@ html.dsa .ap h3{font-size:21px}
 html.dsa .asbl{grid-template-columns:1fr;gap:6px}
 html.dsa .asrias{background:#fef3c7}
 html.dsa .carta .faccia{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.03em;word-spacing:.14em;line-height:1.75;background:#fffbeb}
+/* podcast della lezione */
+.pcplayer{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pcplay{width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;font-size:22px;cursor:pointer;flex:none}
+html.dsa .pcplay{width:72px;height:72px;font-size:28px}
+.pcbarra{flex:1;min-width:200px}
+.pctl{display:flex;height:12px;border-radius:999px;overflow:hidden;background:#e2e8f0;margin:6px 0}
+.pctl span{height:100%;cursor:pointer}.pctl .n{background:#cbd5e1}.pctl .p{background:#0d4275}
+.pctl span.ora{outline:2px solid #f59e0b;outline-offset:-2px}
+.pctempo{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--mut);display:flex;justify-content:space-between}
+.pcleg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px;flex-wrap:wrap}
+.pcleg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.pz{display:flex;gap:12px;padding:12px;border-radius:12px;margin-top:8px;border:1px solid transparent;cursor:pointer}
+.pz:hover{background:#f8fafc}
+.pz.ora{background:#fffbeb;border-color:#fde68a}
+.pz .chi{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:19px}
+.pz.n .chi{background:#f1f5f9}.pz.p .chi{background:#e0f2fe}
+.pz b{display:block;font-size:13px;color:var(--ink)}.pz .min{font-size:12px;color:var(--mut);font-weight:400}
+.pz .tx{font-size:14px;line-height:1.5;color:var(--txt);margin-top:2px;-webkit-user-select:text;user-select:text}
+.pz.p .tx{font-style:italic}
+html.dsa .pz .tx{font-size:17px;line-height:1.9;font-style:normal}
+.pz.ora .tx .w.on{background:#fde68a;border-radius:4px;box-shadow:0 0 0 2px #fde68a}
+.solo-dsa-b{display:none!important}html.dsa .solo-dsa-b{display:block!important}
+html.dsa #v-podcast{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.02em;word-spacing:.1em}
+html.dsa #v-podcast .card{background:#fffbeb}
 /* la materia (Registra e pagina della lezione) */
 .chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
 .matlez{display:inline-flex;align-items:center;gap:8px;background:#eef3f9;border-radius:999px;padding:4px 6px 4px 12px;font-size:13px;color:var(--navy);font-weight:600;margin-top:6px}
