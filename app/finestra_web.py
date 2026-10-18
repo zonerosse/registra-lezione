@@ -247,6 +247,12 @@ class Api:
     def esame_pdf(self, materia):
         return self._m.esame_pdf(materia)
 
+    def test_nuovo(self, materia, cartelle, solo_sbagliate=False):
+        return self._m.test_nuovo(materia, cartelle, solo_sbagliate)
+
+    def test_correggi(self, materia, risposte, sec=0):
+        return self._m.test_correggi(materia, risposte, sec)
+
     def ascolta_appunti(self, cartella):
         return self._m.ascolta_appunti(cartella)
 

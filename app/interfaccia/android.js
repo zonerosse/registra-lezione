@@ -295,6 +295,7 @@ if (ANDROID) {
     "Scegli la <b>data dell'esame</b>: arriva il <b>piano di studio</b> giorno per giorno, da mettere nel calendario o salvare in PDF.",
     "<b>Simulazione scritta</b>: rispondi come allo scritto, poi <b>Correggi</b>: punti, cosa manca e voto. Pochi centesimi.",
     "<b>🎤 Interrogazione a voce</b>: rispondi parlando, come all'orale; se manca qualcosa arriva una domanda in più. Alla fine voto e come hai parlato.",
+    "<b>☑ Test a crocette</b>: 10 domande a 4 risposte; alla fine il voto e perché ogni errore era sbagliato. Puoi rifare solo le sbagliate.",
     "In alto la freccia <b>←</b> (o il tasto Indietro) ti riporta alla pagina da cui sei arrivato."
    ],
    "g": "studio"
@@ -642,6 +643,7 @@ if (ANDROID) {
     "Choose the <b>exam date</b>: the day-by-day <b>study plan</b> arrives, to put in the calendar or save as PDF.",
     "<b>Written mock exam</b>: answer as in the written exam, then <b>Correct</b>: points, what is missing and the mark. A few cents.",
     "<b>🎤 Oral exam</b>: answer out loud, as in an oral exam; if something is missing you get a follow-up question. At the end the mark and how you spoke.",
+    "<b>☑ Multiple-choice test</b>: 10 questions with 4 answers; at the end the mark and why each mistake was wrong. You can redo only the wrong ones.",
     "At the top the <b>←</b> arrow (or the Back key) takes you back to the page you came from."
    ],
    "g": "studio"

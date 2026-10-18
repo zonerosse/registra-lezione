@@ -188,6 +188,7 @@ const GUIDA = {
      "<b>Data dell'esame</b>: sceglila e arriva il <b>piano di studio</b> giorno per giorno: gli argomenti in ordine, ripassi, simulazioni, la domenica riposo. Con <b>📅 Nel calendario</b> va in Outlook o Google Calendar. <b>Salva in PDF</b> per stamparlo.",
      "<b>✍ Simulazione scritta</b>: domande nuove su tutto il corso. Rispondi come all'esame scritto, senza guardare gli appunti, poi tocca <b>Correggi</b>: punti per ogni domanda, cosa va bene, cosa manca, voto in trentesimi e cosa ripassare prima.",
      "<b>🎤 Interrogazione a voce</b>: come all'orale. Il docente fa 3 domande, tu tocchi il microfono e rispondi parlando; se manca qualcosa ti fa una <b>domanda in più</b>. Alla fine: voto, cosa va bene e cosa manca, e <b>come hai parlato</b> (tempo, «cioè» ed «ehm», pause). La voce si trascrive sul PC: a Claude va solo il testo.",
+     "<b>☑ Test a crocette</b>: 10 domande a 4 risposte su tutta la materia, come i test d'esame. <b>Correggi</b>: voto, risposte giuste e sbagliate, e per ogni errore <b>perché era sbagliata</b>, con la lezione e il minuto (tocca per rivederlo) e «Chiedi alla lezione». Le sbagliate vanno nelle flashcard «da rivedere»; puoi rifare <b>solo le sbagliate</b> (gratis).",
      "In alto a sinistra la freccia <b>←</b> ti riporta alla pagina da cui sei arrivato."
     ],
     "g": "studio"
@@ -565,6 +566,7 @@ const GUIDA = {
      "<b>Exam date</b>: choose it and the day-by-day <b>study plan</b> arrives: topics in order, reviews, simulations, Sunday off. With <b>📅 To calendar</b> it goes to Outlook or Google Calendar. <b>Save as PDF</b> to print it.",
      "<b>✍ Written mock exam</b>: new questions on the whole course. Answer as in the written exam, without looking at the notes, then tap <b>Correct</b>: points for each question, what is right, what is missing, mark out of 30 and what to review first.",
      "<b>🎤 Oral exam</b>: as in an oral exam. The examiner asks 3 questions, you tap the microphone and answer out loud; if something is missing you get a <b>follow-up question</b>. At the end: mark, what is right and what is missing, and <b>how you spoke</b> (time, «um» and «uh», pauses). Your voice is transcribed on the PC: Claude only receives the text.",
+     "<b>☑ Multiple-choice test</b>: 10 questions with 4 answers on the whole course, like exam tests. <b>Correct</b>: mark, right and wrong answers and, for every mistake, <b>why it was wrong</b>, with the lecture and minute (tap to see it again) and «Ask the lecture». Wrong ones go to the «to review» flashcards; you can redo <b>only the wrong ones</b> (free).",
      "At the top left the <b>←</b> arrow takes you back to the page you came from."
     ],
     "g": "studio"

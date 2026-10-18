@@ -227,6 +227,162 @@ def correggi(base, materia, risposte, chiave, L="it"):
     return sim, ch._costo(r.get("usage", {}))
 
 
+# ------------------------------------------------------------------ test a crocette (come i test d'esame)
+
+N_TEST = 10
+SCHEMA_TEST = {"type": "object", "properties": {"domande": {"type": "array", "items": {"type": "object", "properties": {
+    "domanda": {"type": "string"},
+    "opzioni": {"type": "array", "items": {"type": "string"}, "description": "esattamente 4 risposte"},
+    "giusta": {"type": "integer", "description": "indice (0-3) della risposta giusta in opzioni"},
+    "spiegazione": {"type": "string", "description": "perche' e' giusta quella e perche' l'errore tipico e' sbagliato, 1-2 frasi"},
+    "lezione": {"type": "string", "description": "L1, L2... la lezione da cui viene"},
+    "orario": {"type": "string", "description": "hh:mm:ss del punto della lezione, preso da \"dove\", o vuoto"},
+    "carta": {"type": "string", "description": "la domanda degli appunti da cui viene, copiata uguale"}},
+    "required": ["domanda", "opzioni", "giusta", "spiegazione", "lezione"]}}}, "required": ["domande"]}
+
+
+def _lezioni_test(cartelle):
+    """Le lezioni della materia in ordine di data: [{"n", "cartella", "data", "nome"}]."""
+    out = []
+    for i, (quando, c) in enumerate(sorted(((_data(c)[0], c) for c in cartelle), key=lambda x: x[0]), 1):
+        out.append({"n": i, "cartella": str(c), "data": f"{quando:%d/%m}", "nome": _data(c)[1].get("nome", "")})
+    return out
+
+
+def _secondi(orario):
+    m = re.search(r"(\d{1,2}):(\d{2})(?::(\d{2}))?", str(orario or ""))
+    if not m:
+        return None
+    a, b, c = m.group(1), m.group(2), m.group(3)
+    return int(a) * 3600 + int(b) * 60 + int(c) if c is not None else int(a) * 60 + int(b)
+
+
+def _mescola(q):
+    """Le 4 risposte in ordine casuale (la giusta non sta sempre nello stesso posto)."""
+    import random
+    idx = list(range(len(q["opzioni"])))
+    random.shuffle(idx)
+    giusta = q["opzioni"][q["giusta"]]
+    q["opzioni"] = [q["opzioni"][i] for i in idx]
+    q["giusta"] = q["opzioni"].index(giusta)
+    return q
+
+
+def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False):
+    """Un test a crocette sulla materia (10 domande, 4 risposte). Con solo_sbagliate: di nuovo le domande sbagliate
+    dell'ultimo test, con le risposte rimescolate (non costa niente). Torna (test, spesa)."""
+    d = leggi(base, materia)
+    if solo_sbagliate:
+        ult = (d.get("test") or [None])[-1]
+        if not ult or not ult.get("risposte"):
+            raise ap.ErroreAppunti(tr("es_err"))
+        sbagliate = [dict(q) for q, r in zip(ult["domande"], ult["risposte"]) if r != q["giusta"]]
+        if not sbagliate:
+            raise ap.ErroreAppunti(tr("tc_nessuna"))
+        test = {"quando": datetime.datetime.now().isoformat(timespec="seconds"), "lezioni": ult.get("lezioni") or [],
+                "domande": [_mescola(q) for q in sbagliate], "risposte": None, "voto": None, "ripasso": True}
+        d.setdefault("test", []).append(test)
+        d["test"] = d["test"][-20:]
+        salva(base, materia, d)
+        return test, 0.0
+    lezioni = _lezioni_test(cartelle)
+    blocchi = []
+    for x in lezioni:
+        testo = ch._appunti_compatti(x["cartella"])
+        if testo.strip():
+            blocchi.append(f"=== L{x['n']} · {x['data']} · {x['nome']} ===\n{testo}")
+    if not blocchi:
+        raise ap.ErroreAppunti(tr("es_vuoto"))
+    top = [q["domanda"] for q in ((d.get("classifica") or {}).get("domande") or []) if q.get("stelle", 1) >= 2]
+    gia = [q["domanda"] for t in d.get("test") or [] for q in t.get("domande") or []][-40:]
+    corpo = {"model": ch.MODELLO, "max_tokens": 6000,
+             "system": "Sei il docente di questa materia e prepari un TEST A CROCETTE d'esame: " + str(N_TEST) + " domande, "
+                       "ciascuna con ESATTAMENTE 4 risposte e una sola giusta. Prendi le domande soprattutto dagli argomenti "
+                       "piu' importanti (\"domande_importanti\") ma copri piu' lezioni. Le risposte sbagliate devono essere "
+                       "plausibili: gli errori tipici degli studenti (valori confusi, concetti scambiati), mai assurde, niente "
+                       "\"tutte le precedenti\" o \"nessuna\". Domande brevi e chiare. \"spiegazione\": perche' la giusta e' "
+                       "giusta e dove sta l'errore tipico, 1-2 frasi. \"lezione\" = L1, L2... da cui viene; \"orario\" = "
+                       "hh:mm:ss preso dal \"dove\" di quel punto (vuoto se non c'e'); \"carta\" = la domanda degli appunti "
+                       "da cui viene, copiata uguale. Usa solo il materiale ricevuto. Non ripetere le domande gia' fatte se "
+                       "puoi. Scrivi in " + testi.nome_lingua(L, "it") + ". Chiama lo strumento salva_test.",
+             "tools": [{"name": "salva_test", "description": "Salva il test.", "input_schema": SCHEMA_TEST}],
+             "messages": [{"role": "user", "content": json.dumps({"materia": materia, "domande_importanti": top[:15],
+                                                                  "gia_fatte": gia}, ensure_ascii=False)
+                           + "\n\nAPPUNTI DELLE LEZIONI:\n" + "\n\n".join(blocchi)[:200_000]}]}
+    dati, usage = _strumento(chiave, corpo, "domande")
+    domande = []
+    per_n = {f"L{x['n']}": x for x in lezioni}
+    for q in dati["domande"]:
+        op = [str(o).strip() for o in (q.get("opzioni") or []) if str(o or "").strip()]
+        try:
+            g = int(q.get("giusta"))
+        except (TypeError, ValueError):
+            continue
+        if len(op) != 4 or not 0 <= g < 4 or not str(q.get("domanda") or "").strip():
+            continue
+        lez = per_n.get(str(q.get("lezione") or "").strip().upper().replace(" ", ""))
+        domande.append(_mescola({"domanda": str(q["domanda"])[:400], "opzioni": [o[:300] for o in op], "giusta": g,
+                                 "spiegazione": str(q.get("spiegazione") or "")[:500], "lezione": lez["n"] if lez else None,
+                                 "sec": _secondi(q.get("orario")), "carta": str(q.get("carta") or "")[:400]}))
+    if len(domande) < 3:
+        raise ap.ErroreAppunti(tr("es_err"))
+    test = {"quando": datetime.datetime.now().isoformat(timespec="seconds"), "lezioni": lezioni,
+            "domande": domande[:N_TEST], "risposte": None, "voto": None}
+    d.setdefault("test", []).append(test)
+    d["test"] = d["test"][-20:]
+    salva(base, materia, d)
+    return test, ch._costo(usage)
+
+
+def test_correggi(base, materia, risposte, sec=0, L="it"):
+    """Corregge qui (senza Claude): giuste, sbagliate, vuote, voto in trentesimi, lezioni da ripassare.
+    Le domande sbagliate mettono «da rivedere» la flashcard da cui vengono."""
+    import difflib
+    import ripasso as rp
+    d = leggi(base, materia)
+    test = (d.get("test") or [None])[-1]
+    if not test:
+        raise ap.ErroreAppunti(tr("es_err"))
+    dom = test["domande"]
+    ris = []
+    for i in range(len(dom)):
+        try:
+            v = int(risposte[i]) if i < len(risposte) and risposte[i] is not None else None
+        except (TypeError, ValueError):
+            v = None
+        ris.append(v if v in (0, 1, 2, 3) else None)
+    giuste = sum(1 for q, r in zip(dom, ris) if r == q["giusta"])
+    vuote = sum(1 for r in ris if r is None)
+    test.update(risposte=ris, giuste=giuste, sbagliate=len(dom) - giuste - vuote, vuote=vuote, sec=int(sec or 0),
+                voto=round(30 * giuste / max(1, len(dom))))
+    # lezioni con piu' errori: da ripassare
+    lez = {x["n"]: x for x in test.get("lezioni") or []}
+    errori = {}
+    for q, r in zip(dom, ris):
+        if r != q["giusta"] and q.get("lezione") in lez:
+            errori[q["lezione"]] = errori.get(q["lezione"], 0) + 1
+    peggio = sorted(errori, key=lambda n: -errori[n])[:2]
+    test["da_ripassare"] = [f"L{n} · {lez[n]['data']} · {lez[n]['nome']}" for n in peggio]
+    # le sbagliate tornano «da rivedere» nelle flashcard
+    segnate = 0
+    for q, r in zip(dom, ris):
+        if r == q["giusta"] or q.get("lezione") not in lez:
+            continue
+        try:
+            carte = rp.carte_lezione(lez[q["lezione"]]["cartella"])
+            cerca = (q.get("carta") or q["domanda"]).lower()
+            meglio = max(carte, key=lambda c: difflib.SequenceMatcher(None, cerca, c["domanda"].lower()).ratio(), default=None)
+            if meglio and difflib.SequenceMatcher(None, cerca, meglio["domanda"].lower()).ratio() >= 0.5:
+                rp.voto(lez[q["lezione"]]["cartella"], meglio["id"], False)
+                segnate += 1
+        except Exception:
+            logging.getLogger("registra_lezione").exception("test: flashcard da rivedere")
+    test["flashcard"] = segnate
+    d.setdefault("voti_test", []).append(test["voto"])
+    salva(base, materia, d)
+    return test
+
+
 # ------------------------------------------------------------------ interrogazione a voce (come all'orale)
 
 SCHEMA_INCALZA = {"type": "object", "properties": {"domanda_in_piu": {"type": "string"}}, "required": ["domanda_in_piu"]}

@@ -1982,6 +1982,31 @@ class Motore:
             log.exception("pdf esame")
             return {"ok": False, "msg": tr("ap_imprevisto")}
 
+    # ------------------------------------------------------------------ test a crocette
+
+    def test_nuovo(self, materia, cartelle, solo_sbagliate=False):
+        import esame as es
+        if not solo_sbagliate and not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            test, spesa = es.test_nuovo(BASE, materia, cartelle or [], self.chiave(), testi.LINGUA, bool(solo_sbagliate))
+            return {"ok": True, "test": test, "spesa": spesa}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("test a crocette")
+            return {"ok": False, "msg": tr("es_err")}
+
+    def test_correggi(self, materia, risposte, sec=0):
+        import esame as es
+        try:
+            return {"ok": True, "test": es.test_correggi(BASE, materia, risposte or [], sec, testi.LINGUA)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("test a crocette: correzione")
+            return {"ok": False, "msg": tr("es_err")}
+
     # ------------------------------------------------------------------ ascolta gli appunti (lettura ad alta voce)
 
     def ascolta_appunti(self, cartella):

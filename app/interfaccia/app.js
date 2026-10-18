@@ -1632,6 +1632,7 @@ async function nomiVoci() {
 let ES = {m: null, d: null};
 async function apriEsame(m, rifai = false) {
   if (OR.orale && (!ES.m || ES.m.m !== m.m)) orChiudi();
+  if (TC.test && (!ES.m || ES.m.m !== m.m)) { clearInterval(TC.timer); TC = {test: null}; }
   ES = {m, d: null};
   $('esTit').textContent = t('es.h', {m: m.m}); $('esSub').textContent = m.cartelle.length === 1 ? t('rp.lez1') : t('es.sub', {n: m.cartelle.length});
   $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('es.lav'))}</div></div>`;
@@ -1658,8 +1659,9 @@ function disegnaEsame() {
   const voti = d.voti && d.voti.length ? `<div class="hint" style="margin-top:8px">${esc(t('es.voti', {v: d.voti.join(', ')}))}</div>` : '';
   $('esBox').innerHTML = `<div class="card"><div class="row" style="gap:10px;flex-wrap:wrap"><div class="lbl sp" style="margin:0">${esc(t('es.data'))}</div><input class="in" type="date" id="esData" value="${esc(d.data_esame)}" style="width:170px">${quando}</div></div>
     <div class="card mt"><div class="lbl">${esc(t('es.dom'))}</div>${dom}
-      <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="esRifai" style="text-align:left">${esc(t('es.rifai'))}</button><button class="btn b-ghost b-sm" id="esSim">${esc(t('es.sim'))}</button><button class="btn b-cor b-sm" id="esOrale">${esc(t('or.b'))}</button></div>
-      <div class="hint" style="margin-top:8px;text-align:right">${esc(t('or.nuovo'))}</div>${voti}</div>
+      <div class="row mt" style="justify-content:flex-end;gap:8px"><button class="lnk sp" id="esRifai" style="text-align:left">${esc(t('es.rifai'))}</button><button class="btn b-ghost b-sm" id="esSim">${esc(t('es.sim'))}</button><button class="btn b-ghost b-sm" id="esOrale">${esc(t('or.b'))}</button><button class="btn b-cor b-sm" id="esTest">${esc(t('tc.b'))}</button></div>
+      <div class="hint" style="margin-top:8px;text-align:right">${esc(t('tc.s'))}</div>${voti}</div>
+    <div class="card mt hidden" id="esTestBox"></div>
     <div class="card mt hidden" id="esOrBox"></div>
     <div class="card mt" id="esSimBox"></div>
     <div class="card mt"><div class="row" style="margin-bottom:8px"><div class="lbl sp" style="margin:0">${esc(t('es.piano'))}</div>${P.length ? `<button class="btn b-ghost b-sm" id="esCal">${esc(t('es.cal'))}</button>` : ''}</div>
@@ -1669,6 +1671,8 @@ function disegnaEsame() {
   $('esRifai').onclick = () => apriEsame(ES.m, true);
   $('esSim').onclick = () => nuovaSimulazione();
   $('esOrale').onclick = () => nuovaOrale();
+  $('esTest').onclick = () => nuovoTest(false);
+  if (TC.test) disegnaTest();
   if (OR.orale) disegnaOrale();
   if ($('esCal')) $('esCal').onclick = () => dialogo({titolo: t('es.cal.t'), testo: t('es.cal.s'), bottoni: ANDROID ? [{t: t('annulla'), v: false},
     {t: t('cd.cal.tel'), cls: 'b-main', fn: () => { A.esame_calendario(ES.m.m, 'telefono'); document.querySelector('.velo').remove(); }}] : [{t: t('annulla'), v: false},
@@ -1696,6 +1700,72 @@ function disegnaSimulazione(sim) {
   };
   if ($('esNuova')) $('esNuova').onclick = () => nuovaSimulazione();
 }
+/* ------------------------------------------------------------------ test a crocette */
+// 10 domande a 4 risposte su tutta la materia; si corregge sul PC (gratis): voto, perche' era sbagliata, dove ripassare.
+var TC = {test: null};   // var: apriEsame() lo guarda subito
+async function nuovoTest(soloSbagliate) {
+  clearInterval(TC.timer);
+  const box = $('esTestBox'); box.classList.remove('hidden');
+  box.innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('tc.lav'))}</div>`;
+  box.scrollIntoView({block: 'start'});
+  const r = await A.test_nuovo(ES.m.m, ES.m.cartelle, !!soloSbagliate);
+  if (!r.ok) { box.innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  TC = {test: r.test, scelte: [], sec: 0, corretto: false};
+  TC.timer = setInterval(() => { TC.sec++; if ($('tcT')) $('tcT').textContent = mmss(TC.sec); }, 1000);
+  disegnaTest();
+}
+const mmss = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+function tcLezione(n) { return (TC.test.lezioni || []).find(x => x.n === n); }
+function disegnaTest() {
+  const T = TC.test, box = $('esTestBox'); if (!box || !T) return;
+  box.classList.remove('hidden');
+  const fatto = T.voto != null && T.risposte;
+  const sc = fatto ? T.risposte : TC.scelte;
+  let h = `<div class="row"><div class="lbl sp" style="margin:0">${esc(t(T.ripasso ? 'tc.h.rip' : 'tc.h', {n: T.domande.length}))}</div>${fatto
+    ? `<span class="pill ${T.voto >= 18 ? 'p-ok' : 'p-red'}" style="font-size:14px">${esc(t('es.voto', {v: T.voto}))}</span>` : `<span class="tctempo" id="tcT">${mmss(TC.sec || 0)}</span>`}</div>`;
+  if (fatto) h += `<div class="tcris"><div><b>${T.giuste}</b>${esc(t('tc.giuste'))}</div><div><b>${T.sbagliate}</b>${esc(t('tc.sbagliate'))}</div><div><b>${T.vuote}</b>${esc(t('tc.vuote'))}</div><div><b>${mmss(T.sec || 0)}</b>${esc(t('tc.tempo'))}</div></div>`;
+  h += T.domande.map((q, i) => {
+    const lz = tcLezione(q.lezione);
+    const dove = fatto && lz ? `<div class="tcdove">${q.sec != null ? `<button class="lnk" data-mom="${i}">${esc(t('tc.dove.min', {n: lz.n, d: lz.data, m: Math.floor(q.sec / 60)}))}</button>` : esc(t('tc.dove', {n: lz.n, d: lz.data}))}</div>` : '';
+    const opz = q.opzioni.map((o, j) => {
+      let c = sc[i] === j ? 'sc' : '';
+      if (fatto) c = j === q.giusta ? 'giusta' : sc[i] === j ? 'errata' : '';
+      return `<button data-i="${i}" data-j="${j}" class="${c}"><span class="l">${'ABCD'[j]}</span><span>${esc(o)}</span></button>`;
+    }).join('');
+    const spieg = fatto && sc[i] !== q.giusta ? `<div class="tcspieg"><b>${esc(sc[i] == null ? t('tc.vuota') : t('tc.perche'))}</b> ${esc(q.spiegazione)}${lz ? ` <button class="lnk" data-ch="${i}">${esc(t('tc.chiedi'))}</button>` : ''}</div>` : '';
+    return `<div class="tcq"><b>${i + 1}. ${esc(q.domanda)}</b>${dove}<div class="tcopz${fatto ? ' chiusa' : ''}">${opz}</div>${spieg}</div>`;
+  }).join('');
+  if (fatto) {
+    const consigli = [(T.da_ripassare || []).length ? t('tc.ripassa', {l: T.da_ripassare.join(', ')}) : '', T.flashcard ? t('tc.flash') : ''].filter(Boolean).join(' ');
+    h += (consigli ? `<div class="avviso2 mt">${esc(consigli)}</div>` : '') +
+      `<div class="row mt" style="justify-content:flex-end;gap:8px">${T.sbagliate + T.vuote ? `<button class="btn b-ghost b-sm" id="tcSolo">${esc(t('tc.solo'))}</button>` : ''}<button class="btn b-cor b-sm" id="tcNuovo">${esc(t('tc.nuovo'))}</button></div>`;
+  } else h += `<div class="row mt" style="justify-content:flex-end"><button class="btn b-main b-sm" id="tcCorr">${esc(t('tc.correggi'))}</button></div>`;
+  box.innerHTML = h;
+  box.querySelectorAll('.tcopz:not(.chiusa) button').forEach(b => b.onclick = () => {
+    TC.scelte[+b.dataset.i] = +b.dataset.j;
+    box.querySelectorAll(`.tcopz button[data-i="${b.dataset.i}"]`).forEach(x => x.classList.toggle('sc', x === b));
+  });
+  box.querySelectorAll('[data-mom]').forEach(b => b.onclick = () => { const q = T.domande[+b.dataset.mom], lz = tcLezione(q.lezione); mostraMomento(lz.cartella, q.sec, null, lz.nome); });
+  box.querySelectorAll('[data-ch]').forEach(b => b.onclick = async () => {
+    const q = T.domande[+b.dataset.ch], lz = tcLezione(q.lezione);
+    if (!LZ) await caricaLezioni();
+    const l = LZ && LZ.lezioni.find(x => x.cartella === lz.cartella);
+    if (!l) { if (q.sec != null) mostraMomento(lz.cartella, q.sec, null, lz.nome); return; }
+    await apriChiedi(l);
+    $('chIn').value = t('tc.chiedi.q', {q: q.domanda, r: q.opzioni[q.giusta]});
+  });
+  if ($('tcCorr')) $('tcCorr').onclick = async () => {
+    const b = $('tcCorr'); b.disabled = true;
+    clearInterval(TC.timer);
+    const r = await A.test_correggi(ES.m.m, T.domande.map((_, i) => TC.scelte[i] ?? null), TC.sec || 0);
+    if (!r.ok) { b.disabled = false; return toast(r.msg || ''); }
+    TC.test = r.test; disegnaTest(); box.scrollIntoView({block: 'start'});
+    caricaLezioni();     // i numeri «da rivedere» delle flashcard cambiano
+  };
+  if ($('tcSolo')) $('tcSolo').onclick = () => nuovoTest(true);
+  if ($('tcNuovo')) $('tcNuovo').onclick = () => nuovoTest(false);
+}
+
 /* ------------------------------------------------------------------ la voce (lettura ad alta voce) */
 // Sul PC (e su Mac e iPhone) parla la finestra con la voce del sistema; sul telefono Android la finestra
 // non ha voce e parla l'app (A.voce_*). voceParla() finisce quando la frase e' detta (true) o fermata (false).
