@@ -24,13 +24,19 @@ jobs:
           cp android/app/src/main/python/avvio_android.py ios/src/verbamanent/
 
       - name: Costruisci per l'iPhone simulato
+        id: costruisci
+        continue-on-error: true
         working-directory: ios
         run: |
-          python -m pip install -q --upgrade pip briefcase
-          briefcase create iOS --no-input
-          briefcase build iOS --no-input
+          set -o pipefail
+          mkdir -p ../esito
+          python -m pip install -q --upgrade pip briefcase 2>&1 | tail -5 | tee ../esito/costruzione.txt
+          briefcase --version | tee -a ../esito/costruzione.txt
+          briefcase create iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
+          briefcase build iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
 
       - name: Prova sull'iPhone simulato
+        if: steps.costruisci.outcome == 'success'
         run: |
           mkdir -p esito
           APP=$(find ios/build -name "*.app" -path "*iphonesimulator*" | head -1)
@@ -68,7 +74,8 @@ jobs:
           else
             git worktree add -q --detach /tmp/pub && (cd /tmp/pub && git checkout -q --orphan iphone-prove && git rm -rqf . || true)
           fi
-          rm -rf /tmp/pub/esito && cp -R esito /tmp/pub/esito 2>/dev/null || mkdir -p /tmp/pub/esito
+          mkdir -p esito && date -u > esito/quando.txt
+          rm -rf /tmp/pub/esito && cp -R esito /tmp/pub/esito
           cd /tmp/pub
           git add -A esito
           git commit -q -m "Prova iPhone $(date -u +%d/%m\ %H:%M)" || true
