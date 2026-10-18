@@ -64,7 +64,7 @@ window.indietro = () => {
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
-  if (INTERNE.includes(pagina)) { const b = $('v-' + pagina).querySelector(':scope > .indietro'); if (b) b.click(); else vai('arch'); return true; }
+  if (STORIA.length) { const b = $('v-' + pagina).querySelector(':scope > .perc .torna'); if (b) b.click(); else vai('arch'); return true; }
   if (pagina === 'info') { vai('imp'); return true; }
   if (pagina !== 'reg') { vai('reg'); return true; }
   if (IV) { IV = null; vai('reg'); return true; }
@@ -125,27 +125,44 @@ function titoloPagina(p) {
   const h = $('v-' + p) && $('v-' + p).querySelector('h2');
   return h ? h.textContent.trim() : '';
 }
-function frecciaIndietro(p) {
+// La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
+// (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
+const ICO_PAG = {arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+                 reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
+function nomePagina(p) {
+  if (p === 'lezione' && LEZ) return LEZ.nome;
+  if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
+  return titoloPagina(p) || t('indietro');
+}
+function barraPercorso(p) {
   const sec = $('v-' + p);
-  let b = sec.querySelector(':scope > .indietro');
-  if (!b) { b = document.createElement('button'); b.className = 'indietro'; sec.insertBefore(b, sec.firstChild); }
-  const prima = STORIA[STORIA.length - 1] || 'arch';
-  b.textContent = '← ' + (titoloPagina(prima) || t('indietro'));
-  b.onclick = () => { STORIA.pop(); vai(prima, true); };
+  let b = sec.querySelector(':scope > .perc');
+  if (!b) { b = document.createElement('div'); b.className = 'perc'; sec.insertBefore(b, sec.firstChild); }
+  const giro = [...STORIA, p];
+  b.innerHTML = `<button class="torna">← ${esc(t('indietro'))}</button><div class="briciole">` +
+    giro.map((x, i) => (i ? '<span class="sep">›</span>' : '') + (i === giro.length - 1 ? `<b>${ICO_PAG[x] || ''} ${esc(nomePagina(x))}</b>`
+      : `<a data-i="${i}">${ICO_PAG[x] || ''} ${esc(nomePagina(x))}</a>`)).join('') + '</div>';
+  b.querySelector('.torna').onclick = () => { const prima = STORIA.pop() || 'arch'; vai(prima, true); };
+  b.querySelectorAll('.briciole a').forEach(a => a.onclick = () => { const i = +a.dataset.i, x = giro[i]; STORIA = STORIA.slice(0, i); vai(x, true); });
 }
 function vai(p, tornando = false) {
   if (p !== 'esame' && OR && OR.orale) orChiudi();
   if (p !== 'ascolta' && AS && AS.attivo) asFerma();
   if (!tornando) {
-    if (INTERNE.includes(p)) { if (pagina && pagina !== p && STORIA[STORIA.length - 1] !== pagina) STORIA.push(pagina); if (STORIA.length > 12) STORIA.shift(); }
+    const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
+    STU.dentro = false;
+    if (interna) { if (pagina && pagina !== p && STORIA[STORIA.length - 1] !== pagina) STORIA.push(pagina); if (STORIA.length > 12) STORIA.shift(); }
     else STORIA = [];
   }
   pagina = p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(p) ? 'arch' : p === 'lic' ? 'info' : p)));
+  // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
+  const radice = STORIA.length ? STORIA[0] : p;
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
   ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
-  if (INTERNE.includes(p)) frecciaIndietro(p);
+  document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
+  if (STORIA.length) barraPercorso(p);
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'studia') apriStudia();
@@ -1747,7 +1764,7 @@ async function tileLezione(l, a) {
 }
 
 /* ------------------------------------------------------------------ Studia: la materia */
-var STU = {m: null, info: null};
+var STU = {m: null, info: null, dentro: false};
 function materieStudia() {
   const M = [];
   (LZ ? LZ.lezioni : []).forEach(l => {
@@ -1761,7 +1778,7 @@ function materieStudia() {
 }
 async function apriStudia(materia) {
   if (materia) STU.m = materia;
-  if (pagina !== 'studia') { vai('studia'); return; }       // vai() richiama apriStudia
+  if (pagina !== 'studia') { STU.dentro = !!materia; vai('studia'); return; }       // vai() richiama apriStudia
   if (!LZ) await caricaLezioni();
   disegnaStudia();
 }
@@ -1772,6 +1789,7 @@ async function disegnaStudia() {
   STU.m = m.m;
   $('stMat').innerHTML = M.map(x => `<span data-m="${esc(x.m)}" class="${x === m ? 'on' : ''}">${esc(x.m)} · ${esc(x.lez.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: x.lez.length}))}</span>`).join('');
   $('stMat').querySelectorAll('span').forEach(s => s.onclick = () => { STU.m = s.dataset.m; disegnaStudia(); });
+  if (STORIA.length) barraPercorso('studia');
   const info = await A.studia_info(m.m);
   if (STU.m !== m.m) return;
   STU.info = info;

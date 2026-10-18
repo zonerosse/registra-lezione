@@ -522,6 +522,17 @@ html.dsa .ap h3{font-size:21px}
 html.dsa .asbl{grid-template-columns:1fr;gap:6px}
 html.dsa .asrias{background:#fef3c7}
 html.dsa .carta .faccia{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.03em;word-spacing:.14em;line-height:1.75;background:#fffbeb}
+/* la barra del percorso: «← Indietro» e da dove sei arrivato */
+.perc{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:8px 10px;margin-bottom:16px;box-shadow:0 1px 2px rgba(15,27,45,.05)}
+.perc .torna{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;flex:none}
+.perc .briciole{display:flex;align-items:center;gap:4px;flex-wrap:wrap;font-size:14px;min-width:0}
+.perc .briciole a{color:var(--navy);font-weight:600;cursor:pointer;padding:3px 6px;border-radius:8px}
+.perc .briciole a:hover{background:#eef3f9}
+.perc .briciole .sep{color:#94a3b8}
+.perc .briciole b{color:var(--ink);padding:3px 6px}
+html.android .perc .briciole{font-size:13px}
+.dsabanda{display:none;gap:12px;align-items:flex-start;background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:12px 14px;margin-bottom:14px;font-size:13.5px;line-height:1.5;color:#1e3a8a}
+html.dsa .dsabanda{display:flex}
 /* pagina della lezione e Studia: riquadri per gruppi */
 .tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .tile{display:flex;gap:12px;align-items:center;background:#fff;border:1px solid #e6edf5;border-radius:14px;padding:12px;cursor:pointer;text-align:left;font-family:inherit;box-shadow:0 1px 2px rgba(15,27,45,.05);min-width:0}
