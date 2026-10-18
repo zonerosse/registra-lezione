@@ -70,10 +70,13 @@ class VerbaManent(toga.App):
         """Solo per la prova automatica sull'iPhone simulato: se c'e' prova_whisper.wav lo trascrive."""
         casa = Path.home()
         wav, mod = casa / "prova_whisper.wav", casa / "ggml-small-q5_1.bin"
-        if not (wav.exists() and mod.exists()):
+        if not wav.exists():
             return
         import time
         import java
+        self._prova_audio(casa, wav)
+        if not mod.exists():
+            return
         t0 = time.monotonic()
         try:
             r = java._W.INSTANCE.trascriviFile(str(mod), str(wav), "", 0.0, "en", "", 4, 1)
@@ -84,6 +87,37 @@ class VerbaManent(toga.App):
         except Exception:
             info = "?"
         (casa / "prova_whisper.txt").write_text(f"{time.monotonic() - t0:.1f} s\n{info}\n{r}", encoding="utf-8")
+
+    def _prova_audio(self, casa, wav):
+        """Prova automatica: unisci, taglia, decodifica, durata, PDF in immagini."""
+        import java
+        import wave
+        P = java._P
+        r = []
+        def prova(nome, fn):
+            try:
+                r.append(f"{nome}: {fn()}")
+            except Exception:
+                r.append(f"{nome}: ERRORE {traceback.format_exc()}")
+        m4a, tg, dec = casa / "prova.m4a", casa / "prova_taglio.m4a", casa / "prova_dec.wav"
+        prova("unisci", lambda: (P.unisciAudio([str(wav), str(wav)], str(m4a)), m4a.stat().st_size if m4a.exists() else 0))
+        def durata(p):
+            m = java._MMR()
+            m.setDataSource(str(p))
+            return m.extractMetadata(9)
+        prova("durata m4a (ms, attesi ~22000)", lambda: durata(m4a))
+        prova("taglia 2-6 s", lambda: (P.tagliaAudio(str(m4a), str(tg), 2000, 6000), durata(tg)))
+        def decod():
+            ok = P.decodificaWav(str(m4a), str(dec), 1000, 5000)
+            with wave.open(str(dec)) as w:
+                return ok, w.getframerate(), w.getnchannels(), round(w.getnframes() / w.getframerate(), 2)
+        prova("decodifica 1-6 s", decod)
+        pdf = casa / "prova.pdf"
+        if pdf.exists():
+            cart = casa / "prova_pdf"
+            cart.mkdir(exist_ok=True)
+            prova("pdf in png", lambda: (P.pdfInPng(str(pdf), str(cart), 800), sorted(x.name for x in cart.iterdir())))
+        (casa / "prova_audio.txt").write_text("\n".join(r), encoding="utf-8")
 
     def _mostra(self, url):
         self.web.url = url

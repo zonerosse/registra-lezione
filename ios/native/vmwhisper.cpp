@@ -35,10 +35,13 @@ static bool leggi_wav(const char *percorso, std::vector<float> &out) {
     return false;
 }
 
+static bool g_gpu = true;     // Metal; spento sull'iPhone simulato (il simulatore di GitHub non ha una vera scheda grafica)
+
 static whisper_context *contesto(const char *modello) {
     if (g_ctx && g_modello == modello) return g_ctx;
     if (g_ctx) whisper_free(g_ctx);
     whisper_context_params cp = whisper_context_default_params();
+    cp.use_gpu = g_gpu;
     g_ctx = whisper_init_from_file_with_params(modello, cp);
     g_modello = g_ctx ? modello : "";
     return g_ctx;
@@ -98,6 +101,7 @@ extern "C" char *vm_trascrivi_file(const char *m, const char *w, const char *pr,
     return copia(out);
 }
 
+extern "C" void vm_usa_gpu(int si) { g_gpu = si != 0; }
 extern "C" int vm_progresso(void) { return g_progresso.load(); }
 extern "C" const char *vm_info(void) { return whisper_print_system_info(); }
 extern "C" void vm_libera(char *p) { free(p); }

@@ -67,11 +67,19 @@ jobs:
           DATI=$(xcrun simctl get_app_container "$DEV" $ID data)
           curl -sL -o "$DATI/ggml-small-q5_1.bin" https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
           cp ios/native/whisper.cpp/samples/jfk.wav "$DATI/prova_whisper.wav"
+          pip install -q fpdf2 && python -c "
+          from fpdf import FPDF
+          p = FPDF()
+          for t in ('Slide 1', 'Slide 2'):
+              p.add_page(); p.set_font('helvetica', size=40); p.cell(text=t)
+          p.output('$DATI/prova.pdf')"
           xcrun simctl launch --stdout=$PWD/esito/stdout.txt --stderr=$PWD/esito/stderr.txt "$DEV" $ID
           sleep 60
           xcrun simctl io "$DEV" screenshot esito/01-avvio.png
           for i in $(seq 1 36); do [ -f "$DATI/prova_whisper.txt" ] && break; sleep 5; done
           cp "$DATI/prova_whisper.txt" esito/ 2>/dev/null || echo "nessun esito dopo 3 minuti" > esito/prova_whisper.txt
+          cp "$DATI/prova_audio.txt" esito/ 2>/dev/null || true
+          cp "$DATI/prova_pdf/p001.png" esito/pdf-p001.png 2>/dev/null || true
           find "$DATI" -name "*.log" -exec cp {} esito/ \; || true
           cp "$DATI/Documents/errore_avvio.txt" esito/ 2>/dev/null || true
           if [ -f "$DATI/porta.txt" ]; then

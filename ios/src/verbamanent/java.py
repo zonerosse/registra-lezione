@@ -136,10 +136,54 @@ class _Ponte:
             return str(e)
 
     def pdfInPng(self, pdf, cartella, larghezza):
-        return 0
+        """Ogni pagina del PDF in cartella/p001.png ... larga `larghezza` pixel (PDFKit). Ritorna quante pagine."""
+        try:
+            import ctypes
+            from rubicon.objc import ObjCInstance
+            from rubicon.objc.runtime import load_library, objc_id
+            from rubicon.objc.types import CGSize
+            load_library("PDFKit")
+            uikit = load_library("UIKit")
+            uikit.UIImagePNGRepresentation.restype = objc_id
+            uikit.UIImagePNGRepresentation.argtypes = [objc_id]
+            doc = _objc("PDFDocument").alloc().initWithURL_(_url(pdf))
+            if doc is None:
+                return 0
+            n = int(doc.pageCount)
+            for i in range(n):
+                pg = doc.pageAtIndex_(i)
+                b = pg.boundsForBox_(1)                                    # 1 = kPDFDisplayBoxCropBox
+                w, h = float(b.size.width) or 1.0, float(b.size.height) or 1.0
+                img = pg.thumbnailOfSize_forBox_(CGSize(larghezza, max(1, int(larghezza * h / w))), 1)
+                dati = ObjCInstance(uikit.UIImagePNGRepresentation(img.ptr))
+                dati.writeToFile_atomically_(f"{cartella}/p{i + 1:03d}.png", True)
+            return n
+        except Exception:
+            log.exception("iphone: pdf in png")
+            return 0
 
     def unisciAudio(self, wavs, uscita):
-        return False
+        """Unisce le parti WAV (16 kHz mono) in un solo audio .m4a (AAC, molto piu' piccolo)."""
+        tmp = str(uscita) + ".tmp.m4a"
+        try:
+            dest = None
+            for w in wavs:
+                src = _audio_leggi(w)
+                if dest is None:
+                    dest = _audio_scrivi_aac(tmp, src.processingFormat)
+                _audio_copia(src, dest, 0, int(src.length))
+            if dest is None:
+                return False
+            _chiudi(dest)
+            os.replace(tmp, str(uscita))
+            return True
+        except Exception:
+            log.exception("iphone: unisci audio")
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            return False
 
     def cifra(self, testo):
         import base64
@@ -162,10 +206,68 @@ class _Ponte:
         pass
 
     def tagliaAudio(self, sorgente, uscita, da, a):
-        return False
+        """Un pezzo dell'audio (da..a millisecondi) in un altro file .m4a."""
+        tmp = str(uscita) + ".tmp.m4a"
+        try:
+            src = _audio_leggi(sorgente)
+            rate = float(src.processingFormat.sampleRate)
+            i0 = int(max(0, da) * rate / 1000)
+            i1 = min(int(src.length), int(a * rate / 1000))
+            if i1 <= i0:
+                return False
+            dest = _audio_scrivi_aac(tmp, src.processingFormat)
+            _audio_copia(src, dest, i0, i1 - i0)
+            _chiudi(dest)
+            os.replace(tmp, str(uscita))
+            return True
+        except Exception:
+            log.exception("iphone: taglia audio")
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
+            return False
 
     def decodificaWav(self, sorgente, uscita, da, durata):
-        return False
+        """Il pezzo da..da+durata (millisecondi) di qualsiasi audio come WAV 16 kHz mono, scritto un po' alla volta."""
+        import wave
+        import numpy as np
+        try:
+            src = _audio_leggi(sorgente)
+            fmt = src.processingFormat                     # float32, canali separati
+            rate, canali = float(fmt.sampleRate), int(fmt.channelCount)
+            i0 = int(max(0, da) * rate / 1000)
+            fine = min(int(src.length), i0 + int(durata * rate / 1000))
+            if fine <= i0:
+                return False
+            src.framePosition = i0
+            passo = int(rate * 10)
+            buf = _objc("AVAudioPCMBuffer").alloc().initWithPCMFormat_frameCapacity_(fmt, passo)
+            scritti = 0
+            with wave.open(str(uscita), "wb") as w:
+                w.setnchannels(1)
+                w.setsampwidth(2)
+                w.setframerate(16000)
+                pos = i0
+                while pos < fine:
+                    n = min(passo, fine - pos)
+                    if not src.readIntoBuffer_frameCount_error_(buf, n, None):
+                        break
+                    letti = int(buf.frameLength)
+                    if letti <= 0:
+                        break
+                    dati = buf.floatChannelData
+                    x = sum(np.ctypeslib.as_array(dati[c], shape=(letti,)).astype(np.float32) for c in range(canali)) / canali
+                    if rate != 16000:
+                        m = max(1, int(round(letti * 16000 / rate)))
+                        x = np.interp(np.linspace(0, letti - 1, m), np.arange(letti), x)
+                    w.writeframes((np.clip(x, -1, 1) * 32767).astype("<i2").tobytes())
+                    scritti += len(x)
+                    pos += letti
+            return scritti > 0
+        except Exception:
+            log.exception("iphone: decodifica audio")
+            return False
 
     def impronta(self, modello, dati, frame):
         import numpy as np
@@ -175,6 +277,56 @@ class _Ponte:
 
     def notifica(self, titolo, testo):
         log.info("iphone: notifica %s", titolo)
+
+
+def _url(percorso):
+    return _objc("NSURL").fileURLWithPath_(str(percorso))
+
+
+def _audio_leggi(percorso):
+    from rubicon.objc.runtime import load_library
+    load_library("AVFoundation")
+    f = _objc("AVAudioFile").alloc().initForReading_error_(_url(percorso), None)
+    if f is None:
+        raise RuntimeError("audio non leggibile: " + str(percorso))
+    return f
+
+
+def _audio_scrivi_aac(percorso, fmt):
+    from rubicon.objc import ns_from_py
+    imp = ns_from_py({"AVFormatIDKey": 1633772320,              # kAudioFormatMPEG4AAC
+                      "AVSampleRateKey": float(fmt.sampleRate), "AVNumberOfChannelsKey": int(fmt.channelCount),
+                      "AVEncoderBitRateKey": 32000 * int(fmt.channelCount)})
+    f = _objc("AVAudioFile").alloc().initForWriting_settings_error_(_url(percorso), imp, None)
+    if f is None:
+        raise RuntimeError("non riesco a creare " + str(percorso))
+    return f
+
+
+def _audio_copia(src, dest, da, quanti):
+    """Copia `quanti` campioni da `da`, 10 secondi alla volta (un'ora di audio non sta in memoria)."""
+    fmt = src.processingFormat
+    passo = int(float(fmt.sampleRate) * 10)
+    buf = _objc("AVAudioPCMBuffer").alloc().initWithPCMFormat_frameCapacity_(fmt, passo)
+    src.framePosition = da
+    resta = quanti
+    while resta > 0:
+        if not src.readIntoBuffer_frameCount_error_(buf, min(passo, resta), None) or int(buf.frameLength) <= 0:
+            break
+        if not dest.writeFromBuffer_error_(buf, None):
+            raise RuntimeError("scrittura audio non riuscita")
+        resta -= int(buf.frameLength)
+
+
+def _chiudi(f):
+    """Chiude il file audio (iOS 18 ha close; prima si chiude quando l'oggetto sparisce)."""
+    import gc
+    try:
+        f.close()
+    except Exception:
+        pass
+    del f
+    gc.collect()
 
 
 class _Reg:
@@ -344,6 +496,8 @@ class _Whisper:
             lib.vm_progresso.restype = ctypes.c_int
             lib.vm_info.restype = ctypes.c_char_p
             lib.vm_libera.argtypes = [ctypes.c_void_p]
+            # Metal (processore grafico) sull'iPhone vero; nel simulatore si blocca, li' si usa il processore normale
+            lib.vm_usa_gpu(0 if os.environ.get("SIMULATOR_DEVICE_NAME") else 1)
             _Whisper._lib = lib
             log.info("iphone: whisper %s", lib.vm_info().decode(errors="replace"))
         return self._lib
@@ -371,13 +525,18 @@ class _W:
 
 
 class _MMR:
+    """Al posto del lettore di Android: la durata (millisecondi) di un audio."""
     METADATA_KEY_DURATION = 9
 
     def setDataSource(self, p):
         self.p = p
 
     def extractMetadata(self, k):
-        return None
+        try:
+            f = _audio_leggi(self.p)
+            return str(int(int(f.length) * 1000 / float(f.processingFormat.sampleRate)))
+        except Exception:
+            return None
 
     def release(self):
         pass
