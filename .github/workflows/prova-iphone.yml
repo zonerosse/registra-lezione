@@ -23,6 +23,17 @@ jobs:
           bash tools/prova_android/prepara_rl.sh ios/src/verbamanent/rl
           cp android/app/src/main/python/avvio_android.py ios/src/verbamanent/
 
+      - name: Riconoscitore vocale (whisper.cpp) per l'iPhone simulato
+        run: |
+          git clone -q --depth 1 --branch v1.7.6 https://github.com/ggml-org/whisper.cpp ios/native/whisper.cpp
+          cmake -S ios/native -B /tmp/vmw -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=iphonesimulator \
+                -DCMAKE_OSX_ARCHITECTURES=arm64 -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0 \
+                -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO > /tmp/vmw.txt 2>&1 || (tail -40 /tmp/vmw.txt; exit 1)
+          cmake --build /tmp/vmw --config Release --target vmwhisper -- -quiet > /tmp/vmw2.txt 2>&1 || (grep -m30 -i error /tmp/vmw2.txt; exit 1)
+          F=$(find /tmp/vmw -name "libvmwhisper.dylib" | head -1)
+          file "$F"; otool -L "$F"
+          cp "$F" ios/src/verbamanent/vmwhisper.so
+
       - name: Costruisci per l'iPhone simulato
         id: costruisci
         continue-on-error: true
@@ -52,20 +63,33 @@ jobs:
           xcrun simctl bootstatus "$DEV" -b
           xcrun simctl install "$DEV" "$APP"
           xcrun simctl privacy "$DEV" grant microphone $ID || true
-          xcrun simctl launch --stdout=$PWD/esito/stdout.txt --stderr=$PWD/esito/stderr.txt "$DEV" $ID
-          sleep 90
-          xcrun simctl io "$DEV" screenshot esito/01-avvio.png
+          # riconoscitore e un audio di prova dentro l'app, cosi' la prova di trascrizione parte subito
           DATI=$(xcrun simctl get_app_container "$DEV" $ID data)
-          ls -R "$DATI/Documents" > esito/documenti.txt 2>&1 || true
+          curl -sL -o "$DATI/ggml-small-q5_1.bin" https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small-q5_1.bin
+          cp ios/native/whisper.cpp/samples/jfk.wav "$DATI/prova_whisper.wav"
+          xcrun simctl launch --stdout=$PWD/esito/stdout.txt --stderr=$PWD/esito/stderr.txt "$DEV" $ID
+          sleep 60
+          xcrun simctl io "$DEV" screenshot esito/01-avvio.png
+          for i in $(seq 1 36); do [ -f "$DATI/prova_whisper.txt" ] && break; sleep 5; done
+          cp "$DATI/prova_whisper.txt" esito/ 2>/dev/null || echo "nessun esito dopo 3 minuti" > esito/prova_whisper.txt
           find "$DATI" -name "*.log" -exec cp {} esito/ \; || true
           cp "$DATI/Documents/errore_avvio.txt" esito/ 2>/dev/null || true
-          if [ -f "$DATI/Documents/porta.txt" ]; then
-            P=$(cat "$DATI/Documents/porta.txt")
+          if [ -f "$DATI/porta.txt" ]; then
+            P=$(cat "$DATI/porta.txt")
+            api() { echo "== $1 $2" >> esito/api.txt; curl -s -m 30 -X POST -d "$2" http://127.0.0.1:$P/api/$1 >> esito/api.txt; echo >> esito/api.txt; }
             curl -s -X POST -d '[]' http://127.0.0.1:$P/api/riepilogo > esito/riepilogo.json || true
-            curl -s -X POST -d '[]' http://127.0.0.1:$P/api/stato > esito/stato.json || true
+            # prova di registrazione: 20 secondi dal microfono simulato
+            api imposta '["privacy_ok", true]'
+            api imposta '["lingua", "it"]'
+            api avvia '["Prova iPhone", {"modo": "", "tipo": "lezione"}]'
+            sleep 20
+            api stato '[]'
+            xcrun simctl io "$DEV" screenshot esito/02-registra.png
+            api fine '[]'
+            sleep 10
           fi
-          sleep 15
-          xcrun simctl io "$DEV" screenshot esito/02-dopo.png
+          xcrun simctl io "$DEV" screenshot esito/03-dopo.png
+          ls -lR "$DATI" | grep -v "^total" > esito/documenti.txt 2>&1 || true
 
       - name: Pubblica l'esito
         if: always()

@@ -4,7 +4,7 @@ Il «ponte» verso l'iPhone, con gli stessi nomi del ponte Android (Ponte, Regis
 cosi' android_motore.py funziona senza cambiarlo. Qui le funzioni del telefono si chiamano
 con rubicon-objc (le librerie di iOS) invece che con Kotlin.
 
-PRIMA PROVA: cartelle, batteria e link sono veri; registrazione e trascrizione arrivano nei passi successivi.
+Gia' veri: cartelle, batteria, link, registrazione (AVAudioRecorder), trascrizione (whisper.cpp, vmwhisper.so).
 """
 import json
 import logging
@@ -16,7 +16,9 @@ from pathlib import Path
 log = logging.getLogger("registra_lezione")
 
 CASA = Path.home()
-DATI = CASA / "Documents"
+# come su Android: il motore mette le registrazioni in HOME/Documents, cosi' finiscono nella cartella
+# dell'app visibile in «File»; riconoscitore e impostazioni restano fuori, nella cartella dell'app
+DATI = CASA
 CACHE = CASA / "Library" / "Caches" / "VerbaManent"
 DATI.mkdir(parents=True, exist_ok=True)
 CACHE.mkdir(parents=True, exist_ok=True)
@@ -323,11 +325,45 @@ class _Reg:
 
 
 class _Whisper:
-    def progresso(self):
-        return 0
+    """whisper.cpp compilato per l'iPhone (vmwhisper.so, stesso ponte di Android), chiamato con ctypes."""
+    _lib = None
 
-    def trascriviFile(self, *a):
-        raise RuntimeError("La trascrizione sull'iPhone arriva in un prossimo passo.")
+    def _carica(self):
+        if self._lib is None:
+            import ctypes
+            qui = Path(__file__).resolve().parent
+            f = qui / "vmwhisper.so"
+            if not f.exists():
+                # nell'app Xcode trasforma le librerie in «framework» e lascia un file .fwork con il percorso
+                fw = qui / "vmwhisper.fwork"
+                f = Path(_objc("NSBundle").mainBundle.bundlePath) / fw.read_text().strip()
+            lib = ctypes.CDLL(str(f))
+            lib.vm_trascrivi_file.restype = ctypes.c_void_p
+            lib.vm_trascrivi_file.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p, ctypes.c_float,
+                                              ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_int]
+            lib.vm_progresso.restype = ctypes.c_int
+            lib.vm_info.restype = ctypes.c_char_p
+            lib.vm_libera.argtypes = [ctypes.c_void_p]
+            _Whisper._lib = lib
+            log.info("iphone: whisper %s", lib.vm_info().decode(errors="replace"))
+        return self._lib
+
+    def progresso(self):
+        try:
+            return int(self._carica().vm_progresso())
+        except Exception:
+            return 0
+
+    def trascriviFile(self, modello, wav, prima, secPrima, lingua, parole, thread, beam):
+        import ctypes
+        lib = self._carica()
+        b = lambda x: str(x or "").encode("utf-8")
+        p = lib.vm_trascrivi_file(b(modello), b(wav), b(prima), float(secPrima), b(lingua), b(parole),
+                                  int(thread), int(beam))
+        try:
+            return ctypes.string_at(p).decode("utf-8", errors="replace")
+        finally:
+            lib.vm_libera(p)
 
 
 class _W:

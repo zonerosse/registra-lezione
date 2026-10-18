@@ -56,6 +56,7 @@ class VerbaManent(toga.App):
             porta = avvio_android.avvia(str(cartella), _lingua())
             url = f"http://127.0.0.1:{porta}/index.html?android=1&iphone=1"
             self.loop.call_soon_threadsafe(self._mostra, url)
+            self._prova_whisper()
         except Exception:
             err = traceback.format_exc()
             print(err, flush=True)
@@ -64,6 +65,21 @@ class VerbaManent(toga.App):
             except OSError:
                 pass
             self.loop.call_soon_threadsafe(lambda: setattr(self.attesa, "text", "Verba Manent IA\n\n⚠ " + err[-600:]))
+
+    def _prova_whisper(self):
+        """Solo per la prova automatica sull'iPhone simulato: se c'e' prova_whisper.wav lo trascrive."""
+        casa = Path.home()
+        wav, mod = casa / "prova_whisper.wav", casa / "ggml-small-q5_1.bin"
+        if not (wav.exists() and mod.exists()):
+            return
+        import time
+        import java
+        t0 = time.monotonic()
+        try:
+            r = java._W.INSTANCE.trascriviFile(str(mod), str(wav), "", 0.0, "en", "", 4, 1)
+        except Exception:
+            r = traceback.format_exc()
+        (casa / "prova_whisper.txt").write_text(f"{time.monotonic() - t0:.1f} s\n{r}", encoding="utf-8")
 
     def _mostra(self, url):
         self.web.url = url
