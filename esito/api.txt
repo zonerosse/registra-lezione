@@ -1,10 +1,1 @@
 == imposta ["privacy_ok", true]
-{"ok": true}
-== imposta ["lingua", "it"]
-{"ok": true}
-== avvia ["Prova iPhone", {"modo": "", "tipo": "lezione"}]
-{"ok": true, "mini": true}
-== stato []
-{"vista": "reg", "occupato": true, "registro": true, "nome": "Prova iPhone", "titolo_fine": "Prova iPhone", "avviso_fine": "", "modello": "", "agg": {"tipo": null}, "messaggi": [], "audio_ok": true, "liberi": 43.262164992, "finale": null, "cal_avviso": null, "cal_fine": null, "cal_ora": null, "secondi": 20, "slide": 0, "gb": 0.0, "livello": 4e-06, "livelli": [4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06, 4e-06], "pausa": false, "pausa_sec": 0, "avviso": "Collega il caricatore: stai trascrivendo durante la lezione e il telefono consuma di pi\u00f9.", "modo": "online", "diretta_on": false, "diretta": [], "diretta_lav": false, "n_note": 0, "aperte": [], "avvisa": {"id": "2026-10-18 0026 - Prova iPhone", "tipo": "lezione", "modo": "online", "fatto": "", "lingua": "it"}, "parti": [{"stato": "reg", "orario": "00:00 \u2013 00:30", "k": 1}], "pronti": 0, "ha_appunti": false, "spesa": null, "cornell": null, "formato": "cornell", "importa": null, "android": true, "in_carica": false, "batteria": 100, "aspetta_carica": false}
-== fine []
-{"ok": true}
