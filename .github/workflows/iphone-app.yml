@@ -10,7 +10,7 @@ on:
     - cron: '17 5 1 1,3,5,7,9,11 *'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   iphone:
@@ -66,8 +66,12 @@ jobs:
         working-directory: ios
         run: |
           P=$(find build -name "*.xcodeproj" -path "*xcode*" | head -1)
+          mkdir -p ../esito-app
+          xcodebuild -list -project "$P" | tee ../esito-app/progetto.txt
+          set -o pipefail
           xcodebuild -project "$P" -scheme "Verba Manent IA" -configuration Release -sdk iphoneos \
-                     -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build -quiet
+                     -destination 'generic/platform=iOS' CODE_SIGNING_ALLOWED=NO build 2>&1 \
+                     | grep -E "error|warning: .*(dylib|framework)|BUILD|\*\*" | tail -80 | tee ../esito-app/costruzione.txt
           echo "✓ L'app per l'iPhone vero si costruisce. Per mandarla a TestFlight servono le chiavi di Apple."
 
       - name: Firma e manda a TestFlight
@@ -97,3 +101,15 @@ jobs:
                      -exportPath /tmp/vm-export $AUTH
           rm -f "$K"
           echo "✓ Mandata a TestFlight: tra pochi minuti compare nell'app TestFlight."
+
+      - name: Pubblica l'esito
+        if: always()
+        run: |
+          mkdir -p esito-app && date -u > esito-app/quando.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git fetch -q origin iphone-prove
+          git worktree add -q /tmp/pub origin/iphone-prove
+          rm -rf /tmp/pub/esito-app && cp -R esito-app /tmp/pub/esito-app
+          cd /tmp/pub && git add -A esito-app && (git commit -q -m "App iPhone $(date -u +%d/%m\ %H:%M)" || true)
+          git push -q origin HEAD:iphone-prove
