@@ -1,1267 +1,1261 @@
-drwxr-xr-x   3 runner  staff         96 Oct 18 08:58 Documents
--rw-r--r--   1 runner  staff  190085487 Oct 18 08:58 ggml-small-q5_1.bin
-drwxr-xr-x   9 runner  staff        288 Oct 18 08:58 Library
--rw-r--r--   1 runner  staff          5 Oct 18 09:03 porta.txt
--rw-r--r--   1 runner  staff        171 Oct 18 08:58 prova_audio.txt
--rw-r--r--   1 runner  staff     160044 Oct 18 08:58 prova_dec.wav
-drwxr-xr-x   4 runner  staff        128 Oct 18 08:58 prova_pdf
--rw-r--r--   1 runner  staff      41578 Oct 18 08:58 prova_taglio.m4a
--rw-r--r--   1 runner  staff        315 Oct 18 09:00 prova_whisper.txt
--rw-r--r--   1 runner  staff     111347 Oct 18 08:58 prova.m4a
--rw-r--r--   1 runner  staff       1351 Oct 18 08:58 prova.pdf
-drwxr-xr-x   2 runner  staff         64 Oct 18 08:57 SystemData
-drwxr-xr-x  10 runner  staff        320 Oct 18 09:03 tmp
--rw-r--r--   1 runner  staff   26530550 Oct 18 09:01 voci_resnet34.onnx
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Documents:
-drwxr-xr-x  4 runner  staff  128 Oct 18 09:00 Recorded lectures
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Documents/Recorded lectures:
-drwxr-xr-x  10 runner  staff   320 Oct 18 09:01 2026-10-18 0900 - Prova iPhone
--rw-r--r--   1 runner  staff  1284 Oct 18 09:03 registra_lezione.log
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Documents/Recorded lectures/2026-10-18 0900 - Prova iPhone:
--rw-r--r--  1 runner  staff  713034 Oct 18 09:01 audio_001.wav
--rw-r--r--  1 runner  staff     447 Oct 18 09:01 info.json
--rw-r--r--  1 runner  staff     173 Oct 18 09:01 meta.json
-drwxr-xr-x  2 runner  staff      64 Oct 18 09:01 pacchetti
-drwxr-xr-x  2 runner  staff      64 Oct 18 09:00 slide
--rw-r--r--  1 runner  staff      96 Oct 18 09:01 trascrizione_001.json
--rw-r--r--  1 runner  staff    2445 Oct 18 09:01 voci_impronte.tmp
--rw-r--r--  1 runner  staff      97 Oct 18 09:01 voci.json
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Documents/Recorded lectures/2026-10-18 0900 - Prova iPhone/pacchetti:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Documents/Recorded lectures/2026-10-18 0900 - Prova iPhone/slide:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library:
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 Application Support
-drwxr-xr-x  7 runner  staff  224 Oct 18 08:58 Caches
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 Cookies
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:57 Preferences
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 Saved Application State
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:57 SplashBoard
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 WebKit
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support:
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:58 VerbaManent
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent:
-drwxr-xr-x  32 runner  staff  1024 Oct 18 08:58 rl
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl:
-drwxr-xr-x  14 runner  staff     448 Oct 18 08:55 _vendor
--rw-r--r--   1 runner  staff    6375 Oct 18 08:55 aggiorna.py
--rw-r--r--   1 runner  staff   31554 Oct 18 08:55 android_motore.py
--rw-r--r--   1 runner  staff   90749 Oct 18 08:55 appunti.py
--rw-r--r--   1 runner  staff    7883 Oct 18 08:55 calendario.py
--rw-r--r--   1 runner  staff   30699 Oct 18 08:55 chiedi.py
--rw-r--r--   1 runner  staff    3682 Oct 18 08:55 cloud.py
--rw-r--r--   1 runner  staff   35925 Oct 18 08:55 condividi.py
--rw-r--r--   1 runner  staff    5809 Oct 18 08:55 cose.py
--rw-r--r--   1 runner  staff   11398 Oct 18 08:55 docente.py
--rw-r--r--   1 runner  staff   41624 Oct 18 08:55 elaborazione.py
--rw-r--r--   1 runner  staff   17093 Oct 18 08:55 esame.py
--rw-r--r--   1 runner  staff   22965 Oct 18 08:55 finestra_web.py
-drwxr-xr-x   5 runner  staff     160 Oct 18 08:55 font
--rw-r--r--   1 runner  staff    5698 Oct 18 08:55 importa.py
-drwxr-xr-x  11 runner  staff     352 Oct 18 08:55 interfaccia
--rw-r--r--   1 runner  staff  809181 Oct 18 08:55 LICENZE.txt
--rw-r--r--   1 runner  staff  148674 Oct 18 08:55 motore.py
--rw-r--r--   1 runner  staff    5794 Oct 18 08:55 rapporti.py
--rw-r--r--   1 runner  staff   17972 Oct 18 08:55 registratore.py
--rw-r--r--   1 runner  staff    6180 Oct 18 08:55 ripasso.py
--rw-r--r--   1 runner  staff    9707 Oct 18 08:55 scarica_link.py
--rw-r--r--   1 runner  staff    7616 Oct 18 08:55 server_trascrizione.py
--rw-r--r--   1 runner  staff    3118 Oct 18 08:55 servi_video.py
--rw-r--r--   1 runner  staff   33441 Oct 18 08:55 testi.py
--rw-r--r--   1 runner  staff    2420 Oct 18 08:55 testo_importato.py
--rw-r--r--   1 runner  staff    6113 Oct 18 08:55 verifica.py
--rw-r--r--   1 runner  staff     357 Oct 18 08:55 versione_android.json
--rw-r--r--   1 runner  staff   16690 Oct 18 08:55 voci.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor:
-drwxr-xr-x  13 runner  staff     416 Oct 18 08:55 dateutil
-drwxr-xr-x  21 runner  staff     672 Oct 18 08:55 icalendar
--rw-r--r--   1 runner  staff     743 Oct 18 08:55 LEGGIMI.txt
-drwxr-xr-x   9 runner  staff     288 Oct 18 08:55 licenze
-drwxr-xr-x  28 runner  staff     896 Oct 18 08:55 pypdf
--rw-r--r--   1 runner  staff    1634 Oct 18 08:55 pypdf-LICENSE.txt
-drwxr-xr-x  16 runner  staff     512 Oct 18 08:55 recurring_ical_events
--rw-r--r--   1 runner  staff   34703 Oct 18 08:55 six.py
--rw-r--r--   1 runner  staff  165012 Oct 18 08:55 typing_extensions.py
-drwxr-xr-x   5 runner  staff     160 Oct 18 08:55 tzdata
--rw-r--r--   1 runner  staff    8852 Oct 18 08:55 x_wr_timezone.py
-drwxr-xr-x   6 runner  staff     192 Oct 18 08:55 zoneinfo
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/dateutil:
--rw-r--r--  1 runner  staff    620 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff    932 Oct 18 08:55 _common.py
--rw-r--r--  1 runner  staff    166 Oct 18 08:55 _version.py
--rw-r--r--  1 runner  staff   2678 Oct 18 08:55 easter.py
-drwxr-xr-x  5 runner  staff    160 Oct 18 08:55 parser
--rw-r--r--  1 runner  staff  24903 Oct 18 08:55 relativedelta.py
--rw-r--r--  1 runner  staff  66557 Oct 18 08:55 rrule.py
-drwxr-xr-x  7 runner  staff    224 Oct 18 08:55 tz
--rw-r--r--  1 runner  staff     59 Oct 18 08:55 tzwin.py
--rw-r--r--  1 runner  staff   1965 Oct 18 08:55 utils.py
-drwxr-xr-x  5 runner  staff    160 Oct 18 08:55 zoneinfo
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/dateutil/parser:
--rw-r--r--  1 runner  staff   1766 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  58796 Oct 18 08:55 _parser.py
--rw-r--r--  1 runner  staff  13233 Oct 18 08:55 isoparser.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/dateutil/tz:
--rw-r--r--  1 runner  staff    444 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  12977 Oct 18 08:55 _common.py
--rw-r--r--  1 runner  staff   2569 Oct 18 08:55 _factories.py
--rw-r--r--  1 runner  staff  62855 Oct 18 08:55 tz.py
--rw-r--r--  1 runner  staff  12935 Oct 18 08:55 win.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/dateutil/zoneinfo:
--rw-r--r--  1 runner  staff    5889 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  156400 Oct 18 08:55 dateutil-zoneinfo.tar.gz
--rw-r--r--  1 runner  staff    2392 Oct 18 08:55 rebuild.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar:
--rw-r--r--   1 runner  staff   3250 Oct 18 08:55 __init__.py
--rw-r--r--   1 runner  staff    520 Oct 18 08:55 _version.py
--rw-r--r--   1 runner  staff  14139 Oct 18 08:55 alarms.py
--rw-r--r--   1 runner  staff  95362 Oct 18 08:55 attr.py
-drwxr-xr-x  16 runner  staff    512 Oct 18 08:55 cal
--rw-r--r--   1 runner  staff  10203 Oct 18 08:55 caselessdict.py
--rw-r--r--   1 runner  staff   4322 Oct 18 08:55 cli.py
--rw-r--r--   1 runner  staff   1569 Oct 18 08:55 compatibility.py
--rw-r--r--   1 runner  staff    994 Oct 18 08:55 config.py
--rw-r--r--   1 runner  staff  16993 Oct 18 08:55 enums.py
--rw-r--r--   1 runner  staff  11248 Oct 18 08:55 error.py
--rw-r--r--   1 runner  staff  28624 Oct 18 08:55 param.py
-drwxr-xr-x   8 runner  staff    256 Oct 18 08:55 parser
--rw-r--r--   1 runner  staff   1997 Oct 18 08:55 parser_tools.py
-drwxr-xr-x  25 runner  staff    800 Oct 18 08:55 prop
--rw-r--r--   1 runner  staff      0 Oct 18 08:55 py.typed
-drwxr-xr-x  11 runner  staff    352 Oct 18 08:55 timezone
--rw-r--r--   1 runner  staff   4227 Oct 18 08:55 tools.py
--rw-r--r--   1 runner  staff    707 Oct 18 08:55 version.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/cal:
--rw-r--r--  1 runner  staff    825 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  26578 Oct 18 08:55 alarm.py
--rw-r--r--  1 runner  staff  13281 Oct 18 08:55 availability.py
--rw-r--r--  1 runner  staff   7226 Oct 18 08:55 available.py
--rw-r--r--  1 runner  staff  21809 Oct 18 08:55 calendar.py
--rw-r--r--  1 runner  staff   3369 Oct 18 08:55 component_factory.py
--rw-r--r--  1 runner  staff  44995 Oct 18 08:55 component.py
--rw-r--r--  1 runner  staff  19124 Oct 18 08:55 event.py
--rw-r--r--  1 runner  staff    761 Oct 18 08:55 examples.py
--rw-r--r--  1 runner  staff   6365 Oct 18 08:55 free_busy.py
--rw-r--r--  1 runner  staff   9720 Oct 18 08:55 journal.py
--rw-r--r--  1 runner  staff  10439 Oct 18 08:55 lazy.py
--rw-r--r--  1 runner  staff  17320 Oct 18 08:55 timezone.py
--rw-r--r--  1 runner  staff  14362 Oct 18 08:55 todo.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/parser:
--rw-r--r--  1 runner  staff   1435 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  11491 Oct 18 08:55 content_line.py
-drwxr-xr-x  6 runner  staff    192 Oct 18 08:55 ical
--rw-r--r--  1 runner  staff  18466 Oct 18 08:55 parameter.py
--rw-r--r--  1 runner  staff   4471 Oct 18 08:55 property.py
--rw-r--r--  1 runner  staff   8860 Oct 18 08:55 string.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/parser/ical:
--rw-r--r--  1 runner  staff    141 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   1506 Oct 18 08:55 calendar.py
--rw-r--r--  1 runner  staff  11181 Oct 18 08:55 component.py
--rw-r--r--  1 runner  staff   5428 Oct 18 08:55 lazy.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop:
--rw-r--r--   1 runner  staff   3318 Oct 18 08:55 __init__.py
--rw-r--r--   1 runner  staff   5937 Oct 18 08:55 adr.py
--rw-r--r--   1 runner  staff   4687 Oct 18 08:55 binary.py
--rw-r--r--   1 runner  staff   3395 Oct 18 08:55 boolean.py
--rw-r--r--   1 runner  staff   3012 Oct 18 08:55 broken.py
--rw-r--r--   1 runner  staff   7658 Oct 18 08:55 cal_address.py
--rw-r--r--   1 runner  staff   3718 Oct 18 08:55 categories.py
--rw-r--r--   1 runner  staff   4034 Oct 18 08:55 conference.py
-drwxr-xr-x  12 runner  staff    384 Oct 18 08:55 dt
--rw-r--r--   1 runner  staff  10346 Oct 18 08:55 factory.py
--rw-r--r--   1 runner  staff   3251 Oct 18 08:55 float.py
--rw-r--r--   1 runner  staff   4881 Oct 18 08:55 geo.py
--rw-r--r--   1 runner  staff   3735 Oct 18 08:55 image.py
--rw-r--r--   1 runner  staff   1155 Oct 18 08:55 inline.py
--rw-r--r--   1 runner  staff   4668 Oct 18 08:55 integer.py
--rw-r--r--   1 runner  staff   5337 Oct 18 08:55 n.py
--rw-r--r--   1 runner  staff   5003 Oct 18 08:55 org.py
-drwxr-xr-x   8 runner  staff    256 Oct 18 08:55 recur
--rw-r--r--   1 runner  staff   5411 Oct 18 08:55 text.py
--rw-r--r--   1 runner  staff   1145 Oct 18 08:55 uid.py
--rw-r--r--   1 runner  staff   4936 Oct 18 08:55 unknown.py
--rw-r--r--   1 runner  staff   3647 Oct 18 08:55 uri.py
--rw-r--r--   1 runner  staff   1542 Oct 18 08:55 xml_reference.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop/dt:
--rw-r--r--  1 runner  staff    491 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   1210 Oct 18 08:55 base.py
--rw-r--r--  1 runner  staff   4324 Oct 18 08:55 date.py
--rw-r--r--  1 runner  staff   6984 Oct 18 08:55 datetime.py
--rw-r--r--  1 runner  staff   6769 Oct 18 08:55 duration.py
--rw-r--r--  1 runner  staff   3367 Oct 18 08:55 list.py
--rw-r--r--  1 runner  staff  10807 Oct 18 08:55 period.py
--rw-r--r--  1 runner  staff   9123 Oct 18 08:55 time.py
--rw-r--r--  1 runner  staff   6713 Oct 18 08:55 types.py
--rw-r--r--  1 runner  staff   5794 Oct 18 08:55 utc_offset.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop/recur:
--rw-r--r--  1 runner  staff    274 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   2205 Oct 18 08:55 frequency.py
--rw-r--r--  1 runner  staff   3151 Oct 18 08:55 month.py
--rw-r--r--  1 runner  staff  11204 Oct 18 08:55 recur.py
--rw-r--r--  1 runner  staff   1308 Oct 18 08:55 skip.py
--rw-r--r--  1 runner  staff   3940 Oct 18 08:55 weekday.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/icalendar/timezone:
--rw-r--r--  1 runner  staff     571 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  219401 Oct 18 08:55 equivalent_timezone_ids_result.py
--rw-r--r--  1 runner  staff    4461 Oct 18 08:55 equivalent_timezone_ids.py
--rw-r--r--  1 runner  staff    1584 Oct 18 08:55 provider.py
--rw-r--r--  1 runner  staff    2392 Oct 18 08:55 pytz.py
--rw-r--r--  1 runner  staff    5018 Oct 18 08:55 tzid.py
--rw-r--r--  1 runner  staff    7927 Oct 18 08:55 tzp.py
--rw-r--r--  1 runner  staff    7490 Oct 18 08:55 windows_to_olson.py
--rw-r--r--  1 runner  staff    6232 Oct 18 08:55 zoneinfo.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/licenze:
--rw-r--r--  1 runner  staff   1313 Oct 18 08:55 icalendar-7.3.0-LICENSE.rst
--rw-r--r--  1 runner  staff   2889 Oct 18 08:55 python_dateutil-2.9.0.post0-LICENSE
--rw-r--r--  1 runner  staff   7652 Oct 18 08:55 recurring_ical_events-3.8.2-LICENSE
--rw-r--r--  1 runner  staff   1066 Oct 18 08:55 six-1.17.0-LICENSE
--rw-r--r--  1 runner  staff  13936 Oct 18 08:55 typing_extensions-4.16.0-LICENSE
--rw-r--r--  1 runner  staff    625 Oct 18 08:55 tzdata-2026.5-LICENSE
--rw-r--r--  1 runner  staff   7652 Oct 18 08:55 x_wr_timezone-2.0.1-LICENSE
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf:
--rw-r--r--   1 runner  staff    1494 Oct 18 08:55 __init__.py
--rw-r--r--   1 runner  staff   21013 Oct 18 08:55 _cmap.py
-drwxr-xr-x  10 runner  staff     320 Oct 18 08:55 _codecs
--rw-r--r--   1 runner  staff   11280 Oct 18 08:55 _configuration.py
-drwxr-xr-x   7 runner  staff     224 Oct 18 08:55 _crypt_providers
--rw-r--r--   1 runner  staff   63337 Oct 18 08:55 _doc_common.py
--rw-r--r--   1 runner  staff   53681 Oct 18 08:55 _encryption.py
--rw-r--r--   1 runner  staff   11385 Oct 18 08:55 _page_labels.py
--rw-r--r--   1 runner  staff  103943 Oct 18 08:55 _page.py
--rw-r--r--   1 runner  staff    2397 Oct 18 08:55 _protocols.py
--rw-r--r--   1 runner  staff   72487 Oct 18 08:55 _reader.py
-drwxr-xr-x   5 runner  staff     160 Oct 18 08:55 _text_extraction
--rw-r--r--   1 runner  staff   23663 Oct 18 08:55 _utils.py
--rw-r--r--   1 runner  staff      23 Oct 18 08:55 _version.py
--rw-r--r--   1 runner  staff  140929 Oct 18 08:55 _writer.py
-drwxr-xr-x   4 runner  staff     128 Oct 18 08:55 actions
-drwxr-xr-x   6 runner  staff     192 Oct 18 08:55 annotations
--rw-r--r--   1 runner  staff   24233 Oct 18 08:55 constants.py
--rw-r--r--   1 runner  staff    1947 Oct 18 08:55 errors.py
--rw-r--r--   1 runner  staff   38450 Oct 18 08:55 filters.py
-drwxr-xr-x  17 runner  staff     544 Oct 18 08:55 generic
--rw-r--r--   1 runner  staff    7907 Oct 18 08:55 pagerange.py
--rw-r--r--   1 runner  staff    1413 Oct 18 08:55 papersizes.py
--rw-r--r--   1 runner  staff       0 Oct 18 08:55 py.typed
--rw-r--r--   1 runner  staff    1915 Oct 18 08:55 types.py
--rw-r--r--   1 runner  staff   32148 Oct 18 08:55 xmp.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_codecs:
--rw-r--r--  1 runner  staff    1510 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   10717 Oct 18 08:55 _codecs.py
--rw-r--r--  1 runner  staff  577665 Oct 18 08:55 adobe_glyphs.py
--rw-r--r--  1 runner  staff  114976 Oct 18 08:55 core_font_metrics.py
--rw-r--r--  1 runner  staff    4269 Oct 18 08:55 pdfdoc.py
--rw-r--r--  1 runner  staff    2630 Oct 18 08:55 std.py
--rw-r--r--  1 runner  staff    4642 Oct 18 08:55 symbol.py
--rw-r--r--  1 runner  staff    4655 Oct 18 08:55 zapfding.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_crypt_providers:
--rw-r--r--  1 runner  staff  2770 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1735 Oct 18 08:55 _base.py
--rw-r--r--  1 runner  staff  7313 Oct 18 08:55 _cryptography.py
--rw-r--r--  1 runner  staff  3382 Oct 18 08:55 _fallback.py
--rw-r--r--  1 runner  staff  4050 Oct 18 08:55 _pycryptodome.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_text_extraction:
--rw-r--r--  1 runner  staff  11093 Oct 18 08:55 __init__.py
-drwxr-xr-x  6 runner  staff    192 Oct 18 08:55 _layout_mode
--rw-r--r--  1 runner  staff  15295 Oct 18 08:55 _text_extractor.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_text_extraction/_layout_mode:
--rw-r--r--  1 runner  staff    348 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  18283 Oct 18 08:55 _fixed_width_page.py
--rw-r--r--  1 runner  staff   7569 Oct 18 08:55 _text_state_manager.py
--rw-r--r--  1 runner  staff   6625 Oct 18 08:55 _text_state_params.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/actions:
--rw-r--r--  1 runner  staff   391 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  7648 Oct 18 08:55 _actions.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/annotations:
--rw-r--r--  1 runner  staff    990 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff    961 Oct 18 08:55 _base.py
--rw-r--r--  1 runner  staff  11858 Oct 18 08:55 _markup_annotations.py
--rw-r--r--  1 runner  staff   3695 Oct 18 08:55 _non_markup_annotations.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/pypdf/generic:
--rw-r--r--  1 runner  staff   3468 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  43800 Oct 18 08:55 _appearance_stream.py
--rw-r--r--  1 runner  staff  34314 Oct 18 08:55 _base.py
--rw-r--r--  1 runner  staff   3187 Oct 18 08:55 _color.py
--rw-r--r--  1 runner  staff  73017 Oct 18 08:55 _data_structures.py
--rw-r--r--  1 runner  staff  19061 Oct 18 08:55 _files.py
--rw-r--r--  1 runner  staff   5550 Oct 18 08:55 _fit.py
--rw-r--r--  1 runner  staff  43622 Oct 18 08:55 _font.py
--rw-r--r--  1 runner  staff  15158 Oct 18 08:55 _image_inline.py
--rw-r--r--  1 runner  staff  28136 Oct 18 08:55 _image_xobject.py
--rw-r--r--  1 runner  staff   6207 Oct 18 08:55 _link.py
--rw-r--r--  1 runner  staff   1094 Oct 18 08:55 _outline.py
--rw-r--r--  1 runner  staff   3969 Oct 18 08:55 _rectangle.py
--rw-r--r--  1 runner  staff   7875 Oct 18 08:55 _utils.py
--rw-r--r--  1 runner  staff   7577 Oct 18 08:55 _viewerpref.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events:
--rw-r--r--  1 runner  staff   3610 Oct 18 08:55 __init__.py
-drwxr-xr-x  8 runner  staff    256 Oct 18 08:55 adapters
--rw-r--r--  1 runner  staff    668 Oct 18 08:55 constants.py
--rw-r--r--  1 runner  staff   1430 Oct 18 08:55 errors.py
--rw-r--r--  1 runner  staff    749 Oct 18 08:55 examples.py
--rw-r--r--  1 runner  staff   6908 Oct 18 08:55 occurrence.py
--rw-r--r--  1 runner  staff   4624 Oct 18 08:55 pages.py
--rw-r--r--  1 runner  staff  14367 Oct 18 08:55 query.py
-drwxr-xr-x  7 runner  staff    224 Oct 18 08:55 selection
-drwxr-xr-x  5 runner  staff    160 Oct 18 08:55 series
--rw-r--r--  1 runner  staff    673 Oct 18 08:55 types.py
--rw-r--r--  1 runner  staff   8093 Oct 18 08:55 util.py
--rw-r--r--  1 runner  staff    468 Oct 18 08:55 version.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/adapters:
--rw-r--r--  1 runner  staff   361 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   531 Oct 18 08:55 alarm.py
--rw-r--r--  1 runner  staff  9189 Oct 18 08:55 component.py
--rw-r--r--  1 runner  staff  1658 Oct 18 08:55 event.py
--rw-r--r--  1 runner  staff  1263 Oct 18 08:55 journal.py
--rw-r--r--  1 runner  staff  2721 Oct 18 08:55 todo.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/selection:
--rw-r--r--  1 runner  staff   281 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  3262 Oct 18 08:55 alarm.py
--rw-r--r--  1 runner  staff  2183 Oct 18 08:55 all.py
--rw-r--r--  1 runner  staff   979 Oct 18 08:55 base.py
--rw-r--r--  1 runner  staff  3697 Oct 18 08:55 name.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/series:
--rw-r--r--  1 runner  staff    305 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   4872 Oct 18 08:55 alarm.py
--rw-r--r--  1 runner  staff  21955 Oct 18 08:55 rrule.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata:
--rw-r--r--   1 runner  staff   252 Oct 18 08:55 __init__.py
-drwxr-xr-x  70 runner  staff  2240 Oct 18 08:55 zoneinfo
--rw-r--r--   1 runner  staff  9102 Oct 18 08:55 zones
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo:
--rw-r--r--    1 runner  staff       0 Oct 18 08:55 __init__.py
-drwxr-xr-x   57 runner  staff    1824 Oct 18 08:55 Africa
-drwxr-xr-x  150 runner  staff    4800 Oct 18 08:55 America
-drwxr-xr-x   15 runner  staff     480 Oct 18 08:55 Antarctica
-drwxr-xr-x    4 runner  staff     128 Oct 18 08:55 Arctic
-drwxr-xr-x  102 runner  staff    3264 Oct 18 08:55 Asia
-drwxr-xr-x   15 runner  staff     480 Oct 18 08:55 Atlantic
-drwxr-xr-x   26 runner  staff     832 Oct 18 08:55 Australia
-drwxr-xr-x    7 runner  staff     224 Oct 18 08:55 Brazil
-drwxr-xr-x   11 runner  staff     352 Oct 18 08:55 Canada
--rw-r--r--    1 runner  staff    1103 Oct 18 08:55 CET
-drwxr-xr-x    5 runner  staff     160 Oct 18 08:55 Chile
--rw-r--r--    1 runner  staff     922 Oct 18 08:55 CST6CDT
--rw-r--r--    1 runner  staff    1117 Oct 18 08:55 Cuba
--rw-r--r--    1 runner  staff     682 Oct 18 08:55 EET
--rw-r--r--    1 runner  staff    1309 Oct 18 08:55 Egypt
--rw-r--r--    1 runner  staff    1496 Oct 18 08:55 Eire
--rw-r--r--    1 runner  staff     149 Oct 18 08:55 EST
--rw-r--r--    1 runner  staff     922 Oct 18 08:55 EST5EDT
-drwxr-xr-x   38 runner  staff    1216 Oct 18 08:55 Etc
-drwxr-xr-x   67 runner  staff    2144 Oct 18 08:55 Europe
--rw-r--r--    1 runner  staff     113 Oct 18 08:55 Factory
--rw-r--r--    1 runner  staff    1599 Oct 18 08:55 GB
--rw-r--r--    1 runner  staff    1599 Oct 18 08:55 GB-Eire
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 GMT
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 GMT-0
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 GMT+0
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 GMT0
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 Greenwich
--rw-r--r--    1 runner  staff     775 Oct 18 08:55 Hongkong
--rw-r--r--    1 runner  staff     221 Oct 18 08:55 HST
--rw-r--r--    1 runner  staff     130 Oct 18 08:55 Iceland
-drwxr-xr-x   14 runner  staff     448 Oct 18 08:55 Indian
--rw-r--r--    1 runner  staff     812 Oct 18 08:55 Iran
--rw-r--r--    1 runner  staff    4841 Oct 18 08:55 iso3166.tab
--rw-r--r--    1 runner  staff    1074 Oct 18 08:55 Israel
--rw-r--r--    1 runner  staff     339 Oct 18 08:55 Jamaica
--rw-r--r--    1 runner  staff     213 Oct 18 08:55 Japan
--rw-r--r--    1 runner  staff     219 Oct 18 08:55 Kwajalein
--rw-r--r--    1 runner  staff    3694 Oct 18 08:55 leapseconds
--rw-r--r--    1 runner  staff     431 Oct 18 08:55 Libya
--rw-r--r--    1 runner  staff    1103 Oct 18 08:55 MET
-drwxr-xr-x    6 runner  staff     192 Oct 18 08:55 Mexico
--rw-r--r--    1 runner  staff     240 Oct 18 08:55 MST
--rw-r--r--    1 runner  staff     922 Oct 18 08:55 MST7MDT
--rw-r--r--    1 runner  staff    1042 Oct 18 08:55 Navajo
--rw-r--r--    1 runner  staff    1043 Oct 18 08:55 NZ
--rw-r--r--    1 runner  staff     808 Oct 18 08:55 NZ-CHAT
-drwxr-xr-x   47 runner  staff    1504 Oct 18 08:55 Pacific
--rw-r--r--    1 runner  staff     923 Oct 18 08:55 Poland
--rw-r--r--    1 runner  staff    1463 Oct 18 08:55 Portugal
--rw-r--r--    1 runner  staff     393 Oct 18 08:55 PRC
--rw-r--r--    1 runner  staff     922 Oct 18 08:55 PST8PDT
--rw-r--r--    1 runner  staff     511 Oct 18 08:55 ROC
--rw-r--r--    1 runner  staff     415 Oct 18 08:55 ROK
--rw-r--r--    1 runner  staff     256 Oct 18 08:55 Singapore
--rw-r--r--    1 runner  staff    1200 Oct 18 08:55 Turkey
--rw-r--r--    1 runner  staff  104917 Oct 18 08:55 tzdata.zi
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 UCT
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 Universal
-drwxr-xr-x   15 runner  staff     480 Oct 18 08:55 US
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 UTC
--rw-r--r--    1 runner  staff     908 Oct 18 08:55 W-SU
--rw-r--r--    1 runner  staff    1463 Oct 18 08:55 WET
--rw-r--r--    1 runner  staff   18809 Oct 18 08:55 zone.tab
--rw-r--r--    1 runner  staff   17592 Oct 18 08:55 zone1970.tab
--rw-r--r--    1 runner  staff    8425 Oct 18 08:55 zonenow.tab
--rw-r--r--    1 runner  staff     111 Oct 18 08:55 Zulu
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Africa:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Abidjan
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Accra
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Addis_Ababa
--rw-r--r--  1 runner  staff   470 Oct 18 08:55 Algiers
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Asmara
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Asmera
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Bamako
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Bangui
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Banjul
--rw-r--r--  1 runner  staff   149 Oct 18 08:55 Bissau
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Blantyre
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Brazzaville
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Bujumbura
--rw-r--r--  1 runner  staff  1309 Oct 18 08:55 Cairo
--rw-r--r--  1 runner  staff   793 Oct 18 08:55 Casablanca
--rw-r--r--  1 runner  staff   562 Oct 18 08:55 Ceuta
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Conakry
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Dakar
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Dar_es_Salaam
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Djibouti
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Douala
--rw-r--r--  1 runner  staff   704 Oct 18 08:55 El_Aaiun
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Freetown
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Gaborone
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Harare
--rw-r--r--  1 runner  staff   190 Oct 18 08:55 Johannesburg
--rw-r--r--  1 runner  staff   458 Oct 18 08:55 Juba
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Kampala
--rw-r--r--  1 runner  staff   458 Oct 18 08:55 Khartoum
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Kigali
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Kinshasa
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Lagos
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Libreville
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Lome
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Luanda
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Lubumbashi
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Lusaka
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Malabo
--rw-r--r--  1 runner  staff   131 Oct 18 08:55 Maputo
--rw-r--r--  1 runner  staff   190 Oct 18 08:55 Maseru
--rw-r--r--  1 runner  staff   190 Oct 18 08:55 Mbabane
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Mogadishu
--rw-r--r--  1 runner  staff   164 Oct 18 08:55 Monrovia
--rw-r--r--  1 runner  staff   191 Oct 18 08:55 Nairobi
--rw-r--r--  1 runner  staff   160 Oct 18 08:55 Ndjamena
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Niamey
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Nouakchott
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Ouagadougou
--rw-r--r--  1 runner  staff   180 Oct 18 08:55 Porto-Novo
--rw-r--r--  1 runner  staff   173 Oct 18 08:55 Sao_Tome
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Timbuktu
--rw-r--r--  1 runner  staff   431 Oct 18 08:55 Tripoli
--rw-r--r--  1 runner  staff   449 Oct 18 08:55 Tunis
--rw-r--r--  1 runner  staff   638 Oct 18 08:55 Windhoek
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America:
--rw-r--r--   1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--   1 runner  staff   969 Oct 18 08:55 Adak
--rw-r--r--   1 runner  staff   977 Oct 18 08:55 Anchorage
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Anguilla
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Antigua
--rw-r--r--   1 runner  staff   592 Oct 18 08:55 Araguaina
-drwxr-xr-x  16 runner  staff   512 Oct 18 08:55 Argentina
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Aruba
--rw-r--r--   1 runner  staff  1085 Oct 18 08:55 Asuncion
--rw-r--r--   1 runner  staff   149 Oct 18 08:55 Atikokan
--rw-r--r--   1 runner  staff   969 Oct 18 08:55 Atka
--rw-r--r--   1 runner  staff   682 Oct 18 08:55 Bahia
--rw-r--r--   1 runner  staff   700 Oct 18 08:55 Bahia_Banderas
--rw-r--r--   1 runner  staff   278 Oct 18 08:55 Barbados
--rw-r--r--   1 runner  staff   394 Oct 18 08:55 Belem
--rw-r--r--   1 runner  staff  1045 Oct 18 08:55 Belize
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Blanc-Sablon
--rw-r--r--   1 runner  staff   430 Oct 18 08:55 Boa_Vista
--rw-r--r--   1 runner  staff   179 Oct 18 08:55 Bogota
--rw-r--r--   1 runner  staff   999 Oct 18 08:55 Boise
--rw-r--r--   1 runner  staff   708 Oct 18 08:55 Buenos_Aires
--rw-r--r--   1 runner  staff   883 Oct 18 08:55 Cambridge_Bay
--rw-r--r--   1 runner  staff   952 Oct 18 08:55 Campo_Grande
--rw-r--r--   1 runner  staff   538 Oct 18 08:55 Cancun
--rw-r--r--   1 runner  staff   190 Oct 18 08:55 Caracas
--rw-r--r--   1 runner  staff   708 Oct 18 08:55 Catamarca
--rw-r--r--   1 runner  staff   151 Oct 18 08:55 Cayenne
--rw-r--r--   1 runner  staff   149 Oct 18 08:55 Cayman
--rw-r--r--   1 runner  staff  1754 Oct 18 08:55 Chicago
--rw-r--r--   1 runner  staff   691 Oct 18 08:55 Chihuahua
--rw-r--r--   1 runner  staff   718 Oct 18 08:55 Ciudad_Juarez
--rw-r--r--   1 runner  staff   149 Oct 18 08:55 Coral_Harbour
--rw-r--r--   1 runner  staff   708 Oct 18 08:55 Cordoba
--rw-r--r--   1 runner  staff   232 Oct 18 08:55 Costa_Rica
--rw-r--r--   1 runner  staff  1362 Oct 18 08:55 Coyhaique
--rw-r--r--   1 runner  staff   240 Oct 18 08:55 Creston
--rw-r--r--   1 runner  staff   934 Oct 18 08:55 Cuiaba
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Curacao
--rw-r--r--   1 runner  staff   447 Oct 18 08:55 Danmarkshavn
--rw-r--r--   1 runner  staff  1029 Oct 18 08:55 Dawson
--rw-r--r--   1 runner  staff   683 Oct 18 08:55 Dawson_Creek
--rw-r--r--   1 runner  staff  1042 Oct 18 08:55 Denver
--rw-r--r--   1 runner  staff   899 Oct 18 08:55 Detroit
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Dominica
--rw-r--r--   1 runner  staff  1313 Oct 18 08:55 Edmonton
--rw-r--r--   1 runner  staff   436 Oct 18 08:55 Eirunepe
--rw-r--r--   1 runner  staff   176 Oct 18 08:55 El_Salvador
--rw-r--r--   1 runner  staff  1367 Oct 18 08:55 Ensenada
--rw-r--r--   1 runner  staff  1448 Oct 18 08:55 Fort_Nelson
--rw-r--r--   1 runner  staff   531 Oct 18 08:55 Fort_Wayne
--rw-r--r--   1 runner  staff   484 Oct 18 08:55 Fortaleza
--rw-r--r--   1 runner  staff   880 Oct 18 08:55 Glace_Bay
--rw-r--r--   1 runner  staff   965 Oct 18 08:55 Godthab
--rw-r--r--   1 runner  staff  1580 Oct 18 08:55 Goose_Bay
--rw-r--r--   1 runner  staff   853 Oct 18 08:55 Grand_Turk
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Grenada
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Guadeloupe
--rw-r--r--   1 runner  staff   212 Oct 18 08:55 Guatemala
--rw-r--r--   1 runner  staff   179 Oct 18 08:55 Guayaquil
--rw-r--r--   1 runner  staff   181 Oct 18 08:55 Guyana
--rw-r--r--   1 runner  staff  1672 Oct 18 08:55 Halifax
--rw-r--r--   1 runner  staff  1117 Oct 18 08:55 Havana
--rw-r--r--   1 runner  staff   258 Oct 18 08:55 Hermosillo
-drwxr-xr-x  11 runner  staff   352 Oct 18 08:55 Indiana
--rw-r--r--   1 runner  staff   531 Oct 18 08:55 Indianapolis
--rw-r--r--   1 runner  staff  1160 Oct 18 08:55 Inuvik
--rw-r--r--   1 runner  staff   855 Oct 18 08:55 Iqaluit
--rw-r--r--   1 runner  staff   339 Oct 18 08:55 Jamaica
--rw-r--r--   1 runner  staff   690 Oct 18 08:55 Jujuy
--rw-r--r--   1 runner  staff   966 Oct 18 08:55 Juneau
-drwxr-xr-x   5 runner  staff   160 Oct 18 08:55 Kentucky
--rw-r--r--   1 runner  staff  1016 Oct 18 08:55 Knox_IN
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Kralendijk
--rw-r--r--   1 runner  staff   170 Oct 18 08:55 La_Paz
--rw-r--r--   1 runner  staff   283 Oct 18 08:55 Lima
--rw-r--r--   1 runner  staff  1294 Oct 18 08:55 Los_Angeles
--rw-r--r--   1 runner  staff  1242 Oct 18 08:55 Louisville
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Lower_Princes
--rw-r--r--   1 runner  staff   502 Oct 18 08:55 Maceio
--rw-r--r--   1 runner  staff   295 Oct 18 08:55 Managua
--rw-r--r--   1 runner  staff   412 Oct 18 08:55 Manaus
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Marigot
--rw-r--r--   1 runner  staff   178 Oct 18 08:55 Martinique
--rw-r--r--   1 runner  staff   437 Oct 18 08:55 Matamoros
--rw-r--r--   1 runner  staff   690 Oct 18 08:55 Mazatlan
--rw-r--r--   1 runner  staff   708 Oct 18 08:55 Mendoza
--rw-r--r--   1 runner  staff   917 Oct 18 08:55 Menominee
--rw-r--r--   1 runner  staff   654 Oct 18 08:55 Merida
--rw-r--r--   1 runner  staff   586 Oct 18 08:55 Metlakatla
--rw-r--r--   1 runner  staff   773 Oct 18 08:55 Mexico_City
--rw-r--r--   1 runner  staff   550 Oct 18 08:55 Miquelon
--rw-r--r--   1 runner  staff  1493 Oct 18 08:55 Moncton
--rw-r--r--   1 runner  staff   709 Oct 18 08:55 Monterrey
--rw-r--r--   1 runner  staff   969 Oct 18 08:55 Montevideo
--rw-r--r--   1 runner  staff  1717 Oct 18 08:55 Montreal
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Montserrat
--rw-r--r--   1 runner  staff  1717 Oct 18 08:55 Nassau
--rw-r--r--   1 runner  staff  1744 Oct 18 08:55 New_York
--rw-r--r--   1 runner  staff  1717 Oct 18 08:55 Nipigon
--rw-r--r--   1 runner  staff   975 Oct 18 08:55 Nome
--rw-r--r--   1 runner  staff   484 Oct 18 08:55 Noronha
-drwxr-xr-x   6 runner  staff   192 Oct 18 08:55 North_Dakota
--rw-r--r--   1 runner  staff   965 Oct 18 08:55 Nuuk
--rw-r--r--   1 runner  staff   718 Oct 18 08:55 Ojinaga
--rw-r--r--   1 runner  staff   149 Oct 18 08:55 Panama
--rw-r--r--   1 runner  staff   855 Oct 18 08:55 Pangnirtung
--rw-r--r--   1 runner  staff   187 Oct 18 08:55 Paramaribo
--rw-r--r--   1 runner  staff   240 Oct 18 08:55 Phoenix
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Port_of_Spain
--rw-r--r--   1 runner  staff   565 Oct 18 08:55 Port-au-Prince
--rw-r--r--   1 runner  staff   418 Oct 18 08:55 Porto_Acre
--rw-r--r--   1 runner  staff   394 Oct 18 08:55 Porto_Velho
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Puerto_Rico
--rw-r--r--   1 runner  staff  1218 Oct 18 08:55 Punta_Arenas
--rw-r--r--   1 runner  staff  1637 Oct 18 08:55 Rainy_River
--rw-r--r--   1 runner  staff   807 Oct 18 08:55 Rankin_Inlet
--rw-r--r--   1 runner  staff   484 Oct 18 08:55 Recife
--rw-r--r--   1 runner  staff   638 Oct 18 08:55 Regina
--rw-r--r--   1 runner  staff   807 Oct 18 08:55 Resolute
--rw-r--r--   1 runner  staff   418 Oct 18 08:55 Rio_Branco
--rw-r--r--   1 runner  staff   708 Oct 18 08:55 Rosario
--rw-r--r--   1 runner  staff  1367 Oct 18 08:55 Santa_Isabel
--rw-r--r--   1 runner  staff   409 Oct 18 08:55 Santarem
--rw-r--r--   1 runner  staff  1354 Oct 18 08:55 Santiago
--rw-r--r--   1 runner  staff   317 Oct 18 08:55 Santo_Domingo
--rw-r--r--   1 runner  staff   952 Oct 18 08:55 Sao_Paulo
--rw-r--r--   1 runner  staff   984 Oct 18 08:55 Scoresbysund
--rw-r--r--   1 runner  staff  1042 Oct 18 08:55 Shiprock
--rw-r--r--   1 runner  staff   956 Oct 18 08:55 Sitka
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 St_Barthelemy
--rw-r--r--   1 runner  staff  1878 Oct 18 08:55 St_Johns
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 St_Kitts
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 St_Lucia
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 St_Thomas
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 St_Vincent
--rw-r--r--   1 runner  staff   368 Oct 18 08:55 Swift_Current
--rw-r--r--   1 runner  staff   194 Oct 18 08:55 Tegucigalpa
--rw-r--r--   1 runner  staff   455 Oct 18 08:55 Thule
--rw-r--r--   1 runner  staff  1717 Oct 18 08:55 Thunder_Bay
--rw-r--r--   1 runner  staff  1367 Oct 18 08:55 Tijuana
--rw-r--r--   1 runner  staff  1717 Oct 18 08:55 Toronto
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Tortola
--rw-r--r--   1 runner  staff  1673 Oct 18 08:55 Vancouver
--rw-r--r--   1 runner  staff   177 Oct 18 08:55 Virgin
--rw-r--r--   1 runner  staff  1029 Oct 18 08:55 Whitehorse
--rw-r--r--   1 runner  staff  1637 Oct 18 08:55 Winnipeg
--rw-r--r--   1 runner  staff   946 Oct 18 08:55 Yakutat
--rw-r--r--   1 runner  staff  1313 Oct 18 08:55 Yellowknife
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Argentina:
--rw-r--r--  1 runner  staff    0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Buenos_Aires
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Catamarca
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 ComodRivadavia
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Cordoba
--rw-r--r--  1 runner  staff  690 Oct 18 08:55 Jujuy
--rw-r--r--  1 runner  staff  717 Oct 18 08:55 La_Rioja
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Mendoza
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Rio_Gallegos
--rw-r--r--  1 runner  staff  690 Oct 18 08:55 Salta
--rw-r--r--  1 runner  staff  717 Oct 18 08:55 San_Juan
--rw-r--r--  1 runner  staff  717 Oct 18 08:55 San_Luis
--rw-r--r--  1 runner  staff  726 Oct 18 08:55 Tucuman
--rw-r--r--  1 runner  staff  708 Oct 18 08:55 Ushuaia
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Indiana:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   531 Oct 18 08:55 Indianapolis
--rw-r--r--  1 runner  staff  1016 Oct 18 08:55 Knox
--rw-r--r--  1 runner  staff   567 Oct 18 08:55 Marengo
--rw-r--r--  1 runner  staff   683 Oct 18 08:55 Petersburg
--rw-r--r--  1 runner  staff   522 Oct 18 08:55 Tell_City
--rw-r--r--  1 runner  staff   369 Oct 18 08:55 Vevay
--rw-r--r--  1 runner  staff   558 Oct 18 08:55 Vincennes
--rw-r--r--  1 runner  staff   603 Oct 18 08:55 Winamac
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Kentucky:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1242 Oct 18 08:55 Louisville
--rw-r--r--  1 runner  staff   972 Oct 18 08:55 Monticello
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/North_Dakota:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1043 Oct 18 08:55 Beulah
--rw-r--r--  1 runner  staff   990 Oct 18 08:55 Center
--rw-r--r--  1 runner  staff   990 Oct 18 08:55 New_Salem
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Antarctica:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   287 Oct 18 08:55 Casey
--rw-r--r--  1 runner  staff   197 Oct 18 08:55 Davis
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 DumontDUrville
--rw-r--r--  1 runner  staff   976 Oct 18 08:55 Macquarie
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Mawson
--rw-r--r--  1 runner  staff  1043 Oct 18 08:55 McMurdo
--rw-r--r--  1 runner  staff   887 Oct 18 08:55 Palmer
--rw-r--r--  1 runner  staff   132 Oct 18 08:55 Rothera
--rw-r--r--  1 runner  staff  1043 Oct 18 08:55 South_Pole
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Syowa
--rw-r--r--  1 runner  staff   158 Oct 18 08:55 Troll
--rw-r--r--  1 runner  staff   170 Oct 18 08:55 Vostok
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Arctic:
--rw-r--r--  1 runner  staff    0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  705 Oct 18 08:55 Longyearbyen
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Asia:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Aden
--rw-r--r--  1 runner  staff   618 Oct 18 08:55 Almaty
--rw-r--r--  1 runner  staff   928 Oct 18 08:55 Amman
--rw-r--r--  1 runner  staff   743 Oct 18 08:55 Anadyr
--rw-r--r--  1 runner  staff   606 Oct 18 08:55 Aqtau
--rw-r--r--  1 runner  staff   615 Oct 18 08:55 Aqtobe
--rw-r--r--  1 runner  staff   375 Oct 18 08:55 Ashgabat
--rw-r--r--  1 runner  staff   375 Oct 18 08:55 Ashkhabad
--rw-r--r--  1 runner  staff   616 Oct 18 08:55 Atyrau
--rw-r--r--  1 runner  staff   630 Oct 18 08:55 Baghdad
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Bahrain
--rw-r--r--  1 runner  staff   744 Oct 18 08:55 Baku
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Bangkok
--rw-r--r--  1 runner  staff   753 Oct 18 08:55 Barnaul
--rw-r--r--  1 runner  staff   732 Oct 18 08:55 Beirut
--rw-r--r--  1 runner  staff   618 Oct 18 08:55 Bishkek
--rw-r--r--  1 runner  staff   320 Oct 18 08:55 Brunei
--rw-r--r--  1 runner  staff   220 Oct 18 08:55 Calcutta
--rw-r--r--  1 runner  staff   750 Oct 18 08:55 Chita
--rw-r--r--  1 runner  staff   594 Oct 18 08:55 Choibalsan
--rw-r--r--  1 runner  staff   393 Oct 18 08:55 Chongqing
--rw-r--r--  1 runner  staff   393 Oct 18 08:55 Chungking
--rw-r--r--  1 runner  staff   247 Oct 18 08:55 Colombo
--rw-r--r--  1 runner  staff   231 Oct 18 08:55 Dacca
--rw-r--r--  1 runner  staff  1234 Oct 18 08:55 Damascus
--rw-r--r--  1 runner  staff   231 Oct 18 08:55 Dhaka
--rw-r--r--  1 runner  staff   170 Oct 18 08:55 Dili
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Dubai
--rw-r--r--  1 runner  staff   366 Oct 18 08:55 Dushanbe
--rw-r--r--  1 runner  staff   940 Oct 18 08:55 Famagusta
--rw-r--r--  1 runner  staff  2950 Oct 18 08:55 Gaza
--rw-r--r--  1 runner  staff   393 Oct 18 08:55 Harbin
--rw-r--r--  1 runner  staff  2968 Oct 18 08:55 Hebron
--rw-r--r--  1 runner  staff   232 Oct 18 08:55 Ho_Chi_Minh
--rw-r--r--  1 runner  staff   775 Oct 18 08:55 Hong_Kong
--rw-r--r--  1 runner  staff   594 Oct 18 08:55 Hovd
--rw-r--r--  1 runner  staff   760 Oct 18 08:55 Irkutsk
--rw-r--r--  1 runner  staff  1200 Oct 18 08:55 Istanbul
--rw-r--r--  1 runner  staff   248 Oct 18 08:55 Jakarta
--rw-r--r--  1 runner  staff   171 Oct 18 08:55 Jayapura
--rw-r--r--  1 runner  staff  1074 Oct 18 08:55 Jerusalem
--rw-r--r--  1 runner  staff   159 Oct 18 08:55 Kabul
--rw-r--r--  1 runner  staff   727 Oct 18 08:55 Kamchatka
--rw-r--r--  1 runner  staff   266 Oct 18 08:55 Karachi
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Kashgar
--rw-r--r--  1 runner  staff   161 Oct 18 08:55 Kathmandu
--rw-r--r--  1 runner  staff   161 Oct 18 08:55 Katmandu
--rw-r--r--  1 runner  staff   775 Oct 18 08:55 Khandyga
--rw-r--r--  1 runner  staff   220 Oct 18 08:55 Kolkata
--rw-r--r--  1 runner  staff   741 Oct 18 08:55 Krasnoyarsk
--rw-r--r--  1 runner  staff   256 Oct 18 08:55 Kuala_Lumpur
--rw-r--r--  1 runner  staff   320 Oct 18 08:55 Kuching
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Kuwait
--rw-r--r--  1 runner  staff   791 Oct 18 08:55 Macao
--rw-r--r--  1 runner  staff   791 Oct 18 08:55 Macau
--rw-r--r--  1 runner  staff   751 Oct 18 08:55 Magadan
--rw-r--r--  1 runner  staff   190 Oct 18 08:55 Makassar
--rw-r--r--  1 runner  staff   274 Oct 18 08:55 Manila
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Muscat
--rw-r--r--  1 runner  staff   597 Oct 18 08:55 Nicosia
--rw-r--r--  1 runner  staff   726 Oct 18 08:55 Novokuznetsk
--rw-r--r--  1 runner  staff   753 Oct 18 08:55 Novosibirsk
--rw-r--r--  1 runner  staff   741 Oct 18 08:55 Omsk
--rw-r--r--  1 runner  staff   625 Oct 18 08:55 Oral
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Phnom_Penh
--rw-r--r--  1 runner  staff   247 Oct 18 08:55 Pontianak
--rw-r--r--  1 runner  staff   183 Oct 18 08:55 Pyongyang
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Qatar
--rw-r--r--  1 runner  staff   624 Oct 18 08:55 Qostanay
--rw-r--r--  1 runner  staff   624 Oct 18 08:55 Qyzylorda
--rw-r--r--  1 runner  staff   187 Oct 18 08:55 Rangoon
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Riyadh
--rw-r--r--  1 runner  staff   232 Oct 18 08:55 Saigon
--rw-r--r--  1 runner  staff   755 Oct 18 08:55 Sakhalin
--rw-r--r--  1 runner  staff   366 Oct 18 08:55 Samarkand
--rw-r--r--  1 runner  staff   415 Oct 18 08:55 Seoul
--rw-r--r--  1 runner  staff   393 Oct 18 08:55 Shanghai
--rw-r--r--  1 runner  staff   256 Oct 18 08:55 Singapore
--rw-r--r--  1 runner  staff   742 Oct 18 08:55 Srednekolymsk
--rw-r--r--  1 runner  staff   511 Oct 18 08:55 Taipei
--rw-r--r--  1 runner  staff   366 Oct 18 08:55 Tashkent
--rw-r--r--  1 runner  staff   620 Oct 18 08:55 Tbilisi
--rw-r--r--  1 runner  staff   812 Oct 18 08:55 Tehran
--rw-r--r--  1 runner  staff  1074 Oct 18 08:55 Tel_Aviv
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Thimbu
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Thimphu
--rw-r--r--  1 runner  staff   213 Oct 18 08:55 Tokyo
--rw-r--r--  1 runner  staff   753 Oct 18 08:55 Tomsk
--rw-r--r--  1 runner  staff   190 Oct 18 08:55 Ujung_Pandang
--rw-r--r--  1 runner  staff   594 Oct 18 08:55 Ulaanbaatar
--rw-r--r--  1 runner  staff   594 Oct 18 08:55 Ulan_Bator
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Urumqi
--rw-r--r--  1 runner  staff   771 Oct 18 08:55 Ust-Nera
--rw-r--r--  1 runner  staff   152 Oct 18 08:55 Vientiane
--rw-r--r--  1 runner  staff   742 Oct 18 08:55 Vladivostok
--rw-r--r--  1 runner  staff   741 Oct 18 08:55 Yakutsk
--rw-r--r--  1 runner  staff   187 Oct 18 08:55 Yangon
--rw-r--r--  1 runner  staff   760 Oct 18 08:55 Yekaterinburg
--rw-r--r--  1 runner  staff   708 Oct 18 08:55 Yerevan
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Atlantic:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1401 Oct 18 08:55 Azores
--rw-r--r--  1 runner  staff  1024 Oct 18 08:55 Bermuda
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Canary
--rw-r--r--  1 runner  staff   175 Oct 18 08:55 Cape_Verde
--rw-r--r--  1 runner  staff   441 Oct 18 08:55 Faeroe
--rw-r--r--  1 runner  staff   441 Oct 18 08:55 Faroe
--rw-r--r--  1 runner  staff   705 Oct 18 08:55 Jan_Mayen
--rw-r--r--  1 runner  staff  1372 Oct 18 08:55 Madeira
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 Reykjavik
--rw-r--r--  1 runner  staff   132 Oct 18 08:55 South_Georgia
--rw-r--r--  1 runner  staff   130 Oct 18 08:55 St_Helena
--rw-r--r--  1 runner  staff   789 Oct 18 08:55 Stanley
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Australia:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 ACT
--rw-r--r--  1 runner  staff   921 Oct 18 08:55 Adelaide
--rw-r--r--  1 runner  staff   289 Oct 18 08:55 Brisbane
--rw-r--r--  1 runner  staff   941 Oct 18 08:55 Broken_Hill
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 Canberra
--rw-r--r--  1 runner  staff  1003 Oct 18 08:55 Currie
--rw-r--r--  1 runner  staff   234 Oct 18 08:55 Darwin
--rw-r--r--  1 runner  staff   314 Oct 18 08:55 Eucla
--rw-r--r--  1 runner  staff  1003 Oct 18 08:55 Hobart
--rw-r--r--  1 runner  staff   692 Oct 18 08:55 LHI
--rw-r--r--  1 runner  staff   325 Oct 18 08:55 Lindeman
--rw-r--r--  1 runner  staff   692 Oct 18 08:55 Lord_Howe
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 Melbourne
--rw-r--r--  1 runner  staff   234 Oct 18 08:55 North
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 NSW
--rw-r--r--  1 runner  staff   306 Oct 18 08:55 Perth
--rw-r--r--  1 runner  staff   289 Oct 18 08:55 Queensland
--rw-r--r--  1 runner  staff   921 Oct 18 08:55 South
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 Sydney
--rw-r--r--  1 runner  staff  1003 Oct 18 08:55 Tasmania
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 Victoria
--rw-r--r--  1 runner  staff   306 Oct 18 08:55 West
--rw-r--r--  1 runner  staff   941 Oct 18 08:55 Yancowinna
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Brazil:
--rw-r--r--  1 runner  staff    0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  418 Oct 18 08:55 Acre
--rw-r--r--  1 runner  staff  484 Oct 18 08:55 DeNoronha
--rw-r--r--  1 runner  staff  952 Oct 18 08:55 East
--rw-r--r--  1 runner  staff  412 Oct 18 08:55 West
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Canada:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1672 Oct 18 08:55 Atlantic
--rw-r--r--  1 runner  staff  1637 Oct 18 08:55 Central
--rw-r--r--  1 runner  staff  1717 Oct 18 08:55 Eastern
--rw-r--r--  1 runner  staff  1313 Oct 18 08:55 Mountain
--rw-r--r--  1 runner  staff  1878 Oct 18 08:55 Newfoundland
--rw-r--r--  1 runner  staff  1673 Oct 18 08:55 Pacific
--rw-r--r--  1 runner  staff   638 Oct 18 08:55 Saskatchewan
--rw-r--r--  1 runner  staff  1029 Oct 18 08:55 Yukon
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Chile:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1354 Oct 18 08:55 Continental
--rw-r--r--  1 runner  staff  1174 Oct 18 08:55 EasterIsland
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Etc:
--rw-r--r--  1 runner  staff    0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 GMT
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 GMT-0
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-1
--rw-r--r--  1 runner  staff  115 Oct 18 08:55 GMT-10
--rw-r--r--  1 runner  staff  115 Oct 18 08:55 GMT-11
--rw-r--r--  1 runner  staff  115 Oct 18 08:55 GMT-12
--rw-r--r--  1 runner  staff  115 Oct 18 08:55 GMT-13
--rw-r--r--  1 runner  staff  115 Oct 18 08:55 GMT-14
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-2
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-3
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-4
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-5
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-6
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-7
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-8
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT-9
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 GMT+0
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+1
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT+10
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT+11
--rw-r--r--  1 runner  staff  114 Oct 18 08:55 GMT+12
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+2
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+3
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+4
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+5
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+6
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+7
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+8
--rw-r--r--  1 runner  staff  113 Oct 18 08:55 GMT+9
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 GMT0
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 Greenwich
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 UCT
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 Universal
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 UTC
--rw-r--r--  1 runner  staff  111 Oct 18 08:55 Zulu
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Europe:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1103 Oct 18 08:55 Amsterdam
--rw-r--r--  1 runner  staff   389 Oct 18 08:55 Andorra
--rw-r--r--  1 runner  staff   726 Oct 18 08:55 Astrakhan
--rw-r--r--  1 runner  staff   682 Oct 18 08:55 Athens
--rw-r--r--  1 runner  staff  1599 Oct 18 08:55 Belfast
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Belgrade
--rw-r--r--  1 runner  staff   705 Oct 18 08:55 Berlin
--rw-r--r--  1 runner  staff   723 Oct 18 08:55 Bratislava
--rw-r--r--  1 runner  staff  1103 Oct 18 08:55 Brussels
--rw-r--r--  1 runner  staff   661 Oct 18 08:55 Bucharest
--rw-r--r--  1 runner  staff   766 Oct 18 08:55 Budapest
--rw-r--r--  1 runner  staff   497 Oct 18 08:55 Busingen
--rw-r--r--  1 runner  staff  1207 Oct 18 08:55 Chisinau
--rw-r--r--  1 runner  staff   705 Oct 18 08:55 Copenhagen
--rw-r--r--  1 runner  staff  1496 Oct 18 08:55 Dublin
--rw-r--r--  1 runner  staff  1220 Oct 18 08:55 Gibraltar
--rw-r--r--  1 runner  staff  1599 Oct 18 08:55 Guernsey
--rw-r--r--  1 runner  staff   481 Oct 18 08:55 Helsinki
--rw-r--r--  1 runner  staff  1599 Oct 18 08:55 Isle_of_Man
--rw-r--r--  1 runner  staff  1200 Oct 18 08:55 Istanbul
--rw-r--r--  1 runner  staff  1599 Oct 18 08:55 Jersey
--rw-r--r--  1 runner  staff   904 Oct 18 08:55 Kaliningrad
--rw-r--r--  1 runner  staff   558 Oct 18 08:55 Kiev
--rw-r--r--  1 runner  staff   735 Oct 18 08:55 Kirov
--rw-r--r--  1 runner  staff   558 Oct 18 08:55 Kyiv
--rw-r--r--  1 runner  staff  1463 Oct 18 08:55 Lisbon
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Ljubljana
--rw-r--r--  1 runner  staff  1599 Oct 18 08:55 London
--rw-r--r--  1 runner  staff  1103 Oct 18 08:55 Luxembourg
--rw-r--r--  1 runner  staff   897 Oct 18 08:55 Madrid
--rw-r--r--  1 runner  staff   928 Oct 18 08:55 Malta
--rw-r--r--  1 runner  staff   481 Oct 18 08:55 Mariehamn
--rw-r--r--  1 runner  staff   808 Oct 18 08:55 Minsk
--rw-r--r--  1 runner  staff  1105 Oct 18 08:55 Monaco
--rw-r--r--  1 runner  staff   908 Oct 18 08:55 Moscow
--rw-r--r--  1 runner  staff   597 Oct 18 08:55 Nicosia
--rw-r--r--  1 runner  staff   705 Oct 18 08:55 Oslo
--rw-r--r--  1 runner  staff  1105 Oct 18 08:55 Paris
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Podgorica
--rw-r--r--  1 runner  staff   723 Oct 18 08:55 Prague
--rw-r--r--  1 runner  staff   694 Oct 18 08:55 Riga
--rw-r--r--  1 runner  staff   947 Oct 18 08:55 Rome
--rw-r--r--  1 runner  staff   732 Oct 18 08:55 Samara
--rw-r--r--  1 runner  staff   947 Oct 18 08:55 San_Marino
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Sarajevo
--rw-r--r--  1 runner  staff   726 Oct 18 08:55 Saratov
--rw-r--r--  1 runner  staff   865 Oct 18 08:55 Simferopol
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Skopje
--rw-r--r--  1 runner  staff   592 Oct 18 08:55 Sofia
--rw-r--r--  1 runner  staff   705 Oct 18 08:55 Stockholm
--rw-r--r--  1 runner  staff   675 Oct 18 08:55 Tallinn
--rw-r--r--  1 runner  staff   604 Oct 18 08:55 Tirane
--rw-r--r--  1 runner  staff  1207 Oct 18 08:55 Tiraspol
--rw-r--r--  1 runner  staff   760 Oct 18 08:55 Ulyanovsk
--rw-r--r--  1 runner  staff   558 Oct 18 08:55 Uzhgorod
--rw-r--r--  1 runner  staff   497 Oct 18 08:55 Vaduz
--rw-r--r--  1 runner  staff   947 Oct 18 08:55 Vatican
--rw-r--r--  1 runner  staff   658 Oct 18 08:55 Vienna
--rw-r--r--  1 runner  staff   676 Oct 18 08:55 Vilnius
--rw-r--r--  1 runner  staff   753 Oct 18 08:55 Volgograd
--rw-r--r--  1 runner  staff   923 Oct 18 08:55 Warsaw
--rw-r--r--  1 runner  staff   478 Oct 18 08:55 Zagreb
--rw-r--r--  1 runner  staff   558 Oct 18 08:55 Zaporozhye
--rw-r--r--  1 runner  staff   497 Oct 18 08:55 Zurich
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Indian:
--rw-r--r--  1 runner  staff    0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  191 Oct 18 08:55 Antananarivo
--rw-r--r--  1 runner  staff  152 Oct 18 08:55 Chagos
--rw-r--r--  1 runner  staff  152 Oct 18 08:55 Christmas
--rw-r--r--  1 runner  staff  187 Oct 18 08:55 Cocos
--rw-r--r--  1 runner  staff  191 Oct 18 08:55 Comoro
--rw-r--r--  1 runner  staff  152 Oct 18 08:55 Kerguelen
--rw-r--r--  1 runner  staff  133 Oct 18 08:55 Mahe
--rw-r--r--  1 runner  staff  152 Oct 18 08:55 Maldives
--rw-r--r--  1 runner  staff  179 Oct 18 08:55 Mauritius
--rw-r--r--  1 runner  staff  191 Oct 18 08:55 Mayotte
--rw-r--r--  1 runner  staff  133 Oct 18 08:55 Reunion
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Mexico:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff  1367 Oct 18 08:55 BajaNorte
--rw-r--r--  1 runner  staff   690 Oct 18 08:55 BajaSur
--rw-r--r--  1 runner  staff   773 Oct 18 08:55 General
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Pacific:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   407 Oct 18 08:55 Apia
--rw-r--r--  1 runner  staff  1043 Oct 18 08:55 Auckland
--rw-r--r--  1 runner  staff   201 Oct 18 08:55 Bougainville
--rw-r--r--  1 runner  staff   808 Oct 18 08:55 Chatham
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Chuuk
--rw-r--r--  1 runner  staff  1174 Oct 18 08:55 Easter
--rw-r--r--  1 runner  staff   342 Oct 18 08:55 Efate
--rw-r--r--  1 runner  staff   172 Oct 18 08:55 Enderbury
--rw-r--r--  1 runner  staff   153 Oct 18 08:55 Fakaofo
--rw-r--r--  1 runner  staff   396 Oct 18 08:55 Fiji
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Funafuti
--rw-r--r--  1 runner  staff   175 Oct 18 08:55 Galapagos
--rw-r--r--  1 runner  staff   132 Oct 18 08:55 Gambier
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Guadalcanal
--rw-r--r--  1 runner  staff   350 Oct 18 08:55 Guam
--rw-r--r--  1 runner  staff   221 Oct 18 08:55 Honolulu
--rw-r--r--  1 runner  staff   221 Oct 18 08:55 Johnston
--rw-r--r--  1 runner  staff   172 Oct 18 08:55 Kanton
--rw-r--r--  1 runner  staff   174 Oct 18 08:55 Kiritimati
--rw-r--r--  1 runner  staff   242 Oct 18 08:55 Kosrae
--rw-r--r--  1 runner  staff   219 Oct 18 08:55 Kwajalein
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Majuro
--rw-r--r--  1 runner  staff   139 Oct 18 08:55 Marquesas
--rw-r--r--  1 runner  staff   146 Oct 18 08:55 Midway
--rw-r--r--  1 runner  staff   183 Oct 18 08:55 Nauru
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Niue
--rw-r--r--  1 runner  staff   237 Oct 18 08:55 Norfolk
--rw-r--r--  1 runner  staff   198 Oct 18 08:55 Noumea
--rw-r--r--  1 runner  staff   146 Oct 18 08:55 Pago_Pago
--rw-r--r--  1 runner  staff   148 Oct 18 08:55 Palau
--rw-r--r--  1 runner  staff   153 Oct 18 08:55 Pitcairn
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Pohnpei
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Ponape
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Port_Moresby
--rw-r--r--  1 runner  staff   406 Oct 18 08:55 Rarotonga
--rw-r--r--  1 runner  staff   350 Oct 18 08:55 Saipan
--rw-r--r--  1 runner  staff   146 Oct 18 08:55 Samoa
--rw-r--r--  1 runner  staff   133 Oct 18 08:55 Tahiti
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Tarawa
--rw-r--r--  1 runner  staff   237 Oct 18 08:55 Tongatapu
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Truk
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Wake
--rw-r--r--  1 runner  staff   134 Oct 18 08:55 Wallis
--rw-r--r--  1 runner  staff   154 Oct 18 08:55 Yap
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/US:
--rw-r--r--  1 runner  staff     0 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   977 Oct 18 08:55 Alaska
--rw-r--r--  1 runner  staff   969 Oct 18 08:55 Aleutian
--rw-r--r--  1 runner  staff   240 Oct 18 08:55 Arizona
--rw-r--r--  1 runner  staff  1754 Oct 18 08:55 Central
--rw-r--r--  1 runner  staff   531 Oct 18 08:55 East-Indiana
--rw-r--r--  1 runner  staff  1744 Oct 18 08:55 Eastern
--rw-r--r--  1 runner  staff   221 Oct 18 08:55 Hawaii
--rw-r--r--  1 runner  staff  1016 Oct 18 08:55 Indiana-Starke
--rw-r--r--  1 runner  staff   899 Oct 18 08:55 Michigan
--rw-r--r--  1 runner  staff  1042 Oct 18 08:55 Mountain
--rw-r--r--  1 runner  staff  1294 Oct 18 08:55 Pacific
--rw-r--r--  1 runner  staff   146 Oct 18 08:55 Samoa
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/_vendor/zoneinfo:
--rw-r--r--  1 runner  staff    703 Oct 18 08:55 __init__.py
--rw-r--r--  1 runner  staff   5294 Oct 18 08:55 _common.py
--rw-r--r--  1 runner  staff   5519 Oct 18 08:55 _tzpath.py
--rw-r--r--  1 runner  staff  24674 Oct 18 08:55 _zoneinfo.py
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/font:
--rw-r--r--  1 runner  staff  708920 Oct 18 08:55 DejaVuSans-Bold.ttf
--rw-r--r--  1 runner  staff  759720 Oct 18 08:55 DejaVuSans.ttf
--rw-r--r--  1 runner  staff    3937 Oct 18 08:55 LICENZA-DejaVu.txt
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/interfaccia:
--rw-r--r--   1 runner  staff   60947 Oct 18 08:55 android.js
--rw-r--r--   1 runner  staff  152468 Oct 18 08:55 app.js
--rw-r--r--   1 runner  staff   59959 Oct 18 08:55 guida.js
--rw-r--r--   1 runner  staff   57401 Oct 18 08:55 index.html
--rw-r--r--   1 runner  staff  826167 Oct 18 08:55 licenze.js
--rw-r--r--   1 runner  staff   14482 Oct 18 08:55 logo.png
--rw-r--r--   1 runner  staff   56571 Oct 18 08:55 stile.css
--rw-r--r--   1 runner  staff  104338 Oct 18 08:55 testi.js
-drwxr-xr-x  44 runner  staff    1408 Oct 18 08:55 video
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Application Support/VerbaManent/rl/interfaccia/video:
--rw-r--r--  1 runner  staff  302666 Oct 18 08:55 tel-aggiornamenti-en.webm
--rw-r--r--  1 runner  staff  271874 Oct 18 08:55 tel-aggiornamenti-it.webm
--rw-r--r--  1 runner  staff  598291 Oct 18 08:55 tel-calendario-en.webm
--rw-r--r--  1 runner  staff  579967 Oct 18 08:55 tel-calendario-it.webm
--rw-r--r--  1 runner  staff  203688 Oct 18 08:55 tel-chiave-en.webm
--rw-r--r--  1 runner  staff  187766 Oct 18 08:55 tel-chiave-it.webm
--rw-r--r--  1 runner  staff  452625 Oct 18 08:55 tel-chiparla-en.webm
--rw-r--r--  1 runner  staff  425596 Oct 18 08:55 tel-chiparla-it.webm
--rw-r--r--  1 runner  staff  942641 Oct 18 08:55 tel-condividi-en.webm
--rw-r--r--  1 runner  staff  853041 Oct 18 08:55 tel-condividi-it.webm
--rw-r--r--  1 runner  staff  193086 Oct 18 08:55 tel-cose-en.webm
--rw-r--r--  1 runner  staff  176979 Oct 18 08:55 tel-cose-it.webm
--rw-r--r--  1 runner  staff  262185 Oct 18 08:55 tel-docente-en.webm
--rw-r--r--  1 runner  staff  243491 Oct 18 08:55 tel-docente-it.webm
--rw-r--r--  1 runner  staff  308243 Oct 18 08:55 tel-dove-en.webm
--rw-r--r--  1 runner  staff  296930 Oct 18 08:55 tel-dove-it.webm
--rw-r--r--  1 runner  staff  630949 Oct 18 08:55 tel-durante-en.webm
--rw-r--r--  1 runner  staff  666410 Oct 18 08:55 tel-durante-it.webm
--rw-r--r--  1 runner  staff  493068 Oct 18 08:55 tel-esame-en.webm
--rw-r--r--  1 runner  staff  478404 Oct 18 08:55 tel-esame-it.webm
--rw-r--r--  1 runner  staff  304527 Oct 18 08:55 tel-fine-en.webm
--rw-r--r--  1 runner  staff  311754 Oct 18 08:55 tel-fine-it.webm
--rw-r--r--  1 runner  staff  221038 Oct 18 08:55 tel-importa-en.webm
--rw-r--r--  1 runner  staff  200745 Oct 18 08:55 tel-importa-it.webm
--rw-r--r--  1 runner  staff  491252 Oct 18 08:55 tel-impostazioni-en.webm
--rw-r--r--  1 runner  staff  452513 Oct 18 08:55 tel-impostazioni-it.webm
--rw-r--r--  1 runner  staff  318001 Oct 18 08:55 tel-inviti-en.webm
--rw-r--r--  1 runner  staff  284732 Oct 18 08:55 tel-inviti-it.webm
--rw-r--r--  1 runner  staff  245003 Oct 18 08:55 tel-itesto-en.webm
--rw-r--r--  1 runner  staff  224553 Oct 18 08:55 tel-itesto-it.webm
--rw-r--r--  1 runner  staff  333272 Oct 18 08:55 tel-lezioni-en.webm
--rw-r--r--  1 runner  staff  335919 Oct 18 08:55 tel-lezioni-it.webm
--rw-r--r--  1 runner  staff  265948 Oct 18 08:55 tel-menu-en.webm
--rw-r--r--  1 runner  staff  268885 Oct 18 08:55 tel-menu-it.webm
--rw-r--r--  1 runner  staff  264999 Oct 18 08:55 tel-nome-en.webm
--rw-r--r--  1 runner  staff  297739 Oct 18 08:55 tel-nome-it.webm
--rw-r--r--  1 runner  staff  249707 Oct 18 08:55 tel-parole-en.webm
--rw-r--r--  1 runner  staff  267698 Oct 18 08:55 tel-parole-it.webm
--rw-r--r--  1 runner  staff  479871 Oct 18 08:55 tel-registrare-en.webm
--rw-r--r--  1 runner  staff  462270 Oct 18 08:55 tel-registrare-it.webm
--rw-r--r--  1 runner  staff  362831 Oct 18 08:55 tel-ripasso-en.webm
--rw-r--r--  1 runner  staff  363658 Oct 18 08:55 tel-ripasso-it.webm
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches:
-drwx------  6 runner  staff  192 Oct 18 09:03 com.apple.WebKit.GPU
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 com.apple.WebKit.Networking
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 com.apple.WebKit.WebContent
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 it.puntowebferrara.verbamanent
-drwxr-xr-x  2 runner  staff   64 Oct 18 09:01 VerbaManent
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/com.apple.WebKit.GPU:
--rw-r--r--@ 1 runner  staff  327680 Oct 18 09:01 functions.data
--rw-r--r--@ 1 runner  staff    3852 Oct 18 09:03 functions.list
--rw-r--r--@ 1 runner  staff  311296 Oct 18 09:01 libraries.data
--rw-r--r--@ 1 runner  staff    1500 Oct 18 09:03 libraries.list
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/com.apple.WebKit.Networking:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/com.apple.WebKit.WebContent:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent:
-drwxr-xr-x  6 runner  staff  192 Oct 18 09:03 WebKit
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit:
-drwxr-xr-x  5 runner  staff  160 Oct 18 08:58 AlternativeServices
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 CacheStorage
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 HSTS
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 NetworkCache
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/AlternativeServices:
--rw-r--r--@ 1 runner  staff   4096 Oct 18 08:58 AlternativeService.sqlite
--rw-r--r--  1 runner  staff  32768 Oct 18 09:03 AlternativeService.sqlite-shm
--rw-r--r--  1 runner  staff  41232 Oct 18 09:03 AlternativeService.sqlite-wal
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/CacheStorage:
--rw-------  1 runner  staff  8 Oct 18 08:58 salt
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/HSTS:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache:
-drwx------@ 4 runner  staff  128 Oct 18 09:01 Version 17
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache/Version 17:
-drwx------  2 runner  staff  64 Oct 18 09:01 Blobs
--rw-------  1 runner  staff   8 Oct 18 08:58 salt
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache/Version 17/Blobs:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Caches/VerbaManent:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Cookies:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Preferences:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Saved Application State:
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:58 it.puntowebferrara.verbamanent.savedState
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Saved Application State/it.puntowebferrara.verbamanent.savedState:
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:58 KnownSceneSessions
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/Saved Application State/it.puntowebferrara.verbamanent.savedState/KnownSceneSessions:
--rw-r--r--  1 runner  staff  42 Oct 18 09:03 data.data
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/SplashBoard:
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:57 Snapshots
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/SplashBoard/Snapshots:
-drwxr-xr-x  6 runner  staff  192 Oct 18 08:57 it.puntowebferrara.verbamanent - {DEFAULT GROUP}
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/SplashBoard/Snapshots/it.puntowebferrara.verbamanent - {DEFAULT GROUP}:
--rw-r--r--  1 runner  staff  18189 Oct 18 08:57 0803337A-C72B-4A16-AE63-54B56B718FFC@3x.ktx
--rw-r--r--  1 runner  staff  18189 Oct 18 08:57 0B61E4C6-98C7-40E1-A700-D7C37CA6781C@3x.ktx
--rw-r--r--  1 runner  staff  18532 Oct 18 08:57 3C8CBC72-DDCC-4C03-A071-DA075AE3E3A4@3x.ktx
--rw-r--r--  1 runner  staff  18532 Oct 18 08:57 B0E6BBF5-9AF2-469E-B0FF-ED6886AA126F@3x.ktx
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit:
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:58 it.puntowebferrara.verbamanent
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent:
-drwxr-xr-x  9 runner  staff  288 Oct 18 08:58 WebsiteData
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData:
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 Default
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 DeviceIdHashSalts
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 IndexedDB
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 LocalStorage
-drwxr-xr-x  3 runner  staff   96 Oct 18 08:58 MediaKeys
-drwxr-xr-x  5 runner  staff  160 Oct 18 08:58 ResourceLoadStatistics
-drwxr-xr-x  2 runner  staff   64 Oct 18 08:58 SearchHistory
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/Default:
--rw-------  1 runner  staff  8 Oct 18 08:58 salt
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/DeviceIdHashSalts:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/IndexedDB:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/LocalStorage:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/MediaKeys:
-drwx------  3 runner  staff  96 Oct 18 08:58 v1
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/MediaKeys/v1:
--rw-------  1 runner  staff  8 Oct 18 08:58 salt
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/ResourceLoadStatistics:
--rw-r--r--@ 1 runner  staff  184320 Oct 18 09:03 observations.db
--rw-r--r--@ 1 runner  staff   32768 Oct 18 09:03 observations.db-shm
--rw-r--r--@ 1 runner  staff  131872 Oct 18 09:03 observations.db-wal
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/SearchHistory:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/prova_pdf:
--rw-r--r--  1 runner  staff  22954 Oct 18 08:58 p001.png
--rw-r--r--  1 runner  staff  23415 Oct 18 08:58 p002.png
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/SystemData:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp:
-drwx------  2 runner  staff  64 Oct 18 09:02 BlobRegistryFiles-9slvMkOu
-drwx------  2 runner  staff  64 Oct 18 09:03 BlobRegistryFiles-bnOaF3vH
-drwx------  2 runner  staff  64 Oct 18 09:02 BlobRegistryFiles-CO782jmd
-drwx------  2 runner  staff  64 Oct 18 09:01 BlobRegistryFiles-EPwE5B6K
-drwx------  2 runner  staff  64 Oct 18 09:01 BlobRegistryFiles-KRBIVPFj
-drwx------  2 runner  staff  64 Oct 18 08:58 BlobRegistryFiles-VIQA6Mf5
-drwx------  2 runner  staff  64 Oct 18 09:02 BlobRegistryFiles-WL8OmqkC
-drwxr-xr-x  3 runner  staff  96 Oct 18 08:58 it.puntowebferrara.verbamanent
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-9slvMkOu:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-bnOaF3vH:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-CO782jmd:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-EPwE5B6K:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-KRBIVPFj:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-VIQA6Mf5:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/BlobRegistryFiles-WL8OmqkC:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/it.puntowebferrara.verbamanent:
-drwxr-xr-x  4 runner  staff  128 Oct 18 08:58 WebKit
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/it.puntowebferrara.verbamanent/WebKit:
-drwxr-xr-x  2 runner  staff  64 Oct 18 08:58 JavaScriptCoreDebug
-drwxr-xr-x  2 runner  staff  64 Oct 18 08:58 MediaCache
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/it.puntowebferrara.verbamanent/WebKit/JavaScriptCoreDebug:
-
-/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/3AC4004A-05CB-4EF0-8BD5-FBD80DE09A98/tmp/it.puntowebferrara.verbamanent/WebKit/MediaCache:
+drwxr-xr-x   3 runner  staff         96 Oct 18 09:24 Documents
+-rw-r--r--   1 runner  staff  190085487 Oct 18 09:24 ggml-small-q5_1.bin
+drwxr-xr-x   9 runner  staff        288 Oct 18 09:24 Library
+-rw-r--r--   1 runner  staff          5 Oct 18 09:30 porta.txt
+-rw-r--r--   1 runner  staff        229 Oct 18 09:24 prova_audio.txt
+-rw-r--r--   1 runner  staff     160044 Oct 18 09:24 prova_dec.wav
+drwxr-xr-x   4 runner  staff        128 Oct 18 09:24 prova_pdf
+-rw-r--r--   1 runner  staff      41578 Oct 18 09:24 prova_taglio.m4a
+-rw-r--r--   1 runner  staff        315 Oct 18 09:27 prova_whisper.txt
+-rw-r--r--   1 runner  staff     111347 Oct 18 09:24 prova.m4a
+-rw-r--r--   1 runner  staff       1351 Oct 18 09:24 prova.pdf
+drwxr-xr-x   2 runner  staff         64 Oct 18 09:24 SystemData
+drwxr-xr-x  10 runner  staff        320 Oct 18 09:30 tmp
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Documents:
+drwxr-xr-x  4 runner  staff  128 Oct 18 09:27 Recorded lectures
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Documents/Recorded lectures:
+drwxr-xr-x  6 runner  staff   192 Oct 18 09:28 2026-10-18 0927 - Prova iPhone
+-rw-r--r--  1 runner  staff  1034 Oct 18 09:30 registra_lezione.log
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Documents/Recorded lectures/2026-10-18 0927 - Prova iPhone:
+-rw-r--r--  1 runner  staff  1031840 Oct 18 09:28 audio_001.wav
+-rw-r--r--  1 runner  staff      447 Oct 18 09:28 info.json
+-rw-r--r--  1 runner  staff      174 Oct 18 09:28 meta.json
+drwxr-xr-x  2 runner  staff       64 Oct 18 09:27 slide
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Documents/Recorded lectures/2026-10-18 0927 - Prova iPhone/slide:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library:
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 Application Support
+drwxr-xr-x  7 runner  staff  224 Oct 18 09:24 Caches
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 Cookies
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 Preferences
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 Saved Application State
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 SplashBoard
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 WebKit
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support:
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 VerbaManent
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent:
+drwxr-xr-x  32 runner  staff  1024 Oct 18 09:24 rl
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl:
+drwxr-xr-x  14 runner  staff     448 Oct 18 09:21 _vendor
+-rw-r--r--   1 runner  staff    6375 Oct 18 09:21 aggiorna.py
+-rw-r--r--   1 runner  staff   31554 Oct 18 09:21 android_motore.py
+-rw-r--r--   1 runner  staff   90749 Oct 18 09:21 appunti.py
+-rw-r--r--   1 runner  staff    7883 Oct 18 09:21 calendario.py
+-rw-r--r--   1 runner  staff   30699 Oct 18 09:21 chiedi.py
+-rw-r--r--   1 runner  staff    3682 Oct 18 09:21 cloud.py
+-rw-r--r--   1 runner  staff   35925 Oct 18 09:21 condividi.py
+-rw-r--r--   1 runner  staff    5809 Oct 18 09:21 cose.py
+-rw-r--r--   1 runner  staff   11398 Oct 18 09:21 docente.py
+-rw-r--r--   1 runner  staff   41624 Oct 18 09:21 elaborazione.py
+-rw-r--r--   1 runner  staff   17093 Oct 18 09:21 esame.py
+-rw-r--r--   1 runner  staff   22965 Oct 18 09:21 finestra_web.py
+drwxr-xr-x   5 runner  staff     160 Oct 18 09:21 font
+-rw-r--r--   1 runner  staff    5698 Oct 18 09:21 importa.py
+drwxr-xr-x  11 runner  staff     352 Oct 18 09:21 interfaccia
+-rw-r--r--   1 runner  staff  809181 Oct 18 09:21 LICENZE.txt
+-rw-r--r--   1 runner  staff  148674 Oct 18 09:21 motore.py
+-rw-r--r--   1 runner  staff    5794 Oct 18 09:21 rapporti.py
+-rw-r--r--   1 runner  staff   17972 Oct 18 09:21 registratore.py
+-rw-r--r--   1 runner  staff    6180 Oct 18 09:21 ripasso.py
+-rw-r--r--   1 runner  staff    9707 Oct 18 09:21 scarica_link.py
+-rw-r--r--   1 runner  staff    7616 Oct 18 09:21 server_trascrizione.py
+-rw-r--r--   1 runner  staff    3118 Oct 18 09:21 servi_video.py
+-rw-r--r--   1 runner  staff   33441 Oct 18 09:21 testi.py
+-rw-r--r--   1 runner  staff    2420 Oct 18 09:21 testo_importato.py
+-rw-r--r--   1 runner  staff    6113 Oct 18 09:21 verifica.py
+-rw-r--r--   1 runner  staff     357 Oct 18 09:21 versione_android.json
+-rw-r--r--   1 runner  staff   16690 Oct 18 09:21 voci.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor:
+drwxr-xr-x  13 runner  staff     416 Oct 18 09:21 dateutil
+drwxr-xr-x  21 runner  staff     672 Oct 18 09:21 icalendar
+-rw-r--r--   1 runner  staff     743 Oct 18 09:21 LEGGIMI.txt
+drwxr-xr-x   9 runner  staff     288 Oct 18 09:21 licenze
+drwxr-xr-x  28 runner  staff     896 Oct 18 09:21 pypdf
+-rw-r--r--   1 runner  staff    1634 Oct 18 09:21 pypdf-LICENSE.txt
+drwxr-xr-x  16 runner  staff     512 Oct 18 09:21 recurring_ical_events
+-rw-r--r--   1 runner  staff   34703 Oct 18 09:21 six.py
+-rw-r--r--   1 runner  staff  165012 Oct 18 09:21 typing_extensions.py
+drwxr-xr-x   5 runner  staff     160 Oct 18 09:21 tzdata
+-rw-r--r--   1 runner  staff    8852 Oct 18 09:21 x_wr_timezone.py
+drwxr-xr-x   6 runner  staff     192 Oct 18 09:21 zoneinfo
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/dateutil:
+-rw-r--r--  1 runner  staff    620 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff    932 Oct 18 09:21 _common.py
+-rw-r--r--  1 runner  staff    166 Oct 18 09:21 _version.py
+-rw-r--r--  1 runner  staff   2678 Oct 18 09:21 easter.py
+drwxr-xr-x  5 runner  staff    160 Oct 18 09:21 parser
+-rw-r--r--  1 runner  staff  24903 Oct 18 09:21 relativedelta.py
+-rw-r--r--  1 runner  staff  66557 Oct 18 09:21 rrule.py
+drwxr-xr-x  7 runner  staff    224 Oct 18 09:21 tz
+-rw-r--r--  1 runner  staff     59 Oct 18 09:21 tzwin.py
+-rw-r--r--  1 runner  staff   1965 Oct 18 09:21 utils.py
+drwxr-xr-x  5 runner  staff    160 Oct 18 09:21 zoneinfo
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/dateutil/parser:
+-rw-r--r--  1 runner  staff   1766 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  58796 Oct 18 09:21 _parser.py
+-rw-r--r--  1 runner  staff  13233 Oct 18 09:21 isoparser.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/dateutil/tz:
+-rw-r--r--  1 runner  staff    444 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  12977 Oct 18 09:21 _common.py
+-rw-r--r--  1 runner  staff   2569 Oct 18 09:21 _factories.py
+-rw-r--r--  1 runner  staff  62855 Oct 18 09:21 tz.py
+-rw-r--r--  1 runner  staff  12935 Oct 18 09:21 win.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/dateutil/zoneinfo:
+-rw-r--r--  1 runner  staff    5889 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  156400 Oct 18 09:21 dateutil-zoneinfo.tar.gz
+-rw-r--r--  1 runner  staff    2392 Oct 18 09:21 rebuild.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar:
+-rw-r--r--   1 runner  staff   3250 Oct 18 09:21 __init__.py
+-rw-r--r--   1 runner  staff    520 Oct 18 09:21 _version.py
+-rw-r--r--   1 runner  staff  14139 Oct 18 09:21 alarms.py
+-rw-r--r--   1 runner  staff  95362 Oct 18 09:21 attr.py
+drwxr-xr-x  16 runner  staff    512 Oct 18 09:21 cal
+-rw-r--r--   1 runner  staff  10203 Oct 18 09:21 caselessdict.py
+-rw-r--r--   1 runner  staff   4322 Oct 18 09:21 cli.py
+-rw-r--r--   1 runner  staff   1569 Oct 18 09:21 compatibility.py
+-rw-r--r--   1 runner  staff    994 Oct 18 09:21 config.py
+-rw-r--r--   1 runner  staff  16993 Oct 18 09:21 enums.py
+-rw-r--r--   1 runner  staff  11248 Oct 18 09:21 error.py
+-rw-r--r--   1 runner  staff  28624 Oct 18 09:21 param.py
+drwxr-xr-x   8 runner  staff    256 Oct 18 09:21 parser
+-rw-r--r--   1 runner  staff   1997 Oct 18 09:21 parser_tools.py
+drwxr-xr-x  25 runner  staff    800 Oct 18 09:21 prop
+-rw-r--r--   1 runner  staff      0 Oct 18 09:21 py.typed
+drwxr-xr-x  11 runner  staff    352 Oct 18 09:21 timezone
+-rw-r--r--   1 runner  staff   4227 Oct 18 09:21 tools.py
+-rw-r--r--   1 runner  staff    707 Oct 18 09:21 version.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/cal:
+-rw-r--r--  1 runner  staff    825 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  26578 Oct 18 09:21 alarm.py
+-rw-r--r--  1 runner  staff  13281 Oct 18 09:21 availability.py
+-rw-r--r--  1 runner  staff   7226 Oct 18 09:21 available.py
+-rw-r--r--  1 runner  staff  21809 Oct 18 09:21 calendar.py
+-rw-r--r--  1 runner  staff   3369 Oct 18 09:21 component_factory.py
+-rw-r--r--  1 runner  staff  44995 Oct 18 09:21 component.py
+-rw-r--r--  1 runner  staff  19124 Oct 18 09:21 event.py
+-rw-r--r--  1 runner  staff    761 Oct 18 09:21 examples.py
+-rw-r--r--  1 runner  staff   6365 Oct 18 09:21 free_busy.py
+-rw-r--r--  1 runner  staff   9720 Oct 18 09:21 journal.py
+-rw-r--r--  1 runner  staff  10439 Oct 18 09:21 lazy.py
+-rw-r--r--  1 runner  staff  17320 Oct 18 09:21 timezone.py
+-rw-r--r--  1 runner  staff  14362 Oct 18 09:21 todo.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/parser:
+-rw-r--r--  1 runner  staff   1435 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  11491 Oct 18 09:21 content_line.py
+drwxr-xr-x  6 runner  staff    192 Oct 18 09:21 ical
+-rw-r--r--  1 runner  staff  18466 Oct 18 09:21 parameter.py
+-rw-r--r--  1 runner  staff   4471 Oct 18 09:21 property.py
+-rw-r--r--  1 runner  staff   8860 Oct 18 09:21 string.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/parser/ical:
+-rw-r--r--  1 runner  staff    141 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   1506 Oct 18 09:21 calendar.py
+-rw-r--r--  1 runner  staff  11181 Oct 18 09:21 component.py
+-rw-r--r--  1 runner  staff   5428 Oct 18 09:21 lazy.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop:
+-rw-r--r--   1 runner  staff   3318 Oct 18 09:21 __init__.py
+-rw-r--r--   1 runner  staff   5937 Oct 18 09:21 adr.py
+-rw-r--r--   1 runner  staff   4687 Oct 18 09:21 binary.py
+-rw-r--r--   1 runner  staff   3395 Oct 18 09:21 boolean.py
+-rw-r--r--   1 runner  staff   3012 Oct 18 09:21 broken.py
+-rw-r--r--   1 runner  staff   7658 Oct 18 09:21 cal_address.py
+-rw-r--r--   1 runner  staff   3718 Oct 18 09:21 categories.py
+-rw-r--r--   1 runner  staff   4034 Oct 18 09:21 conference.py
+drwxr-xr-x  12 runner  staff    384 Oct 18 09:21 dt
+-rw-r--r--   1 runner  staff  10346 Oct 18 09:21 factory.py
+-rw-r--r--   1 runner  staff   3251 Oct 18 09:21 float.py
+-rw-r--r--   1 runner  staff   4881 Oct 18 09:21 geo.py
+-rw-r--r--   1 runner  staff   3735 Oct 18 09:21 image.py
+-rw-r--r--   1 runner  staff   1155 Oct 18 09:21 inline.py
+-rw-r--r--   1 runner  staff   4668 Oct 18 09:21 integer.py
+-rw-r--r--   1 runner  staff   5337 Oct 18 09:21 n.py
+-rw-r--r--   1 runner  staff   5003 Oct 18 09:21 org.py
+drwxr-xr-x   8 runner  staff    256 Oct 18 09:21 recur
+-rw-r--r--   1 runner  staff   5411 Oct 18 09:21 text.py
+-rw-r--r--   1 runner  staff   1145 Oct 18 09:21 uid.py
+-rw-r--r--   1 runner  staff   4936 Oct 18 09:21 unknown.py
+-rw-r--r--   1 runner  staff   3647 Oct 18 09:21 uri.py
+-rw-r--r--   1 runner  staff   1542 Oct 18 09:21 xml_reference.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop/dt:
+-rw-r--r--  1 runner  staff    491 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   1210 Oct 18 09:21 base.py
+-rw-r--r--  1 runner  staff   4324 Oct 18 09:21 date.py
+-rw-r--r--  1 runner  staff   6984 Oct 18 09:21 datetime.py
+-rw-r--r--  1 runner  staff   6769 Oct 18 09:21 duration.py
+-rw-r--r--  1 runner  staff   3367 Oct 18 09:21 list.py
+-rw-r--r--  1 runner  staff  10807 Oct 18 09:21 period.py
+-rw-r--r--  1 runner  staff   9123 Oct 18 09:21 time.py
+-rw-r--r--  1 runner  staff   6713 Oct 18 09:21 types.py
+-rw-r--r--  1 runner  staff   5794 Oct 18 09:21 utc_offset.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/prop/recur:
+-rw-r--r--  1 runner  staff    274 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   2205 Oct 18 09:21 frequency.py
+-rw-r--r--  1 runner  staff   3151 Oct 18 09:21 month.py
+-rw-r--r--  1 runner  staff  11204 Oct 18 09:21 recur.py
+-rw-r--r--  1 runner  staff   1308 Oct 18 09:21 skip.py
+-rw-r--r--  1 runner  staff   3940 Oct 18 09:21 weekday.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/icalendar/timezone:
+-rw-r--r--  1 runner  staff     571 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  219401 Oct 18 09:21 equivalent_timezone_ids_result.py
+-rw-r--r--  1 runner  staff    4461 Oct 18 09:21 equivalent_timezone_ids.py
+-rw-r--r--  1 runner  staff    1584 Oct 18 09:21 provider.py
+-rw-r--r--  1 runner  staff    2392 Oct 18 09:21 pytz.py
+-rw-r--r--  1 runner  staff    5018 Oct 18 09:21 tzid.py
+-rw-r--r--  1 runner  staff    7927 Oct 18 09:21 tzp.py
+-rw-r--r--  1 runner  staff    7490 Oct 18 09:21 windows_to_olson.py
+-rw-r--r--  1 runner  staff    6232 Oct 18 09:21 zoneinfo.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/licenze:
+-rw-r--r--  1 runner  staff   1313 Oct 18 09:21 icalendar-7.3.0-LICENSE.rst
+-rw-r--r--  1 runner  staff   2889 Oct 18 09:21 python_dateutil-2.9.0.post0-LICENSE
+-rw-r--r--  1 runner  staff   7652 Oct 18 09:21 recurring_ical_events-3.8.2-LICENSE
+-rw-r--r--  1 runner  staff   1066 Oct 18 09:21 six-1.17.0-LICENSE
+-rw-r--r--  1 runner  staff  13936 Oct 18 09:21 typing_extensions-4.16.0-LICENSE
+-rw-r--r--  1 runner  staff    625 Oct 18 09:21 tzdata-2026.5-LICENSE
+-rw-r--r--  1 runner  staff   7652 Oct 18 09:21 x_wr_timezone-2.0.1-LICENSE
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf:
+-rw-r--r--   1 runner  staff    1494 Oct 18 09:21 __init__.py
+-rw-r--r--   1 runner  staff   21013 Oct 18 09:21 _cmap.py
+drwxr-xr-x  10 runner  staff     320 Oct 18 09:21 _codecs
+-rw-r--r--   1 runner  staff   11280 Oct 18 09:21 _configuration.py
+drwxr-xr-x   7 runner  staff     224 Oct 18 09:21 _crypt_providers
+-rw-r--r--   1 runner  staff   63337 Oct 18 09:21 _doc_common.py
+-rw-r--r--   1 runner  staff   53681 Oct 18 09:21 _encryption.py
+-rw-r--r--   1 runner  staff   11385 Oct 18 09:21 _page_labels.py
+-rw-r--r--   1 runner  staff  103943 Oct 18 09:21 _page.py
+-rw-r--r--   1 runner  staff    2397 Oct 18 09:21 _protocols.py
+-rw-r--r--   1 runner  staff   72487 Oct 18 09:21 _reader.py
+drwxr-xr-x   5 runner  staff     160 Oct 18 09:21 _text_extraction
+-rw-r--r--   1 runner  staff   23663 Oct 18 09:21 _utils.py
+-rw-r--r--   1 runner  staff      23 Oct 18 09:21 _version.py
+-rw-r--r--   1 runner  staff  140929 Oct 18 09:21 _writer.py
+drwxr-xr-x   4 runner  staff     128 Oct 18 09:21 actions
+drwxr-xr-x   6 runner  staff     192 Oct 18 09:21 annotations
+-rw-r--r--   1 runner  staff   24233 Oct 18 09:21 constants.py
+-rw-r--r--   1 runner  staff    1947 Oct 18 09:21 errors.py
+-rw-r--r--   1 runner  staff   38450 Oct 18 09:21 filters.py
+drwxr-xr-x  17 runner  staff     544 Oct 18 09:21 generic
+-rw-r--r--   1 runner  staff    7907 Oct 18 09:21 pagerange.py
+-rw-r--r--   1 runner  staff    1413 Oct 18 09:21 papersizes.py
+-rw-r--r--   1 runner  staff       0 Oct 18 09:21 py.typed
+-rw-r--r--   1 runner  staff    1915 Oct 18 09:21 types.py
+-rw-r--r--   1 runner  staff   32148 Oct 18 09:21 xmp.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_codecs:
+-rw-r--r--  1 runner  staff    1510 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   10717 Oct 18 09:21 _codecs.py
+-rw-r--r--  1 runner  staff  577665 Oct 18 09:21 adobe_glyphs.py
+-rw-r--r--  1 runner  staff  114976 Oct 18 09:21 core_font_metrics.py
+-rw-r--r--  1 runner  staff    4269 Oct 18 09:21 pdfdoc.py
+-rw-r--r--  1 runner  staff    2630 Oct 18 09:21 std.py
+-rw-r--r--  1 runner  staff    4642 Oct 18 09:21 symbol.py
+-rw-r--r--  1 runner  staff    4655 Oct 18 09:21 zapfding.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_crypt_providers:
+-rw-r--r--  1 runner  staff  2770 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1735 Oct 18 09:21 _base.py
+-rw-r--r--  1 runner  staff  7313 Oct 18 09:21 _cryptography.py
+-rw-r--r--  1 runner  staff  3382 Oct 18 09:21 _fallback.py
+-rw-r--r--  1 runner  staff  4050 Oct 18 09:21 _pycryptodome.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_text_extraction:
+-rw-r--r--  1 runner  staff  11093 Oct 18 09:21 __init__.py
+drwxr-xr-x  6 runner  staff    192 Oct 18 09:21 _layout_mode
+-rw-r--r--  1 runner  staff  15295 Oct 18 09:21 _text_extractor.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/_text_extraction/_layout_mode:
+-rw-r--r--  1 runner  staff    348 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  18283 Oct 18 09:21 _fixed_width_page.py
+-rw-r--r--  1 runner  staff   7569 Oct 18 09:21 _text_state_manager.py
+-rw-r--r--  1 runner  staff   6625 Oct 18 09:21 _text_state_params.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/actions:
+-rw-r--r--  1 runner  staff   391 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  7648 Oct 18 09:21 _actions.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/annotations:
+-rw-r--r--  1 runner  staff    990 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff    961 Oct 18 09:21 _base.py
+-rw-r--r--  1 runner  staff  11858 Oct 18 09:21 _markup_annotations.py
+-rw-r--r--  1 runner  staff   3695 Oct 18 09:21 _non_markup_annotations.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/pypdf/generic:
+-rw-r--r--  1 runner  staff   3468 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  43800 Oct 18 09:21 _appearance_stream.py
+-rw-r--r--  1 runner  staff  34314 Oct 18 09:21 _base.py
+-rw-r--r--  1 runner  staff   3187 Oct 18 09:21 _color.py
+-rw-r--r--  1 runner  staff  73017 Oct 18 09:21 _data_structures.py
+-rw-r--r--  1 runner  staff  19061 Oct 18 09:21 _files.py
+-rw-r--r--  1 runner  staff   5550 Oct 18 09:21 _fit.py
+-rw-r--r--  1 runner  staff  43622 Oct 18 09:21 _font.py
+-rw-r--r--  1 runner  staff  15158 Oct 18 09:21 _image_inline.py
+-rw-r--r--  1 runner  staff  28136 Oct 18 09:21 _image_xobject.py
+-rw-r--r--  1 runner  staff   6207 Oct 18 09:21 _link.py
+-rw-r--r--  1 runner  staff   1094 Oct 18 09:21 _outline.py
+-rw-r--r--  1 runner  staff   3969 Oct 18 09:21 _rectangle.py
+-rw-r--r--  1 runner  staff   7875 Oct 18 09:21 _utils.py
+-rw-r--r--  1 runner  staff   7577 Oct 18 09:21 _viewerpref.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events:
+-rw-r--r--  1 runner  staff   3610 Oct 18 09:21 __init__.py
+drwxr-xr-x  8 runner  staff    256 Oct 18 09:21 adapters
+-rw-r--r--  1 runner  staff    668 Oct 18 09:21 constants.py
+-rw-r--r--  1 runner  staff   1430 Oct 18 09:21 errors.py
+-rw-r--r--  1 runner  staff    749 Oct 18 09:21 examples.py
+-rw-r--r--  1 runner  staff   6908 Oct 18 09:21 occurrence.py
+-rw-r--r--  1 runner  staff   4624 Oct 18 09:21 pages.py
+-rw-r--r--  1 runner  staff  14367 Oct 18 09:21 query.py
+drwxr-xr-x  7 runner  staff    224 Oct 18 09:21 selection
+drwxr-xr-x  5 runner  staff    160 Oct 18 09:21 series
+-rw-r--r--  1 runner  staff    673 Oct 18 09:21 types.py
+-rw-r--r--  1 runner  staff   8093 Oct 18 09:21 util.py
+-rw-r--r--  1 runner  staff    468 Oct 18 09:21 version.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/adapters:
+-rw-r--r--  1 runner  staff   361 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   531 Oct 18 09:21 alarm.py
+-rw-r--r--  1 runner  staff  9189 Oct 18 09:21 component.py
+-rw-r--r--  1 runner  staff  1658 Oct 18 09:21 event.py
+-rw-r--r--  1 runner  staff  1263 Oct 18 09:21 journal.py
+-rw-r--r--  1 runner  staff  2721 Oct 18 09:21 todo.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/selection:
+-rw-r--r--  1 runner  staff   281 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  3262 Oct 18 09:21 alarm.py
+-rw-r--r--  1 runner  staff  2183 Oct 18 09:21 all.py
+-rw-r--r--  1 runner  staff   979 Oct 18 09:21 base.py
+-rw-r--r--  1 runner  staff  3697 Oct 18 09:21 name.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/recurring_ical_events/series:
+-rw-r--r--  1 runner  staff    305 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   4872 Oct 18 09:21 alarm.py
+-rw-r--r--  1 runner  staff  21955 Oct 18 09:21 rrule.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata:
+-rw-r--r--   1 runner  staff   252 Oct 18 09:21 __init__.py
+drwxr-xr-x  70 runner  staff  2240 Oct 18 09:21 zoneinfo
+-rw-r--r--   1 runner  staff  9102 Oct 18 09:21 zones
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo:
+-rw-r--r--    1 runner  staff       0 Oct 18 09:21 __init__.py
+drwxr-xr-x   57 runner  staff    1824 Oct 18 09:21 Africa
+drwxr-xr-x  150 runner  staff    4800 Oct 18 09:21 America
+drwxr-xr-x   15 runner  staff     480 Oct 18 09:21 Antarctica
+drwxr-xr-x    4 runner  staff     128 Oct 18 09:21 Arctic
+drwxr-xr-x  102 runner  staff    3264 Oct 18 09:21 Asia
+drwxr-xr-x   15 runner  staff     480 Oct 18 09:21 Atlantic
+drwxr-xr-x   26 runner  staff     832 Oct 18 09:21 Australia
+drwxr-xr-x    7 runner  staff     224 Oct 18 09:21 Brazil
+drwxr-xr-x   11 runner  staff     352 Oct 18 09:21 Canada
+-rw-r--r--    1 runner  staff    1103 Oct 18 09:21 CET
+drwxr-xr-x    5 runner  staff     160 Oct 18 09:21 Chile
+-rw-r--r--    1 runner  staff     922 Oct 18 09:21 CST6CDT
+-rw-r--r--    1 runner  staff    1117 Oct 18 09:21 Cuba
+-rw-r--r--    1 runner  staff     682 Oct 18 09:21 EET
+-rw-r--r--    1 runner  staff    1309 Oct 18 09:21 Egypt
+-rw-r--r--    1 runner  staff    1496 Oct 18 09:21 Eire
+-rw-r--r--    1 runner  staff     149 Oct 18 09:21 EST
+-rw-r--r--    1 runner  staff     922 Oct 18 09:21 EST5EDT
+drwxr-xr-x   38 runner  staff    1216 Oct 18 09:21 Etc
+drwxr-xr-x   67 runner  staff    2144 Oct 18 09:21 Europe
+-rw-r--r--    1 runner  staff     113 Oct 18 09:21 Factory
+-rw-r--r--    1 runner  staff    1599 Oct 18 09:21 GB
+-rw-r--r--    1 runner  staff    1599 Oct 18 09:21 GB-Eire
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 GMT
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 GMT-0
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 GMT+0
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 GMT0
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 Greenwich
+-rw-r--r--    1 runner  staff     775 Oct 18 09:21 Hongkong
+-rw-r--r--    1 runner  staff     221 Oct 18 09:21 HST
+-rw-r--r--    1 runner  staff     130 Oct 18 09:21 Iceland
+drwxr-xr-x   14 runner  staff     448 Oct 18 09:21 Indian
+-rw-r--r--    1 runner  staff     812 Oct 18 09:21 Iran
+-rw-r--r--    1 runner  staff    4841 Oct 18 09:21 iso3166.tab
+-rw-r--r--    1 runner  staff    1074 Oct 18 09:21 Israel
+-rw-r--r--    1 runner  staff     339 Oct 18 09:21 Jamaica
+-rw-r--r--    1 runner  staff     213 Oct 18 09:21 Japan
+-rw-r--r--    1 runner  staff     219 Oct 18 09:21 Kwajalein
+-rw-r--r--    1 runner  staff    3694 Oct 18 09:21 leapseconds
+-rw-r--r--    1 runner  staff     431 Oct 18 09:21 Libya
+-rw-r--r--    1 runner  staff    1103 Oct 18 09:21 MET
+drwxr-xr-x    6 runner  staff     192 Oct 18 09:21 Mexico
+-rw-r--r--    1 runner  staff     240 Oct 18 09:21 MST
+-rw-r--r--    1 runner  staff     922 Oct 18 09:21 MST7MDT
+-rw-r--r--    1 runner  staff    1042 Oct 18 09:21 Navajo
+-rw-r--r--    1 runner  staff    1043 Oct 18 09:21 NZ
+-rw-r--r--    1 runner  staff     808 Oct 18 09:21 NZ-CHAT
+drwxr-xr-x   47 runner  staff    1504 Oct 18 09:21 Pacific
+-rw-r--r--    1 runner  staff     923 Oct 18 09:21 Poland
+-rw-r--r--    1 runner  staff    1463 Oct 18 09:21 Portugal
+-rw-r--r--    1 runner  staff     393 Oct 18 09:21 PRC
+-rw-r--r--    1 runner  staff     922 Oct 18 09:21 PST8PDT
+-rw-r--r--    1 runner  staff     511 Oct 18 09:21 ROC
+-rw-r--r--    1 runner  staff     415 Oct 18 09:21 ROK
+-rw-r--r--    1 runner  staff     256 Oct 18 09:21 Singapore
+-rw-r--r--    1 runner  staff    1200 Oct 18 09:21 Turkey
+-rw-r--r--    1 runner  staff  104917 Oct 18 09:21 tzdata.zi
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 UCT
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 Universal
+drwxr-xr-x   15 runner  staff     480 Oct 18 09:21 US
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 UTC
+-rw-r--r--    1 runner  staff     908 Oct 18 09:21 W-SU
+-rw-r--r--    1 runner  staff    1463 Oct 18 09:21 WET
+-rw-r--r--    1 runner  staff   18809 Oct 18 09:21 zone.tab
+-rw-r--r--    1 runner  staff   17592 Oct 18 09:21 zone1970.tab
+-rw-r--r--    1 runner  staff    8425 Oct 18 09:21 zonenow.tab
+-rw-r--r--    1 runner  staff     111 Oct 18 09:21 Zulu
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Africa:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Abidjan
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Accra
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Addis_Ababa
+-rw-r--r--  1 runner  staff   470 Oct 18 09:21 Algiers
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Asmara
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Asmera
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Bamako
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Bangui
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Banjul
+-rw-r--r--  1 runner  staff   149 Oct 18 09:21 Bissau
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Blantyre
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Brazzaville
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Bujumbura
+-rw-r--r--  1 runner  staff  1309 Oct 18 09:21 Cairo
+-rw-r--r--  1 runner  staff   793 Oct 18 09:21 Casablanca
+-rw-r--r--  1 runner  staff   562 Oct 18 09:21 Ceuta
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Conakry
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Dakar
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Dar_es_Salaam
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Djibouti
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Douala
+-rw-r--r--  1 runner  staff   704 Oct 18 09:21 El_Aaiun
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Freetown
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Gaborone
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Harare
+-rw-r--r--  1 runner  staff   190 Oct 18 09:21 Johannesburg
+-rw-r--r--  1 runner  staff   458 Oct 18 09:21 Juba
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Kampala
+-rw-r--r--  1 runner  staff   458 Oct 18 09:21 Khartoum
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Kigali
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Kinshasa
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Lagos
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Libreville
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Lome
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Luanda
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Lubumbashi
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Lusaka
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Malabo
+-rw-r--r--  1 runner  staff   131 Oct 18 09:21 Maputo
+-rw-r--r--  1 runner  staff   190 Oct 18 09:21 Maseru
+-rw-r--r--  1 runner  staff   190 Oct 18 09:21 Mbabane
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Mogadishu
+-rw-r--r--  1 runner  staff   164 Oct 18 09:21 Monrovia
+-rw-r--r--  1 runner  staff   191 Oct 18 09:21 Nairobi
+-rw-r--r--  1 runner  staff   160 Oct 18 09:21 Ndjamena
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Niamey
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Nouakchott
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Ouagadougou
+-rw-r--r--  1 runner  staff   180 Oct 18 09:21 Porto-Novo
+-rw-r--r--  1 runner  staff   173 Oct 18 09:21 Sao_Tome
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Timbuktu
+-rw-r--r--  1 runner  staff   431 Oct 18 09:21 Tripoli
+-rw-r--r--  1 runner  staff   449 Oct 18 09:21 Tunis
+-rw-r--r--  1 runner  staff   638 Oct 18 09:21 Windhoek
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America:
+-rw-r--r--   1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--   1 runner  staff   969 Oct 18 09:21 Adak
+-rw-r--r--   1 runner  staff   977 Oct 18 09:21 Anchorage
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Anguilla
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Antigua
+-rw-r--r--   1 runner  staff   592 Oct 18 09:21 Araguaina
+drwxr-xr-x  16 runner  staff   512 Oct 18 09:21 Argentina
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Aruba
+-rw-r--r--   1 runner  staff  1085 Oct 18 09:21 Asuncion
+-rw-r--r--   1 runner  staff   149 Oct 18 09:21 Atikokan
+-rw-r--r--   1 runner  staff   969 Oct 18 09:21 Atka
+-rw-r--r--   1 runner  staff   682 Oct 18 09:21 Bahia
+-rw-r--r--   1 runner  staff   700 Oct 18 09:21 Bahia_Banderas
+-rw-r--r--   1 runner  staff   278 Oct 18 09:21 Barbados
+-rw-r--r--   1 runner  staff   394 Oct 18 09:21 Belem
+-rw-r--r--   1 runner  staff  1045 Oct 18 09:21 Belize
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Blanc-Sablon
+-rw-r--r--   1 runner  staff   430 Oct 18 09:21 Boa_Vista
+-rw-r--r--   1 runner  staff   179 Oct 18 09:21 Bogota
+-rw-r--r--   1 runner  staff   999 Oct 18 09:21 Boise
+-rw-r--r--   1 runner  staff   708 Oct 18 09:21 Buenos_Aires
+-rw-r--r--   1 runner  staff   883 Oct 18 09:21 Cambridge_Bay
+-rw-r--r--   1 runner  staff   952 Oct 18 09:21 Campo_Grande
+-rw-r--r--   1 runner  staff   538 Oct 18 09:21 Cancun
+-rw-r--r--   1 runner  staff   190 Oct 18 09:21 Caracas
+-rw-r--r--   1 runner  staff   708 Oct 18 09:21 Catamarca
+-rw-r--r--   1 runner  staff   151 Oct 18 09:21 Cayenne
+-rw-r--r--   1 runner  staff   149 Oct 18 09:21 Cayman
+-rw-r--r--   1 runner  staff  1754 Oct 18 09:21 Chicago
+-rw-r--r--   1 runner  staff   691 Oct 18 09:21 Chihuahua
+-rw-r--r--   1 runner  staff   718 Oct 18 09:21 Ciudad_Juarez
+-rw-r--r--   1 runner  staff   149 Oct 18 09:21 Coral_Harbour
+-rw-r--r--   1 runner  staff   708 Oct 18 09:21 Cordoba
+-rw-r--r--   1 runner  staff   232 Oct 18 09:21 Costa_Rica
+-rw-r--r--   1 runner  staff  1362 Oct 18 09:21 Coyhaique
+-rw-r--r--   1 runner  staff   240 Oct 18 09:21 Creston
+-rw-r--r--   1 runner  staff   934 Oct 18 09:21 Cuiaba
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Curacao
+-rw-r--r--   1 runner  staff   447 Oct 18 09:21 Danmarkshavn
+-rw-r--r--   1 runner  staff  1029 Oct 18 09:21 Dawson
+-rw-r--r--   1 runner  staff   683 Oct 18 09:21 Dawson_Creek
+-rw-r--r--   1 runner  staff  1042 Oct 18 09:21 Denver
+-rw-r--r--   1 runner  staff   899 Oct 18 09:21 Detroit
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Dominica
+-rw-r--r--   1 runner  staff  1313 Oct 18 09:21 Edmonton
+-rw-r--r--   1 runner  staff   436 Oct 18 09:21 Eirunepe
+-rw-r--r--   1 runner  staff   176 Oct 18 09:21 El_Salvador
+-rw-r--r--   1 runner  staff  1367 Oct 18 09:21 Ensenada
+-rw-r--r--   1 runner  staff  1448 Oct 18 09:21 Fort_Nelson
+-rw-r--r--   1 runner  staff   531 Oct 18 09:21 Fort_Wayne
+-rw-r--r--   1 runner  staff   484 Oct 18 09:21 Fortaleza
+-rw-r--r--   1 runner  staff   880 Oct 18 09:21 Glace_Bay
+-rw-r--r--   1 runner  staff   965 Oct 18 09:21 Godthab
+-rw-r--r--   1 runner  staff  1580 Oct 18 09:21 Goose_Bay
+-rw-r--r--   1 runner  staff   853 Oct 18 09:21 Grand_Turk
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Grenada
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Guadeloupe
+-rw-r--r--   1 runner  staff   212 Oct 18 09:21 Guatemala
+-rw-r--r--   1 runner  staff   179 Oct 18 09:21 Guayaquil
+-rw-r--r--   1 runner  staff   181 Oct 18 09:21 Guyana
+-rw-r--r--   1 runner  staff  1672 Oct 18 09:21 Halifax
+-rw-r--r--   1 runner  staff  1117 Oct 18 09:21 Havana
+-rw-r--r--   1 runner  staff   258 Oct 18 09:21 Hermosillo
+drwxr-xr-x  11 runner  staff   352 Oct 18 09:21 Indiana
+-rw-r--r--   1 runner  staff   531 Oct 18 09:21 Indianapolis
+-rw-r--r--   1 runner  staff  1160 Oct 18 09:21 Inuvik
+-rw-r--r--   1 runner  staff   855 Oct 18 09:21 Iqaluit
+-rw-r--r--   1 runner  staff   339 Oct 18 09:21 Jamaica
+-rw-r--r--   1 runner  staff   690 Oct 18 09:21 Jujuy
+-rw-r--r--   1 runner  staff   966 Oct 18 09:21 Juneau
+drwxr-xr-x   5 runner  staff   160 Oct 18 09:21 Kentucky
+-rw-r--r--   1 runner  staff  1016 Oct 18 09:21 Knox_IN
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Kralendijk
+-rw-r--r--   1 runner  staff   170 Oct 18 09:21 La_Paz
+-rw-r--r--   1 runner  staff   283 Oct 18 09:21 Lima
+-rw-r--r--   1 runner  staff  1294 Oct 18 09:21 Los_Angeles
+-rw-r--r--   1 runner  staff  1242 Oct 18 09:21 Louisville
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Lower_Princes
+-rw-r--r--   1 runner  staff   502 Oct 18 09:21 Maceio
+-rw-r--r--   1 runner  staff   295 Oct 18 09:21 Managua
+-rw-r--r--   1 runner  staff   412 Oct 18 09:21 Manaus
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Marigot
+-rw-r--r--   1 runner  staff   178 Oct 18 09:21 Martinique
+-rw-r--r--   1 runner  staff   437 Oct 18 09:21 Matamoros
+-rw-r--r--   1 runner  staff   690 Oct 18 09:21 Mazatlan
+-rw-r--r--   1 runner  staff   708 Oct 18 09:21 Mendoza
+-rw-r--r--   1 runner  staff   917 Oct 18 09:21 Menominee
+-rw-r--r--   1 runner  staff   654 Oct 18 09:21 Merida
+-rw-r--r--   1 runner  staff   586 Oct 18 09:21 Metlakatla
+-rw-r--r--   1 runner  staff   773 Oct 18 09:21 Mexico_City
+-rw-r--r--   1 runner  staff   550 Oct 18 09:21 Miquelon
+-rw-r--r--   1 runner  staff  1493 Oct 18 09:21 Moncton
+-rw-r--r--   1 runner  staff   709 Oct 18 09:21 Monterrey
+-rw-r--r--   1 runner  staff   969 Oct 18 09:21 Montevideo
+-rw-r--r--   1 runner  staff  1717 Oct 18 09:21 Montreal
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Montserrat
+-rw-r--r--   1 runner  staff  1717 Oct 18 09:21 Nassau
+-rw-r--r--   1 runner  staff  1744 Oct 18 09:21 New_York
+-rw-r--r--   1 runner  staff  1717 Oct 18 09:21 Nipigon
+-rw-r--r--   1 runner  staff   975 Oct 18 09:21 Nome
+-rw-r--r--   1 runner  staff   484 Oct 18 09:21 Noronha
+drwxr-xr-x   6 runner  staff   192 Oct 18 09:21 North_Dakota
+-rw-r--r--   1 runner  staff   965 Oct 18 09:21 Nuuk
+-rw-r--r--   1 runner  staff   718 Oct 18 09:21 Ojinaga
+-rw-r--r--   1 runner  staff   149 Oct 18 09:21 Panama
+-rw-r--r--   1 runner  staff   855 Oct 18 09:21 Pangnirtung
+-rw-r--r--   1 runner  staff   187 Oct 18 09:21 Paramaribo
+-rw-r--r--   1 runner  staff   240 Oct 18 09:21 Phoenix
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Port_of_Spain
+-rw-r--r--   1 runner  staff   565 Oct 18 09:21 Port-au-Prince
+-rw-r--r--   1 runner  staff   418 Oct 18 09:21 Porto_Acre
+-rw-r--r--   1 runner  staff   394 Oct 18 09:21 Porto_Velho
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Puerto_Rico
+-rw-r--r--   1 runner  staff  1218 Oct 18 09:21 Punta_Arenas
+-rw-r--r--   1 runner  staff  1637 Oct 18 09:21 Rainy_River
+-rw-r--r--   1 runner  staff   807 Oct 18 09:21 Rankin_Inlet
+-rw-r--r--   1 runner  staff   484 Oct 18 09:21 Recife
+-rw-r--r--   1 runner  staff   638 Oct 18 09:21 Regina
+-rw-r--r--   1 runner  staff   807 Oct 18 09:21 Resolute
+-rw-r--r--   1 runner  staff   418 Oct 18 09:21 Rio_Branco
+-rw-r--r--   1 runner  staff   708 Oct 18 09:21 Rosario
+-rw-r--r--   1 runner  staff  1367 Oct 18 09:21 Santa_Isabel
+-rw-r--r--   1 runner  staff   409 Oct 18 09:21 Santarem
+-rw-r--r--   1 runner  staff  1354 Oct 18 09:21 Santiago
+-rw-r--r--   1 runner  staff   317 Oct 18 09:21 Santo_Domingo
+-rw-r--r--   1 runner  staff   952 Oct 18 09:21 Sao_Paulo
+-rw-r--r--   1 runner  staff   984 Oct 18 09:21 Scoresbysund
+-rw-r--r--   1 runner  staff  1042 Oct 18 09:21 Shiprock
+-rw-r--r--   1 runner  staff   956 Oct 18 09:21 Sitka
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 St_Barthelemy
+-rw-r--r--   1 runner  staff  1878 Oct 18 09:21 St_Johns
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 St_Kitts
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 St_Lucia
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 St_Thomas
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 St_Vincent
+-rw-r--r--   1 runner  staff   368 Oct 18 09:21 Swift_Current
+-rw-r--r--   1 runner  staff   194 Oct 18 09:21 Tegucigalpa
+-rw-r--r--   1 runner  staff   455 Oct 18 09:21 Thule
+-rw-r--r--   1 runner  staff  1717 Oct 18 09:21 Thunder_Bay
+-rw-r--r--   1 runner  staff  1367 Oct 18 09:21 Tijuana
+-rw-r--r--   1 runner  staff  1717 Oct 18 09:21 Toronto
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Tortola
+-rw-r--r--   1 runner  staff  1673 Oct 18 09:21 Vancouver
+-rw-r--r--   1 runner  staff   177 Oct 18 09:21 Virgin
+-rw-r--r--   1 runner  staff  1029 Oct 18 09:21 Whitehorse
+-rw-r--r--   1 runner  staff  1637 Oct 18 09:21 Winnipeg
+-rw-r--r--   1 runner  staff   946 Oct 18 09:21 Yakutat
+-rw-r--r--   1 runner  staff  1313 Oct 18 09:21 Yellowknife
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Argentina:
+-rw-r--r--  1 runner  staff    0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Buenos_Aires
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Catamarca
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 ComodRivadavia
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Cordoba
+-rw-r--r--  1 runner  staff  690 Oct 18 09:21 Jujuy
+-rw-r--r--  1 runner  staff  717 Oct 18 09:21 La_Rioja
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Mendoza
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Rio_Gallegos
+-rw-r--r--  1 runner  staff  690 Oct 18 09:21 Salta
+-rw-r--r--  1 runner  staff  717 Oct 18 09:21 San_Juan
+-rw-r--r--  1 runner  staff  717 Oct 18 09:21 San_Luis
+-rw-r--r--  1 runner  staff  726 Oct 18 09:21 Tucuman
+-rw-r--r--  1 runner  staff  708 Oct 18 09:21 Ushuaia
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Indiana:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   531 Oct 18 09:21 Indianapolis
+-rw-r--r--  1 runner  staff  1016 Oct 18 09:21 Knox
+-rw-r--r--  1 runner  staff   567 Oct 18 09:21 Marengo
+-rw-r--r--  1 runner  staff   683 Oct 18 09:21 Petersburg
+-rw-r--r--  1 runner  staff   522 Oct 18 09:21 Tell_City
+-rw-r--r--  1 runner  staff   369 Oct 18 09:21 Vevay
+-rw-r--r--  1 runner  staff   558 Oct 18 09:21 Vincennes
+-rw-r--r--  1 runner  staff   603 Oct 18 09:21 Winamac
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/Kentucky:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1242 Oct 18 09:21 Louisville
+-rw-r--r--  1 runner  staff   972 Oct 18 09:21 Monticello
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/America/North_Dakota:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1043 Oct 18 09:21 Beulah
+-rw-r--r--  1 runner  staff   990 Oct 18 09:21 Center
+-rw-r--r--  1 runner  staff   990 Oct 18 09:21 New_Salem
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Antarctica:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   287 Oct 18 09:21 Casey
+-rw-r--r--  1 runner  staff   197 Oct 18 09:21 Davis
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 DumontDUrville
+-rw-r--r--  1 runner  staff   976 Oct 18 09:21 Macquarie
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Mawson
+-rw-r--r--  1 runner  staff  1043 Oct 18 09:21 McMurdo
+-rw-r--r--  1 runner  staff   887 Oct 18 09:21 Palmer
+-rw-r--r--  1 runner  staff   132 Oct 18 09:21 Rothera
+-rw-r--r--  1 runner  staff  1043 Oct 18 09:21 South_Pole
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Syowa
+-rw-r--r--  1 runner  staff   158 Oct 18 09:21 Troll
+-rw-r--r--  1 runner  staff   170 Oct 18 09:21 Vostok
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Arctic:
+-rw-r--r--  1 runner  staff    0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  705 Oct 18 09:21 Longyearbyen
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Asia:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Aden
+-rw-r--r--  1 runner  staff   618 Oct 18 09:21 Almaty
+-rw-r--r--  1 runner  staff   928 Oct 18 09:21 Amman
+-rw-r--r--  1 runner  staff   743 Oct 18 09:21 Anadyr
+-rw-r--r--  1 runner  staff   606 Oct 18 09:21 Aqtau
+-rw-r--r--  1 runner  staff   615 Oct 18 09:21 Aqtobe
+-rw-r--r--  1 runner  staff   375 Oct 18 09:21 Ashgabat
+-rw-r--r--  1 runner  staff   375 Oct 18 09:21 Ashkhabad
+-rw-r--r--  1 runner  staff   616 Oct 18 09:21 Atyrau
+-rw-r--r--  1 runner  staff   630 Oct 18 09:21 Baghdad
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Bahrain
+-rw-r--r--  1 runner  staff   744 Oct 18 09:21 Baku
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Bangkok
+-rw-r--r--  1 runner  staff   753 Oct 18 09:21 Barnaul
+-rw-r--r--  1 runner  staff   732 Oct 18 09:21 Beirut
+-rw-r--r--  1 runner  staff   618 Oct 18 09:21 Bishkek
+-rw-r--r--  1 runner  staff   320 Oct 18 09:21 Brunei
+-rw-r--r--  1 runner  staff   220 Oct 18 09:21 Calcutta
+-rw-r--r--  1 runner  staff   750 Oct 18 09:21 Chita
+-rw-r--r--  1 runner  staff   594 Oct 18 09:21 Choibalsan
+-rw-r--r--  1 runner  staff   393 Oct 18 09:21 Chongqing
+-rw-r--r--  1 runner  staff   393 Oct 18 09:21 Chungking
+-rw-r--r--  1 runner  staff   247 Oct 18 09:21 Colombo
+-rw-r--r--  1 runner  staff   231 Oct 18 09:21 Dacca
+-rw-r--r--  1 runner  staff  1234 Oct 18 09:21 Damascus
+-rw-r--r--  1 runner  staff   231 Oct 18 09:21 Dhaka
+-rw-r--r--  1 runner  staff   170 Oct 18 09:21 Dili
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Dubai
+-rw-r--r--  1 runner  staff   366 Oct 18 09:21 Dushanbe
+-rw-r--r--  1 runner  staff   940 Oct 18 09:21 Famagusta
+-rw-r--r--  1 runner  staff  2950 Oct 18 09:21 Gaza
+-rw-r--r--  1 runner  staff   393 Oct 18 09:21 Harbin
+-rw-r--r--  1 runner  staff  2968 Oct 18 09:21 Hebron
+-rw-r--r--  1 runner  staff   232 Oct 18 09:21 Ho_Chi_Minh
+-rw-r--r--  1 runner  staff   775 Oct 18 09:21 Hong_Kong
+-rw-r--r--  1 runner  staff   594 Oct 18 09:21 Hovd
+-rw-r--r--  1 runner  staff   760 Oct 18 09:21 Irkutsk
+-rw-r--r--  1 runner  staff  1200 Oct 18 09:21 Istanbul
+-rw-r--r--  1 runner  staff   248 Oct 18 09:21 Jakarta
+-rw-r--r--  1 runner  staff   171 Oct 18 09:21 Jayapura
+-rw-r--r--  1 runner  staff  1074 Oct 18 09:21 Jerusalem
+-rw-r--r--  1 runner  staff   159 Oct 18 09:21 Kabul
+-rw-r--r--  1 runner  staff   727 Oct 18 09:21 Kamchatka
+-rw-r--r--  1 runner  staff   266 Oct 18 09:21 Karachi
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Kashgar
+-rw-r--r--  1 runner  staff   161 Oct 18 09:21 Kathmandu
+-rw-r--r--  1 runner  staff   161 Oct 18 09:21 Katmandu
+-rw-r--r--  1 runner  staff   775 Oct 18 09:21 Khandyga
+-rw-r--r--  1 runner  staff   220 Oct 18 09:21 Kolkata
+-rw-r--r--  1 runner  staff   741 Oct 18 09:21 Krasnoyarsk
+-rw-r--r--  1 runner  staff   256 Oct 18 09:21 Kuala_Lumpur
+-rw-r--r--  1 runner  staff   320 Oct 18 09:21 Kuching
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Kuwait
+-rw-r--r--  1 runner  staff   791 Oct 18 09:21 Macao
+-rw-r--r--  1 runner  staff   791 Oct 18 09:21 Macau
+-rw-r--r--  1 runner  staff   751 Oct 18 09:21 Magadan
+-rw-r--r--  1 runner  staff   190 Oct 18 09:21 Makassar
+-rw-r--r--  1 runner  staff   274 Oct 18 09:21 Manila
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Muscat
+-rw-r--r--  1 runner  staff   597 Oct 18 09:21 Nicosia
+-rw-r--r--  1 runner  staff   726 Oct 18 09:21 Novokuznetsk
+-rw-r--r--  1 runner  staff   753 Oct 18 09:21 Novosibirsk
+-rw-r--r--  1 runner  staff   741 Oct 18 09:21 Omsk
+-rw-r--r--  1 runner  staff   625 Oct 18 09:21 Oral
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Phnom_Penh
+-rw-r--r--  1 runner  staff   247 Oct 18 09:21 Pontianak
+-rw-r--r--  1 runner  staff   183 Oct 18 09:21 Pyongyang
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Qatar
+-rw-r--r--  1 runner  staff   624 Oct 18 09:21 Qostanay
+-rw-r--r--  1 runner  staff   624 Oct 18 09:21 Qyzylorda
+-rw-r--r--  1 runner  staff   187 Oct 18 09:21 Rangoon
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Riyadh
+-rw-r--r--  1 runner  staff   232 Oct 18 09:21 Saigon
+-rw-r--r--  1 runner  staff   755 Oct 18 09:21 Sakhalin
+-rw-r--r--  1 runner  staff   366 Oct 18 09:21 Samarkand
+-rw-r--r--  1 runner  staff   415 Oct 18 09:21 Seoul
+-rw-r--r--  1 runner  staff   393 Oct 18 09:21 Shanghai
+-rw-r--r--  1 runner  staff   256 Oct 18 09:21 Singapore
+-rw-r--r--  1 runner  staff   742 Oct 18 09:21 Srednekolymsk
+-rw-r--r--  1 runner  staff   511 Oct 18 09:21 Taipei
+-rw-r--r--  1 runner  staff   366 Oct 18 09:21 Tashkent
+-rw-r--r--  1 runner  staff   620 Oct 18 09:21 Tbilisi
+-rw-r--r--  1 runner  staff   812 Oct 18 09:21 Tehran
+-rw-r--r--  1 runner  staff  1074 Oct 18 09:21 Tel_Aviv
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Thimbu
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Thimphu
+-rw-r--r--  1 runner  staff   213 Oct 18 09:21 Tokyo
+-rw-r--r--  1 runner  staff   753 Oct 18 09:21 Tomsk
+-rw-r--r--  1 runner  staff   190 Oct 18 09:21 Ujung_Pandang
+-rw-r--r--  1 runner  staff   594 Oct 18 09:21 Ulaanbaatar
+-rw-r--r--  1 runner  staff   594 Oct 18 09:21 Ulan_Bator
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Urumqi
+-rw-r--r--  1 runner  staff   771 Oct 18 09:21 Ust-Nera
+-rw-r--r--  1 runner  staff   152 Oct 18 09:21 Vientiane
+-rw-r--r--  1 runner  staff   742 Oct 18 09:21 Vladivostok
+-rw-r--r--  1 runner  staff   741 Oct 18 09:21 Yakutsk
+-rw-r--r--  1 runner  staff   187 Oct 18 09:21 Yangon
+-rw-r--r--  1 runner  staff   760 Oct 18 09:21 Yekaterinburg
+-rw-r--r--  1 runner  staff   708 Oct 18 09:21 Yerevan
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Atlantic:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1401 Oct 18 09:21 Azores
+-rw-r--r--  1 runner  staff  1024 Oct 18 09:21 Bermuda
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Canary
+-rw-r--r--  1 runner  staff   175 Oct 18 09:21 Cape_Verde
+-rw-r--r--  1 runner  staff   441 Oct 18 09:21 Faeroe
+-rw-r--r--  1 runner  staff   441 Oct 18 09:21 Faroe
+-rw-r--r--  1 runner  staff   705 Oct 18 09:21 Jan_Mayen
+-rw-r--r--  1 runner  staff  1372 Oct 18 09:21 Madeira
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 Reykjavik
+-rw-r--r--  1 runner  staff   132 Oct 18 09:21 South_Georgia
+-rw-r--r--  1 runner  staff   130 Oct 18 09:21 St_Helena
+-rw-r--r--  1 runner  staff   789 Oct 18 09:21 Stanley
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Australia:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 ACT
+-rw-r--r--  1 runner  staff   921 Oct 18 09:21 Adelaide
+-rw-r--r--  1 runner  staff   289 Oct 18 09:21 Brisbane
+-rw-r--r--  1 runner  staff   941 Oct 18 09:21 Broken_Hill
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 Canberra
+-rw-r--r--  1 runner  staff  1003 Oct 18 09:21 Currie
+-rw-r--r--  1 runner  staff   234 Oct 18 09:21 Darwin
+-rw-r--r--  1 runner  staff   314 Oct 18 09:21 Eucla
+-rw-r--r--  1 runner  staff  1003 Oct 18 09:21 Hobart
+-rw-r--r--  1 runner  staff   692 Oct 18 09:21 LHI
+-rw-r--r--  1 runner  staff   325 Oct 18 09:21 Lindeman
+-rw-r--r--  1 runner  staff   692 Oct 18 09:21 Lord_Howe
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 Melbourne
+-rw-r--r--  1 runner  staff   234 Oct 18 09:21 North
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 NSW
+-rw-r--r--  1 runner  staff   306 Oct 18 09:21 Perth
+-rw-r--r--  1 runner  staff   289 Oct 18 09:21 Queensland
+-rw-r--r--  1 runner  staff   921 Oct 18 09:21 South
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 Sydney
+-rw-r--r--  1 runner  staff  1003 Oct 18 09:21 Tasmania
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 Victoria
+-rw-r--r--  1 runner  staff   306 Oct 18 09:21 West
+-rw-r--r--  1 runner  staff   941 Oct 18 09:21 Yancowinna
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Brazil:
+-rw-r--r--  1 runner  staff    0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  418 Oct 18 09:21 Acre
+-rw-r--r--  1 runner  staff  484 Oct 18 09:21 DeNoronha
+-rw-r--r--  1 runner  staff  952 Oct 18 09:21 East
+-rw-r--r--  1 runner  staff  412 Oct 18 09:21 West
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Canada:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1672 Oct 18 09:21 Atlantic
+-rw-r--r--  1 runner  staff  1637 Oct 18 09:21 Central
+-rw-r--r--  1 runner  staff  1717 Oct 18 09:21 Eastern
+-rw-r--r--  1 runner  staff  1313 Oct 18 09:21 Mountain
+-rw-r--r--  1 runner  staff  1878 Oct 18 09:21 Newfoundland
+-rw-r--r--  1 runner  staff  1673 Oct 18 09:21 Pacific
+-rw-r--r--  1 runner  staff   638 Oct 18 09:21 Saskatchewan
+-rw-r--r--  1 runner  staff  1029 Oct 18 09:21 Yukon
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Chile:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1354 Oct 18 09:21 Continental
+-rw-r--r--  1 runner  staff  1174 Oct 18 09:21 EasterIsland
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Etc:
+-rw-r--r--  1 runner  staff    0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 GMT
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 GMT-0
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-1
+-rw-r--r--  1 runner  staff  115 Oct 18 09:21 GMT-10
+-rw-r--r--  1 runner  staff  115 Oct 18 09:21 GMT-11
+-rw-r--r--  1 runner  staff  115 Oct 18 09:21 GMT-12
+-rw-r--r--  1 runner  staff  115 Oct 18 09:21 GMT-13
+-rw-r--r--  1 runner  staff  115 Oct 18 09:21 GMT-14
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-2
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-3
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-4
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-5
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-6
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-7
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-8
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT-9
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 GMT+0
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+1
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT+10
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT+11
+-rw-r--r--  1 runner  staff  114 Oct 18 09:21 GMT+12
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+2
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+3
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+4
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+5
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+6
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+7
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+8
+-rw-r--r--  1 runner  staff  113 Oct 18 09:21 GMT+9
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 GMT0
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 Greenwich
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 UCT
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 Universal
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 UTC
+-rw-r--r--  1 runner  staff  111 Oct 18 09:21 Zulu
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Europe:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1103 Oct 18 09:21 Amsterdam
+-rw-r--r--  1 runner  staff   389 Oct 18 09:21 Andorra
+-rw-r--r--  1 runner  staff   726 Oct 18 09:21 Astrakhan
+-rw-r--r--  1 runner  staff   682 Oct 18 09:21 Athens
+-rw-r--r--  1 runner  staff  1599 Oct 18 09:21 Belfast
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Belgrade
+-rw-r--r--  1 runner  staff   705 Oct 18 09:21 Berlin
+-rw-r--r--  1 runner  staff   723 Oct 18 09:21 Bratislava
+-rw-r--r--  1 runner  staff  1103 Oct 18 09:21 Brussels
+-rw-r--r--  1 runner  staff   661 Oct 18 09:21 Bucharest
+-rw-r--r--  1 runner  staff   766 Oct 18 09:21 Budapest
+-rw-r--r--  1 runner  staff   497 Oct 18 09:21 Busingen
+-rw-r--r--  1 runner  staff  1207 Oct 18 09:21 Chisinau
+-rw-r--r--  1 runner  staff   705 Oct 18 09:21 Copenhagen
+-rw-r--r--  1 runner  staff  1496 Oct 18 09:21 Dublin
+-rw-r--r--  1 runner  staff  1220 Oct 18 09:21 Gibraltar
+-rw-r--r--  1 runner  staff  1599 Oct 18 09:21 Guernsey
+-rw-r--r--  1 runner  staff   481 Oct 18 09:21 Helsinki
+-rw-r--r--  1 runner  staff  1599 Oct 18 09:21 Isle_of_Man
+-rw-r--r--  1 runner  staff  1200 Oct 18 09:21 Istanbul
+-rw-r--r--  1 runner  staff  1599 Oct 18 09:21 Jersey
+-rw-r--r--  1 runner  staff   904 Oct 18 09:21 Kaliningrad
+-rw-r--r--  1 runner  staff   558 Oct 18 09:21 Kiev
+-rw-r--r--  1 runner  staff   735 Oct 18 09:21 Kirov
+-rw-r--r--  1 runner  staff   558 Oct 18 09:21 Kyiv
+-rw-r--r--  1 runner  staff  1463 Oct 18 09:21 Lisbon
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Ljubljana
+-rw-r--r--  1 runner  staff  1599 Oct 18 09:21 London
+-rw-r--r--  1 runner  staff  1103 Oct 18 09:21 Luxembourg
+-rw-r--r--  1 runner  staff   897 Oct 18 09:21 Madrid
+-rw-r--r--  1 runner  staff   928 Oct 18 09:21 Malta
+-rw-r--r--  1 runner  staff   481 Oct 18 09:21 Mariehamn
+-rw-r--r--  1 runner  staff   808 Oct 18 09:21 Minsk
+-rw-r--r--  1 runner  staff  1105 Oct 18 09:21 Monaco
+-rw-r--r--  1 runner  staff   908 Oct 18 09:21 Moscow
+-rw-r--r--  1 runner  staff   597 Oct 18 09:21 Nicosia
+-rw-r--r--  1 runner  staff   705 Oct 18 09:21 Oslo
+-rw-r--r--  1 runner  staff  1105 Oct 18 09:21 Paris
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Podgorica
+-rw-r--r--  1 runner  staff   723 Oct 18 09:21 Prague
+-rw-r--r--  1 runner  staff   694 Oct 18 09:21 Riga
+-rw-r--r--  1 runner  staff   947 Oct 18 09:21 Rome
+-rw-r--r--  1 runner  staff   732 Oct 18 09:21 Samara
+-rw-r--r--  1 runner  staff   947 Oct 18 09:21 San_Marino
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Sarajevo
+-rw-r--r--  1 runner  staff   726 Oct 18 09:21 Saratov
+-rw-r--r--  1 runner  staff   865 Oct 18 09:21 Simferopol
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Skopje
+-rw-r--r--  1 runner  staff   592 Oct 18 09:21 Sofia
+-rw-r--r--  1 runner  staff   705 Oct 18 09:21 Stockholm
+-rw-r--r--  1 runner  staff   675 Oct 18 09:21 Tallinn
+-rw-r--r--  1 runner  staff   604 Oct 18 09:21 Tirane
+-rw-r--r--  1 runner  staff  1207 Oct 18 09:21 Tiraspol
+-rw-r--r--  1 runner  staff   760 Oct 18 09:21 Ulyanovsk
+-rw-r--r--  1 runner  staff   558 Oct 18 09:21 Uzhgorod
+-rw-r--r--  1 runner  staff   497 Oct 18 09:21 Vaduz
+-rw-r--r--  1 runner  staff   947 Oct 18 09:21 Vatican
+-rw-r--r--  1 runner  staff   658 Oct 18 09:21 Vienna
+-rw-r--r--  1 runner  staff   676 Oct 18 09:21 Vilnius
+-rw-r--r--  1 runner  staff   753 Oct 18 09:21 Volgograd
+-rw-r--r--  1 runner  staff   923 Oct 18 09:21 Warsaw
+-rw-r--r--  1 runner  staff   478 Oct 18 09:21 Zagreb
+-rw-r--r--  1 runner  staff   558 Oct 18 09:21 Zaporozhye
+-rw-r--r--  1 runner  staff   497 Oct 18 09:21 Zurich
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Indian:
+-rw-r--r--  1 runner  staff    0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  191 Oct 18 09:21 Antananarivo
+-rw-r--r--  1 runner  staff  152 Oct 18 09:21 Chagos
+-rw-r--r--  1 runner  staff  152 Oct 18 09:21 Christmas
+-rw-r--r--  1 runner  staff  187 Oct 18 09:21 Cocos
+-rw-r--r--  1 runner  staff  191 Oct 18 09:21 Comoro
+-rw-r--r--  1 runner  staff  152 Oct 18 09:21 Kerguelen
+-rw-r--r--  1 runner  staff  133 Oct 18 09:21 Mahe
+-rw-r--r--  1 runner  staff  152 Oct 18 09:21 Maldives
+-rw-r--r--  1 runner  staff  179 Oct 18 09:21 Mauritius
+-rw-r--r--  1 runner  staff  191 Oct 18 09:21 Mayotte
+-rw-r--r--  1 runner  staff  133 Oct 18 09:21 Reunion
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Mexico:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff  1367 Oct 18 09:21 BajaNorte
+-rw-r--r--  1 runner  staff   690 Oct 18 09:21 BajaSur
+-rw-r--r--  1 runner  staff   773 Oct 18 09:21 General
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/Pacific:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   407 Oct 18 09:21 Apia
+-rw-r--r--  1 runner  staff  1043 Oct 18 09:21 Auckland
+-rw-r--r--  1 runner  staff   201 Oct 18 09:21 Bougainville
+-rw-r--r--  1 runner  staff   808 Oct 18 09:21 Chatham
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Chuuk
+-rw-r--r--  1 runner  staff  1174 Oct 18 09:21 Easter
+-rw-r--r--  1 runner  staff   342 Oct 18 09:21 Efate
+-rw-r--r--  1 runner  staff   172 Oct 18 09:21 Enderbury
+-rw-r--r--  1 runner  staff   153 Oct 18 09:21 Fakaofo
+-rw-r--r--  1 runner  staff   396 Oct 18 09:21 Fiji
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Funafuti
+-rw-r--r--  1 runner  staff   175 Oct 18 09:21 Galapagos
+-rw-r--r--  1 runner  staff   132 Oct 18 09:21 Gambier
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Guadalcanal
+-rw-r--r--  1 runner  staff   350 Oct 18 09:21 Guam
+-rw-r--r--  1 runner  staff   221 Oct 18 09:21 Honolulu
+-rw-r--r--  1 runner  staff   221 Oct 18 09:21 Johnston
+-rw-r--r--  1 runner  staff   172 Oct 18 09:21 Kanton
+-rw-r--r--  1 runner  staff   174 Oct 18 09:21 Kiritimati
+-rw-r--r--  1 runner  staff   242 Oct 18 09:21 Kosrae
+-rw-r--r--  1 runner  staff   219 Oct 18 09:21 Kwajalein
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Majuro
+-rw-r--r--  1 runner  staff   139 Oct 18 09:21 Marquesas
+-rw-r--r--  1 runner  staff   146 Oct 18 09:21 Midway
+-rw-r--r--  1 runner  staff   183 Oct 18 09:21 Nauru
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Niue
+-rw-r--r--  1 runner  staff   237 Oct 18 09:21 Norfolk
+-rw-r--r--  1 runner  staff   198 Oct 18 09:21 Noumea
+-rw-r--r--  1 runner  staff   146 Oct 18 09:21 Pago_Pago
+-rw-r--r--  1 runner  staff   148 Oct 18 09:21 Palau
+-rw-r--r--  1 runner  staff   153 Oct 18 09:21 Pitcairn
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Pohnpei
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Ponape
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Port_Moresby
+-rw-r--r--  1 runner  staff   406 Oct 18 09:21 Rarotonga
+-rw-r--r--  1 runner  staff   350 Oct 18 09:21 Saipan
+-rw-r--r--  1 runner  staff   146 Oct 18 09:21 Samoa
+-rw-r--r--  1 runner  staff   133 Oct 18 09:21 Tahiti
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Tarawa
+-rw-r--r--  1 runner  staff   237 Oct 18 09:21 Tongatapu
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Truk
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Wake
+-rw-r--r--  1 runner  staff   134 Oct 18 09:21 Wallis
+-rw-r--r--  1 runner  staff   154 Oct 18 09:21 Yap
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/tzdata/zoneinfo/US:
+-rw-r--r--  1 runner  staff     0 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   977 Oct 18 09:21 Alaska
+-rw-r--r--  1 runner  staff   969 Oct 18 09:21 Aleutian
+-rw-r--r--  1 runner  staff   240 Oct 18 09:21 Arizona
+-rw-r--r--  1 runner  staff  1754 Oct 18 09:21 Central
+-rw-r--r--  1 runner  staff   531 Oct 18 09:21 East-Indiana
+-rw-r--r--  1 runner  staff  1744 Oct 18 09:21 Eastern
+-rw-r--r--  1 runner  staff   221 Oct 18 09:21 Hawaii
+-rw-r--r--  1 runner  staff  1016 Oct 18 09:21 Indiana-Starke
+-rw-r--r--  1 runner  staff   899 Oct 18 09:21 Michigan
+-rw-r--r--  1 runner  staff  1042 Oct 18 09:21 Mountain
+-rw-r--r--  1 runner  staff  1294 Oct 18 09:21 Pacific
+-rw-r--r--  1 runner  staff   146 Oct 18 09:21 Samoa
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/_vendor/zoneinfo:
+-rw-r--r--  1 runner  staff    703 Oct 18 09:21 __init__.py
+-rw-r--r--  1 runner  staff   5294 Oct 18 09:21 _common.py
+-rw-r--r--  1 runner  staff   5519 Oct 18 09:21 _tzpath.py
+-rw-r--r--  1 runner  staff  24674 Oct 18 09:21 _zoneinfo.py
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/font:
+-rw-r--r--  1 runner  staff  708920 Oct 18 09:21 DejaVuSans-Bold.ttf
+-rw-r--r--  1 runner  staff  759720 Oct 18 09:21 DejaVuSans.ttf
+-rw-r--r--  1 runner  staff    3937 Oct 18 09:21 LICENZA-DejaVu.txt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/interfaccia:
+-rw-r--r--   1 runner  staff   60947 Oct 18 09:21 android.js
+-rw-r--r--   1 runner  staff  152468 Oct 18 09:21 app.js
+-rw-r--r--   1 runner  staff   59959 Oct 18 09:21 guida.js
+-rw-r--r--   1 runner  staff   57401 Oct 18 09:21 index.html
+-rw-r--r--   1 runner  staff  826167 Oct 18 09:21 licenze.js
+-rw-r--r--   1 runner  staff   14482 Oct 18 09:21 logo.png
+-rw-r--r--   1 runner  staff   56571 Oct 18 09:21 stile.css
+-rw-r--r--   1 runner  staff  104338 Oct 18 09:21 testi.js
+drwxr-xr-x  44 runner  staff    1408 Oct 18 09:21 video
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Application Support/VerbaManent/rl/interfaccia/video:
+-rw-r--r--  1 runner  staff  302666 Oct 18 09:21 tel-aggiornamenti-en.webm
+-rw-r--r--  1 runner  staff  271874 Oct 18 09:21 tel-aggiornamenti-it.webm
+-rw-r--r--  1 runner  staff  598291 Oct 18 09:21 tel-calendario-en.webm
+-rw-r--r--  1 runner  staff  579967 Oct 18 09:21 tel-calendario-it.webm
+-rw-r--r--  1 runner  staff  203688 Oct 18 09:21 tel-chiave-en.webm
+-rw-r--r--  1 runner  staff  187766 Oct 18 09:21 tel-chiave-it.webm
+-rw-r--r--  1 runner  staff  452625 Oct 18 09:21 tel-chiparla-en.webm
+-rw-r--r--  1 runner  staff  425596 Oct 18 09:21 tel-chiparla-it.webm
+-rw-r--r--  1 runner  staff  942641 Oct 18 09:21 tel-condividi-en.webm
+-rw-r--r--  1 runner  staff  853041 Oct 18 09:21 tel-condividi-it.webm
+-rw-r--r--  1 runner  staff  193086 Oct 18 09:21 tel-cose-en.webm
+-rw-r--r--  1 runner  staff  176979 Oct 18 09:21 tel-cose-it.webm
+-rw-r--r--  1 runner  staff  262185 Oct 18 09:21 tel-docente-en.webm
+-rw-r--r--  1 runner  staff  243491 Oct 18 09:21 tel-docente-it.webm
+-rw-r--r--  1 runner  staff  308243 Oct 18 09:21 tel-dove-en.webm
+-rw-r--r--  1 runner  staff  296930 Oct 18 09:21 tel-dove-it.webm
+-rw-r--r--  1 runner  staff  630949 Oct 18 09:21 tel-durante-en.webm
+-rw-r--r--  1 runner  staff  666410 Oct 18 09:21 tel-durante-it.webm
+-rw-r--r--  1 runner  staff  493068 Oct 18 09:21 tel-esame-en.webm
+-rw-r--r--  1 runner  staff  478404 Oct 18 09:21 tel-esame-it.webm
+-rw-r--r--  1 runner  staff  304527 Oct 18 09:21 tel-fine-en.webm
+-rw-r--r--  1 runner  staff  311754 Oct 18 09:21 tel-fine-it.webm
+-rw-r--r--  1 runner  staff  221038 Oct 18 09:21 tel-importa-en.webm
+-rw-r--r--  1 runner  staff  200745 Oct 18 09:21 tel-importa-it.webm
+-rw-r--r--  1 runner  staff  491252 Oct 18 09:21 tel-impostazioni-en.webm
+-rw-r--r--  1 runner  staff  452513 Oct 18 09:21 tel-impostazioni-it.webm
+-rw-r--r--  1 runner  staff  318001 Oct 18 09:21 tel-inviti-en.webm
+-rw-r--r--  1 runner  staff  284732 Oct 18 09:21 tel-inviti-it.webm
+-rw-r--r--  1 runner  staff  245003 Oct 18 09:21 tel-itesto-en.webm
+-rw-r--r--  1 runner  staff  224553 Oct 18 09:21 tel-itesto-it.webm
+-rw-r--r--  1 runner  staff  333272 Oct 18 09:21 tel-lezioni-en.webm
+-rw-r--r--  1 runner  staff  335919 Oct 18 09:21 tel-lezioni-it.webm
+-rw-r--r--  1 runner  staff  265948 Oct 18 09:21 tel-menu-en.webm
+-rw-r--r--  1 runner  staff  268885 Oct 18 09:21 tel-menu-it.webm
+-rw-r--r--  1 runner  staff  264999 Oct 18 09:21 tel-nome-en.webm
+-rw-r--r--  1 runner  staff  297739 Oct 18 09:21 tel-nome-it.webm
+-rw-r--r--  1 runner  staff  249707 Oct 18 09:21 tel-parole-en.webm
+-rw-r--r--  1 runner  staff  267698 Oct 18 09:21 tel-parole-it.webm
+-rw-r--r--  1 runner  staff  479871 Oct 18 09:21 tel-registrare-en.webm
+-rw-r--r--  1 runner  staff  462270 Oct 18 09:21 tel-registrare-it.webm
+-rw-r--r--  1 runner  staff  362831 Oct 18 09:21 tel-ripasso-en.webm
+-rw-r--r--  1 runner  staff  363658 Oct 18 09:21 tel-ripasso-it.webm
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches:
+drwx------  6 runner  staff  192 Oct 18 09:30 com.apple.WebKit.GPU
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 com.apple.WebKit.Networking
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 com.apple.WebKit.WebContent
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 it.puntowebferrara.verbamanent
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:28 VerbaManent
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/com.apple.WebKit.GPU:
+-rw-r--r--@ 1 runner  staff  327680 Oct 18 09:28 functions.data
+-rw-r--r--@ 1 runner  staff    3852 Oct 18 09:30 functions.list
+-rw-r--r--@ 1 runner  staff  311296 Oct 18 09:28 libraries.data
+-rw-r--r--@ 1 runner  staff    1500 Oct 18 09:30 libraries.list
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/com.apple.WebKit.Networking:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/com.apple.WebKit.WebContent:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent:
+drwxr-xr-x  6 runner  staff  192 Oct 18 09:30 WebKit
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit:
+drwxr-xr-x  5 runner  staff  160 Oct 18 09:24 AlternativeServices
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 CacheStorage
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 HSTS
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 NetworkCache
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/AlternativeServices:
+-rw-r--r--@ 1 runner  staff   4096 Oct 18 09:24 AlternativeService.sqlite
+-rw-r--r--  1 runner  staff  32768 Oct 18 09:30 AlternativeService.sqlite-shm
+-rw-r--r--  1 runner  staff  41232 Oct 18 09:30 AlternativeService.sqlite-wal
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/CacheStorage:
+-rw-------  1 runner  staff  8 Oct 18 09:24 salt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/HSTS:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache:
+drwx------@ 4 runner  staff  128 Oct 18 09:28 Version 17
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache/Version 17:
+drwx------  2 runner  staff  64 Oct 18 09:28 Blobs
+-rw-------  1 runner  staff   8 Oct 18 09:24 salt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/it.puntowebferrara.verbamanent/WebKit/NetworkCache/Version 17/Blobs:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Caches/VerbaManent:
+-rw-r--r--  1 runner  staff  1027788 Oct 18 09:28 pezzo_6235140096.wav
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Cookies:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Preferences:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Saved Application State:
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 it.puntowebferrara.verbamanent.savedState
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Saved Application State/it.puntowebferrara.verbamanent.savedState:
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 KnownSceneSessions
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/Saved Application State/it.puntowebferrara.verbamanent.savedState/KnownSceneSessions:
+-rw-r--r--  1 runner  staff  42 Oct 18 09:30 data.data
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/SplashBoard:
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 Snapshots
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/SplashBoard/Snapshots:
+drwxr-xr-x  6 runner  staff  192 Oct 18 09:24 it.puntowebferrara.verbamanent - {DEFAULT GROUP}
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/SplashBoard/Snapshots/it.puntowebferrara.verbamanent - {DEFAULT GROUP}:
+-rw-r--r--  1 runner  staff  18189 Oct 18 09:24 18E57FB0-2156-440A-97E9-3A604201BA0E@3x.ktx
+-rw-r--r--  1 runner  staff  18532 Oct 18 09:24 6211184C-DCC7-4330-9000-9A74FA6B559F@3x.ktx
+-rw-r--r--  1 runner  staff  18532 Oct 18 09:24 A8C303C9-85CF-4125-992A-AB05FC3B48E3@3x.ktx
+-rw-r--r--  1 runner  staff  18189 Oct 18 09:24 BEE11B89-895E-4837-B565-18B756615215@3x.ktx
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit:
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 it.puntowebferrara.verbamanent
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent:
+drwxr-xr-x  9 runner  staff  288 Oct 18 09:24 WebsiteData
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData:
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 Default
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 DeviceIdHashSalts
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 IndexedDB
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 LocalStorage
+drwxr-xr-x  3 runner  staff   96 Oct 18 09:24 MediaKeys
+drwxr-xr-x  5 runner  staff  160 Oct 18 09:24 ResourceLoadStatistics
+drwxr-xr-x  2 runner  staff   64 Oct 18 09:24 SearchHistory
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/Default:
+-rw-------  1 runner  staff  8 Oct 18 09:24 salt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/DeviceIdHashSalts:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/IndexedDB:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/LocalStorage:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/MediaKeys:
+drwx------  3 runner  staff  96 Oct 18 09:24 v1
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/MediaKeys/v1:
+-rw-------  1 runner  staff  8 Oct 18 09:24 salt
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/ResourceLoadStatistics:
+-rw-r--r--@ 1 runner  staff  184320 Oct 18 09:30 observations.db
+-rw-r--r--@ 1 runner  staff   32768 Oct 18 09:30 observations.db-shm
+-rw-r--r--@ 1 runner  staff  131872 Oct 18 09:30 observations.db-wal
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/Library/WebKit/it.puntowebferrara.verbamanent/WebsiteData/SearchHistory:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/prova_pdf:
+-rw-r--r--  1 runner  staff  22954 Oct 18 09:24 p001.png
+-rw-r--r--  1 runner  staff  23415 Oct 18 09:24 p002.png
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/SystemData:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp:
+drwx------  2 runner  staff  64 Oct 18 09:30 BlobRegistryFiles-3dZTZnXp
+drwx------  2 runner  staff  64 Oct 18 09:28 BlobRegistryFiles-dhF15UNq
+drwx------  2 runner  staff  64 Oct 18 09:28 BlobRegistryFiles-IqrTS8hT
+drwx------  2 runner  staff  64 Oct 18 09:24 BlobRegistryFiles-TueZ29DP
+drwx------  2 runner  staff  64 Oct 18 09:29 BlobRegistryFiles-UTmMSJZC
+drwx------  2 runner  staff  64 Oct 18 09:30 BlobRegistryFiles-xgjCH2Df
+drwx------  2 runner  staff  64 Oct 18 09:29 BlobRegistryFiles-YFxdzlH4
+drwxr-xr-x  3 runner  staff  96 Oct 18 09:24 it.puntowebferrara.verbamanent
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-3dZTZnXp:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-dhF15UNq:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-IqrTS8hT:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-TueZ29DP:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-UTmMSJZC:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-xgjCH2Df:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/BlobRegistryFiles-YFxdzlH4:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/it.puntowebferrara.verbamanent:
+drwxr-xr-x  4 runner  staff  128 Oct 18 09:24 WebKit
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/it.puntowebferrara.verbamanent/WebKit:
+drwxr-xr-x  2 runner  staff  64 Oct 18 09:24 JavaScriptCoreDebug
+drwxr-xr-x  2 runner  staff  64 Oct 18 09:24 MediaCache
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/it.puntowebferrara.verbamanent/WebKit/JavaScriptCoreDebug:
+
+/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/70EBA32D-D829-49B8-BEAF-0F7BD705ED06/tmp/it.puntowebferrara.verbamanent/WebKit/MediaCache:
