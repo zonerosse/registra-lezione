@@ -50,6 +50,48 @@ def _chiama(chiave, corpo, tentativi=3):
             attesa *= 2
 
 
+def strumento(chiave, corpo, campo, chiave_errore):
+    """Chiama Claude OBBLIGANDOLO a usare lo strumento e torna (input, usage). Se la lista `campo` arriva vuota,
+    scritta come testo JSON o tagliata (risposta troppo lunga), riprova con piu' spazio. Se non va: ErroreAppunti."""
+    nome = corpo["tools"][0]["name"]
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": nome})
+    usage = {}
+    for prova in range(3):
+        r = _chiama(chiave, corpo)
+        for k, v in (r.get("usage") or {}).items():
+            if isinstance(v, (int, float)):
+                usage[k] = usage.get(k, 0) + v
+        blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+        dati = (blocco or {}).get("input") or {}
+        if not dati:                           # piano B: il JSON scritto nel testo
+            testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+            try:
+                dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
+            except ValueError:
+                dati = {}
+        if isinstance(dati, str):
+            try:
+                dati = json.loads(dati)
+            except ValueError:
+                dati = {}
+        v = dati.get(campo) if isinstance(dati, dict) else None
+        if isinstance(v, str):                 # a volte la lista arriva come testo JSON
+            try:
+                v = json.loads(v)
+            except ValueError:
+                v = None
+            dati[campo] = v
+        if isinstance(v, list) and any(isinstance(x, dict) for x in v):
+            dati[campo] = [x for x in v if isinstance(x, dict)]
+            return dati, usage
+        if isinstance(v, list) and v and all(isinstance(x, str) for x in v):
+            return dati, usage
+        log.warning("%s: %s vuoto (prova %s, stop=%s, risposta=%.300r)", nome, campo, prova + 1, r.get("stop_reason"),
+                    json.dumps(r.get("content", []), ensure_ascii=False))
+        corpo = dict(corpo, max_tokens=int(corpo.get("max_tokens", 2000) * 2))
+    raise ap.ErroreAppunti(tr(chiave_errore))
+
+
 def hms(sec):
     sec = int(sec or 0)
     return f"{sec // 3600:02d}:{sec // 60 % 60:02d}:{sec % 60:02d}"
@@ -211,30 +253,26 @@ def crea_mappa(chiave, cartella, lingua=None):
         materiale = testo_lezione(cartella)[:200_000]
     if not materiale.strip():
         raise ap.ErroreAppunti(tr("ch_vuoto"))
-    corpo = {"model": MODELLO, "max_tokens": 1500,
+    corpo = {"model": MODELLO, "max_tokens": 3000,
              "system": "Fai la mappa mentale di una lezione universitaria per uno studente: l'argomento al centro, "
                        "3-6 rami con i grandi temi nell'ordine della lezione, per ogni ramo 1-4 foglie brevissime "
                        "(definizioni, formule, nomi di teoremi, esempi). Niente frasi lunghe. Scrivi in "
                        f"{testi.nome_lingua(lingua, 'it')}. Chiama lo strumento salva_mappa.",
              "tools": [{"name": "salva_mappa", "description": "Salva la mappa mentale.", "input_schema": SCHEMA_MAPPA}],
-             # come per gli appunti: "auto" (alcuni modelli non accettano "tool"); le istruzioni chiedono lo strumento
-             # e c'e' il piano B (JSON nel testo)
-             "tool_choice": {"type": "auto"},
              "messages": [{"role": "user", "content": materiale}]}
-    r = _chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dati = blocco["input"] if blocco else None
-    if not dati:
-        testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
-        try:
-            dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
-        except ValueError:
-            dati = None
-    if not dati or not dati.get("rami"):
-        raise ap.ErroreAppunti(tr("ch_mappa_err"))
+    dati, usage = strumento(chiave, corpo, "rami", "ch_mappa_err")
+    r = {"usage": usage}
+
+    def foglie(x):
+        f = x.get("foglie") or []
+        if isinstance(f, str):
+            try:
+                f = json.loads(f)
+            except ValueError:
+                f = [f]
+        return [str(v)[:80] for v in (f if isinstance(f, list) else [f])[:4] if v]
     dati = {"centro": str(dati.get("centro", ""))[:60],
-            "rami": [{"titolo": str(x.get("titolo", ""))[:60], "foglie": [str(f)[:80] for f in (x.get("foglie") or [])[:4]]}
-                     for x in dati["rami"][:6]]}
+            "rami": [{"titolo": str(x.get("titolo", ""))[:60], "foglie": foglie(x)} for x in dati["rami"][:6]]}
     spesa = _costo(r.get("usage", {}))
     el.scrivi_json(cartella / "mappa.json", dati)
     info = el.leggi_json(cartella / "info.json", {}) or {}
@@ -368,26 +406,16 @@ def crea_infografica(cartella, chiave, rifai=False, lingua=None):
     if not materiale.strip():
         raise ap.ErroreAppunti(tr("ch_vuoto"))
     tipo = info.get("tipo") or "lezione"
-    corpo = {"model": MODELLO, "max_tokens": 1500,
+    corpo = {"model": MODELLO, "max_tokens": 3000,
              "system": f"Fai l'infografica di una {'riunione di lavoro' if tipo == 'riunione' else 'lezione' if tipo == 'lezione' else 'presentazione'}: "
                        "tutto quello che conta in UNA pagina da guardare in un minuto. 3-4 concetti chiave (ognuno con una "
                        "parte 'grande' cortissima: formula, cifra o parola), i passi del procedimento (o le prossime mosse), "
                        "l'avvertenza principale. Usa solo il materiale ricevuto, niente di inventato. Testi brevissimi. "
                        f"Scrivi in {testi.nome_lingua(lingua, 'it')}. Chiama lo strumento salva_infografica.",
              "tools": [{"name": "salva_infografica", "description": "Salva l'infografica.", "input_schema": SCHEMA_INFO}],
-             "tool_choice": {"type": "auto"},
              "messages": [{"role": "user", "content": materiale}]}
-    r = _chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dati = blocco["input"] if blocco else None
-    if not dati:
-        testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
-        try:
-            dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
-        except ValueError:
-            dati = None
-    if not dati or not dati.get("concetti"):
-        raise ap.ErroreAppunti(tr("if_err"))
+    dati, usage = strumento(chiave, corpo, "concetti", "if_err")
+    r = {"usage": usage}
     # la citazione deve esserci davvero, altrimenti la tolgo
     if dati.get("citazione"):
         try:

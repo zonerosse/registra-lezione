@@ -1,6 +1,6 @@
 {
- "versione": "3.68",
+ "versione": "3.69",
  "librerie": 2,
- "novita": "Preparazione all'esame: nuova «🎤 Interrogazione a voce». Rispondi parlando come all'orale, il docente ti fa la domanda in più e alla fine ti dà il voto e ti dice come hai parlato.",
- "novita_en": "Exam preparation: new «🎤 Oral exam». Answer out loud as in an oral exam, the examiner asks follow-up questions and at the end gives you a mark and tells you how you spoke."
+ "novita": "Mappa mentale e infografica: Claude ora le prepara sempre nel formato giusto (prima a volte, soprattutto sul telefono, chiedeva di riprovare). Se la risposta arriva incompleta riprova da solo.",
+ "novita_en": "Mind map and infographic: Claude now always prepares them in the right format (before, especially on the phone, it sometimes asked to try again). If the reply arrives incomplete it retries by itself."
 }

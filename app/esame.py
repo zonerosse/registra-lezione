@@ -22,30 +22,8 @@ from testi import tr
 
 
 def _strumento(chiave, corpo, campo):
-    """Chiama Claude con lo strumento e torna (input, usage). Se la lista `campo` arriva vuota, scritta come testo
-    o tagliata (risposta troppo lunga), riprova una volta con piu' spazio. Se non va: ErroreAppunti con il messaggio giusto."""
-    usage = {}
-    for prova in range(2):
-        r = ch._chiama(chiave, corpo)
-        for k, v in (r.get("usage") or {}).items():
-            if isinstance(v, (int, float)):
-                usage[k] = usage.get(k, 0) + v
-        blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-        dati = (blocco or {}).get("input") or {}
-        v = dati.get(campo)
-        if isinstance(v, str):                 # a volte la lista arriva come testo JSON
-            try:
-                v = json.loads(v)
-            except ValueError:
-                v = None
-            dati[campo] = v
-        if isinstance(v, list) and v:
-            return dati, usage
-        log.warning("esame: %s vuoto (prova %s, stop=%s)", campo, prova + 1, r.get("stop_reason"))
-        corpo = dict(corpo, max_tokens=int(corpo.get("max_tokens", 2000) * 2))
-    raise ap.ErroreAppunti(tr("es_err"))
-
-log = logging.getLogger("registra_lezione")
+    """Chiama Claude con lo strumento e torna (input, usage): vedi chiedi.strumento."""
+    return ch.strumento(chiave, corpo, campo, "es_err")
 
 
 def _file(base, materia):
