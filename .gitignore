@@ -16,3 +16,6 @@ tools/prova_android/node_modules/
 prova_android_out/
 tools/prova_android/simula/node_modules/
 prova_simulata/
+ios/build/
+ios/src/verbamanent/rl/
+ios/src/verbamanent/avvio_android.py
