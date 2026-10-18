@@ -253,6 +253,9 @@ class Api:
     def cambia_materia(self, cartella, materia):
         return self._m.cambia_materia(cartella, materia)
 
+    def karaoke(self, cartella):
+        return self._m.karaoke(cartella)
+
     def podcast(self, cartella, durata="breve", rifai=False):
         return self._m.podcast(cartella, durata, rifai)
 

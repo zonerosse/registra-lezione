@@ -288,6 +288,21 @@
       <div class="hint mt" data-t="lz.altro">In «⋯ Altro»: rinomina, rifai gli appunti, slide del docente, cartella, elimina.</div>
     </section>
 
+    <!-- KARAOKE DELLA LEZIONE -->
+    <section class="pg hidden" id="v-karaoke">
+      <div class="hd"><div><h2 data-t="kk.h">🎤 Karaoke della lezione</h2><p id="kkSub"></p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
+      <div class="card"><div class="kkplayer">
+        <button class="pcplay" id="kkPlay">▶</button><span class="kktempo" id="kkT0">0:00</span>
+        <div class="kkbarra" id="kkBar"><i id="kkBarI"></i></div><span class="kktempo" id="kkT1"></span>
+        <div class="seg" id="kkVel"><span data-v="0.8">0,8×</span><span data-v="1">1×</span><span data-v="1.25">1,25×</span><span data-v="1.5">1,5×</span></div>
+        <button class="btn b-ghost b-sm" id="kkRiga" data-t="kk.riga">📏 Una riga alla volta</button>
+      </div><div class="hint hidden" id="kkNo" style="margin-top:8px" data-t="kk.novideo">Il video o l'audio di questa lezione non c'è più: puoi leggere il testo, ma non sentire la voce.</div></div>
+      <div class="kkgrid mt">
+        <div class="card"><div class="kktesto" id="kkTesto"></div><div class="hint mt" data-t="kk.hint">Tocca una parola per far ripartire la voce da lì.</div></div>
+        <div class="kkslide hidden" id="kkSlideBox"><div class="card"><div class="lbl" data-t="kk.slide">Slide in quel momento</div><img id="kkSlide" alt=""><div class="hint" style="margin-top:8px" data-t="kk.slide.s">La slide cambia da sola mentre il prof parla.</div></div></div>
+      </div>
+    </section>
+
     <!-- PODCAST DELLA LEZIONE -->
     <section class="pg hidden" id="v-podcast">
       <div class="hd"><div><h2 data-t="pc.h">🎧 Podcast della lezione</h2><p id="pcSub"></p></div>

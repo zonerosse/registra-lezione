@@ -117,7 +117,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -127,11 +127,12 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
   if (p === 'podcast') return t('tl.pc');
+  if (p === 'karaoke') return t('tl.kk');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
 }
@@ -150,6 +151,7 @@ function vai(p, tornando = false) {
   if (p !== 'esame' && OR && OR.orale) orChiudi();
   if (p !== 'ascolta' && AS && AS.attivo) asFerma();
   if (p !== 'podcast' && PCS && PCS.attivo) pcFerma();
+  if (p !== 'karaoke' && KK && KK.au) KK.au.pause();
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
     STU.dentro = false;
@@ -159,8 +161,8 @@ function vai(p, tornando = false) {
   pagina = p;
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
-  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'lezione', 'podcast', 'karaoke', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -1752,14 +1754,14 @@ function disegnaLezione() {
   const rip = l.ripasso && l.ripasso.n ? (l.ripasso.no ? t('tl.flash.n', {n: l.ripasso.n, r: l.ripasso.no}) : t(l.ripasso.n === 1 ? 'tl.flash.n1' : 'tl.flash.n0', {n: l.ripasso.n})) : '';
   const ha = {ap: l.n_appunti, asc: l.n_appunti, tras: pronta, vid: l.video && pronta, chiedi: l.trascritta && pronta, mappa: l.trascritta && pronta, ig: l.trascritta && pronta,
               cap: l.capitoli && pronta, voci: l.trascritta && pronta, flash: l.ripasso && l.ripasso.n, mat: l.materia && lezioniMateria(l).length, cond: l.n_appunti && pronta, sp: l.video && pronta};
-  ha.pc = l.trascritta && pronta;
-  const D = new Set(dsa ? ['ap', 'asc', 'mappa', 'cap', 'chiedi', 'flash', 'pc'] : []);
+  ha.pc = l.trascritta && pronta; ha.kk = l.trascritta && pronta;
+  const D = new Set(dsa ? ['ap', 'asc', 'mappa', 'cap', 'chiedi', 'flash', 'pc', 'kk'] : []);
   const dsaGr = dsa ? `<div class="dsagr">${gruppo(t('g.dsa'), [
-      ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.dsa.pc.s')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.dsa.asc.s')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.dsa.mappa.s')),
+      ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.dsa.kk.s')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.dsa.pc.s')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.dsa.asc.s')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.dsa.mappa.s')),
       ha.ap && tile('appunti_dsa', '📄', t('tl.dsa.ap'), t('tl.dsa.ap.s')), ha.flash && tile('ripassa', '🃏', t('tl.dsa.flash'), t('tl.dsa.flash.s'), rip),
       ha.chiedi && tile('chiedi', '💬', t('tl.dsa.chiedi'), t('tl.dsa.chiedi.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.dsa.cap.s'))])}<div class="altrihd">${esc(t('g.resto'))}</div></div>` : '';
   const d = k => D.has(k);
-  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
+  const resto = gruppo(t('g.leggi'), [ha.ap && tile('appunti', '📄', t('tl.appunti'), t('tl.appunti.s'), '', d('ap')), ha.kk && tile('karaoke', '🎤', t('tl.kk'), t('tl.kk.s'), '', d('kk')), ha.pc && tile('podcast', '🎧', t('tl.pc'), t('tl.pc.s'), '', d('pc')), ha.asc && tile('ascolta', '🔊', t('tl.asc'), t('tl.asc.s'), '', d('asc')),
       ha.tras && tile('tras', '📝', t('tl.tras'), t('tl.tras.s')), ha.vid && tile('video', '▶', t('tl.vid'), t('tl.vid.s'))]) +
     gruppo(t('g.capisci'), [ha.chiedi && tile('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), '', d('chiedi')), ha.mappa && tile('mappa', '🗺', t('tl.mappa'), t('tl.mappa.s'), '', d('mappa')),
       ha.ig && tile('infografica', '🖼', t('tl.ig'), t('tl.ig.s')), ha.cap && tile('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), '', d('cap')),
@@ -1790,7 +1792,90 @@ async function tileLezione(l, a) {
   if (a === 'appunti_dsa') { toast(t('as.lav')); const r = await A.appunti_dsa(l.cartella); if (!r.ok) toast(r.msg || ''); return; }
   if (a === 'studia_mat') return apriStudia(l.materia);
   if (a === 'podcast') return apriPodcast(l);
+  if (a === 'karaoke') return apriKaraoke(l);
   return azioneLezione(l, a);
+}
+
+/* ------------------------------------------------------------------ karaoke della lezione */
+// La voce vera del prof (video/audio della lezione) con le parole della trascrizione che si illuminano;
+// tocchi una parola e la voce riparte da li'; accanto la slide di quel momento.
+var KK = {lez: null, d: null, au: null, vel: 1, riga: -1, w: null, tick: null};
+async function apriKaraoke(l) {
+  if (KK.au) KK.au.pause();
+  clearInterval(KK.tick);
+  KK = {lez: l, d: null, au: null, vel: KK.vel || 1, riga: -1, w: null, tick: null};
+  $('kkSub').textContent = t('kk.sub', {n: l.nome});
+  $('kkTesto').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('kk.lav'))}</div>`;
+  $('kkSlideBox').classList.add('hidden'); $('kkNo').classList.add('hidden'); $('kkPlay').textContent = '▶';
+  kkVel(); disegnaFacilitata();
+  vai('karaoke');
+  const r = await A.karaoke(l.cartella);
+  if (KK.lez !== l) return;
+  if (!r.ok) { $('kkTesto').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  KK.d = r;
+  $('kkT1').textContent = kkOra(Math.round(r.durata));
+  $('kkNo').classList.toggle('hidden', !!r.media); $('kkPlay').disabled = !r.media;
+  $('kkSlideBox').classList.toggle('hidden', !r.slide.length); document.querySelector('.kkgrid').classList.toggle('solo', !r.slide.length);
+  let minuto = -1, h = '';
+  r.segmenti.forEach((s, i) => {
+    const m = Math.floor(s.i / 60);
+    const lab = m !== minuto ? `<span class="min">${kkOra(Math.floor(s.i))}${s.c ? ' · ' + esc(s.c) : ''}</span>` : '';
+    minuto = m;
+    h += `<div class="r" data-r="${i}">${lab}${s.t.split(/\s+/).map((w, j) => `<span class="w" data-j="${j}">${esc(w)}</span>`).join(' ')}</div>`;
+  });
+  $('kkTesto').innerHTML = h;
+  if (r.media) {
+    KK.au = new Audio(r.media); KK.au.preload = 'metadata'; KK.au.playbackRate = KK.vel;
+    KK.au.onplay = () => { $('kkPlay').textContent = '⏸'; clearInterval(KK.tick); KK.tick = setInterval(kkSegna, 120); };
+    KK.au.onpause = KK.au.onended = () => { $('kkPlay').textContent = '▶'; clearInterval(KK.tick); };
+  }
+  kkSlide(0);
+}
+const kkOra = s => KK.d && KK.d.durata >= 3600 ? hms(s) : mmss(s);
+function kkTrova(tt) {          // la frase in quel secondo (ricerca dicotomica)
+  const S = KK.d.segmenti; let a = 0, b = S.length - 1, k = -1;
+  while (a <= b) { const m = (a + b) >> 1; if (S[m].i <= tt) { k = m; a = m + 1; } else b = m - 1; }
+  return k;
+}
+function kkSlide(tt) {
+  const L = KK.d && KK.d.slide; if (!L || !L.length) return;
+  let k = 0; for (let i = 0; i < L.length; i++) { if (L[i].t <= tt) k = i; else break; }
+  if ($('kkSlide').dataset.u !== L[k].url) { $('kkSlide').src = L[k].url; $('kkSlide').dataset.u = L[k].url; }
+}
+function kkSegna() {
+  if (!KK.au || !KK.d) return;
+  const tt = KK.au.currentTime, S = KK.d.segmenti;
+  $('kkT0').textContent = kkOra(Math.floor(tt)); $('kkBarI').style.width = Math.min(100, tt / KK.d.durata * 100) + '%';
+  kkSlide(tt);
+  const k = kkTrova(tt);
+  if (k !== KK.riga) {
+    const box = $('kkTesto');
+    if (KK.riga >= 0) { const v = box.querySelector(`.r[data-r="${KK.riga}"]`); if (v) { v.classList.remove('ora'); v.querySelectorAll('.det,.on').forEach(x => x.classList.remove('det', 'on')); } }
+    box.querySelectorAll('.r').forEach(x => x.classList.toggle('fatta', +x.dataset.r < k));
+    KK.riga = k;
+    const n = box.querySelector(`.r[data-r="${k}"]`); if (n) { n.classList.add('ora'); n.scrollIntoView({block: 'center', behavior: 'smooth'}); }
+  }
+  if (k < 0) return;
+  const s = S[k], ws = $('kkTesto').querySelectorAll(`.r[data-r="${k}"] .w`);
+  const j = Math.max(0, Math.min(ws.length - 1, Math.floor((tt - s.i) / Math.max(0.3, s.f - s.i) * ws.length)));
+  ws.forEach((x, n) => { x.classList.toggle('on', n === j); x.classList.toggle('det', n < j); });
+}
+function kkVai(tt) {
+  if (!KK.au) return;
+  KK.au.currentTime = Math.max(0, tt); KK.au.playbackRate = KK.vel;
+  KK.au.play().catch(() => {}); kkSegna();
+}
+function kkVel() { $('kkVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === KK.vel)); }
+function collegaKaraoke() {
+  $('kkPlay').onclick = () => { if (!KK.au) return; if (KK.au.paused) { voceFerma(); if (KK.riga < 0 && KK.au.currentTime < 0.5 && KK.d.segmenti.length) KK.au.currentTime = KK.d.segmenti[0].i; KK.au.playbackRate = KK.vel; KK.au.play().catch(() => {}); } else KK.au.pause(); };
+  $('kkVel').querySelectorAll('span').forEach(s => s.onclick = () => { KK.vel = +s.dataset.v; kkVel(); if (KK.au) KK.au.playbackRate = KK.vel; });
+  $('kkRiga').onclick = () => { $('kkTesto').classList.toggle('righello'); $('kkRiga').classList.toggle('b-main'); $('kkRiga').classList.toggle('b-ghost'); };
+  $('kkBar').onclick = e => { if (!KK.d) return; const r = $('kkBar').getBoundingClientRect(); kkVai((e.clientX - r.left) / r.width * KK.d.durata); };
+  $('kkTesto').onclick = e => {
+    const w = e.target.closest('.w'); if (!w || !KK.d) return;
+    const r = +w.closest('.r').dataset.r, s = KK.d.segmenti[r], n = w.parentNode.querySelectorAll('.w').length;
+    kkVai(s.i + (+w.dataset.j) / n * (s.f - s.i));
+  };
 }
 
 /* ------------------------------------------------------------------ podcast della lezione */
@@ -2675,6 +2760,7 @@ function collegaNovita() {
   document.querySelectorAll('[data-dsa]').forEach(x => x.onclick = cambiaDsa);
   $('lzAltro').onclick = e => LEZ && menuLezione(LEZ, e.currentTarget, true);
   collegaPodcast();
+  collegaKaraoke();
   $('chMic').onclick = () => detta($('chMic'), $('chIn'));
   $('asPlay').onclick = asPlay; $('asStop').onclick = () => asFerma(true);
   $('asVel').querySelectorAll('span').forEach(s => s.onclick = () => { AS.vel = +s.dataset.v; disegnaVel(); if (AS.attivo) asLeggi(AS.i); });

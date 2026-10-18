@@ -522,6 +522,28 @@ html.dsa .ap h3{font-size:21px}
 html.dsa .asbl{grid-template-columns:1fr;gap:6px}
 html.dsa .asrias{background:#fef3c7}
 html.dsa .carta .faccia{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.03em;word-spacing:.14em;line-height:1.75;background:#fffbeb}
+/* karaoke della lezione */
+.kkplayer{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.kktempo{font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--mut)}
+.kkbarra{flex:1;min-width:140px;height:10px;background:#e2e8f0;border-radius:999px;position:relative;cursor:pointer}
+.kkbarra i{position:absolute;left:0;top:0;bottom:0;background:var(--navy);border-radius:999px;width:0}
+.kkgrid{display:grid;grid-template-columns:1fr 300px;gap:14px;align-items:start}
+.kkgrid.solo{grid-template-columns:1fr}
+.kkslide{position:sticky;top:10px}
+.kkslide img{width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+.kktesto{font-size:15.5px;line-height:1.8;color:var(--txt);max-height:60vh;overflow:auto;padding-right:6px;-webkit-user-select:text;user-select:text}
+.kktesto .min{display:block;font-size:12px;color:var(--mut);margin-top:10px;font-weight:600}
+.kktesto .r.fatta{color:#94a3b8}
+.kktesto .w{cursor:pointer;border-radius:4px}
+.kktesto .w:hover{background:#eef3f9}
+.kktesto .r.ora .w.det{color:#94a3b8}
+.kktesto .w.on{background:#fde68a;box-shadow:0 0 0 2px #fde68a;color:var(--ink)}
+.kktesto .r.ora{background:#fffbeb;border-radius:6px}
+.kktesto.righello .r:not(.ora){opacity:.2}
+html.dsa .kktesto{font-size:19px;line-height:2.1}
+html.dsa #v-karaoke{font-family:"Atkinson Hyperlegible",Verdana,sans-serif;letter-spacing:.02em;word-spacing:.1em}
+html.dsa #v-karaoke .card{background:#fffbeb}
+@media(max-width:800px){.kkgrid{grid-template-columns:1fr}.kkslide{position:static;order:-1}}
 /* podcast della lezione */
 .pcplayer{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .pcplay{width:56px;height:56px;border-radius:50%;border:0;background:linear-gradient(180deg,#1e5fbf,#0d4275);color:#fff;font-size:22px;cursor:pointer;flex:none}

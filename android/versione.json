@@ -1,7 +1,7 @@
 {
- "versione": "0.11.6",
+ "versione": "0.11.7",
  "codice": 11,
- "novita": "Nuovo: «🎧 Podcast della lezione» nella pagina della lezione. I punti importanti in 8 o 20 minuti, con una voce narrante e la voce vera del prof nei momenti chiave; la parola che senti si illumina. Sul PC si salva in MP3.",
- "novita_en": "New: «🎧 Lecture podcast» on the lecture page. The key points in 8 or 20 minutes, with a narrator and the lecturer's real voice at the key moments; the word you hear lights up. On the PC you can save it as MP3.",
- "contenuto": 63
+ "novita": "Nuovo: «🎤 Karaoke della lezione» nella pagina della lezione. La voce vera del prof con le parole che si illuminano e la slide di quel momento accanto; tocca una parola per ripartire da lì. «📏 Una riga alla volta» per leggere meglio.",
+ "novita_en": "New: «🎤 Lecture karaoke» on the lecture page. The lecturer's real voice with the words lighting up and the slide of that moment beside it; tap a word to start from there. «📏 One line at a time» for easier reading.",
+ "contenuto": 64
 }

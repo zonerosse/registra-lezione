@@ -2011,6 +2011,32 @@ class Motore:
             log.exception("test a crocette: correzione")
             return {"ok": False, "msg": tr("es_err")}
 
+    # ------------------------------------------------------------------ karaoke della lezione
+
+    def karaoke(self, cartella):
+        """Tutta la trascrizione con gli orari, le slide con il loro minuto e il video/audio della lezione:
+        la finestra fa sentire la voce vera del prof e illumina le parole. Niente Claude."""
+        cart = Path(cartella)
+        try:
+            segs = [{"i": round(float(s["inizio"]), 2), "f": round(float(s["fine"]), 2), "t": str(s.get("testo") or "").strip(),
+                     **({"c": s["chi"]} if s.get("chi") else {})} for s in ch.segmenti_lezione(cart) if str(s.get("testo") or "").strip()]
+            if not segs:
+                return {"ok": False, "msg": tr("ch_vuoto")}
+            slide = []
+            for s in ch.slide_della_lezione(cart):
+                try:
+                    u = servi_video.registra(el.immagine_slide(cart, s["file"]))
+                except Exception:
+                    u = None
+                if u:
+                    slide.append({"n": s["n"], "t": round(float(s["t"]), 2), "url": u})
+            v = video_di(cart)
+            return {"ok": True, "segmenti": segs, "slide": slide, "media": servi_video.registra(v) if v else None,
+                    "durata": segs[-1]["f"]}
+        except Exception:
+            log.exception("karaoke")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
     # ------------------------------------------------------------------ podcast della lezione
 
     def podcast(self, cartella, durata="breve", rifai=False):
