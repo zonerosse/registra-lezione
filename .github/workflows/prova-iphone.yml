@@ -30,7 +30,11 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p ../esito
-          python -m pip install -q --upgrade pip briefcase 2>&1 | tail -5 | tee ../esito/costruzione.txt
+          ls /Applications | grep -i xcode | tee ../esito/costruzione.txt
+          X=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$X" ]; then sudo xcode-select -s "$X/Contents/Developer"; B=briefcase; else B="briefcase<0.4"; fi
+          xcodebuild -version | tee -a ../esito/costruzione.txt
+          python -m pip install -q --upgrade pip "$B" 2>&1 | tail -5 | tee -a ../esito/costruzione.txt
           briefcase --version | tee -a ../esito/costruzione.txt
           briefcase create iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
           briefcase build iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
