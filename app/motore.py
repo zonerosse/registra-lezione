@@ -3583,12 +3583,18 @@ class Motore:
     def sync_collega(self, codice):
         """«Collegati al PC»: cerca sulla rete il PC che mostra questo codice."""
         self._sync()
+        ips = []
+        q = str(codice or "").strip()
+        if q.lower().startswith("vmia:"):          # dal QR: «vmia:482913@192.168.1.10,10.0.0.5»
+            corpo = q[5:]
+            codice, _, dove = corpo.partition("@")
+            ips = [x for x in dove.split(",") if re.fullmatch(r"\d{1,3}(\.\d{1,3}){3}", x)]
         codice = re.sub(r"\D", "", str(codice or ""))
         if len(codice) != 6:
             return {"ok": False, "msg": tr("sy_err_codice")}
         if not self.cfg.get("sync_id"):
             self.cfg["sync_id"] = __import__("secrets").token_hex(6)
-        d, err = self._sy_mod.abbina(codice, self.cfg["sync_id"], self.nome_dispositivo())
+        d, err = self._sy_mod.abbina(codice, self.cfg["sync_id"], self.nome_dispositivo(), ips)
         if not d:
             return {"ok": False, "msg": tr({"non_trovato": "sy_err_trova", "codice": "sy_err_codice"}.get(err, "sy_err_rete"))}
         lista = [x for x in self.cfg.get("sync_dispositivi") or [] if x.get("id") != d["id"]]

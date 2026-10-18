@@ -1,7 +1,7 @@
 {
- "versione": "0.12.1",
- "codice": 12,
- "novita": "Nuovo: «🔄 Sincronizza» (Impostazioni). Collega il telefono al PC una volta con un codice di 6 cifre: da lì in poi, sulla stessa rete Wi-Fi (o con l'hotspot del telefono), lezioni, appunti, ripasso, voti e materie sono uguali sul PC e sul telefono.",
- "novita_en": "New: «🔄 Sync» (Settings). Link the phone to the PC once with a 6-digit code: from then on, on the same Wi-Fi network (or with the phone's hotspot), lessons, notes, review, marks and subjects are the same on PC and phone.",
- "contenuto": 75
+ "versione": "0.13.0",
+ "codice": 13,
+ "novita": "Nuovo: «🔄 Sincronizza» con il QR. Sul PC compare un QR: il telefono lo inquadra e si collega da solo (oppure si scrive il codice di 6 cifre). Da lì in poi, sulla stessa rete Wi-Fi o con l'hotspot del telefono, lezioni, appunti, ripasso, voti e materie sono uguali sul PC e sul telefono. Per il QR va installata l'app nuova sul telefono.",
+ "novita_en": "New: «🔄 Sync» with a QR code. A QR appears on the PC: the phone scans it and links by itself (or you type the 6-digit code). From then on, on the same Wi-Fi network or with the phone's hotspot, lessons, notes, review, marks and subjects are the same on PC and phone. For the QR install the new app on the phone.",
+ "contenuto": 76
 }

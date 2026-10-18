@@ -177,6 +177,28 @@ object Ponte {
         scatto?.countDown()
     }
 
+    // ------------------------------------------------------------------ QR del PC («Sincronizza»)
+    /** Apre il lettore di QR di Google e aspetta. Ritorna il testo del QR, "" se annullato, "!" se il lettore non c'e'. */
+    @JvmStatic fun leggiQr(): String {
+        val a = attivita.get() ?: return "!"
+        val l = CountDownLatch(1)
+        var testo = "!"
+        a.runOnUiThread {
+            try {
+                val opz = com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions.Builder()
+                    .setBarcodeFormats(com.google.mlkit.vision.barcode.common.Barcode.FORMAT_QR_CODE)
+                    .enableAutoZoom()
+                    .build()
+                com.google.mlkit.vision.codescanner.GmsBarcodeScanning.getClient(a, opz).startScan()
+                    .addOnSuccessListener { testo = it.rawValue ?: ""; l.countDown() }
+                    .addOnCanceledListener { testo = ""; l.countDown() }
+                    .addOnFailureListener { testo = "!"; l.countDown() }
+            } catch (e: Throwable) { testo = "!"; l.countDown() }
+        }
+        l.await(5, TimeUnit.MINUTES)
+        return testo
+    }
+
     // ------------------------------------------------------------------ riconoscitore vocale
     @Volatile @JvmStatic var scaricati: Long = 0
     @Volatile @JvmStatic var totale: Long = 0

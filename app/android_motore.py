@@ -775,6 +775,21 @@ def _api_android(api, mt):
         lista = [x for x in f.split("\n") if x]
         return {"ok": bool(lista), "percorsi": lista}
 
+    def sync_qr():
+        """«Inquadra il QR»: il lettore di Google; poi si collega al PC con il codice e gli indirizzi del QR."""
+        try:
+            q = str(Ponte.leggiQr())
+        except Exception:
+            log.exception("lettore QR")
+            q = "!"
+        if q == "":
+            return {"ok": False, "annullato": True}
+        if q == "!":
+            from testi import tr
+            return {"ok": False, "msg": tr("sy_err_lettore")}
+        return api._m.sync_collega(q)
+
+    api.sync_qr = sync_qr
     api.scatta_foto = scatta_foto
     api.scatta_foglio = scatta_foglio
     api.scegli_immagini = scegli_immagini

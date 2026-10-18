@@ -1016,6 +1016,7 @@ html.android .fogrid{grid-template-columns:1fr}html.android .scfo{grid-template-
 .sypasso{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid #edf2f7}.sypasso:last-child{border-bottom:0}
 .sypasso .n{width:28px;height:28px;border-radius:50%;background:#0d4275;color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
 .sypasso b{display:block;color:var(--ink)}.sypasso span{font-size:13px;color:var(--mut)}
+.syqr{display:flex;justify-content:center;margin:6px 0}.syqr svg{width:210px;height:210px;border-radius:12px;border:1px solid #e2e8f0;background:#fff}
 .sycod{font-size:44px;font-weight:800;letter-spacing:8px;color:var(--navy);margin:8px 0 4px;font-variant-numeric:tabular-nums}
 .syin{font-size:28px;font-weight:800;letter-spacing:6px;text-align:center;max-width:240px;margin:8px auto 0;display:block}
 .sydisp{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #edf2f7}.sydisp:last-child{border-bottom:0}

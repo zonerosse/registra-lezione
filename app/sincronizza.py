@@ -308,12 +308,13 @@ def scrivi(base, pacchetti, rel, contenuto, mtime=None, n=None):
 # --------------------------------------------------------------------------- il centro (sul PC)
 
 def _io_ip():
-    """Gli indirizzi di questo dispositivo sulla rete locale."""
+    """Gli indirizzi di questo dispositivo sulla rete locale (prima quello della rete principale)."""
     out = set()
+    primo = None
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("10.255.255.255", 1))
-        out.add(s.getsockname()[0])
+        primo = s.getsockname()[0]
         s.close()
     except OSError:
         pass
@@ -322,7 +323,8 @@ def _io_ip():
             out.add(x[4][0])
     except OSError:
         pass
-    return sorted(ip for ip in out if not ip.startswith("127."))
+    altri = sorted(ip for ip in out if not ip.startswith("127.") and ip != primo)
+    return ([primo] if primo and not primo.startswith("127.") else []) + altri[:3]
 
 
 class Centro:
@@ -564,8 +566,19 @@ def _chiedi(ip, percorso, token="", dati=None, metodo="POST", tempo=30):
         return r.read()
 
 
-def abbina(codice, mio_id, mio_nome):
-    ip, info = cerca(f"VMIA-CODICE?{codice}", attesa=3)
+def abbina(codice, mio_id, mio_nome, ips=()):
+    """ips: gli indirizzi del PC scritti nel QR (si prova prima quelli: funziona anche dove la ricerca e' bloccata)."""
+    ip = None
+    for x in ips or ():
+        try:
+            with urllib.request.urlopen(f"http://{x}:{PORTA}/vm/ping", timeout=2) as r:
+                json.loads(r.read())
+            ip = x
+            break
+        except Exception:
+            continue
+    if not ip:
+        ip, info = cerca(f"VMIA-CODICE?{codice}", attesa=3)
     if not ip:
         return None, "non_trovato"
     try:

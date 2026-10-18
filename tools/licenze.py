@@ -64,6 +64,8 @@ GRUPPI = [
         ("Hugging Face Hub, tokenizers", "Scaricano e leggono il modello di trascrizione", "Download and read the transcription model", "Apache", ["huggingface-hub", "x:tokenizers", "hf-xet"]),
         ("Chaquopy (solo Android)", "Python dentro l'app Android", "Python inside the Android app", "MIT", ["x:chaquopy"]),
         ("AndroidX (solo Android)", "Componenti di base dell'app Android", "Basic Android app components", "Apache", ["x:androidx-core"]),
+        ("Lettore di codici QR di Google (solo Android)", "Legge il QR per collegare il telefono al PC", "Reads the QR code to link the phone to the PC", "Google", ["x:mlkit-code-scanner"]),
+        ("QR Code Generator (Kazuhiko Arase)", "Disegna il QR per collegare il telefono", "Draws the QR code to link the phone", "MIT", ["x:qrcode-generator"]),
         ("Inno Setup", "Crea l'installatore", "Builds the installer", "Libera", ["x:innosetup"]),
     ]),
 ]

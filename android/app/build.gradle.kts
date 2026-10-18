@@ -48,6 +48,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     // «Chi parla»: il modello delle voci (lo stesso del PC) gira sul telefono
     implementation("com.microsoft.onnxruntime:onnxruntime-android:1.19.2")
+    // «Sincronizza»: legge il QR del PC con il lettore di Google (dentro Google Play services, senza permessi)
+    implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 }
 
 // la parte di appunti, PDF, flashcard ecc. e' quella del programma per Windows (in Python)

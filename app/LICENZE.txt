@@ -13843,6 +13843,51 @@ Apache License
    END OF TERMS AND CONDITIONS
 
 ------------------------------------------------------------------------------
+Lettore di codici QR di Google (solo Android)  [Google]
+------------------------------------------------------------------------------
+
+Google code scanner (com.google.android.gms:play-services-code-scanner)
+Copyright Google LLC.
+
+Part of Google Play services / ML Kit. Used under the Android Software
+Development Kit License Agreement and the ML Kit Terms of Service:
+https://developer.android.com/studio/terms
+https://developers.google.com/ml-kit/terms
+
+The scanner runs inside Google Play services on the phone: the camera image
+is processed on the device and is not sent to Google by this app.
+
+------------------------------------------------------------------------------
+QR Code Generator (Kazuhiko Arase)  [MIT]
+------------------------------------------------------------------------------
+
+QR Code Generator for JavaScript
+Copyright (c) 2009 Kazuhiko Arase
+URL: http://www.d-project.com/
+
+Licensed under the MIT license:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+The word 'QR Code' is registered trademark of DENSO WAVE INCORPORATED.
+
+------------------------------------------------------------------------------
 Inno Setup  [Libera]
 ------------------------------------------------------------------------------
 

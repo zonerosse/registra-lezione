@@ -2732,6 +2732,7 @@ async function disegnaSY(tutto) {
   const rete = `<div class="card mt"><div class="lbl">${esc(t('sy.nontrova.l'))}</div><div class="hint">${t('sy.nontrova')}${ANDROID ? '' : '<br><br>' + t('sy.firewall')}</div></div>`;
   if (SY.modo === 'codice') {
     box.innerHTML = `<div class="card" style="text-align:center"><div class="lbl" style="text-align:left">💻 ${esc(t('sy.questopc', {n: r.nome}))}</div>
+      <div class="syqr">${syQr(r)}</div>
       <div class="sycod">${esc(r.codice.slice(0, 3) + ' ' + r.codice.slice(3))}</div>
       <div class="hint">${esc(t('sy.scrivilo'))}</div><div class="hint" id="syScade">${esc(t('sy.scade', {n: Math.max(1, Math.ceil(r.codice_sec / 60))}))}</div>
       <div class="row mt" style="gap:10px;justify-content:center;color:var(--mut)"><span class="spin"></span>${esc(t('sy.aspetto'))}</div>
@@ -2741,7 +2742,7 @@ async function disegnaSY(tutto) {
   }
   if (SY.modo === 'collega') {
     box.innerHTML = `<div class="card" style="text-align:center"><div class="lbl" style="text-align:left">🔄 ${esc(t('sy.collegati.t'))}</div>
-      <div class="hint">${esc(t('sy.scrivi'))}</div>
+      ${QRTEL() ? `<button class="btn b-main" id="syQr" style="width:100%;max-width:320px">📷 ${esc(t('sy.qr'))}</button><div class="hint mt">${esc(t('sy.oppure'))}</div>` : `<div class="hint">${esc(t('sy.scrivi'))}</div>`}
       <input class="in syin" id="syCod" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="000 000">
       <div class="row mt" style="gap:8px;justify-content:center"><button class="btn b-main b-sm" id="syVai">${esc(t('sy.collega'))}</button><button class="btn b-ghost b-sm" id="syAnn">${esc(t('annulla'))}</button></div>
       <div id="syMsg" class="mt"></div></div>` + rete;
@@ -2754,6 +2755,12 @@ async function disegnaSY(tutto) {
       else $('syMsg').innerHTML = `<div class="avviso">${esc(x.msg)}</div>`;
     };
     $('syVai').onclick = vai_;
+    if ($('syQr')) $('syQr').onclick = async () => {
+      $('syMsg').innerHTML = '';
+      const x = await A.sync_qr();
+      if (x.ok) { SY.modo = ''; SY.fatto = x.nome; disegnaSY(true); }
+      else if (!x.annullato) $('syMsg').innerHTML = `<div class="avviso">${esc(x.msg || '')}</div>`;
+    };
     $('syCod').onkeydown = e => { if (e.key === 'Enter') vai_(); };
     $('syAnn').onclick = () => { SY.modo = ''; disegnaSY(true); };
     setTimeout(() => $('syCod') && $('syCod').focus(), 50);
@@ -2788,6 +2795,16 @@ async function disegnaSY(tutto) {
     SY.modo = 'codice'; SY.fatto = ''; disegnaSY(true);
   };
   if ($('syColl')) $('syColl').onclick = () => { SY.modo = 'collega'; SY.fatto = ''; disegnaSY(true); };
+}
+// il telefono legge il QR con il lettore di Google (app nuova, codice 13); il QR porta codice e indirizzi del PC
+const QRTEL = () => ANDROID && (R.app_codice || 0) >= 13;
+function syQr(r) {
+  try {
+    const q = qrcode(0, 'M');
+    q.addData(`vmia:${r.codice}@${(r.ip || []).join(',')}`);
+    q.make();
+    return q.createSvgTag({cellSize: 6, margin: 2, scalable: true});
+  } catch (e) { return ''; }
 }
 function syDispositivi(r) {
   return r.dispositivi.map(d => `<div class="sydisp"><span class="ic">${d.ruolo === 'centro' ? '💻' : '📱'}</span><div class="sp"><b>${esc(d.nome)}</b>
