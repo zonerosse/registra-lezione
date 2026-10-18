@@ -243,12 +243,22 @@ class _Ponte:
             return False
 
     def cifra(self, testo):
-        import base64
-        return base64.b64encode(testo.encode()).decode()          # (prova: poi nel portachiavi dell'iPhone)
+        """Le chiavi (es. quella di Claude) vanno nel portachiavi dell'iPhone, protetto da iOS; nelle impostazioni
+        dell'app resta solo un segnaposto (kc:...) che da solo non serve a niente."""
+        import secrets
+        ident = secrets.token_hex(8)
+        _portachiavi_scrivi(ident, str(testo))
+        return "kc:" + ident
 
     def decifra(self, dati):
-        import base64
-        return base64.b64decode(dati).decode()
+        d = str(dati or "")
+        if not d.startswith("kc:"):
+            return ""
+        try:
+            return _portachiavi_leggi(d[3:])
+        except Exception:
+            log.exception("iphone: portachiavi")
+            return ""
 
     def email(self, dest, oggetto, testo, allegati):
         """Mail dell'iPhone gia' scritta (destinatari, oggetto, testo, allegati): si tocca Invia.
@@ -418,6 +428,62 @@ def _condividi_ora(*file, testo=""):
     if pop is not None:
         pop.sourceView = vc.view
     vc.presentViewController_animated_completion_(a, True, None)
+
+
+# ----------------------------------------------------------------------------- portachiavi (Keychain)
+
+_SERVIZIO = "it.puntowebferrara.verbamanent"
+
+
+def _sicurezza():
+    import ctypes
+    from rubicon.objc import ObjCInstance
+    from rubicon.objc.runtime import load_library
+    sec = load_library("Security")
+    k = lambda n: ObjCInstance(ctypes.c_void_p.in_dll(sec, n).value)
+    sec.SecItemAdd.restype = ctypes.c_int32
+    sec.SecItemAdd.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+    sec.SecItemDelete.restype = ctypes.c_int32
+    sec.SecItemDelete.argtypes = [ctypes.c_void_p]
+    sec.SecItemCopyMatching.restype = ctypes.c_int32
+    sec.SecItemCopyMatching.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p)]
+    return sec, k
+
+
+def _portachiavi_base(k, ident):
+    D = _objc("NSMutableDictionary").alloc().init()
+    D.setObject_forKey_(k("kSecClassGenericPassword"), k("kSecClass"))
+    D.setObject_forKey_(_SERVIZIO, k("kSecAttrService"))
+    D.setObject_forKey_(str(ident), k("kSecAttrAccount"))
+    return D
+
+
+def _portachiavi_scrivi(ident, testo):
+    sec, k = _sicurezza()
+    D = _portachiavi_base(k, ident)
+    sec.SecItemDelete(D.ptr.value)
+    dati = _objc("NSString").stringWithString_(testo).dataUsingEncoding_(4)          # 4 = UTF-8
+    D.setObject_forKey_(dati, k("kSecValueData"))
+    # solo su questo iPhone, leggibile dopo il primo sblocco (anche a schermo spento, per lavorare in sottofondo)
+    D.setObject_forKey_(k("kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly"), k("kSecAttrAccessible"))
+    r = sec.SecItemAdd(D.ptr.value, None)
+    if r != 0:
+        raise RuntimeError(f"portachiavi: errore {r}")
+
+
+def _portachiavi_leggi(ident):
+    import ctypes
+    from rubicon.objc import ObjCInstance
+    sec, k = _sicurezza()
+    D = _portachiavi_base(k, ident)
+    D.setObject_forKey_(_objc("NSNumber").numberWithBool_(True), k("kSecReturnData"))
+    D.setObject_forKey_(k("kSecMatchLimitOne"), k("kSecMatchLimit"))
+    out = ctypes.c_void_p()
+    r = sec.SecItemCopyMatching(D.ptr.value, ctypes.byref(out))
+    if r != 0 or not out.value:
+        return ""
+    dati = ObjCInstance(out.value)
+    return str(_objc("NSString").alloc().initWithData_encoding_(dati, 4))
 
 
 def _tipo_mime(f):

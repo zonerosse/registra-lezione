@@ -139,6 +139,12 @@ class VerbaManent(toga.App):
             with wave.open(str(dec)) as w:
                 return ok, w.getframerate(), w.getnchannels(), round(w.getnframes() / w.getframerate(), 2)
         prova("decodifica 1-6 s", decod)
+        def chiave():
+            segreto = "sk-prova-12345"
+            c = P.cifra(segreto)
+            return c, "uguale" if P.decifra(c) == segreto else "DIVERSA: " + repr(P.decifra(c)), \
+                "assente" if segreto not in c else "VISIBILE"
+        prova("portachiavi", chiave)
         pdf = casa / "prova.pdf"
         if pdf.exists():
             cart = casa / "prova_pdf"
