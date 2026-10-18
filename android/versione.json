@@ -1,7 +1,7 @@
 {
- "versione": "0.10.22",
+ "versione": "0.10.23",
  "codice": 10,
- "novita": "Guida: due modi di pagare, con la tua chiave di Claude oppure, prossimamente, con un abbonamento che comprende Claude e il server veloce.",
- "novita_en": "Guide: two ways to pay, with your own Claude key or, coming soon, with a subscription that includes Claude and the fast server.",
- "contenuto": 53
+ "novita": "Guida: sotto ogni video c'è «⛶ Schermo intero». Per tornare indietro: «✕ Chiudi» (o Esc sul PC, Indietro sul telefono).",
+ "novita_en": "Guide: under each video there is «⛶ Full screen». To go back: «✕ Close» (or Esc on the PC, Back on the phone).",
+ "contenuto": 54
 }

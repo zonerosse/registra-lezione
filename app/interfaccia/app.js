@@ -59,6 +59,7 @@ async function avvio() {
 const pausa = ms => new Promise(r => setTimeout(r, ms));
 // telefono, tasto «Indietro»: chiude dialogo o menu, altrimenti torna a Registra. false = l'app va dietro
 window.indietro = () => {
+  if (videoInteroChiudi()) return true;
   const m = document.querySelector('.menu'); if (m) { m.remove(); return true; }
   const v = [...document.querySelectorAll('.velo')].pop();
   if (v) { const b = v.querySelector('.bt button'); if (b) b.click(); else v.remove(); return true; }
@@ -1243,15 +1244,34 @@ function disegnaGuida(l) {
     const n = c.perche ? '★' : ++num;
     let tit = '';
     if (c.g && c.g !== prima) { prima = c.g; if (gr[c.g]) tit = `<div class="gtit">${esc(gr[c.g])}</div>`; }
-    return tit + `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${n}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video>` : ''}<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}></details>`;
+    return tit + `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${n}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video><div class="gvint"><button class="btn b-ghost b-sm" data-gv="1">⛶ ${esc(t('gv.intero'))}</button></div>` : ''}<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}></details>`;
   }).join('');
   // aprendo un capitolo il suo video parte da capo; chiudendolo si ferma
   $('gCap').querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => {
     const v = d.querySelector('video'); if (!v) return;
     if (d.open) { try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {} } else v.pause();
   }));
+  $('gCap').querySelectorAll('[data-gv]').forEach(b => b.onclick = e => { e.preventDefault(); videoIntero(b.closest('details').querySelector('video')); });
   $('segGuida').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === l));
 }
+// video della Guida a schermo intero: un velo nero che copre tutta la finestra (il pulsante del lettore non funziona dentro il programma)
+function videoIntero(v) {
+  if (!v || $('gvVelo')) return;
+  const d = document.createElement('div'); d.id = 'gvVelo';
+  d.innerHTML = `<button class="gvchiudi">✕ ${esc(t('chiudi'))}</button><video src="${v.getAttribute('src')}" controls muted playsinline autoplay></video>`;
+  document.body.appendChild(d);
+  const g = d.querySelector('video');
+  g.addEventListener('loadedmetadata', () => { try { g.currentTime = v.currentTime || 0; } catch (e) {} g.play().catch(() => {}); }, {once: true});
+  v.pause();
+  d.querySelector('.gvchiudi').onclick = () => videoInteroChiudi();
+}
+function videoInteroChiudi() {
+  const d = $('gvVelo'); if (!d) return false;
+  const g = d.querySelector('video'), v = [...document.querySelectorAll('#gCap video')].find(x => x.getAttribute('src') === g.getAttribute('src'));
+  if (v) { try { v.currentTime = g.currentTime; } catch (e) {} }
+  g.pause(); d.remove(); return true;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') videoInteroChiudi(); });
 
 /* ------------------------------------------------------------------ in aula (microfono) */
 let PDFA = null, MICS = null, micOcc = false;

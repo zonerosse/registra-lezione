@@ -662,3 +662,9 @@ html.android .banda.corta .btn{flex:1 1 40%;justify-content:center;order:3}
 .indietro:hover{background:#f0f7ff}
 .gtit{font-size:12px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.5px;margin:20px 0 8px 4px}
 #gCap>.gtit:first-child{margin-top:4px}
+/* video della Guida a schermo intero */
+.cap .gvint{margin:-6px 18px 14px 58px}
+#gvVelo{position:fixed;inset:0;z-index:10000;background:#000;display:flex;align-items:center;justify-content:center}
+#gvVelo video{width:100%;height:100%;object-fit:contain;background:#000}
+#gvVelo .gvchiudi{position:absolute;top:14px;right:14px;z-index:1;background:rgba(255,255,255,.92);color:var(--ink);border:0;border-radius:999px;padding:9px 16px;font:600 14px "Segoe UI",Roboto,system-ui,sans-serif;cursor:pointer}
+html.android .cap .gvint{margin-left:16px}
