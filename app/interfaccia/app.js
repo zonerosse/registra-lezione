@@ -248,7 +248,7 @@ async function cambiaLingua(l) {
   LINGUA = R.lingua;
   traduciPagina(); scriviVersione();
   document.querySelectorAll('[data-h]').forEach(e => { e.dataset.h = ''; });
-  disegnaPronto(); disegnaImpostazioni(); disegnaStato();
+  disegnaPronto(); disegnaImpostazioni(); disegnaStato(); controllaNomeRec();
   if (LZ) disegnaLezioni();
   if (S.vista === 'fine') disegnaFine();
   if (S.vista === 'reg') disegnaReg();
@@ -1192,6 +1192,7 @@ function disegnaImpostazioni() {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
     $('swCarica').classList.toggle('on', !!R.solo_carica);
     $('andVer').textContent = t('and.agg.s', {v: R.versione});
+    if (IPHONE) $('andAgg').classList.add('hidden');
   }
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;

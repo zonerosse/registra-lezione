@@ -2,6 +2,7 @@
    Sul PC questo file non fa niente (la pagina non ha ?android=1 nell'indirizzo). */
 'use strict';
 const ANDROID = /[?&]android=1/.test(location.search);
+const IPHONE = /[?&]iphone=1/.test(location.search);       // sull'iPhone gli aggiornamenti arrivano dall'App Store
 if (ANDROID) {
   document.documentElement.classList.add('android');
   const AND = {
