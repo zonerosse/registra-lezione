@@ -685,7 +685,24 @@ def _tts():
     return _VOCE["tts"]
 
 
-def voce_parla(testo, velocita=1.0, lingua="it"):
+def _voce_per(t, lingua, chi):
+    """Due voci diverse del telefono per il podcast a due voci (Giulia, Marco); se ce n'e' una sola, Marco piu' basso."""
+    try:
+        chiave = (lingua, chi)
+        if chiave not in _VOCE.setdefault("scelte", {}):
+            vv = sorted([v for v in t.getVoices().toArray() if str(v.getLocale().getLanguage()) == lingua and not v.isNetworkConnectionRequired()],
+                        key=lambda v: str(v.getName()))
+            _VOCE["scelte"][chiave] = vv[min(chi, len(vv) - 1)] if vv else None
+            _VOCE["scelte"][(lingua, "uniche")] = len(vv) < 2
+        v = _VOCE["scelte"][chiave]
+        if v is not None:
+            t.setVoice(v)
+        t.setPitch(0.8 if chi and _VOCE["scelte"].get((lingua, "uniche")) else 1.0)
+    except Exception:
+        log.exception("voce: scelta")
+
+
+def voce_parla(testo, velocita=1.0, lingua="it", chi=-1):
     try:
         t = _tts()
         for _ in range(50):                             # la prima volta la voce si prepara (al massimo 5 s)
@@ -696,6 +713,12 @@ def voce_parla(testo, velocita=1.0, lingua="it"):
             return {"ok": False}
         TTS, Locale = jclass("android.speech.tts.TextToSpeech"), jclass("java.util.Locale")
         t.setLanguage(Locale("it", "IT") if lingua == "it" else Locale("en", "GB"))
+        if chi is not None and int(chi) >= 0:
+            _voce_per(t, "it" if lingua == "it" else "en", int(chi))
+        elif _VOCE.get("scelte"):
+            _VOCE["scelte"] = {}
+            t.setPitch(1.0)
+            t.setLanguage(Locale("it", "IT") if lingua == "it" else Locale("en", "GB"))
         t.setSpeechRate(float(velocita or 1.0))
         t.speak(str(testo or ""), TTS.QUEUE_FLUSH, None, "rl")
         _VOCE["da"] = time.monotonic()

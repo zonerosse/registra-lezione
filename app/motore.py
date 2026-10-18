@@ -2618,32 +2618,34 @@ class Motore:
 
     # ------------------------------------------------------------------ podcast della lezione
 
-    def podcast(self, cartella, durata="breve", rifai=False):
+    def podcast(self, cartella, durata="breve", rifai=False, stile="uno"):
         import podcast as pc
         cart = Path(cartella)
         dsa = bool(self.cfg.get("lettura_facilitata"))
-        if not self.chiave() and not pc.file_podcast(cart, durata, dsa).exists():
+        if not self.chiave() and not pc.file_podcast(cart, durata, dsa, stile).exists():
             return {"ok": False, "msg": tr("manca_chiave")}
         try:
-            dati, spesa = pc.crea(cart, self.chiave(), durata, dsa, bool(rifai))
+            dati, spesa = pc.crea(cart, self.chiave(), durata, dsa, bool(rifai), stile)
             v = video_di(cart)
             return {"ok": True, "podcast": dati, "spesa": spesa, "media": servi_video.registra(v) if v else None,
                     "mp3": sys.platform in ("win32", "darwin")}
+        except pc.NienteDibattito:
+            return {"ok": False, "msg": tr("pc_niente_dib"), "niente_dibattito": True}
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
         except Exception:
             log.exception("podcast")
             return {"ok": False, "msg": tr("pc_err")}
 
-    def podcast_mp3(self, cartella, durata="breve", velocita=1.0):
+    def podcast_mp3(self, cartella, durata="breve", velocita=1.0, stile="uno"):
         import podcast as pc
         cart = Path(cartella)
         dsa = bool(self.cfg.get("lettura_facilitata"))
-        dati = el.leggi_json(pc.file_podcast(cart, durata, dsa))
+        dati = el.leggi_json(pc.file_podcast(cart, durata, dsa, stile))
         if not dati:
             return {"ok": False, "msg": tr("pc_err")}
         info = el.leggi_json(cart / "info.json", {}) or {}
-        dest = Path(self.cfg["cartella_pacchetti"]) / tr("pc_cartella") / f"{el.nome_sicuro(info.get('nome') or cart.name)} – podcast {durata}.mp3"
+        dest = Path(self.cfg["cartella_pacchetti"]) / tr("pc_cartella") / f"{el.nome_sicuro(info.get('nome') or cart.name)} – podcast {durata}{'' if stile == 'uno' else ' ' + tr('pc_stile_' + stile)}.mp3"
         try:
             f = pc.mp3(cart, dati, video_di(cart), dest, float(velocita or 1.0), 2.0 if dsa else 0.0)
             mostra_file(f)

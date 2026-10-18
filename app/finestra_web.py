@@ -425,11 +425,11 @@ class Api:
     def karaoke(self, cartella):
         return self._m.karaoke(cartella)
 
-    def podcast(self, cartella, durata="breve", rifai=False):
-        return self._m.podcast(cartella, durata, rifai)
+    def podcast(self, cartella, durata="breve", rifai=False, stile="uno"):
+        return self._m.podcast(cartella, durata, rifai, stile)
 
-    def podcast_mp3(self, cartella, durata="breve", velocita=1.0):
-        return self._m.podcast_mp3(cartella, durata, velocita)
+    def podcast_mp3(self, cartella, durata="breve", velocita=1.0, stile="uno"):
+        return self._m.podcast_mp3(cartella, durata, velocita, stile)
 
     def studia_info(self, materia):
         return self._m.studia_info(materia)

@@ -1963,9 +1963,19 @@ function collegaKaraoke() {
 /* ------------------------------------------------------------------ podcast della lezione */
 // Voce narrante (voce del sistema) + pezzi veri della lezione (il video/audio dal minuto giusto). Mentre ascolti la
 // parola si illumina: per la voce narrante con le parole che dice la voce, per il prof con gli orari della trascrizione.
-var PCS = {lez: null, d: null, i: 0, attivo: false, vel: 1.25, dur: 'breve', media: null, audio: null};
+var PCS = {lez: null, d: null, i: 0, attivo: false, vel: 1.25, dur: 'breve', stile: 'uno', media: null, audio: null};
+// i nomi delle due voci (Giulia e Marco) e la legenda
+const pcNomi = () => (PCS.d && PCS.d.nomi) || (LINGUA === 'en' ? ['Emma', 'Jack'] : ['Giulia', 'Marco']);
+function pcChi(p) { return p.tipo === 'prof' ? t('pc.prof') : p.tipo === 'a' ? pcNomi()[0] : p.tipo === 'b' ? pcNomi()[1] : t('pc.narr'); }
+function pcStileTesti() {
+  $('pcStile').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.v === PCS.stile));
+  const [a, b] = pcNomi();
+  $('pcStileS').innerHTML = t('pc.s.' + (PCS.stile === 'dibattito' ? 'dib' : PCS.stile) + '.s', {a: esc(a), b: esc(b)});
+  const voce = (c, n) => `<span><i style="background:${c}"></i><span>${esc(n)}</span></span>`;
+  $('pcLeg').innerHTML = (PCS.stile === 'uno' ? voce('#cbd5e1', t('pc.narr')) : voce('#94a3b8', a) + voce('#cbd5e1', b)) + voce('#0d4275', t('pc.prof.reg'));
+}
 const parole = s => String(s || '').split(/\s+/).filter(Boolean);
-function pcDurata(p) { return p.tipo === 'prof' ? p.a - p.da : Math.max(3, parole(p.testo).length * 0.42); }
+function pcDurata(p) { return p.tipo === 'prof' ? p.a - p.da : Math.max(p.tipo === 'narratore' ? 3 : 1.5, parole(p.testo).length * 0.42); }
 async function apriPodcast(l, rifai = false) {
   pcFerma();
   PCS = {...PCS, lez: l, d: null, i: 0, attivo: false};
@@ -1974,12 +1984,17 @@ async function apriPodcast(l, rifai = false) {
   $('pcLista').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('pc.lav'))}</div>`;
   $('pcTl').innerHTML = ''; $('pcMp3Box').classList.add('hidden');
   $('pcDur').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.v === PCS.dur));
-  pcVel(); disegnaFacilitata();
+  pcStileTesti(); pcVel(); disegnaFacilitata();
   if (pagina !== 'podcast') vai('podcast');
-  const r = await A.podcast(l.cartella, PCS.dur, rifai);
+  const r = await A.podcast(l.cartella, PCS.dur, rifai, PCS.stile);
   if (PCS.lez !== l) return;
-  if (!r.ok) { $('pcLista').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
+  if (!r.ok) {
+    $('pcLista').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>` + (r.niente_dibattito ? `<div class="row mt"><button class="btn b-main b-sm" id="pcProvaDue">${esc(t('pc.prova.due'))}</button></div>` : '');
+    if ($('pcProvaDue')) $('pcProvaDue').onclick = () => { PCS.stile = 'due'; apriPodcast(PCS.lez); };
+    return;
+  }
   PCS.d = r.podcast; PCS.media = r.media;
+  pcStileTesti();
   const tot = PCS.d.pezzi.reduce((a, p) => a + pcDurata(p), 0);
   $('pcSub').textContent = t('pc.sub', {n: l.nome, m: Math.max(1, Math.round(tot / 60))});
   $('pcT1').textContent = mmss(Math.round(tot));
@@ -1989,10 +2004,11 @@ async function apriPodcast(l, rifai = false) {
 function pcVel() { $('pcVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === PCS.vel)); }
 function disegnaPodcast() {
   const P = PCS.d.pezzi, tot = P.reduce((a, p) => a + pcDurata(p), 0);
-  $('pcTl').innerHTML = P.map((p, i) => `<span class="${p.tipo === 'prof' ? 'p' : 'n'}" data-i="${i}" style="width:${pcDurata(p) / tot * 100}%"></span>`).join('');
+  const cl = p => ({prof: 'p', a: 'a', b: 'b'})[p.tipo] || 'n';
+  $('pcTl').innerHTML = P.map((p, i) => `<span class="${cl(p)}" data-i="${i}" style="width:${pcDurata(p) / tot * 100}%"></span>`).join('');
   const testo = p => p.tipo === 'prof' ? p.frasi.map(f => f.testo).join(' ') : p.testo;
-  $('pcLista').innerHTML = (PCS.media ? '' : `<div class="hint" style="margin-bottom:6px">${esc(t('pc.novideo'))}</div>`) + P.map((p, i) => `<div class="pz ${p.tipo === 'prof' ? 'p' : 'n'}" data-i="${i}"><div class="chi">${p.tipo === 'prof' ? '🎓' : '🎙'}</div><div>
-    <b>${esc(p.tipo === 'prof' ? t('pc.prof') : t('pc.narr'))}${p.tipo === 'prof' ? ` <span class="min">· ${esc(t('pc.min', {m: Math.floor(p.da / 60)}))}</span> <button class="lnk" data-riv="${i}">${esc(t('pc.rivedi'))}</button>` : ''}</b>
+  $('pcLista').innerHTML = (PCS.media ? '' : `<div class="hint" style="margin-bottom:6px">${esc(t('pc.novideo'))}</div>`) + P.map((p, i) => `<div class="pz ${p.tipo === 'prof' ? 'p' : 'n'}" data-i="${i}"><div class="chi">${p.tipo === 'prof' ? '🎓' : p.tipo === 'b' ? '💬' : p.tipo === 'a' ? '🙋' : '🎙'}</div><div>
+    <b>${esc(pcChi(p))}${p.tipo === 'prof' ? ` <span class="min">· ${esc(t('pc.min', {m: Math.floor(p.da / 60)}))}</span> <button class="lnk" data-riv="${i}">${esc(t('pc.rivedi'))}</button>` : ''}</b>
     <div class="tx">${p.tipo === 'prof' ? '«' : ''}${parole(testo(p)).map(w => `<span class="w">${esc(w)}</span>`).join(' ')}${p.tipo === 'prof' ? '»' : ''}</div></div></div>`).join('');
   document.querySelectorAll('#v-podcast [data-i]').forEach(e => e.onclick = ev => { if (ev.target.closest('[data-riv]')) return; pcSuona(+e.dataset.i); });
   document.querySelectorAll('#v-podcast [data-riv]').forEach(b => b.onclick = () => { const p = PCS.d.pezzi[+b.dataset.riv]; pcFerma(); mostraMomento(PCS.lez.cartella, p.da, null, PCS.lez.nome); });
@@ -2040,7 +2056,7 @@ async function pcSuona(k) {
       const pos = []; let c = 0; parole(testo).forEach(w => { const j = testo.indexOf(w, c); pos.push(j); c = j + w.length; });
       let stima = null;
       if (ANDROID) { let w = 0; stima = setInterval(() => { if (PCS.giro === giro) pcSegna(kk, Math.min(pos.length - 1, w++)); }, 420 / PCS.vel); }
-      ok = await voceParla(testo, PCS.vel, ci => { let w = 0; while (w + 1 < pos.length && pos[w + 1] <= ci) w++; pcSegna(kk, w); });
+      ok = await voceParla(testo, PCS.vel, ci => { let w = 0; while (w + 1 < pos.length && pos[w + 1] <= ci) w++; pcSegna(kk, w); }, p.tipo === 'a' ? 0 : p.tipo === 'b' ? 1 : -1);
       if (stima) clearInterval(stima);
     }
     if (PCS.giro !== giro) return;
@@ -2060,10 +2076,11 @@ function collegaPodcast() {
   $('pcPlay').onclick = () => { if (PCS.attivo) pcFerma(); else pcSuona(PCS.i || 0); };
   $('pcVel').querySelectorAll('span').forEach(s => s.onclick = () => { PCS.vel = +s.dataset.v; pcVel(); if (PCS.audio) PCS.audio.playbackRate = PCS.vel; if (PCS.attivo && PCS.d.pezzi[PCS.i].tipo !== 'prof') pcSuona(PCS.i); });
   $('pcDur').querySelectorAll('span').forEach(s => s.onclick = () => { if (PCS.dur === s.dataset.v || !PCS.lez) return; PCS.dur = s.dataset.v; apriPodcast(PCS.lez); });
+  $('pcStile').querySelectorAll('span').forEach(s => s.onclick = () => { if (PCS.stile === s.dataset.v || !PCS.lez) return; PCS.stile = s.dataset.v; PCS.mp3 = null; apriPodcast(PCS.lez); });
   $('pcRifai').onclick = async () => { if (PCS.lez && await conferma(t('pc.rifai.t'), t('pc.rifai.c'))) apriPodcast(PCS.lez, true); };
-  $('pcMp3').onclick = async () => { const b = $('pcMp3'); b.disabled = true; toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel); b.disabled = false; toast(r.ok ? t('pc.mp3.ok') : r.msg || ''); PCS.mp3 = r.ok ? r.file : null; };
+  $('pcMp3').onclick = async () => { const b = $('pcMp3'); b.disabled = true; toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel, PCS.stile); b.disabled = false; toast(r.ok ? t('pc.mp3.ok') : r.msg || ''); PCS.mp3 = r.ok ? r.file : null; };
   $('pcManda').onclick = async () => {
-    if (!PCS.mp3) { toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel); if (!r.ok) return toast(r.msg || ''); PCS.mp3 = r.file; }
+    if (!PCS.mp3) { toast(t('pc.mp3.lav')); const r = await A.podcast_mp3(PCS.lez.cartella, PCS.dur, PCS.vel, PCS.stile); if (!r.ok) return toast(r.msg || ''); PCS.mp3 = r.file; }
     A.spezzone_email(PCS.mp3);
   };
 }
@@ -3367,13 +3384,25 @@ function disegnaTest() {
 let VOCE_GIRO = 0;
 const voceDisponibile = () => ANDROID || !!window.speechSynthesis;
 const perLaVoce = s => String(s || '').replace(/[★•]/g, '').replace(/−/g, '-').replace(/→/g, ', ').replace(/\s+/g, ' ').trim();
-function voceParla(testo, vel = 1, onParola = null) {
+// chi: -1 la voce di sempre; 0 / 1 le due voci del podcast a due voci (Giulia femminile, Marco maschile o piu' basso)
+function vocePer(chi) {
+  const L = LINGUA === 'en' ? 'en' : 'it';
+  const vv = speechSynthesis.getVoices().filter(x => (x.lang || '').toLowerCase().startsWith(L));
+  if (chi < 0 || !vv.length) return {v: vv[0], tono: 1};
+  const F = /elsa|isabella|alice|federica|paola|giulia|elena|sara|chiara|zira|hazel|susan|libby|sonia|kate|emma|aria|jenny|samantha|serena/i;
+  const M = /cosimo|diego|luca|giuseppe|marco|paolo|david|george|mark|ryan|daniel|guy|alex|thomas|oliver/i;
+  const f = vv.find(x => F.test(x.name)) || vv[0];
+  if (chi === 0) return {v: f, tono: 1};
+  const m = vv.find(x => M.test(x.name)) || vv.find(x => x !== f);
+  return m ? {v: m, tono: 1} : {v: f, tono: 0.7};
+}
+function voceParla(testo, vel = 1, onParola = null, chi = -1) {
   const giro = ++VOCE_GIRO;
   testo = perLaVoce(testo);
   return new Promise(async fatto => {
     if (!testo) return fatto(true);
     if (ANDROID) {
-      const r = await A.voce_parla(testo, vel, LINGUA);
+      const r = await A.voce_parla(testo, vel, LINGUA, chi);
       if (!r || !r.ok) return fatto(false);
       while (giro === VOCE_GIRO) { await pausa(200); const o = await A.voce_occupata(); if (!o.occupata) break; }
       return fatto(giro === VOCE_GIRO);
@@ -3382,8 +3411,9 @@ function voceParla(testo, vel = 1, onParola = null) {
       if (!window.speechSynthesis) return fatto(false);
       speechSynthesis.cancel();
       const u = new SpeechSynthesisUtterance(testo); u.lang = LINGUA === 'en' ? 'en-GB' : 'it-IT'; u.rate = vel;
-      const v = speechSynthesis.getVoices().find(x => (x.lang || '').toLowerCase().startsWith(LINGUA === 'en' ? 'en' : 'it'));
-      if (v) u.voice = v;
+      const vp = vocePer(chi);
+      if (vp.v) u.voice = vp.v;
+      u.pitch = vp.tono;
       if (onParola) u.onboundary = e => { if (e.name === 'word' || e.name === undefined) onParola(e.charIndex); };
       u.onend = () => fatto(giro === VOCE_GIRO); u.onerror = () => fatto(false);
       speechSynthesis.speak(u);

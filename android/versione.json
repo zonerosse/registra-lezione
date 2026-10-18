@@ -1,7 +1,7 @@
 {
- "versione": "0.13.2",
+ "versione": "0.13.3",
  "codice": 13,
- "novita": "Nuovo: «⬇ Esporta per Anki» nella pagina delle flashcard. Le carte scelte vanno in un file per Anki (PC, Mac, AnkiDroid, iPhone), con la slide e il minuto della lezione e un mazzo per materia. Se esporti di nuovo dopo nuove lezioni, Anki aggiorna le carte senza doppioni e senza perdere i ripassi.",
- "novita_en": "New: «⬇ Export for Anki» on the flashcards page. The chosen cards go into a file for Anki (PC, Mac, AnkiDroid, iPhone), with the slide and minute of the lesson and one deck per subject. If you export again after new lessons, Anki updates the cards with no duplicates and without losing your reviews.",
- "contenuto": 78
+ "novita": "Nuovo: il podcast della lezione a «Due voci» (Giulia fa le domande, Marco spiega) e a «Dibattito» (due idee opposte su un punto della lezione). Nei momenti importanti parla sempre il prof, con la sua voce vera. Anche in MP3.",
+ "novita_en": "New: the lesson podcast with «Two voices» (Emma asks, Jack explains) and «Debate» (two opposite ideas on a point of the lesson). At the key moments the lecturer always speaks, with their real voice. MP3 too.",
+ "contenuto": 79
 }
