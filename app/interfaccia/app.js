@@ -346,7 +346,7 @@ function primaDiIniziare(rileggi) {
       await A.imposta('rapporti_errori', si); R.rapporti = si; R.rapporti_chiesto = true;
     }
     v.remove();
-    if (!rileggi) invitoCopiato();
+    if (!rileggi) { if (!ANDROID && window.iniziaQui) iniziaQui(invitoCopiato); else invitoCopiato(); }   // «Inizia qui» (inizia.js): Google, Claude, telefono e web
   };
   if (rileggi) v.onclick = e => { if (e.target === v) v.remove(); };
 }

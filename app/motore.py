@@ -674,7 +674,7 @@ class Motore:
             self.cfg["rg_ora"] = valore if re.fullmatch(r"\d{2}:\d{2}", str(valore or "")) else "18:00"
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
-        elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla"):
+        elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla", "inizia_fatto"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
             self.cfg[campo] = el.FACILITATA = bool(valore)

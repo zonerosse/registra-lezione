@@ -1073,3 +1073,24 @@ html.android .fogrid{grid-template-columns:1fr}html.android .scfo{grid-template-
 .lic-verde{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}
 #v-pronto.lic-spenta>*:not(#licFinita):not(#licTile){opacity:.25;pointer-events:none}
 @media(max-width:700px){.lic-due{grid-template-columns:1fr}}
+
+/* «Inizia qui» (inizia.js): il primo avvio in 3 passi */
+.dlg.iq{max-width:560px}
+.iq-passi{display:flex;gap:6px;margin:0 0 16px}
+.iq-passi div{flex:1;font-size:12px;font-weight:600;color:var(--mut)}
+.iq-passi div i{display:block;height:5px;border-radius:5px;background:var(--line);margin-bottom:6px}
+.iq-passi div.fatto i,.iq-passi div.ora i{background:linear-gradient(90deg,#22d3ee,#0284c7)}
+.iq-passi div.ora{color:var(--navy)}.iq-passi div.fatto{color:var(--ok)}
+.iq-g{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;border:1.5px solid #cfe0f1;background:#fff;border-radius:14px;padding:13px;font-size:15.5px;font-weight:700;color:#1f2937}
+.iq-g.attesa{font-size:13.5px;font-weight:600;color:var(--mut);text-align:left}
+.iq-ok{display:flex;gap:12px;align-items:center;background:#ecfdf5;border:1.5px solid #a7f3d0;border-radius:12px;padding:12px 14px;margin:12px 0}
+.iq-ok .s{width:30px;height:30px;border-radius:50%;background:#10b981;color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.iq-ok b{color:var(--ink);display:block}
+.iq-campo{display:flex;gap:8px;margin:12px 0 4px}.iq-campo .in{flex:1;min-width:0}
+.iq-dove{background:var(--soft);border-radius:12px;padding:10px 14px;font-size:13px;line-height:1.6;margin-top:8px}
+.iq-dove summary{cursor:pointer;font-weight:700;color:var(--navy)}.iq-dove ol{margin:6px 0 0;padding-left:18px}
+.iq-link{color:var(--blue);font-weight:700;text-decoration:underline;cursor:pointer}
+.iq-due{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:center;margin:12px 0}
+.iq-qr{width:150px;height:150px;border-radius:12px;border:1.5px solid var(--line);padding:6px;background:#fff}.iq-qr svg{width:100%;height:100%}
+.iq-chiave{display:flex;gap:8px;align-items:center;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:12px;padding:10px 12px;margin-top:10px}
+.iq-chiave code{font-size:16px;font-weight:700;letter-spacing:1px;color:var(--navy);flex:1;-webkit-user-select:text;user-select:text}
