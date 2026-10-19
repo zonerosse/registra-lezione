@@ -24,7 +24,139 @@ const GUIDA = {
      "<b>Due modi di pagare</b>: con la tua chiave di Claude paghi solo quello che usi (circa 0,20 $ per ora registrata). Oppure, prossimamente, con un abbonamento che comprende già Claude e il server veloce, senza chiavi da mettere.",
      "Video, appunti e trascrizioni restano <b>sul tuo PC</b>: sono tuoi."
     ],
-    "g": "primi"
+    "g": "primi",
+    "guida": {
+     "frase": "Registri la lezione, ti dà gli appunti e ti accompagna <b>fino all'esame</b>. Tutto resta sul tuo PC e sul tuo telefono.",
+     "mom": [
+      {
+       "n": "1",
+       "t": "A lezione",
+       "r": [
+        {
+         "e": "🎙",
+         "b": "Online o in aula",
+         "x": ": Meet, Teams, Zoom o il microfono del portatile. Nessun bot nella chiamata.",
+         "v": "registrare"
+        },
+        {
+         "e": "🖼",
+         "b": "Le slide",
+         "x": "le fotografa da solo; con il PDF del prof sono più nitide.",
+         "v": "docente"
+        },
+        {
+         "e": "📷",
+         "b": "Foto alla lavagna",
+         "x": ", appunti a mano e aula rumorosa.",
+         "v": "foto"
+        },
+        {
+         "e": "⬇",
+         "b": "Hai già la lezione?",
+         "x": "Video, audio, link o trascrizione.",
+         "v": "importa"
+        }
+       ]
+      },
+      {
+       "n": "2",
+       "t": "Dopo la lezione",
+       "r": [
+        {
+         "e": "📄",
+         "b": "Appunti",
+         "x": "Cornell o Formato Esame, con le slide accanto.",
+         "v": "formati"
+        },
+        {
+         "e": "💬",
+         "b": "Chiedi alla lezione",
+         "x": ", mappa e infografica.",
+         "v": "chiedi"
+        },
+        {
+         "e": "🎤",
+         "b": "Karaoke e podcast",
+         "x": "con la voce vera del prof.",
+         "v": "podcast"
+        },
+        {
+         "e": "🃏",
+         "b": "Flashcard",
+         "x": "della lezione (anche per Anki).",
+         "v": "ripasso"
+        }
+       ]
+      },
+      {
+       "n": "3",
+       "t": "Prima dell'esame",
+       "r": [
+        {
+         "e": "🧑‍🏫",
+         "b": "Il tuo tutor",
+         "x": ": sa quando hai l'esame e cosa fare oggi.",
+         "v": "tutor"
+        },
+        {
+         "e": "📅",
+         "b": "Ripasso del giorno",
+         "x": ", pochi minuti.",
+         "v": "rg"
+        },
+        {
+         "e": "☑",
+         "b": "Crocette, interrogazione a voce e scritto",
+         "x": ", corretti con il voto.",
+         "v": "esame"
+        },
+        {
+         "e": "📘",
+         "b": "Libro di testo e glossario",
+         "x": "della materia.",
+         "v": "libro"
+        }
+       ]
+      },
+      {
+       "n": "✓",
+       "t": "Per tutti",
+       "r": [
+        {
+         "e": "⭐",
+         "b": "Modalità DSA",
+         "x": ": ascolto, mappe, carattere e sillabe colorate.",
+         "v": "dsa"
+        },
+        {
+         "e": "💼",
+         "b": "Riunioni e webinar",
+         "x": ": verbale con chi fa cosa ed entro quando.",
+         "v": "riunioni"
+        },
+        {
+         "e": "🔄",
+         "b": "PC e telefono insieme",
+         "x": ", sul Wi-Fi o dal tuo Google Drive.",
+         "v": "sincronizza"
+        },
+        {
+         "e": "🎁",
+         "b": "Da dare a chi ti fidi",
+         "x": ": un invito con il programma già pronto.",
+         "v": "inviti"
+        }
+       ]
+      }
+     ],
+     "et": [
+      "🔒 Trascrive sul tuo dispositivo, gratis",
+      "💶 Con la tua chiave di Claude: circa 0,20 $ per ora",
+      "📁 Video e appunti restano tuoi"
+     ],
+     "vedi": "Vedi ›",
+     "torna": "← Torna a «Perché Verba Manent IA»"
+    }
    },
    {
     "ico": "set",
@@ -522,7 +654,139 @@ const GUIDA = {
      "<b>Two ways to pay</b>: with your own Claude key you only pay for what you use (about 0.20 $ per recorded hour). Or, coming soon, with a subscription that already includes Claude and the fast server, with no keys to enter.",
      "Videos, notes and transcripts stay <b>on your PC</b>: they are yours."
     ],
-    "g": "primi"
+    "g": "primi",
+    "guida": {
+     "frase": "You record the lecture, it gives you the notes and takes you <b>all the way to the exam</b>. Everything stays on your PC and your phone.",
+     "mom": [
+      {
+       "n": "1",
+       "t": "In class",
+       "r": [
+        {
+         "e": "🎙",
+         "b": "Online or in class",
+         "x": ": Meet, Teams, Zoom or the laptop microphone. No bot in the call.",
+         "v": "registrare"
+        },
+        {
+         "e": "🖼",
+         "b": "The slides",
+         "x": "captured by itself; with the lecturer's PDF they are sharper.",
+         "v": "docente"
+        },
+        {
+         "e": "📷",
+         "b": "Board photos",
+         "x": ", handwritten notes and noisy classroom.",
+         "v": "foto"
+        },
+        {
+         "e": "⬇",
+         "b": "Already have the lecture?",
+         "x": "Video, audio, link or transcript.",
+         "v": "importa"
+        }
+       ]
+      },
+      {
+       "n": "2",
+       "t": "After the lecture",
+       "r": [
+        {
+         "e": "📄",
+         "b": "Notes",
+         "x": "Cornell or Exam Format, with the slides alongside.",
+         "v": "formati"
+        },
+        {
+         "e": "💬",
+         "b": "Ask the lecture",
+         "x": ", mind map and infographic.",
+         "v": "chiedi"
+        },
+        {
+         "e": "🎤",
+         "b": "Karaoke and podcast",
+         "x": "with the lecturer's real voice.",
+         "v": "podcast"
+        },
+        {
+         "e": "🃏",
+         "b": "Flashcards",
+         "x": "from the lecture (also for Anki).",
+         "v": "ripasso"
+        }
+       ]
+      },
+      {
+       "n": "3",
+       "t": "Before the exam",
+       "r": [
+        {
+         "e": "🧑‍🏫",
+         "b": "Your tutor",
+         "x": ": it knows when your exam is and what to do today.",
+         "v": "tutor"
+        },
+        {
+         "e": "📅",
+         "b": "Daily review",
+         "x": ", a few minutes.",
+         "v": "rg"
+        },
+        {
+         "e": "☑",
+         "b": "Multiple choice, oral and written exam",
+         "x": ", marked with a grade.",
+         "v": "esame"
+        },
+        {
+         "e": "📘",
+         "b": "Textbook and glossary",
+         "x": "for the subject.",
+         "v": "libro"
+        }
+       ]
+      },
+      {
+       "n": "✓",
+       "t": "For everyone",
+       "r": [
+        {
+         "e": "⭐",
+         "b": "Dyslexia mode",
+         "x": ": listening, maps, font and coloured syllables.",
+         "v": "dsa"
+        },
+        {
+         "e": "💼",
+         "b": "Meetings and webinars",
+         "x": ": minutes with who does what and by when.",
+         "v": "riunioni"
+        },
+        {
+         "e": "🔄",
+         "b": "PC and phone together",
+         "x": ", over Wi-Fi or through your Google Drive.",
+         "v": "sincronizza"
+        },
+        {
+         "e": "🎁",
+         "b": "For people you trust",
+         "x": ": an invite with the program ready to go.",
+         "v": "inviti"
+        }
+       ]
+      }
+     ],
+     "et": [
+      "🔒 Transcribes on your device, free",
+      "💶 With your own Claude key: about $0.20 per hour",
+      "📁 Videos and notes stay yours"
+     ],
+     "vedi": "See ›",
+     "torna": "← Back to «Why Verba Manent IA»"
+    }
    },
    {
     "ico": "set",

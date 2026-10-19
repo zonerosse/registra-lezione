@@ -1042,3 +1042,19 @@ html.android .fogrid{grid-template-columns:1fr}html.android .scfo{grid-template-
 .mpr .sp{min-width:0}.mpr .sp b{display:block;color:var(--ink);font-size:14px}.mpr .sp small{display:block;font-size:12.5px;line-height:1.4}
 .mpr.off .btn{opacity:.5;pointer-events:none}
 @media (max-width:600px){.mpr{flex-wrap:wrap}.mpr .sp{flex:1 1 calc(100% - 52px)}.mpr>.btn,.mpr>.row{margin-left:48px}}
+
+/* Guida: «Perché Verba Manent IA» nei tre momenti */
+.gper{padding:0 18px 16px}
+.gfr{font-size:14.5px;color:var(--ink);margin:0 0 12px;line-height:1.5}
+.gmom{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gmb{border:1px solid #e6edf5;border-radius:14px;background:#fff;padding:10px 12px}
+.gmb h4{margin:0 0 4px;font-size:14px;color:var(--navy);display:flex;gap:8px;align-items:center}
+.gmb h4 .n{width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:12px;flex:none}
+.gpr{display:flex;gap:8px;align-items:baseline;padding:5px 0;border-top:1px solid #f1f5f9;font-size:13.5px;line-height:1.45;color:var(--txt)}
+.gmb h4+.gpr{border-top:0}
+.gpr .e{flex:none;width:20px;text-align:center}.gpr .x{flex:1;min-width:0}.gpr b{color:var(--ink)}
+.gpr .lnk{flex:none;white-space:nowrap;font-size:12.5px}
+.get{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.get span{background:#ecfdf5;border:1px solid #bbf7d0;color:#166534;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:600}
+.gtorna{margin:0 16px 10px}
+@media (max-width:700px){.gmom{grid-template-columns:1fr}}

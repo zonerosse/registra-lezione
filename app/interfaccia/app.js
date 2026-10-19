@@ -1395,7 +1395,7 @@ function disegnaGuida(l) {
     const n = c.perche ? '★' : ++num;
     let tit = '';
     if (c.g && c.g !== prima) { prima = c.g; if (gr[c.g]) tit = `<div class="gtit">${esc(gr[c.g])}</div>`; }
-    return tit + `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${n}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video><div class="gvint"><button class="btn b-ghost b-sm" data-gv="1">⛶ ${esc(t('gv.intero'))}</button></div>` : ''}<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}></details>`;
+    return tit + `<details class="cap${c.perche ? ' perche' : ''}"${(aperti.length ? aperti[i] : i === 0) ? ' open' : ''}><summary><span class="n">${n}</span><span class="ico ${c.perche ? 'i-vio' : 'i-blue'}">${ico(c.ico)}</span>${esc(c.t)}${c.v ? `<span class="pill p-blue gvp">${ico('play', 11)}video</span>` : ''}<span class="fr">›</span></summary>${c.v ? `<video class="gv" src="video/${c.v}-${l}.webm" controls muted playsinline preload="metadata"></video><div class="gvint"><button class="btn b-ghost b-sm" data-gv="1">⛶ ${esc(t('gv.intero'))}</button></div>` : ''}${c.guida ? guidaPerche(c.guida, G) : `<${c.perche ? 'ul' : 'ol'}>${c.p.map(x => `<li>${x}</li>`).join('')}</${c.perche ? 'ul' : 'ol'}>`}</details>`;
   }).join('');
   // aprendo un capitolo il suo video parte da capo; chiudendolo si ferma
   $('gCap').querySelectorAll('details').forEach(d => d.addEventListener('toggle', () => {
@@ -1403,7 +1403,29 @@ function disegnaGuida(l) {
     if (d.open) { try { v.currentTime = 0; v.play().catch(() => {}); } catch (e) {} } else v.pause();
   }));
   $('gCap').querySelectorAll('[data-gv]').forEach(b => b.onclick = e => { e.preventDefault(); videoIntero(b.closest('details').querySelector('video')); });
+  $('gCap').querySelectorAll('[data-gvai]').forEach(b => b.onclick = () => guidaVai(b.dataset.gvai, G));
   $('segGuida').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.l === l));
+}
+// «Perché Verba Manent IA»: i tre momenti e «Per tutti», ogni riga apre il suo capitolo
+const capGuida = (G, k) => G.capitoli.findIndex(c => c.v === k || c.v === 'tel-' + k || c.k === k);
+function guidaPerche(g, G) {
+  const riga = r => `<div class="gpr"><span class="e">${r.e}</span><span class="x"><b>${esc(r.b)}</b>${/^[,:.]/.test(r.x) ? '' : ' '}${esc(r.x)}</span>${capGuida(G, r.v) >= 0 ? `<button class="lnk" data-gvai="${esc(r.v)}">${esc(g.vedi)}</button>` : ''}</div>`;
+  return `<div class="gper"><div class="gfr">${g.frase}</div><div class="gmom">${g.mom.map(m => `<div class="gmb"><h4><span class="n">${esc(m.n)}</span>${esc(m.t)}</h4>${m.r.map(riga).join('')}</div>`).join('')}</div>
+    <div class="get">${g.et.map(x => `<span>${esc(x)}</span>`).join('')}</div></div>`;
+}
+function guidaVai(k, G) {
+  const ds = [...$('gCap').querySelectorAll('details.cap')], i = capGuida(G, k);
+  if (i < 0 || !ds[i]) return;
+  const per = ds.find(d => d.classList.contains('perche')), dest = ds[i];
+  const g = (G.capitoli.find(c => c.guida) || {}).guida || {};
+  if (per) per.open = false;
+  $('gCap').querySelectorAll('.gtorna').forEach(b => b.remove());
+  dest.open = true;
+  const b = document.createElement('button');
+  b.className = 'btn b-ghost b-sm gtorna'; b.textContent = g.torna || '←';
+  b.onclick = () => { b.remove(); dest.open = false; if (per) { per.open = true; per.scrollIntoView({block: 'start', behavior: 'smooth'}); } };
+  dest.querySelector('summary').after(b);
+  setTimeout(() => dest.scrollIntoView({block: 'start', behavior: 'smooth'}), 60);
 }
 // video della Guida a schermo intero: un velo nero che copre tutta la finestra (il pulsante del lettore non funziona dentro il programma)
 function videoIntero(v) {
