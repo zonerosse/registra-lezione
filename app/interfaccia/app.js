@@ -1851,7 +1851,7 @@ function disegnaLezione() {
     $('lzLibro').onclick = () => { const m = materieStudia().find(x => x.m.toLowerCase() === r.materia.toLowerCase()); if (m) apriLibro(m, {k: tr_.k, n: tr_.da, q: l.cartella}); };
   });
 }
-async function cambiaMateria(l) {
+async function cambiaMateria(l, dopo) {
   const mie = [...new Set([...(R.recenti || []), ...materieStudia().map(x => x.m)])];
   const html = `<div class="chips" style="margin-top:0">${mie.map(m => `<span class="chip" data-m="${esc(m)}">${esc(m)}</span>`).join('')}</div>
     <input class="in" id="mtNuova" placeholder="${esc(t('mt.nuova'))}" maxlength="60" style="margin-top:10px"><div class="hint" style="margin-top:6px">${esc(t('mt.dopo'))}</div>`;
@@ -1864,7 +1864,8 @@ async function cambiaMateria(l) {
   const r = await A.cambia_materia(l.cartella, m);
   if (!r.ok) return;
   toast(t('mt.ok', {m}));
-  R = await A.riepilogo(); await caricaLezioni(); disegnaLezione();
+  R = await A.riepilogo(); await caricaLezioni();
+  if (dopo) dopo(m); else disegnaLezione();
 }
 async function tileLezione(l, a) {
   if (a.startsWith('apf:')) { const f = a.slice(4), x = (await A.appunti_di(l.cartella)).find(y => y.formato === f); if (x) A.apri(x.file); else apriAppunti(l.cartella); return; }
@@ -2104,9 +2105,26 @@ async function apriStudia(materia) {
   if (!LZ) await caricaLezioni();
   disegnaStudia();
 }
+// lezioni con gli appunti ma senza materia: in Studia non comparirebbero; qui si mette la materia con un tocco
+function senzaMateria() { return (LZ ? LZ.lezioni : []).filter(l => l.n_appunti && l.stato === 'pronta' && !l.materia && (l.tipo || 'lezione') === 'lezione'); }
+function cardSenzaMateria() {
+  const S = senzaMateria();
+  if (!S.length) return '';
+  return `<div class="card" id="stSenza" style="margin-bottom:14px"><div class="avviso">${esc(t(S.length === 1 ? 'st.senza1' : 'st.senza', {n: S.length}))}</div>
+    ${S.map((l, i) => `<div class="row mt" style="gap:10px"><span class="sp" style="color:var(--ink);font-weight:600">${esc(l.nome)}</span><button class="btn b-ghost b-sm" data-sm="${i}">${esc(t('mt.metti'))}</button></div>`).join('')}</div>`;
+}
+function collegaSenzaMateria() {
+  const S = senzaMateria();
+  document.querySelectorAll('#stSenza [data-sm]').forEach(b => b.onclick = () => cambiaMateria(S[+b.dataset.sm], m => { STU.m = m; disegnaStudia(); }));
+}
 async function disegnaStudia() {
   const M = materieStudia();
-  if (!M.length) { $('stMat').innerHTML = ''; $('stBox2').innerHTML = `<div class="card"><div class="hint">${esc(t('st.vuoto'))}</div></div>`; return; }
+  if (!M.length) {
+    $('stMat').innerHTML = '';
+    $('stBox2').innerHTML = cardSenzaMateria() || `<div class="card"><div class="hint">${esc(t('st.vuoto'))}</div></div>`;
+    collegaSenzaMateria();
+    return;
+  }
   const m = M.find(x => STU.m && x.m.toLowerCase() === STU.m.toLowerCase()) || M[0];
   STU.m = m.m;
   $('stMat').innerHTML = M.map(x => `<span data-m="${esc(x.m)}" class="${x === m ? 'on' : ''}">${esc(x.m)} · ${esc(x.lez.length === 1 ? t('rp.lez1') : t('rp.lezn', {n: x.lez.length}))}</span>`).join('');
@@ -2131,7 +2149,8 @@ async function disegnaStudia() {
     gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('libro', '📘', t('tl.lb'), t('tl.lb.s')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
-  $('stBox2').innerHTML = `<div class="card tustudia" id="tuStudia"><span class="gr">🧑‍🏫</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').innerHTML = cardSenzaMateria() + `<div class="card tustudia" id="tuStudia"><span class="gr">🧑‍🏫</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  collegaSenzaMateria();
   $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
   $('rgStudia').onclick = () => apriRipassoGiorno();

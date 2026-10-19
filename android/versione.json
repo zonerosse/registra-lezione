@@ -1,7 +1,7 @@
 {
- "versione": "0.13.4",
+ "versione": "0.13.5",
  "codice": 13,
- "novita": "«🔄 Sincronizza» anche fuori casa: ora si può collegare Google Drive (Impostazioni › Sincronizza › Anche fuori casa). Le lezioni passano dal tuo Drive, ognuna in uno zip chiuso con una password; il telefono collegato con il QR riceve accesso e password dal PC.",
- "novita_en": "«🔄 Sync» away from home: Google Drive can now be linked (Settings › Sync › Away from home too). Lessons go through your Drive, each one in a password-locked zip; the phone linked with the QR gets access and password from the PC.",
- "contenuto": 80
+ "novita": "Corretto: in Studia ora compaiono anche le lezioni con gli appunti ma senza materia, con «✎ Metti la materia» per sistemarle con un tocco. «🔄 Sincronizza» anche fuori casa con Google Drive.",
+ "novita_en": "Fixed: Study now also shows lectures with notes but no course, with «✎ Add the course» to fix them in one tap. «🔄 Sync» away from home with Google Drive.",
+ "contenuto": 81
 }
