@@ -160,6 +160,18 @@ const GUIDA = {
    },
    {
     "ico": "set",
+    "t": "🚀 Inizia qui: tutto pronto in 3 passi",
+    "p": [
+     "Al primo avvio, dopo «Prima di iniziare», Verba Manent ti guida in 3 passi. Lo rifai quando vuoi da <b>Impostazioni → 🚀 Inizia qui</b>.",
+     "<b>1 · Google</b>: un accesso solo, per tutto. Collega il tuo Google Drive per avere le stesse lezioni su PC, telefono e web, e riconosce se hai l'abbonamento. Puoi saltarlo se usi Verba Manent solo su questo PC.",
+     "<b>2 · Claude</b>: se hai l'abbonamento (o sei della famiglia) Claude è già compreso. Altrimenti incolli la tua chiave, con i passi e i link per prenderla: tornando dalla pagina delle chiavi, si incolla da sola.",
+     "<b>3 · Telefono e web</b>: il telefono inquadra il QR e riceve da solo lezioni, Drive e password. La <b>password degli zip</b>, con il bottone Copia, serve per Verba Manent sul web (verbamanent.app/studia)."
+    ],
+    "g": "primi",
+    "v": "inizia-qui"
+   },
+   {
+    "ico": "set",
     "t": "La chiave di Claude o un invito",
     "p": [
      "Gli appunti, «Chiedi», le mappe e l'esame li scrive <b>Claude</b>. Serve una chiave, oppure un invito di chi te la presta.",
@@ -788,6 +800,18 @@ const GUIDA = {
      "vedi": "See ›",
      "torna": "← Back to «Why Verba Manent IA»"
     }
+   },
+   {
+    "ico": "set",
+    "t": "🚀 Start here: ready in 3 steps",
+    "p": [
+     "At the first start, after «Before you start», Verba Manent guides you in 3 steps. Do it again anytime from <b>Settings → 🚀 Start here</b>.",
+     "<b>1 · Google</b>: one sign-in, for everything. It connects your Google Drive so you have the same lectures on PC, phone and web, and it recognises your subscription. You can skip it if you only use Verba Manent on this PC.",
+     "<b>2 · Claude</b>: with a subscription (or as family) Claude is already included. Otherwise you paste your own key, with the steps and links to get it: when you come back from the keys page, it pastes itself.",
+     "<b>3 · Phone and web</b>: the phone scans the QR and gets lectures, Drive and password by itself. The <b>zip password</b>, with its Copy button, opens Verba Manent on the web (verbamanent.app/studia)."
+    ],
+    "g": "primi",
+    "v": "inizia-qui"
    },
    {
     "ico": "set",
