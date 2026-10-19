@@ -689,6 +689,15 @@ class Api:
     def info_video(self, percorso):
         return self._m.info_video(percorso)
 
+    def licenza(self, forza=False):
+        return self._m.licenza(bool(forza))
+
+    def licenza_accedi(self):
+        return self._m.licenza_accedi()
+
+    def licenza_abbonati(self):
+        return self._m.licenza_abbonati()
+
     def importa(self, percorso, nome, lingua, cerca_slide):
         return self._m.importa(percorso, nome, lingua, cerca_slide)
 

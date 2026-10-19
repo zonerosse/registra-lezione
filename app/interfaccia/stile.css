@@ -1058,3 +1058,18 @@ html.android .fogrid{grid-template-columns:1fr}html.android .scfo{grid-template-
 .get span{background:#ecfdf5;border:1px solid #bbf7d0;color:#166534;border-radius:999px;padding:4px 11px;font-size:12.5px;font-weight:600}
 .gtorna{margin:0 16px 10px}
 @media (max-width:700px){.gmom{grid-template-columns:1fr}}
+/* prova gratuita (licenza.js): azzurro durante la prova, giallo-ambra negli ultimi giorni e a prova finita */
+.lic-tile{margin:0 0 10px;padding:12px 12px 11px;border-radius:14px;color:#fff;background:linear-gradient(180deg,rgba(34,211,238,.20),rgba(34,211,238,.08));border:1px solid rgba(34,211,238,.55);box-shadow:0 8px 22px -10px rgba(34,211,238,.5)}
+.lic-tile.ambra{background:linear-gradient(180deg,rgba(251,191,36,.22),rgba(251,191,36,.12));border-color:rgba(251,191,36,.65);box-shadow:0 8px 22px -10px rgba(251,191,36,.6)}
+.lic-tile .lic-k{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#a5f3fc}.lic-tile.ambra .lic-k,.lic-tile.ambra .lic-n small{color:#fde68a}
+.lic-tile .lic-n{font-size:22px;font-weight:800;margin:4px 0 2px;line-height:1.15}.lic-tile .lic-n small{font-size:13px;font-weight:600;color:#a5f3fc}
+.lic-tile .lic-s{font-size:12.5px;color:#d6e6f7;margin-bottom:8px}
+.lic-tile .lic-bar{height:6px;background:rgba(255,255,255,.18);border-radius:4px;overflow:hidden;margin:8px 0 10px}.lic-tile .lic-bar i{display:block;height:100%;background:#22d3ee}.lic-tile.ambra .lic-bar i{background:#fbbf24}
+.lic-tile .btn{width:100%;padding:9px 12px;font-size:13.5px;margin-top:6px}
+.lic-tile.lic-in-pagina{background:linear-gradient(135deg,#0d4275,#092d4f);margin-bottom:14px}
+.lic-ft{font-size:21px;font-weight:700;color:var(--ink);margin-bottom:6px}
+#licFinita{padding:22px 24px;margin-bottom:14px}
+.lic-due{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.lic-verde{background:#f0fdf4;border-color:#bbf7d0;color:#14532d}
+#v-pronto.lic-spenta>*:not(#licFinita):not(#licTile){opacity:.25;pointer-events:none}
+@media(max-width:700px){.lic-due{grid-template-columns:1fr}}

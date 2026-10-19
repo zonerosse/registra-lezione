@@ -327,6 +327,10 @@ def _hhmm(sec):
 class Motore:
     def __init__(self):
         self.cfg = leggi_config()
+        import licenza
+        self.lic = licenza.Licenza(self.cfg, salva_config)
+        ap.LICENZA = self.lic
+        self.lic.controlla_dopo()
         el.FACILITATA = bool(self.cfg.get("lettura_facilitata"))     # «Lettura facilitata»: anche nei PDF
         el.LETTURA = self._lettura()
         self._blocco_cloud = threading.Lock()
@@ -389,7 +393,34 @@ class Motore:
     # ------------------------------------------------------------------ utilita'
 
     def chiave(self):
-        return ap.leggi_chiave(self.cfg.get("chiave", ""))
+        k = ap.leggi_chiave(self.cfg.get("chiave", ""))
+        if not k and getattr(self, "lic", None) is not None and self.lic.abbonato():
+            import licenza
+            return licenza.CHIAVE_ABBONAMENTO          # Claude compreso nell'abbonamento
+        return k
+
+    # ------------------------------------------------------------------ prova gratuita e abbonamento (licenza.py)
+    def _lic_blocco(self):
+        """Prova finita: niente lezioni nuove (le lezioni gia' fatte restano tutte)."""
+        if getattr(self, "lic", None) is not None and self.lic.bloccato():
+            return {"ok": False, "msg": self.lic.messaggio(), "licenza": self.lic.stato()}
+        return None
+
+    def licenza(self, forza=False):
+        if forza:
+            self.lic.controlla(forza=True)
+        else:
+            self.lic.controlla_dopo()
+        return self.lic.stato()
+
+    def licenza_accedi(self):
+        self.lic.accedi(apri, {k: tr("nv_pag_" + k) for k in ("ok_t", "ok_s", "no_t", "no_s")})
+        return {"ok": True}
+
+    def licenza_abbonati(self):
+        import licenza
+        apri(licenza.SITO + ("/en/" if testi.LINGUA == "en" else "/") + "?abbonamento=1#prezzi")
+        return {"ok": True}
 
     def _orario(self, k, fine=None):
         a = (k - 1) * self.parte_sec
@@ -554,6 +585,7 @@ class Motore:
                 "esempi_mio": ap.ESEMPI_MIO.get(testi.LINGUA, ap.ESEMPI_MIO["it"]),
                 "cartella": str(cart), "minuti": int(self.cfg.get("parte_minuti", 30)),
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
+                "licenza": self.lic.stato(),
                 "nome_classe": self.cfg.get("nome_classe") or "",
                 "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")),
                 "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
@@ -954,6 +986,9 @@ class Motore:
         return tr("nome_usato", n=v.get("nome", ""), p=" / ".join(v.get("proposte") or []))
 
     def avvia(self, nome, opzioni=None):
+        b = self._lic_blocco()
+        if b:
+            return b
         opzioni = opzioni or {}
         v = self.nome_libero(nome)
         if not v.get("ok"):
@@ -1070,6 +1105,9 @@ class Motore:
 
     def importa_link(self, url, nome, lingua=None, cerca_slide=True):
         """Come «Importa un video», ma prima scarica il video dal link."""
+        b = self._lic_blocco()
+        if b:
+            return b
         import scarica_link as sl
         nome = (nome or "").strip() or "Video"
         tmp = BASE / "scaricamento"
@@ -1081,6 +1119,9 @@ class Motore:
         return r
 
     def importa(self, percorso, nome, lingua=None, cerca_slide=True, link=None):
+        b = self._lic_blocco()
+        if b:
+            return b
         import importa as im
         src = Path(percorso)
         if not src.exists():
@@ -1153,6 +1194,9 @@ class Motore:
 
     def importa_testo(self, percorso, nome, formato=None):
         """Crea una registrazione dal testo (senza audio) e prepara gli appunti nel formato scelto."""
+        b = self._lic_blocco()
+        if b:
+            return b
         import testo_importato as ti
         src = Path(percorso)
         if self.occupato:

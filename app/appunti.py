@@ -88,12 +88,24 @@ def leggi_chiave(salvata):
 
 # --------------------------------------------------------------------------- chiamate all'API
 
+# prova gratuita / abbonamento (licenza.py): il motore li collega qui
+LICENZA = None
+
+
 def _richiesta(chiave, percorso, corpo=None, timeout=60):
     dati = json.dumps(corpo).encode("utf-8") if corpo is not None else None
-    req = urllib.request.Request(
-        f"{API}/{percorso}", data=dati, method="POST" if dati else "GET",
-        headers={"x-api-key": chiave, "anthropic-version": VERSIONE_API,
-                 "content-type": "application/json", "user-agent": "RegistraLezione"})
+    h = {"x-api-key": chiave, "anthropic-version": VERSIONE_API, "content-type": "application/json", "user-agent": "RegistraLezione"}
+    url = f"{API}/{percorso}"
+    if LICENZA is not None:
+        if LICENZA.bloccato() and not percorso.startswith("models"):     # provare la chiave si puo' sempre
+            raise ErroreAppunti(LICENZA.messaggio())
+        import licenza as lic
+        if chiave == lic.CHIAVE_ABBONAMENTO:
+            # Claude compreso nell'abbonamento: passa dal sito con l'accesso Google (la chiave sta nella cassaforte del sito)
+            url = f"{lic.SITO}/api/claude/v1/{percorso}"
+            h.pop("x-api-key")
+            h["X-VM-Google"] = LICENZA.token() or ""
+    req = urllib.request.Request(url, data=dati, method="POST" if dati else "GET", headers=h)
     try:
         with urllib.request.urlopen(req, timeout=timeout, context=ssl.create_default_context()) as r:
             return json.loads(r.read().decode("utf-8"))
