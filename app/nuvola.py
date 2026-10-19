@@ -183,6 +183,27 @@ def accedi(provider, apri, testi):
 
 # =========================================================================================== i due cloud
 
+def motivo(e):
+    """Perche' una richiesta al cloud non e' andata: "api" (Google Drive API non attiva nel progetto),
+    "accesso" (permesso scaduto o tolto), "spazio" (Drive pieno) o "rete"."""
+    testo = ""
+    if isinstance(e, urllib.error.HTTPError):
+        try:
+            testo = e.read().decode("utf-8", "replace")[:2000]
+        except Exception:
+            pass
+        log.warning("nuvola: HTTP %s %s", e.code, testo)
+        if "accessNotConfigured" in testo or "SERVICE_DISABLED" in testo or "has not been used in project" in testo:
+            return "api"
+        if "storageQuotaExceeded" in testo or "quotaLimitReached" in testo:
+            return "spazio"
+        if e.code in (401, 403) and ("invalid_grant" in testo or "insufficient" in testo.lower() or e.code == 401):
+            return "accesso"
+    if isinstance(e, ErroreAccesso):
+        return "accesso"
+    return "rete"
+
+
 class ErroreAccesso(Exception):
     """L'accesso non vale piu' (password cambiata, permesso tolto): bisogna accedere di nuovo."""
 

@@ -2867,6 +2867,8 @@ async function disegnaNV() {
       : r.errore === 'accesso' ? `<div class="avviso">${esc(t('nv.err.accesso'))}</div>`
       : r.errore === 'chiave' ? `<div class="avviso">${esc(t('nv.err.chiave'))}</div>`
       : r.errore === 'dati' ? `<div class="hint">${esc(t('nv.err.dati'))}</div>`
+      : r.errore === 'spazio' ? `<div class="avviso">${esc(t('nv.err.spazio'))}</div>`
+      : r.errore === 'api' ? `<div class="avviso">${esc(t('nv.err.api'))}</div>`
       : r.errore ? `<div class="avviso">${esc(t('nv.err.rete'))}</div>`
       : r.ultimo ? `<div class="hint">☁️ ${esc(t('nv.fatto', {q: syFa(r.ultimo)}))}${g && (g.su || g.giu) ? ' · ' + esc(t('nv.ultimo', {s: g.su, g: g.giu})) : ''}</div>`
       : `<div class="hint">${esc(t('nv.primo'))}</div>`;
@@ -2884,7 +2886,7 @@ async function disegnaNV() {
       <label><input type="radio" name="nvp" value="microsoft"${NV.p === 'microsoft' ? ' checked' : ''}>OneDrive<small>${esc(t('nv.m.s'))}</small></label></div>
       <div class="row mt" style="gap:8px"><button class="btn b-main b-sm" id="nvAcc"${disp ? '' : ' disabled'}>${esc(t(NV.p === 'microsoft' ? 'nv.acc.m' : 'nv.acc.g'))}</button></div>
       ${disp ? '' : `<div class="hint mt">${esc(t('nv.presto'))}</div>`}
-      ${String(r.accesso).startsWith('errore') ? `<div class="avviso mt">${esc(t(r.accesso === 'errore:annullato' ? 'nv.err.annullato' : r.accesso === 'errore:tempo' ? 'nv.err.tempo' : 'nv.err.rete'))}</div>` : ''}
+      ${String(r.accesso).startsWith('errore') ? `<div class="avviso mt">${esc(t({'errore:annullato': 'nv.err.annullato', 'errore:tempo': 'nv.err.tempo', 'errore:api': 'nv.err.api', 'errore:accesso': 'nv.err.permesso'}[r.accesso] || 'nv.err.accrete'))}</div>` : ''}
       <div class="hint mt">${esc(t('nv.contro'))}</div>`;
   }
   if (h === NV.h) return;

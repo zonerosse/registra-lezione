@@ -3751,9 +3751,9 @@ class Motore:
             st["errore"] = "accesso"
         except za.PasswordSbagliata:
             st["errore"] = "chiave"
-        except Exception:
+        except Exception as e:
             log.exception("nuvola")
-            st["errore"] = "rete"
+            st["errore"] = nv.motivo(e)
         finally:
             salva_config(self.cfg)
             st.update(in_corso=False, ultimo=time.time())
@@ -3804,7 +3804,7 @@ class Motore:
                 st["subito"] = True
             except Exception as e:
                 log.exception("nuvola: accesso")
-                st["accesso"] = "errore:" + (str(e) if str(e) in ("annullato", "tempo") else "rete")
+                st["accesso"] = "errore:" + (str(e) if str(e) in ("annullato", "tempo") else nv.motivo(e))
         threading.Thread(target=lavora, daemon=True).start()
         return {"ok": True}
 

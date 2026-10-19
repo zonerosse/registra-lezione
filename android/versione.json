@@ -1,7 +1,7 @@
 {
- "versione": "0.13.5",
+ "versione": "0.13.6",
  "codice": 13,
- "novita": "Corretto: in Studia ora compaiono anche le lezioni con gli appunti ma senza materia, con «✎ Metti la materia» per sistemarle con un tocco. «🔄 Sincronizza» anche fuori casa con Google Drive.",
- "novita_en": "Fixed: Study now also shows lectures with notes but no course, with «✎ Add the course» to fix them in one tap. «🔄 Sync» away from home with Google Drive.",
- "contenuto": 81
+ "novita": "Cloud: messaggi più chiari quando l'accesso a Google Drive non riesce (Drive API spenta, permesso non dato, Drive pieno). In Studia compaiono anche le lezioni senza materia, con «✎ Metti la materia».",
+ "novita_en": "Cloud: clearer messages when Google Drive sign-in fails (Drive API off, permission not given, Drive full). Study also shows lectures without a course, with «✎ Add the course».",
+ "contenuto": 82
 }
