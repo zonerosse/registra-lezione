@@ -960,7 +960,7 @@ class Motore:
             return {"ok": False, "msg": self._msg_nome(v), "nome": v}
         modo = "aula" if (opzioni.get("modo") or self.cfg.get("modo")) == "aula" else "online"
         microfono = opzioni.get("microfono") or self.cfg.get("microfono") or None
-        pdf = opzioni.get("pdf") if modo == "aula" else None
+        pdf = opzioni.get("pdf") or None                 # slide del docente: anche online (sostituiscono le foto dallo schermo)
         dopo = (opzioni.get("quando") or self.cfg.get("quando")) == "dopo"
         tipo = opzioni.get("tipo") if opzioni.get("tipo") in ap.FORMATI_TIPO else self._tipo()
         partecipanti = [str(x).strip() for x in (opzioni.get("partecipanti") or []) if str(x).strip()][:30]

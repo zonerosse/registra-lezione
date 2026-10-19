@@ -154,12 +154,13 @@ const GUIDA = {
    },
    {
     "ico": "pdf",
-    "t": "Le slide del docente",
+    "t": "Materiali del prof: slide e libro",
     "p": [
-     "Se il docente pubblica le slide in PDF, il programma le mette negli appunti <b>accanto a quando il docente ne parla</b>, al posto delle foto prese dallo schermo: sono più nitide.",
-     "<b>Prima di registrare</b> (in aula): in «Dove si tiene?» → <b>In aula</b> → <b>Slide del docente</b> → <b>Scegli il PDF…</b>. Valgono solo per quella registrazione.",
-     "<b>A lezione finita</b>: nella pagina della lezione tocca <b>Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide (prima ti dice quanto costa); quelli di prima restano come copia.",
-     "Il PDF viene copiato nella cartella della lezione: puoi spostare o cancellare l'originale."
+     "Nel riquadro <b>📎 Materiali del prof</b> metti i PDF che ti dà il prof. C'è sempre nello stesso posto: nella schermata Registra (sotto la materia, online e in aula) e nella pagina della lezione.",
+     "<b>Slide di questa lezione</b>: il PDF delle slide. Il programma le mette negli appunti <b>accanto a quando il prof ne parla</b>. Online le fotografa già dallo schermo: il PDF le rende più nitide.",
+     "<b>Libro o dispense</b>: valgono per tutta la materia. Per ogni lezione ti dice le pagine giuste e quello che a lezione non si è detto (capitolo «Libro di testo»).",
+     "<b>A lezione finita</b>: nella pagina della lezione, riquadro <b>📎 Materiali del prof</b> → <b>Aggiungi il PDF…</b>. Gli appunti vengono rifatti con le slide (prima ti dice quanto costa); quelli di prima restano come copia.",
+     "I PDF restano sul tuo dispositivo: non vanno su internet."
     ],
     "g": "gia",
     "v": "docente"
@@ -187,7 +188,7 @@ const GUIDA = {
      "<b>Leggi</b>: gli appunti in ogni formato (Cornell, Formato Esame…), Ascolta gli appunti, trascrizione, video. Con «＋ Crea anche in…» aggiungi un altro formato.",
      "<b>Capisci</b>: Chiedi alla lezione, mappa, infografica, capitoli, Karaoke, Podcast, foto della lezione, appunti a mano, libro di testo.",
      "<b>Ripassa</b>: flashcard e, se la lezione ha la materia, Studia. <b>Condividi</b>: email, Word, calendario, spezzoni, chi parla, statistiche.",
-     "Sotto ci sono le cose di servizio: rinomina, rifai gli appunti, slide del docente, aula rumorosa, apri la cartella, elimina il video o la lezione.",
+     "Sotto ci sono il riquadro <b>📎 Materiali del prof</b> (slide in PDF e libro) e le cose di servizio: rinomina, rifai gli appunti, aula rumorosa, apri la cartella, elimina il video o la lezione.",
      "Se la lezione non ha la materia compare «⚠ Materia mancante»: tocca <b>✎ Metti la materia</b> e la ritrovi in Studia.",
      "In alto c'è sempre <b>← Indietro</b> con il percorso (per esempio «Le mie registrazioni › Fisiologia – Lezione 3»): ogni parte blu ti riporta lì."
     ],
@@ -651,12 +652,13 @@ const GUIDA = {
    },
    {
     "ico": "pdf",
-    "t": "The lecturer's slides",
+    "t": "Lecturer's materials: slides and textbook",
     "p": [
-     "If the lecturer publishes the slides as a PDF, the program puts them in the notes <b>next to when the lecturer talks about them</b>, instead of the screen photos: they are sharper.",
-     "<b>Before recording</b> (in class): «Where is it held?» → <b>In class</b> → <b>Lecturer's slides</b> → <b>Choose the PDF…</b>. They are only for that recording.",
-     "<b>After the lecture</b>: on the lecture page tap <b>Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides (it tells you the cost first); the previous ones stay as a copy.",
-     "The PDF is copied into the lecture's folder: you can move or delete the original."
+     "In the <b>📎 Lecturer's materials</b> box you put the PDFs the lecturer gives you. It's always in the same place: on the Record screen (under the subject, online and in class) and on the lecture page.",
+     "<b>Slides for this lecture</b>: the slides PDF. The program puts them in the notes <b>next to when the lecturer talks about them</b>. Online it already captures them from the screen: the PDF makes them sharper.",
+     "<b>Textbook or handouts</b>: they apply to the whole subject. For each lecture it tells you the right pages and what wasn't said in class (chapter «Textbook»).",
+     "<b>After the lecture</b>: on the lecture page, <b>📎 Lecturer's materials</b> box → <b>Add the PDF…</b>. The notes are redone with the slides (it tells you the cost first); the previous ones stay as a copy.",
+     "The PDFs stay on your device: they don't go online."
     ],
     "g": "gia",
     "v": "docente"
@@ -684,7 +686,7 @@ const GUIDA = {
      "<b>Read</b>: the notes in every format (Cornell, Exam format…), Listen to the notes, transcript, video. With «＋ Also create in…» you add another format.",
      "<b>Understand</b>: Ask the lecture, map, infographic, chapters, Karaoke, Podcast, lecture photos, handwritten notes, textbook.",
      "<b>Review</b>: flashcards and, if the lecture has a course, Study. <b>Share</b>: email, Word, calendar, clips, who's speaking, statistics.",
-     "Below are the housekeeping items: rename, redo the notes, lecturer's slides, noisy classroom, open the folder, delete the video or the lecture.",
+     "Below are the <b>📎 Lecturer's materials</b> box (slides PDF and textbook) and the housekeeping items: rename, redo the notes, noisy classroom, open the folder, delete the video or the lecture.",
      "If the lecture has no course you see «⚠ Course missing»: tap <b>✎ Add the course</b> and you'll find it in Study.",
      "At the top there's always <b>← Back</b> with the path (for example «My recordings › Physiology – Lecture 3»): each blue part takes you back there."
     ],

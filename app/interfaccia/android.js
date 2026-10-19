@@ -131,7 +131,7 @@ if (ANDROID) {
     "<b>Hai già la lezione?</b> Un audio o la trascrizione già scritta: ne fa gli appunti.",
     "<b>Trascrive sul telefono, o in un minuto sul server</b>: sul telefono è gratis e l'audio resta lì; col server veloce un'ora di lezione è pronta in circa un minuto, per pochi centesimi, e il telefono non scalda.",
     "<b>Sa chi parla</b>: separa le voci da solo e nella trascrizione e nel verbale scrive chi ha detto cosa.",
-    "<b>Le slide del docente</b>: con il PDF delle slide le mette negli appunti accanto alle parole.",
+    "<b>📎 Materiali del prof</b>: con il PDF delle slide le mette negli appunti accanto alle parole.",
     "<b>Scrive giusti i termini difficili</b>: per ogni materia gli dai nomi e parole tecniche, e non li sbaglia più.",
     "<b>Tutto in un posto</b>: cerca una parola in tutte le registrazioni, le cose da fare di tutte le riunioni in <b>Da fare</b>, il calendario che avvisa; il verbale va per email, WhatsApp, Slack, Teams, Notion o nel CRM.",
     "<b>Per l'esame</b>: Cornell, Formato Esame, flashcard, «Chiedi alla lezione», la preparazione all'esame su tutto il corso, la simulazione scritta e l'interrogazione a voce corrette da Claude.",
@@ -264,11 +264,13 @@ if (ANDROID) {
   },
   {
    "ico": "pdf",
-   "t": "Le slide del docente",
+   "t": "Materiali del prof: slide e libro",
    "p": [
-    "Se il docente pubblica le slide in PDF, l'app le mette negli appunti <b>accanto a quando il docente ne parla</b>.",
-    "<b>Prima di registrare</b> (in aula): in «Dove si tiene?» → <b>In aula</b> → <b>Slide del docente</b> → <b>Scegli il PDF…</b>. Valgono solo per quella registrazione.",
-    "<b>A lezione finita</b>: nella pagina della lezione tocca <b>Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide; quelli di prima restano come copia."
+    "Nel riquadro <b>📎 Materiali del prof</b> metti i PDF che ti dà il prof. C'è sempre nello stesso posto: nella schermata Registra (sotto la materia, online e in aula) e nella pagina della lezione.",
+    "<b>Slide di questa lezione</b>: il PDF delle slide. Il programma le mette negli appunti <b>accanto a quando il prof ne parla</b>. Online le fotografa già dallo schermo: il PDF le rende più nitide.",
+    "<b>Libro o dispense</b>: valgono per tutta la materia. Per ogni lezione ti dice le pagine giuste e quello che a lezione non si è detto (capitolo «Libro di testo»).",
+    "<b>A lezione finita</b>: nella pagina della lezione, riquadro <b>📎 Materiali del prof</b> → <b>Aggiungi il PDF…</b>. Gli appunti vengono rifatti con le slide; quelli di prima restano come copia.",
+    "I PDF restano sul tuo dispositivo: non vanno su internet."
    ],
    "g": "gia",
    "v": "tel-docente"
@@ -295,7 +297,7 @@ if (ANDROID) {
     "<b>Leggi</b>: gli appunti in ogni formato (Cornell, Formato Esame…), Ascolta gli appunti, trascrizione, video. Con «＋ Crea anche in…» aggiungi un altro formato.",
     "<b>Capisci</b>: Chiedi alla lezione, mappa, infografica, capitoli, Karaoke, Podcast, foto della lezione, appunti a mano, libro di testo.",
     "<b>Ripassa</b>: flashcard e, se la lezione ha la materia, Studia. <b>Condividi</b>: email, Word, calendario, spezzoni, chi parla, statistiche.",
-    "Sotto ci sono le cose di servizio: rinomina, rifai gli appunti, slide del docente, aula rumorosa, apri la cartella, elimina il video o la lezione.",
+    "Sotto ci sono il riquadro <b>📎 Materiali del prof</b> (slide in PDF e libro) e le cose di servizio: rinomina, rifai gli appunti, aula rumorosa, apri la cartella, elimina il video o la lezione.",
     "Se la lezione non ha la materia compare «⚠ Materia mancante»: tocca <b>✎ Metti la materia</b> e la ritrovi in Studia.",
     "In alto c'è sempre <b>← Indietro</b> con il percorso (per esempio «Le mie registrazioni › Fisiologia – Lezione 3»): ogni parte blu ti riporta lì."
    ],
@@ -599,7 +601,7 @@ if (ANDROID) {
     "<b>Already have the lecture?</b> An audio or the transcript already written: it makes the notes.",
     "<b>It transcribes on the phone, or in a minute on the server</b>: on the phone it's free and the audio stays there; with the fast server an hour of lecture is ready in about a minute, for a few cents, and the phone stays cool.",
     "<b>It knows who is speaking</b>: it separates the voices by itself and writes who said what in the transcript and the minutes.",
-    "<b>The lecturer's slides</b>: with the slides' PDF it puts them in the notes next to the words.",
+    "<b>📎 Lecturer's materials</b>: with the slides' PDF it puts them in the notes next to the words.",
     "<b>It writes difficult terms correctly</b>: for each subject you give it names and technical words, and it stops getting them wrong.",
     "<b>Everything in one place</b>: search a word in all recordings, the to-dos of all meetings in <b>To-dos</b>, the calendar that reminds you; the minutes go by email, WhatsApp, Slack, Teams, Notion or to the CRM.",
     "<b>For the exam</b>: Cornell, Exam format, flashcards, «Ask the lecture», exam preparation on the whole course, the written mock exam and the oral exam marked by Claude.",
@@ -732,11 +734,13 @@ if (ANDROID) {
   },
   {
    "ico": "pdf",
-   "t": "The lecturer's slides",
+   "t": "Lecturer's materials: slides and textbook",
    "p": [
-    "If the lecturer publishes the slides as a PDF, the app puts them in the notes <b>next to when the lecturer talks about them</b>.",
-    "<b>Before recording</b> (in class): «Where does it take place?» → <b>In the classroom</b> → <b>Lecturer's slides</b> → <b>Choose the PDF…</b>. They are only for that recording.",
-    "<b>After the lecture</b>: on the lecture page tap <b>Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides; the previous ones stay as a copy."
+    "In the <b>📎 Lecturer's materials</b> box you put the PDFs the lecturer gives you. It's always in the same place: on the Record screen (under the subject, online and in class) and on the lecture page.",
+    "<b>Slides for this lecture</b>: the slides PDF. The program puts them in the notes <b>next to when the lecturer talks about them</b>. Online it already captures them from the screen: the PDF makes them sharper.",
+    "<b>Textbook or handouts</b>: they apply to the whole subject. For each lecture it tells you the right pages and what wasn't said in class (chapter «Textbook»).",
+    "<b>After the lecture</b>: on the lecture page, <b>📎 Lecturer's materials</b> box → <b>Add the PDF…</b>. The notes are redone with the slides; the previous ones stay as a copy.",
+    "The PDFs stay on your device: they don't go online."
    ],
    "g": "gia",
    "v": "tel-docente"
@@ -763,7 +767,7 @@ if (ANDROID) {
     "<b>Read</b>: the notes in every format (Cornell, Exam format…), Listen to the notes, transcript, video. With «＋ Also create in…» you add another format.",
     "<b>Understand</b>: Ask the lecture, map, infographic, chapters, Karaoke, Podcast, lecture photos, handwritten notes, textbook.",
     "<b>Review</b>: flashcards and, if the lecture has a course, Study. <b>Share</b>: email, Word, calendar, clips, who's speaking, statistics.",
-    "Below are the housekeeping items: rename, redo the notes, lecturer's slides, noisy classroom, open the folder, delete the video or the lecture.",
+    "Below are the <b>📎 Lecturer's materials</b> box (slides PDF and textbook) and the housekeeping items: rename, redo the notes, noisy classroom, open the folder, delete the video or the lecture.",
     "If the lecture has no course you see «⚠ Course missing»: tap <b>✎ Add the course</b> and you'll find it in Study.",
     "At the top there's always <b>← Back</b> with the path (for example «My recordings › Physiology – Lecture 3»): each blue part takes you back there."
    ],

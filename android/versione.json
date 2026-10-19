@@ -1,7 +1,7 @@
 {
- "versione": "0.13.8",
+ "versione": "0.13.9",
  "codice": 13,
- "novita": "Guida rifatta: 15 capitoli nuovi o aggiornati (pagina della lezione, Studia, Ripasso del giorno, tutor, libro di testo, glossario, podcast a due voci, Ascolta e Karaoke, Modalità DSA, foto in aula, Sincronizza, Anki) con 60 video nuovi, per PC e telefono. In Studia le riunioni non compaiono più fra le materie.",
- "novita_en": "Guide redone: 15 new or updated chapters (lecture page, Study, daily review, tutor, textbook, glossary, two-voice podcast, Listen and Karaoke, Dyslexia mode, classroom photos, Sync, Anki) with 60 new videos, for PC and phone. Meetings no longer appear among the courses in Study.",
- "contenuto": 84
+ "novita": "Nuovo riquadro «📎 Materiali del prof»: le slide in PDF e il libro (o le dispense) della materia si mettono in un posto solo, prima di registrare (anche con «Online») e nella pagina della lezione.",
+ "novita_en": "New «📎 Lecturer's materials» box: the slides PDF and the subject's textbook (or handouts) go in one place, before recording (also with «Online») and on the lecture page.",
+ "contenuto": 85
 }

@@ -1031,3 +1031,14 @@ html.android .fogrid{grid-template-columns:1fr}html.android .scfo{grid-template-
 .nvscel label small{display:block;font-weight:400;color:var(--mut);font-size:12.5px;margin-top:3px}.nvscel input{accent-color:var(--blue);margin-right:6px}
 .nvchiave{font-family:ui-monospace,Consolas,monospace;font-size:18px;letter-spacing:2px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;padding:10px;text-align:center;color:var(--navy);font-weight:700;margin-top:6px;user-select:all}
 .pctl .a{background:#94a3b8}.pctl .b{background:#cbd5e1}
+
+/* materiali del prof (slide PDF e libro), prima di registrare e nella pagina della lezione */
+.mp{border:2px dashed #c4b5fd;background:linear-gradient(180deg,#faf5ff,#fff);border-radius:16px;padding:14px 16px}
+.mph b{color:var(--ink);font-size:15.5px}.mph small{color:var(--mut);font-size:12.5px}
+.mp>.hint{margin:4px 0 4px}
+.mpr{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #ede9fe}
+.mp>.hint+.mpr,.mph+.mpr{border-top:0}
+.mpr .ico{width:36px;height:36px;border-radius:10px;font-size:17px}
+.mpr .sp{min-width:0}.mpr .sp b{display:block;color:var(--ink);font-size:14px}.mpr .sp small{display:block;font-size:12.5px;line-height:1.4}
+.mpr.off .btn{opacity:.5;pointer-events:none}
+@media (max-width:600px){.mpr{flex-wrap:wrap}.mpr .sp{flex:1 1 calc(100% - 52px)}.mpr>.btn,.mpr>.row{margin-left:48px}}

@@ -239,7 +239,7 @@ function inizializza() {
   $('licIndietro').onclick = () => vai('info');
   // pronto
   $('nome').addEventListener('input', () => { anteprimaNome(); modelloDaNome(); controllaNomeRec(); });
-  $('materia').addEventListener('input', () => { anteprimaNome(); controllaNomeRec(); $('recenti').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.m.toLowerCase() === $('materia').value.trim().toLowerCase())); });
+  $('materia').addEventListener('input', () => { clearTimeout(MPF.t); MPF.t = setTimeout(disegnaMatProf, 400); anteprimaNome(); controllaNomeRec(); $('recenti').querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.m.toLowerCase() === $('materia').value.trim().toLowerCase())); });
   $('ivNome').addEventListener('input', () => controllaNome('ivNome', 'ivNomeMsg', 'ivVai'));
   $('itNome').addEventListener('input', () => controllaNome('itNome', 'itNomeMsg', 'itVai'));
   $('nome').addEventListener('keydown', e => { if (e.key === 'Enter' && nomeOk('nome')) inizia(); });
@@ -521,6 +521,54 @@ function disegnaPronto() {
   disegnaModo();
   disegnaQuando();
   disegnaTipo();
+  disegnaMatProf();
+}
+/* «📎 Materiali del prof»: slide in PDF di questa lezione e libro (o dispense) della materia, in un posto solo */
+let MPF = {m: null, docs: null, lav: null, t: null};
+async function disegnaMatProf() {
+  const tipo = R.tipo || 'lezione', lez = tipo === 'lezione';
+  $('mpCard').classList.toggle('hidden', tipo === 'riunione');
+  $('mpLb').classList.toggle('hidden', !lez);
+  if (!lez) return;
+  const m = $('materia').value.trim(), riga = $('mpLb'), tx = $('mpLbTx'), b = $('mpLbB');
+  $('mpLbT').textContent = m ? t('mpf.lb', {m}) : t('mpf.lb0');
+  if (MPF.lav) { tx.className = 'mutt'; tx.textContent = t('mpf.lb.lav', {p: MPF.lav}); b.classList.add('hidden'); return; }
+  b.classList.remove('hidden');
+  if (!m) { riga.classList.add('off'); tx.className = 'mutt'; tx.textContent = t('mpf.lb.serve'); b.textContent = t('src.pdf.b'); b.onclick = null; return; }
+  riga.classList.remove('off');
+  if (MPF.m !== m) {
+    MPF.m = m; MPF.docs = null;
+    const r = await A.libro_info(m, []);
+    if (MPF.m !== m) return;
+    MPF.docs = r && r.ok ? (r.documenti || []) : [];
+  }
+  const docs = MPF.docs || [];
+  if (docs.length) {
+    tx.className = 'okt'; tx.textContent = '✓ ' + docs.map(d => d.nome).join(' · ');
+    b.textContent = t('mpf.apri');
+    b.onclick = () => { const x = materieStudia().find(y => y.m.toLowerCase() === m.toLowerCase()); if (x) apriLibro(x); else toast(t('mpf.lb.s')); };
+  } else {
+    tx.className = 'mutt'; tx.textContent = t('mpf.lb.s');
+    b.textContent = t('src.pdf.b');
+    b.onclick = () => libroQui(m, disegnaMatProf);
+  }
+}
+/* aggiunge il libro della materia senza lasciare la pagina; ridisegna con la percentuale */
+async function libroQui(m, ridisegna) {
+  const f = await A.scegli_pdf();
+  if (!f.ok) { if (f.msg) await dialogo({titolo: t('lb.nome'), testo: f.msg}); return; }
+  const r = await A.libro_aggiungi(m, f.percorso, false);
+  if (!r.ok) { await dialogo({titolo: t('lb.nome'), testo: r.msg || ''}); return; }
+  MPF.lav = 1; ridisegna();
+  const giro = setInterval(async () => {
+    const a = await A.libro_avanzamento();
+    MPF.lav = Math.max(1, Math.round((a.f || 0) * 100));
+    if (a.stato === 'fatto' || a.stato === 'errore') {
+      clearInterval(giro); MPF.lav = null; MPF.m = null;
+      if (a.stato === 'errore') await dialogo({titolo: t('lb.nome'), testo: a.msg || ''});
+    }
+    ridisegna();
+  }, 800);
 }
 /* tipo di registrazione: lezione, riunione di lavoro, webinar; e chi partecipa (riunioni) */
 let PART = [];
@@ -629,7 +677,7 @@ async function inizia() {
       if (r.ck) { await A.imposta('promemoria_dnd', false); R.dnd = false; }
       if (r.v !== 'si') return;
     }
-    const r = await A.avvia(nomeCompleto(), {materia: (R.tipo || 'lezione') === 'lezione' ? $('materia').value.trim() : '', modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: aula && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
+    const r = await A.avvia(nomeCompleto(), {materia: (R.tipo || 'lezione') === 'lezione' ? $('materia').value.trim() : '', modo: R.modo, microfono: aula ? $('selMic').value : '', pdf: R.tipo !== 'riunione' && PDFA ? PDFA.percorso : '', quando: ANDROID ? QUANDO : '',
                                 tipo: R.tipo || 'lezione', partecipanti: R.tipo === 'riunione' ? PART : [], modello: R.tipo === 'riunione' ? (MOD || R.modello || 'generica') : ''});
     if (!r.ok && r.msg) { await dialogo({titolo: t('nm.prima2'), testo: r.msg}); return; }
     if (r.ok) { $('nome').value = ''; PDFA = null; QUANDO = null; PART = []; MOD = null; MOD_RICORDO = false; R = await A.riepilogo(); disegnaModo(); await aggiorna(); }
@@ -1105,7 +1153,6 @@ function menuLezione(l, btn, servizio = false) {
   if (l.trascritta && l.stato === 'pronta' && !servizio) voci.push(['stat', 'chat', t('ar.m.stat')]);
   if (l.stato === 'pronta' && l.video) voci.push(['rumore', 'mic', t('ar.m.rumore')]);
   if (l.video && l.stato === 'pronta' && !servizio) voci.push(['spezzone', 'film', t('ar.m.sp')]);
-  if (l.stato === 'pronta' && l.n_pacchetti) voci.push(['pdf', 'pdf', t(l.docente ? 'ar.m.pdf2' : 'ar.m.pdf')]);
   voci.push(['rinomina', 'edit', t('ar.m.rin')]);
   if (!ANDROID) voci.push(['cartella', 'folder', t('ar.m.cart')]);
   if (l.video) voci.push(['video1', 'film', t('ar.m.vid', {g: l.video_testo}), 'r']);
@@ -1387,7 +1434,7 @@ async function disegnaModo() {
   $('srcOnline').classList.toggle('hidden', aula);
   $('prP').textContent = t(aula ? 'pr.p.aula' : 'pr.p');
   $('prPrima').textContent = t(aula ? 'pr.prima.aula' : 'pr.prima');
-  $('pdfTxt').textContent = PDFA ? `${PDFA.nome} · ${t('dc.pag', {p: PDFA.pagine, mb: num(PDFA.mb)})}` : t('src.pdf.s');
+  $('pdfTxt').textContent = PDFA ? '✓ ' + PDFA.nome + (PDFA.mb != null ? ' · ' + t('dc.pag', {p: PDFA.pagine, mb: num(PDFA.mb)}) : '') : t(aula || ANDROID ? 'mpf.sl.s' : 'mpf.sl.on');
   $('pdfTxt').className = PDFA ? 'okt' : 'mutt';
   $('btnPdfA').textContent = PDFA ? t('dc.cambia') : t('src.pdf.b');
   $('btnPdfX').classList.toggle('hidden', !PDFA);
@@ -1842,14 +1889,43 @@ function disegnaLezione() {
   // un gruppo con tutto gia' in «Per te» non si mostra
   $('lzBox').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('lzBox').querySelectorAll('[data-ta]').forEach(b => b.onclick = () => tileLezione(l, b.dataset.ta));
-  if (pronta && l.materia) A.libro_lezione(l.cartella).then(r => {
-    if (!r.ok || LEZ !== l || $('lzLibro')) return;
-    const tr_ = r.tratto, pp = tr_.da === tr_.a ? t('lb.p', {a: tr_.et_da}) : t('lb.pp', {a: tr_.et_da, b: tr_.et_a});
-    const g = $('lzBox').querySelector('.altri .grp .tiles');
-    if (!g) return;
-    g.insertAdjacentHTML('beforeend', tile('libro', '📘', t('tl.lb.lez'), t('tl.lb.lez.s', {p: pp, c: tr_.cap || ''}).replace(/ · $/, '')).replace('<button class="tile"', '<button class="tile" id="lzLibro"'));
-    $('lzLibro').onclick = () => { const m = materieStudia().find(x => x.m.toLowerCase() === r.materia.toLowerCase()); if (m) apriLibro(m, {k: tr_.k, n: tr_.da, q: l.cartella}); };
-  });
+  disegnaMatLez(l, pronta);
+}
+/* pagina della lezione: «📎 Materiali del prof» (slide in PDF e libro della materia) */
+async function disegnaMatLez(l, pronta) {
+  const tipo = l.tipo || 'lezione';
+  if (!pronta || tipo === 'riunione') return;
+  const lez = tipo === 'lezione';
+  const sl = l.docente ? `<small class="okt">${esc(t('mpf.lz.ok'))}</small>` : `<small class="mutt">${esc(l.aula || !l.n_slide ? t('mpf.lz.aula') : t('mpf.lz.foto', {n: l.n_slide}))}</small>`;
+  const box = document.createElement('div');
+  box.className = 'card mt'; box.id = 'lzMp';
+  box.innerHTML = `<div class="mp"><div class="mph"><b>${esc(t('mpf.h'))}</b></div>
+    ${l.n_pacchetti ? `<div class="mpr"><span class="ico i-vio">🖼</span><div class="sp"><b>${esc(t('mpf.sl'))}</b>${sl}</div><button class="btn b-ghost b-sm" id="lzMpSl">${esc(t(l.docente ? 'dc.cambia' : 'mpf.agg'))}</button></div>` : ''}
+    ${lez ? `<div class="mpr" id="lzMpLb"><span class="ico i-blue">📘</span><div class="sp"><b>${esc(l.materia ? t('mpf.lb', {m: l.materia}) : t('mpf.lb0'))}</b><small class="mutt"></small></div><button class="btn b-ghost b-sm"></button></div>` : ''}</div>`;
+  if (!box.querySelector('.mpr')) return;
+  const vecchio = $('lzMp'); if (vecchio) vecchio.remove();
+  $('lzBox').appendChild(box);
+  if ($('lzMpSl')) $('lzMpSl').onclick = () => aggiungiPdf(l);
+  const riga = $('lzMpLb');
+  if (!riga) return;
+  const tx = riga.querySelector('small'), b = riga.querySelector('button');
+  if (!l.materia) { tx.textContent = t('mpf.lz.mt'); b.textContent = t('mpf.lz.mtb'); b.onclick = () => cambiaMateria(l); return; }
+  if (MPF.lav) { tx.textContent = t('mpf.lb.lav', {p: MPF.lav}); b.classList.add('hidden'); return; }
+  const r = await A.libro_info(l.materia, []);
+  if (LEZ !== l || !document.body.contains(riga)) return;
+  const docs = r && r.ok ? (r.documenti || []) : [];
+  if (!docs.length) {
+    tx.textContent = t('mpf.lb.s'); b.textContent = t('src.pdf.b');
+    b.onclick = () => libroQui(l.materia, () => { if (LEZ === l) disegnaMatLez(l, true); });
+    return;
+  }
+  tx.className = 'okt'; tx.textContent = '✓ ' + docs.map(d => d.nome).join(' · ');
+  b.textContent = t('mpf.apri');
+  const lz = await A.libro_lezione(l.cartella);
+  if (LEZ !== l) return;
+  const tr_ = lz && lz.ok ? lz.tratto : null;
+  if (tr_) tx.insertAdjacentHTML('beforeend', ` <span class="mutt">· ${esc(t('mpf.lz.p', {p: tr_.da === tr_.a ? t('lb.p', {a: tr_.et_da}) : t('lb.pp', {a: tr_.et_da, b: tr_.et_a})}))}</span>`);
+  b.onclick = () => { const m = materieStudia().find(x => x.m.toLowerCase() === l.materia.toLowerCase()); if (m) apriLibro(m, tr_ ? {k: tr_.k, n: tr_.da, q: l.cartella} : undefined); };
 }
 async function cambiaMateria(l, dopo) {
   const mie = [...new Set([...(R.recenti || []), ...materieStudia().map(x => x.m)])];
