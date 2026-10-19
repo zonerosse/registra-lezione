@@ -380,6 +380,9 @@ class Api:
     def nuvola_opzione(self, chiave, valore):
         return self._m.nuvola_opzione(chiave, valore)
 
+    def nuvola_presto(self):
+        return self._m.nuvola_presto()
+
     def nuvola_adesso(self):
         return self._m.nuvola_adesso()
 

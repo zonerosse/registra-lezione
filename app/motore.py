@@ -3743,11 +3743,29 @@ class Motore:
         n = self.cfg.get("nuvola") or {}
         return bool(n.get("refresh") and n.get("chiave"))
 
+    def _nv_firma(self):
+        """Un'impronta veloce delle lezioni (cartelle e data dell'ultima modifica): cambia quando una lezione
+        nuova e' pronta o quando arrivano appunti, ripasso, foto."""
+        try:
+            return hash(tuple(sorted((x.name, int(x.stat().st_mtime)) for x in BASE.iterdir() if x.is_dir() and not x.name.startswith("."))))
+        except Exception:
+            return None
+
     def _nv_ciclo(self):
+        firma, cambiata = self._nv_firma(), 0.0
         while True:
             time.sleep(10)
             st = self._nv_stato
-            if not self._nv_attiva() or self.occupato:
+            if not self._nv_attiva():
+                continue
+            # lezione appena finita (o appunti nuovi): si carica subito, senza aspettare i 10 minuti
+            f = self._nv_firma()
+            if f != firma:
+                firma, cambiata = f, time.time()
+            if cambiata and time.time() - cambiata >= 20:      # 20 secondi di calma: e' finito di scrivere
+                cambiata = 0.0
+                st["subito"] = True
+            if self.occupato:
                 continue
             if not st["subito"] and time.time() - st["ultimo"] < 600:
                 continue
@@ -3763,6 +3781,16 @@ class Motore:
                 st["ultimo"] = time.time()
                 continue
             self._nv_giro()
+            firma, cambiata = self._nv_firma(), 0.0      # i file appena scaricati non fanno ripartire il giro
+
+    def nuvola_presto(self):
+        """Quando si apre (o si torna su) Verba Manent: un giro fra pochi secondi, con le solite regole
+        (sul telefono: niente giga se cosi' e' scelto, niente cloud se il PC e' raggiungibile sul Wi-Fi)."""
+        if self._nv_attiva():
+            st = self._nv()
+            if time.time() - st["ultimo"] > 90:
+                st["subito"] = True
+        return {"ok": True}
 
     def _rete_a_consumo(self):
         """Telefono sui dati (non sul Wi-Fi)? Sul PC sempre no."""

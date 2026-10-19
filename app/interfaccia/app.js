@@ -60,6 +60,10 @@ async function avvio() {
   setTimeout(() => { try { if (!S || !S.registro) A.cerca_aggiornamenti(true); } catch (e) {} }, 4000);   // avviso all'apertura, se c'e' una versione nuova
 }
 const pausa = ms => new Promise(r => setTimeout(r, ms));
+// aprendo o tornando su Verba Manent: le lezioni nuove degli altri dispositivi arrivano subito dal cloud
+function nuvolaPresto() { try { if (A && A.nuvola_presto && document.visibilityState !== 'hidden') A.nuvola_presto(); } catch (e) {} }
+document.addEventListener('visibilitychange', nuvolaPresto);
+window.addEventListener('focus', nuvolaPresto);
 // telefono, tasto «Indietro»: chiude dialogo o menu, altrimenti torna a Registra. false = l'app va dietro
 window.indietro = () => {
   if (videoInteroChiudi()) return true;
