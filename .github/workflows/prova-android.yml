@@ -19,6 +19,12 @@ jobs:
     timeout-minutes: 90
     steps:
       - uses: actions/checkout@v5
+      # gli identificativi del programma presso Google (cloud): nella cassaforte di GitHub, non nel codice pubblico
+      - name: Identificativi del cloud
+        env:
+          NUVOLA_APP: ${{ secrets.NUVOLA_APP }}
+        run: |
+          if [ -n "$NUVOLA_APP" ]; then printf '%s' "$NUVOLA_APP" > app/nuvola_app.json; fi
       - uses: actions/setup-java@v4
         with:
           distribution: temurin

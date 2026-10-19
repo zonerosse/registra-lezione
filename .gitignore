@@ -21,3 +21,4 @@ ios/src/verbamanent/rl/
 ios/src/verbamanent/avvio_android.py
 ios/native/whisper.cpp/
 ios/src/verbamanent/vmwhisper.so
+app/nuvola_app.json

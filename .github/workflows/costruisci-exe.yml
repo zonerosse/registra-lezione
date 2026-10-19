@@ -25,6 +25,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v5
+      # gli identificativi del programma presso Google (cloud): nella cassaforte di GitHub, non nel codice pubblico
+      - name: Identificativi del cloud
+        env:
+          NUVOLA_APP: ${{ secrets.NUVOLA_APP }}
+        shell: pwsh
+        run: |
+          if ($env:NUVOLA_APP) { [IO.File]::WriteAllText("app/nuvola_app.json", $env:NUVOLA_APP) }
 
       - name: Leggi la versione
         id: v
