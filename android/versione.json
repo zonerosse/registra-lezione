@@ -1,7 +1,7 @@
 {
- "versione": "0.13.10",
+ "versione": "0.13.11",
  "codice": 13,
- "novita": "Guida: il capitolo «Perché Verba Manent IA» è rifatto e aggiornato, diviso in A lezione, Dopo la lezione, Prima dell'esame e Per tutti; ogni riga ha «Vedi ›» che apre il suo capitolo.",
- "novita_en": "Guide: the «Why Verba Manent IA» chapter is redone and updated, split into In class, After the lecture, Before the exam and For everyone; each line has «See ›» that opens its chapter.",
- "contenuto": 86
+ "novita": "Le lezioni del PC arrivano in pochi secondi, appena apri l'app. «Accedi con Google» riprova da solo se il telefono toglie internet all'app, e se non va scrive il motivo preciso. Guida aggiornata con i passi giusti per la chiave di Claude.",
+ "novita_en": "Lectures from the PC arrive within seconds, as soon as you open the app. «Sign in with Google» retries by itself if the phone cuts the app's internet, and if it fails it shows the exact reason. Guide updated with the right steps for the Claude key.",
+ "contenuto": 87
 }
