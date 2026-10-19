@@ -37,7 +37,7 @@ if (ANDROID) {
       'fn.tras': 'Trascrizione',
       'pr.dnd': '', 'pt.mostra': 'Condividi',
       'src.mic.pred': '{n} (quello del telefono)', 'im.k.ok': '✓ Chiave salvata (protetta dal telefono)', 'ar.cerca': 'Cerca per nome o data…',
-      'im.k.dove': 'Si crea su platform.claude.com → Settings → API keys. Resta salvata solo su questo telefono, protetta.',
+      'im.k.dove': 'Si crea su console.anthropic.com → Chiavi API → Crea chiave (la prima volta metti un po\' di credito in Fatturazione). Inizia con sk-ant-. Resta salvata solo su questo telefono, protetta.',
       'nav.fare': 'Da fare', 'cf.v.studio': 'Usi il programma per studiare? Per le lezioni questa pagina non serve: trovi tutto in «Le mie lezioni».',
       'im.v.t': 'Hai già un audio della lezione?', 'im.v': 'mp3, m4a, wav… anche da Drive. Lo trascrivo e ne faccio gli appunti.', 'im.v.b': 'Importa un audio…', 'iv.h': 'Importa un audio', 'iv.p': "Il file originale resta dov'è.", 'iv.vai': 'Importa e trascrivi', 'iv.stima': 'Ci vorranno circa {t} per la trascrizione.',
       'it.b10': 'Un PDF, Word o testo con quello che ha detto il docente (anche il «Per Claude» di un\'altra registrazione), anche da Drive. Ne faccio gli appunti.', 'it.b.t': 'Hai già la trascrizione?', 'it.b': 'Un PDF con quello che ha detto il docente (anche il «Per Claude» di un\'altra registrazione), anche da Drive. Ne faccio gli appunti.',
@@ -87,7 +87,7 @@ if (ANDROID) {
       'fn.tras': 'Transcript',
       'pr.dnd': '', 'pt.mostra': 'Share',
       'src.mic.pred': '{n} (phone default)', 'im.k.ok': '✓ Key saved (protected by the phone)', 'ar.cerca': 'Search by name or date…',
-      'im.k.dove': 'Create it on platform.claude.com → Settings → API keys. It is stored only on this phone, protected.',
+      'im.k.dove': 'Create it on console.anthropic.com → API keys → Create Key (the first time add some credit under Billing). It starts with sk-ant-. It is stored only on this phone, protected.',
       'nav.fare': 'To-dos', 'cf.v.studio': 'Using it to study? For lectures you do not need this page: everything is in «My lectures».',
       'im.v.t': 'Already have an audio of the lecture?', 'im.v': 'mp3, m4a, wav… also from Drive. I transcribe it and make the notes.', 'im.v.b': 'Import an audio…', 'iv.h': 'Import an audio', 'iv.p': 'The original file stays where it is.', 'iv.vai': 'Import and transcribe', 'iv.stima': 'The transcript will take about {t}.',
       'it.b10': 'A PDF, Word or text file with what the lecturer said (even the «For Claude» file of another recording), also from Drive. I turn it into notes.', 'it.b.t': 'Already have the transcript?', 'it.b': 'A PDF with what the lecturer said (even the «For Claude» file of another recording), also from Drive. I turn it into notes.',
@@ -278,7 +278,7 @@ if (ANDROID) {
    "t": "La chiave di Claude o un invito",
    "p": [
     "Gli appunti, «Chiedi», le mappe e l'esame li scrive <b>Claude</b>. Serve una chiave, oppure un invito di chi te la presta.",
-    "<b>Con la tua chiave</b>: in <b>Impostazioni → Intelligenza artificiale</b> incolla la chiave (si crea su platform.claude.com → Settings → API keys) e tocca <b>Prova e salva</b>. Resta solo sul telefono, protetta. Costo: circa 0,20 $ per ora registrata.",
+    "<b>Con la tua chiave</b>: si crea su <b>console.anthropic.com → Chiavi API → Crea chiave</b> (la prima volta metti un po' di credito in <b>Fatturazione</b>; come <b>Ambito</b> scegli quello proposto, come <b>Scadenza</b> «Mai»; premi <b>Copia</b>: inizia con <b>sk-ant-</b> e si vede una volta sola). Poi in <b>Impostazioni → Intelligenza artificiale</b> incollala e tocca <b>Prova e salva</b>. Resta solo sul telefono, protetta. Costo: circa 0,20 $ per ora registrata.",
     "<b>Con un invito</b>: chi ti invita ti manda un messaggio su WhatsApp. Copialo tutto, poi in <b>Impostazioni → Ho un invito</b> incollalo e tocca <b>Attiva</b>. Le chiavi arrivano già pronte, senza che tu le veda; quello che usi lo paga chi ti ha invitato.",
     "<b>Senza chiave</b> l'app registra e trascrive lo stesso, ma gli appunti non si creano."
    ],
@@ -631,7 +631,7 @@ if (ANDROID) {
     "<b>Sul PC</b>: «Collega un telefono». Compare un <b>QR</b> con sotto un codice di 6 cifre.",
     "<b>Sul telefono</b>: «Collegati al PC» → <b>📷 Inquadra il QR del PC</b> (oppure scrivi il codice). PC e telefono devono essere sulla stessa rete Wi-Fi o sull'hotspot del telefono.",
     "Da lì in poi si scambiano da soli lezioni, appunti, foto, ripasso e voti, ogni minuto, quando sono sulla stessa rete. Se la stessa cosa cambia su tutti e due, si unisce senza perdere niente; una lezione eliminata da una parte sparisce anche dall'altra.",
-    "<b>☁️ Anche fuori casa</b>: accedi con Google Drive e le lezioni passano dal tuo Drive, ognuna in uno <b>zip chiuso con una password</b>. Il telefono collegato col QR riceve accesso e password dal PC. Scrivi la password su un foglio: serve solo se perdi PC e telefono insieme.",
+    "<b>☁️ Anche fuori casa</b>: accedi con Google Drive e le lezioni passano dal tuo Drive, ognuna in uno <b>zip chiuso con una password</b>. Il telefono collegato col QR riceve accesso e password dal PC. Una lezione finita va nel Drive dopo pochi secondi, e quando apri Verba Manent sull'altro dispositivo la trovi già lì. La stessa password serve anche per <b>Verba Manent sul web</b> (verbamanent.app/studia). Scrivila su un foglio: serve anche se perdi PC e telefono insieme.",
     "In basso a sinistra (PC) vedi sempre «🔄 Sincronizzato 2 min fa». I video non passano, a meno che tu li scelga."
    ],
    "g": "lez"
@@ -882,7 +882,7 @@ if (ANDROID) {
    "t": "The Claude key or an invitation",
    "p": [
     "Notes, «Ask», maps and the exam are written by <b>Claude</b>. You need a key, or an invitation from someone who lends you theirs.",
-    "<b>With your own key</b>: in <b>Settings → Artificial intelligence</b> paste the key (create it on platform.claude.com → Settings → API keys) and tap <b>Test and save</b>. It stays only on the phone, protected. Cost: about 0.20 $ per recorded hour.",
+    "<b>With your own key</b>: create it on <b>console.anthropic.com → API keys → Create Key</b> (the first time add some credit under <b>Billing</b>; as <b>Workspace</b> choose the one offered, as <b>Expiry</b> «Never»; press <b>Copy</b>: it starts with <b>sk-ant-</b> and is shown only once). Then in <b>Settings → Artificial intelligence</b> paste it and tap <b>Test and save</b>. It stays only on the phone, protected. Cost: about 0.20 $ per recorded hour.",
     "<b>With an invitation</b>: whoever invites you sends you a WhatsApp message. Copy all of it, then in <b>Settings → I have an invitation</b> paste it and tap <b>Activate</b>. The keys arrive ready, without you seeing them; what you use is paid by whoever invited you.",
     "<b>Without a key</b> the app still records and transcribes, but notes are not created."
    ],
@@ -1235,7 +1235,7 @@ if (ANDROID) {
     "<b>On the PC</b>: «Link a phone». A <b>QR code</b> appears with a 6-digit code under it.",
     "<b>On the phone</b>: «Link to PC» → <b>📷 Scan the PC's QR code</b> (or type the code). PC and phone must be on the same Wi-Fi or the phone's hotspot.",
     "From then on they exchange lectures, notes, photos, reviews and marks by themselves, every minute, when they're on the same network. If the same thing changes on both, it's merged without losing anything; a lecture deleted on one side disappears on the other too.",
-    "<b>☁️ Away from home too</b>: sign in with Google Drive and lectures go through your Drive, each in a <b>password-locked zip</b>. The phone linked with the QR gets access and password from the PC. Write the password on paper: you only need it if you lose PC and phone together.",
+    "<b>☁️ Away from home too</b>: sign in with Google Drive and lectures go through your Drive, each in a <b>password-locked zip</b>. The phone linked with the QR gets access and password from the PC. A finished lecture goes to Drive within seconds, and when you open Verba Manent on the other device it is already there. The same password also opens <b>Verba Manent on the web</b> (verbamanent.app/studia). Write it on paper: you also need it if you lose PC and phone together.",
     "At the bottom left (PC) you always see «🔄 Synced 2 min ago». Videos don't go across unless you choose them."
    ],
    "g": "lez"
