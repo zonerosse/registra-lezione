@@ -3812,6 +3812,7 @@ class Motore:
                 "chiave": n.get("chiave") or "", "manca_chiave": bool(n.get("refresh") and not n.get("chiave")),
                 "solo_wifi": n.get("solo_wifi", True), "ultimo": n.get("ultimo") or "",
                 "in_corso": st["in_corso"], "fase": st["fase"], "errore": st["errore"], "giro": st["giro"], "accesso": st["accesso"],
+                "dettaglio": st.get("dettaglio", ""),
                 "disponibili": {"google": bool(cr["google"]), "microsoft": bool(cr["microsoft"])}}
 
     def nuvola_accedi(self, provider):
@@ -3823,6 +3824,7 @@ class Motore:
         if st["accesso"] == "in_corso":
             return {"ok": True}
         st["accesso"] = "in_corso"
+        st["dettaglio"] = ""
 
         def lavora():
             try:
@@ -3833,13 +3835,13 @@ class Motore:
                 n.pop("no", None)
                 c = nv.Cloud.nuovo(provider, r["refresh"])
                 if not n.get("chiave"):
-                    va, gia = nv.controlla_chiave(c, "")
+                    va, gia = nv._riprova(lambda: nv.controlla_chiave(c, ""))
                     if gia:
                         n["chiave"] = ""                 # nel cloud ci sono gia' zip: serve la loro password
                     else:
                         n["chiave"] = nv.nuova_chiave()
                 else:
-                    va, gia = nv.controlla_chiave(c, n["chiave"])
+                    va, gia = nv._riprova(lambda: nv.controlla_chiave(c, n["chiave"]))
                     if not va:
                         n["chiave"] = ""
                 self.cfg["nuvola"] = n
@@ -3848,7 +3850,9 @@ class Motore:
                 st["subito"] = True
             except Exception as e:
                 log.exception("nuvola: accesso")
-                st["accesso"] = "errore:" + (str(e) if str(e) in ("annullato", "tempo") else nv.motivo(e))
+                m = str(e) if str(e) in ("annullato", "tempo") else nv.motivo(e)
+                st["dettaglio"] = nv.dettaglio(e)          # la causa tecnica in breve, per capire cosa non va (es. sul telefono)
+                st["accesso"] = "errore:" + m
         threading.Thread(target=lavora, daemon=True).start()
         return {"ok": True}
 

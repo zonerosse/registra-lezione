@@ -2984,7 +2984,7 @@ async function disegnaNV() {
       <label><input type="radio" name="nvp" value="microsoft"${NV.p === 'microsoft' ? ' checked' : ''}>OneDrive<small>${esc(t('nv.m.s'))}</small></label></div>
       <div class="row mt" style="gap:8px"><button class="btn b-main b-sm" id="nvAcc"${disp ? '' : ' disabled'}>${esc(t(NV.p === 'microsoft' ? 'nv.acc.m' : 'nv.acc.g'))}</button></div>
       ${disp ? '' : `<div class="hint mt">${esc(t('nv.presto'))}</div>`}
-      ${String(r.accesso).startsWith('errore') ? `<div class="avviso mt">${esc(t({'errore:annullato': 'nv.err.annullato', 'errore:tempo': 'nv.err.tempo', 'errore:api': 'nv.err.api', 'errore:accesso': 'nv.err.permesso'}[r.accesso] || 'nv.err.accrete'))}</div>` : ''}
+      ${String(r.accesso).startsWith('errore') ? `<div class="avviso mt">${esc(t({'errore:annullato': 'nv.err.annullato', 'errore:tempo': 'nv.err.tempo', 'errore:api': 'nv.err.api', 'errore:accesso': 'nv.err.permesso'}[r.accesso] || 'nv.err.accrete'))}${r.dettaglio ? `<div class="hint" style="margin-top:4px">${esc(r.dettaglio)}</div>` : ''}</div>` : ''}
       <div class="hint mt">${esc(t('nv.contro'))}</div>`;
   }
   if (h === NV.h) return;

@@ -154,7 +154,7 @@ async function accedi() {
     ferma();
     if (String(n.accesso).startsWith('errore')) {
       const k = {'errore:annullato': 'e_annullato', 'errore:tempo': 'e_tempo', 'errore:api': 'e_api', 'errore:accesso': 'e_permesso'}[n.accesso] || 'e_rete';
-      passo1(tq(k));
+      passo1(tq(k) + (n.dettaglio ? ' (' + n.dettaglio + ')' : ''));
       return;
     }
     try { await A.licenza(true); } catch (e) {}           // con l'accesso nuovo: abbonamento o famiglia?

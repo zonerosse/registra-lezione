@@ -130,6 +130,21 @@ PAGINA_FATTO = """<!doctype html><meta charset="utf-8"><meta name="viewport" con
 <div style="font-size:42px">{ico}</div><h2 style="color:#0d4275;margin:8px 0">{t}</h2><p style="color:#475569">{s}</p></div></body>"""
 
 
+def _riprova(f, volte=20, pausa=3):
+    """Riprova se manca la rete (non se Google risponde con un errore). Sul telefono, mentre il browser e' davanti,
+    l'app sta dietro e alcuni telefoni (risparmio dati o batteria) le tolgono internet: appena si torna nell'app riprende."""
+    for i in range(volte):
+        try:
+            return f()
+        except urllib.error.HTTPError:
+            raise
+        except (urllib.error.URLError, OSError) as e:
+            if i == volte - 1:
+                raise
+            log.warning("nuvola: rete assente durante l'accesso (%s), riprovo", e)
+            time.sleep(pausa)
+
+
 def accedi(provider, apri, testi):
     """Apre il browser per l'accesso e aspetta (massimo 5 minuti). Torna {"refresh", "email"} o solleva un errore."""
     cr = credenziali()[provider]
@@ -181,18 +196,18 @@ def accedi(provider, apri, testi):
     if not preso.get("code"):
         raise RuntimeError("annullato" if preso else "tempo")
     if provider == "google":
-        t = _post("https://oauth2.googleapis.com/token", {
+        t = _riprova(lambda: _post("https://oauth2.googleapis.com/token", {
             "code": preso["code"], "client_id": cr["id"], "client_secret": cr.get("segreto", ""), "redirect_uri": rit,
-            "grant_type": "authorization_code", "code_verifier": verificatore})
+            "grant_type": "authorization_code", "code_verifier": verificatore}))
     else:
-        t = _post("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+        t = _riprova(lambda: _post("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
             "code": preso["code"], "client_id": cr["id"], "redirect_uri": rit, "grant_type": "authorization_code",
-            "code_verifier": verificatore, "scope": "Files.ReadWrite.AppFolder User.Read offline_access"})
+            "code_verifier": verificatore, "scope": "Files.ReadWrite.AppFolder User.Read offline_access"}))
     if not t.get("refresh_token"):
         raise RuntimeError("token")
     c = Cloud.nuovo(provider, t["refresh_token"])
     c._token, c._scade = t["access_token"], time.time() + int(t.get("expires_in", 3000)) - 120
-    return {"refresh": c.refresh, "email": c.email()}
+    return {"refresh": c.refresh, "email": _riprova(c.email)}
 
 
 # =========================================================================================== i due cloud
@@ -203,7 +218,9 @@ def motivo(e):
     testo = ""
     if isinstance(e, urllib.error.HTTPError):
         try:
-            testo = e.read().decode("utf-8", "replace")[:2000]
+            testo = getattr(e, "_vm_testo", None)
+            if testo is None:
+                testo = e._vm_testo = e.read().decode("utf-8", "replace")[:2000]
         except Exception:
             pass
         log.warning("nuvola: HTTP %s %s", e.code, testo)
@@ -216,6 +233,25 @@ def motivo(e):
     if isinstance(e, ErroreAccesso):
         return "accesso"
     return "rete"
+
+
+def dettaglio(e):
+    """La causa tecnica in una riga (senza dati personali), da mostrare in piccolo sotto l'errore."""
+    try:
+        if isinstance(e, urllib.error.HTTPError):
+            corpo = getattr(e, "_vm_testo", None)
+            if corpo is None:
+                try:
+                    corpo = e._vm_testo = e.read().decode("utf-8", "replace")[:2000]
+                except Exception:
+                    corpo = ""
+            m = re.search(r'"error(?:_description)?"\s*:\s*"([^"]{1,120})"', corpo or "")
+            return f"HTTP {e.code}" + (f" · {m.group(1)}" if m else "")
+        if isinstance(e, urllib.error.URLError):
+            return "URLError · " + str(e.reason)[:120]
+        return type(e).__name__ + (" · " + str(e)[:120] if str(e) else "")
+    except Exception:
+        return type(e).__name__
 
 
 class ErroreAccesso(Exception):
