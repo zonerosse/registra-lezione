@@ -2091,7 +2091,7 @@ var STU = {m: null, info: null, dentro: false};
 function materieStudia() {
   const M = [];
   (LZ ? LZ.lezioni : []).forEach(l => {
-    if (!l.n_appunti || l.stato !== 'pronta' || !l.materia) return;
+    if (!l.n_appunti || l.stato !== 'pronta' || !l.materia || (l.tipo || 'lezione') !== 'lezione') return;   // Studia: solo lezioni (non riunioni)
     let m = M.find(x => x.m.toLowerCase() === l.materia.toLowerCase());
     if (!m) M.push(m = {m: l.materia, cartelle: [], lez: [], n: 0, no: 0, tre: 0});
     m.cartelle.push(l.cartella); m.lez.push(l);

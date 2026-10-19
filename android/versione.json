@@ -1,7 +1,7 @@
 {
- "versione": "0.13.7",
+ "versione": "0.13.8",
  "codice": 13,
- "novita": "«🔄 Sincronizza» fuori casa più riservato: nel tuo Drive i file delle lezioni hanno un codice al posto del nome e anche l'elenco delle lezioni è chiuso con la password, così chi guarda il Drive non sa quali lezioni hai. Gli zip già nel Drive si sistemano da soli al primo giro.",
- "novita_en": "«🔄 Sync» away from home is more private: in your Drive the lecture files have a code instead of their name and the list of lectures is locked with the password too, so nobody looking at your Drive can tell which lectures you have. Zips already in your Drive are converted on the first sync.",
- "contenuto": 83
+ "novita": "Guida rifatta: 15 capitoli nuovi o aggiornati (pagina della lezione, Studia, Ripasso del giorno, tutor, libro di testo, glossario, podcast a due voci, Ascolta e Karaoke, Modalità DSA, foto in aula, Sincronizza, Anki) con 60 video nuovi, per PC e telefono. In Studia le riunioni non compaiono più fra le materie.",
+ "novita_en": "Guide redone: 15 new or updated chapters (lecture page, Study, daily review, tutor, textbook, glossary, two-voice podcast, Listen and Karaoke, Dyslexia mode, classroom photos, Sync, Anki) with 60 new videos, for PC and phone. Meetings no longer appear among the courses in Study.",
+ "contenuto": 84
 }

@@ -72,7 +72,7 @@ const GUIDA = {
      "Il nome deve dire cos'è: <b>la materia o l'argomento</b>, per esempio «Chimica – Zuccheri». Nomi come «b», «aaa», «Lezione» o «prova» non vanno bene: compare un avviso grigio e REGISTRA resta spento.",
      "<b>Due registrazioni non possono avere lo stesso nome.</b> Se il nome c'è già, il programma lo dice e propone nomi liberi, per esempio «Analisi 1 – 17/10»: un tocco e lo usi.",
      "Se parte dal calendario con un titolo generico, il programma aggiunge da solo data e ora (per esempio «Lezione – 17/10 19.10»), così la registrazione non si blocca mai.",
-     "Per cambiarlo dopo: <b>⋯ Altro → Rinomina</b>. Cambia anche il nome dei file e degli appunti."
+     "Per cambiarlo dopo: pagina della lezione → <b>Rinomina</b>. Cambia anche il nome dei file e degli appunti."
     ],
     "g": "reg",
     "v": "nome"
@@ -117,6 +117,18 @@ const GUIDA = {
     "g": "reg"
    },
    {
+    "ico": "scr",
+    "v": "foto",
+    "t": "Foto in aula, appunti a mano e aula rumorosa",
+    "p": [
+     "<b>📷 Foto alla lavagna</b>: mentre registri tocca «Foto alla lavagna» (sul PC «Aggiungi una foto»). La foto si aggancia al minuto della lezione e Claude legge cosa c'è scritto.",
+     "Dopo, nella pagina della lezione, <b>Foto della lezione</b>: vedi la foto, il testo letto e senti il prof proprio in quel momento.",
+     "<b>✍ Appunti a mano e fotocopie</b> (pagina della lezione): fotografa i tuoi fogli o le fotocopie; Claude li legge e li aggiunge alla lezione, così finiscono anche in «Chiedi», nel tutor e negli appunti rifatti.",
+     "<b>🔇 Aula rumorosa</b>: toglie il rumore di fondo prima di trascrivere. Si accende da solo quando serve; puoi accenderlo tu in Registra. Per una lezione già fatta: pagina della lezione → «Aula rumorosa» → ritrascrivi."
+    ],
+    "g": "reg"
+   },
+   {
     "ico": "imp",
     "v": "importa",
     "t": "Importare un video, un audio o un link",
@@ -146,7 +158,7 @@ const GUIDA = {
     "p": [
      "Se il docente pubblica le slide in PDF, il programma le mette negli appunti <b>accanto a quando il docente ne parla</b>, al posto delle foto prese dallo schermo: sono più nitide.",
      "<b>Prima di registrare</b> (in aula): in «Dove si tiene?» → <b>In aula</b> → <b>Slide del docente</b> → <b>Scegli il PDF…</b>. Valgono solo per quella registrazione.",
-     "<b>A lezione finita</b>: sulla registrazione tocca <b>⋯ Altro → Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide (prima ti dice quanto costa); quelli di prima restano come copia.",
+     "<b>A lezione finita</b>: nella pagina della lezione tocca <b>Aggiungi le slide del docente (PDF)…</b>. Gli appunti vengono rifatti con le slide (prima ti dice quanto costa); quelli di prima restano come copia.",
      "Il PDF viene copiato nella cartella della lezione: puoi spostare o cancellare l'originale."
     ],
     "g": "gia",
@@ -161,8 +173,23 @@ const GUIDA = {
      "<b>Formato Esame</b> (lezioni): le domande più probabili con le stelle (★★★ = il docente ci ha insistito), lo schema della risposta, le parole chiave e una simulazione d'esame. Con più parti, il PDF completo comincia con la classifica unica delle domande.",
      "<b>Verbale</b> (riunioni) e <b>Punti chiave</b> (webinar): li sceglie il programma in base a cosa registri.",
      "<b>✎ Il mio formato</b>: in Impostazioni scrivi a parole come vuoi gli appunti (o tocca un esempio pronto) e prova il risultato con <b>Prova</b> su una registrazione già fatta.",
-     "Il formato si sceglie in <b>Impostazioni</b> e vale per le prossime registrazioni. Su una registrazione già fatta: <b>⋯ Altro</b> → «Crea anche in…».",
+     "Il formato si sceglie in <b>Impostazioni</b> e vale per le prossime registrazioni. Su una registrazione già fatta: nella pagina della lezione, <b>＋ Crea anche in…</b>.",
      "Gli appunti li scrive Claude: <b>controllali sempre</b>. Quello che Claude aggiunge di suo è <b>in viola</b> («aggiunto da Claude»); citazioni, minuti e slide che non tornano con la registrazione hanno <b>⚠ da verificare</b>."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "lib",
+    "v": "lezione",
+    "t": "La pagina della lezione",
+    "p": [
+     "In «Le mie registrazioni» tocca una lezione: si apre la sua pagina, con tutto in <b>riquadri</b> divisi per gruppi.",
+     "<b>Leggi</b>: gli appunti in ogni formato (Cornell, Formato Esame…), Ascolta gli appunti, trascrizione, video. Con «＋ Crea anche in…» aggiungi un altro formato.",
+     "<b>Capisci</b>: Chiedi alla lezione, mappa, infografica, capitoli, Karaoke, Podcast, foto della lezione, appunti a mano, libro di testo.",
+     "<b>Ripassa</b>: flashcard e, se la lezione ha la materia, Studia. <b>Condividi</b>: email, Word, calendario, spezzoni, chi parla, statistiche.",
+     "Sotto ci sono le cose di servizio: rinomina, rifai gli appunti, slide del docente, aula rumorosa, apri la cartella, elimina il video o la lezione.",
+     "Se la lezione non ha la materia compare «⚠ Materia mancante»: tocca <b>✎ Metti la materia</b> e la ritrovi in Studia.",
+     "In alto c'è sempre <b>← Indietro</b> con il percorso (per esempio «Le mie registrazioni › Fisiologia – Lezione 3»): ogni parte blu ti riporta lì."
     ],
     "g": "studio"
    },
@@ -171,39 +198,11 @@ const GUIDA = {
     "v": "ripasso",
     "t": "Ripassare con le flashcard",
     "p": [
-     "In «Le mie registrazioni» tocca <b>Ripassa</b> su una lezione. Oppure usa la riga in alto <b>Ripassa</b>: scegli la materia dal menu (dice quante domande ci sono) e tocca <b>Ripassa</b>, con le domande di tutte le lezioni di quella materia.",
+     "Nella pagina della lezione tocca <b>Flashcard</b>, oppure in <b>Studia</b> scegli la materia: le domande di tutte le sue lezioni.",
      "Scegli quali domande: <b>prima quelle da rivedere</b> (consigliato), tutte in ordine sparso, o solo le ★★★ del Formato Esame.",
-     "Leggi la domanda e pensa alla risposta. Tocca la carta per girarla, poi <b>La sapevo</b> o <b>Da rivedere</b> (tastiera: spazio, ← e →).",
-     "Quelle da rivedere tornano per prime la volta dopo. Non costa niente: usa le domande già negli appunti."
-    ],
-    "g": "studio"
-   },
-   {
-    "ico": "spark",
-    "v": "esame",
-    "t": "Preparazione all'esame",
-    "p": [
-     "In «Le mie registrazioni», nella riga in alto <b>Ripassa</b>, scegli la materia e tocca <b>🎯 Preparati all'esame</b> (per le materie con almeno una lezione con gli appunti).",
-     "<b>Le domande più probabili di tutto il corso</b>: Claude guarda gli appunti di tutte le lezioni. Sale quello che torna in più lezioni o su cui il docente insiste. Tocca una domanda per vedere lo schema della risposta. Si aggiorna da solo quando arriva una lezione nuova (circa 1-3 centesimi).",
-     "<b>Data dell'esame</b>: sceglila e arriva il <b>piano di studio</b> giorno per giorno: gli argomenti in ordine, ripassi, simulazioni, la domenica riposo. Con <b>📅 Nel calendario</b> va in Outlook o Google Calendar. <b>Salva in PDF</b> per stamparlo.",
-     "<b>✍ Simulazione scritta</b>: domande nuove su tutto il corso. Rispondi come all'esame scritto, senza guardare gli appunti, poi tocca <b>Correggi</b>: punti per ogni domanda, cosa va bene, cosa manca, voto in trentesimi e cosa ripassare prima.",
-     "<b>🎤 Interrogazione a voce</b>: come all'orale. Il docente fa 3 domande, tu tocchi il microfono e rispondi parlando; se manca qualcosa ti fa una <b>domanda in più</b>. Alla fine: voto, cosa va bene e cosa manca, e <b>come hai parlato</b> (tempo, «cioè» ed «ehm», pause). La voce si trascrive sul PC: a Claude va solo il testo.",
-     "<b>☑ Test a crocette</b>: 10 domande a 4 risposte su tutta la materia, come i test d'esame. <b>Correggi</b>: voto, risposte giuste e sbagliate, e per ogni errore <b>perché era sbagliata</b>, con la lezione e il minuto (tocca per rivederlo) e «Chiedi alla lezione». Le sbagliate vanno nelle flashcard «da rivedere»; puoi rifare <b>solo le sbagliate</b> (gratis).",
-     "<b>La pagina della lezione</b>: tocca una lezione in «Le mie registrazioni» e trovi tutto in riquadri: <b>Leggi</b>, <b>Capisci</b>, <b>Ripassa</b>, <b>Condividi</b>. In «⋯ Altro» restano rinomina, rifai gli appunti, slide del docente, cartella, elimina.",
-     "<b>🎧 Podcast della lezione</b> (pagina della lezione): i punti importanti in 8 o 20 minuti, con una voce narrante e, nei momenti chiave, <b>la voce vera del prof</b> presa dalla registrazione; la parola che senti si illumina. Sul PC si salva in MP3 o si manda sul telefono.",
-     "<b>📷 Foto in aula</b>: mentre registri, «Foto alla lavagna» (sul PC «Aggiungi una foto») la aggancia al minuto; poi in «Foto della lezione» vedi cosa c'è scritto e senti il prof in quel momento. <b>✍ Appunti a mano e fotocopie</b> (pagina della lezione): Claude legge le foto dei tuoi fogli e le aggiunge alla lezione; nel Libro di testo anche un libro fotografato. <b>🔇 Aula rumorosa</b>: toglie il rumore prima di trascrivere (si accende anche da solo); per le lezioni fatte, «⋯ Altro → Aula rumorosa».",
-     "<b>📘 Libro di testo</b> (Studia): aggiungi il PDF del libro o delle dispense; lo leggo sul tuo dispositivo, non va su internet. Per ogni lezione le pagine giuste, «Nel libro, ma a lezione non si è detto», la pagina con le frasi della lezione evidenziate. Il libro compare anche nella pagina della lezione, nelle flashcard, nel glossario e nelle risposte di Chiedi e del tutor.",
-     "<b>🧑‍🏫 Il tuo tutor</b> (Studia e Spazio DSA): sa quando hai l'esame, quanto sei pronto e dove sbagli (test, interrogazioni, ripasso). Ogni giorno ti dice cosa fare, con i minuti, da spuntare; toccando una cosa si apre lo strumento giusto. La chat risponde sapendo tutto questo, con i punti della lezione da riascoltare.",
-     "<b>📖 Glossario della materia</b> (Studia e Spazio DSA): tutte le parole difficili delle lezioni, con i doppioni uniti da Claude, spiegate semplici. Per ogni parola la slide, la frase vera del prof e «▶ Senti il prof» dal punto giusto; parole collegate, ★ importanti, ricerca, PDF e «Ripassa le parole».",
-     "<b>👓 Come leggo meglio</b> (Spazio DSA e Impostazioni): scegli il carattere (Atkinson Hyperlegible, OpenDyslexic, Lexend), la grandezza, lo spazio tra righe e lettere, il colore dello sfondo, le sillabe colorate (in italiano) e il righello di lettura che segue il dito o il mouse. Vale per appunti, Ascolta, Karaoke, flashcard e PDF per DSA.",
-     "<b>🃏 Ripasso del giorno</b> (Studia e Spazio DSA): ogni giorno poche carte scelte fra tutte le lezioni, con materia, lezione e argomento ben visibili. Le sbagliate tornano il giorno dopo, le sapute dopo 2, 4, 8 giorni, più spesso quando l'esame è vicino. Quattro modi: con le carte, a voce (ti dice le parole chiave dette e mancanti), a crocette (risposte sbagliate nuove ogni settimana), lampo. Sul telefono il promemoria all'ora che scegli.",
-     "<b>⭐ Spazio DSA</b> (prima voce del menu, solo con la Modalità DSA accesa): scegli materia e lezione e trovi gli strumenti in ordine: in aula, dopo la lezione, per la verifica, per il docente. «Gli strumenti che uso» fa il foglio per il PDP. Tutto il resto è in «Altro».",
-     "<b>🗺 Mappa per la verifica</b> (Studia): scegli le lezioni della verifica e ottieni un foglio A4 con le parole chiave e il riquadro di formule e valori. Togli le parole che non vuoi, scrivi nome e classe, poi PDF o Stampa (strumento compensativo, L. 170/2010).",
-     "<b>🎤 Karaoke della lezione</b> (pagina della lezione): la voce vera del prof con le parole che si illuminano, la slide di quel momento accanto; tocca una parola per ripartire da lì. «📏 Una riga alla volta» oscura le altre righe.",
-     "<b>🎓 Studia</b> (menu a sinistra): scegli la materia e hai i giorni all'esame, il piano di oggi, test a crocette, interrogazione, simulazione scritta, flashcard e Chiedi su tutto il corso, e i tuoi voti.",
-     "<b>Test a crocette</b>: scegli 10, 20 o 30 domande, la difficoltà e, se vuoi, <b>come all'esame vero</b> (1 minuto a domanda, −0,25 per ogni risposta sbagliata).",
-     "<b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima gli strumenti più utili per chi ha un DSA (ascolto, mappe, appunti facili da leggere, flashcard e test letti a voce, Chiedi e scritto dettati a voce), il resto in grigio sotto; carattere leggibile, più spazio, fondo crema e 30% di tempo in più nei test.",
-     "In alto a sinistra la freccia <b>←</b> ti riporta alla pagina da cui sei arrivato."
+     "Leggi la domanda e pensa alla risposta. Tocca la carta per girarla: vedi lo schema, la slide e il minuto della lezione. Poi <b>La sapevo</b> o <b>Da rivedere</b> (spazio, ← e →).",
+     "Quelle da rivedere tornano per prime la volta dopo. Non costa niente: usa le domande già negli appunti.",
+     "<b>⬇ Esporta per Anki</b>: le stesse carte in un file per Anki (PC, Mac, AnkiDroid, iPhone), con la slide e un mazzo per materia. Se esporti di nuovo dopo nuove lezioni, Anki aggiorna le carte senza doppioni e senza perdere i ripassi."
     ],
     "g": "studio"
    },
@@ -212,12 +211,125 @@ const GUIDA = {
     "v": "chiedi",
     "t": "Chiedi, mappa e infografica",
     "p": [
-     "<b>Chiedi alla lezione</b> (sulla registrazione: <b>⋯ Altro → Chiedi alla lezione</b>): scrivi cosa non hai capito. La risposta usa solo quello che si è detto e indica slide e minuto: tocca il minuto e rivedi quel punto. Puoi chiedere anche su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.",
-     "<b>🔊 Ascolta gli appunti</b> (⋯ Altro): il programma legge gli appunti ad alta voce ed evidenzia la frase; tocca una frase per ripartire da lì. Con <b>Aa Lettura facilitata</b> (anche in Impostazioni) il carattere è più leggibile, con più spazio e fondo crema: utile per chi ha un DSA.",
-     "<b>Mappa mentale</b> (⋯ Altro): lo schema ad albero, da salvare in PDF o stampare. <b>Infografica</b> (⋯ Altro): tutta la registrazione in una pagina. Circa 1 centesimo, una volta sola.",
-     "Da queste pagine torni indietro con la freccia <b>←</b> in alto: ti riporta alla pagina da cui eri arrivato."
+     "<b>Chiedi alla lezione</b> (pagina della lezione): scrivi cosa non hai capito. La risposta usa solo quello che si è detto e indica slide e minuto: tocca il minuto e rivedi quel punto. Se c'è il libro di testo, cita anche la pagina. In Studia chiedi su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.",
+     "Puoi anche <b>dettare</b> la domanda con il microfono 🎤.",
+     "<b>Mappa mentale</b>: lo schema ad albero della lezione, da salvare in PDF o stampare. <b>Infografica</b>: tutta la registrazione in una pagina. Circa 1 centesimo, una volta sola.",
+     "<b>Capitoli</b>: l'indice degli argomenti; tocca un argomento e la lezione riparte da lì."
     ],
     "g": "studio"
+   },
+   {
+    "ico": "aud",
+    "v": "ascolta",
+    "t": "Ascolta gli appunti e Karaoke",
+    "p": [
+     "<b>🔊 Ascolta gli appunti</b> (pagina della lezione): il programma legge gli appunti ad alta voce e la frase letta si illumina; tocca una frase per ripartire da lì. Scegli la velocità.",
+     "<b>🎤 Karaoke della lezione</b>: la voce vera del prof con le parole che si illuminano mentre parla, e accanto la slide di quel momento. Tocca una parola per ripartire da lì.",
+     "<b>📏 Una riga alla volta</b> (Karaoke): oscura le altre righe, per non perdere il segno.",
+     "Non costa niente: usa la registrazione e gli appunti che hai già."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "aud",
+    "v": "podcast",
+    "t": "Podcast della lezione",
+    "p": [
+     "Nella pagina della lezione tocca <b>🎧 Podcast</b>: i punti importanti in <b>8 minuti</b> (Breve) o <b>20</b> (Completo), da ascoltare in autobus o mentre cammini.",
+     "Tre stili: <b>Una voce</b> (una voce narrante), <b>Due voci</b> (Giulia fa le domande che faresti tu, Marco spiega) e <b>Dibattito</b> (due idee opposte su un punto della lezione, per diritto, storia, filosofia…).",
+     "Nei momenti chiave parla sempre <b>il prof, con la sua voce vera</b> presa dalla registrazione. Le parole che senti si illuminano; tocca un pezzo per ascoltarlo da lì, «Rivedi» apre la lezione a quel minuto.",
+     "<b>⬇ Salva in MP3</b> o <b>📤 Manda sul telefono</b>.",
+     "Costo: pochi centesimi, una volta sola (Claude scrive solo la scaletta; le voci sono quelle del PC)."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "cards",
+    "v": "studia",
+    "t": "Studia: la pagina della materia",
+    "p": [
+     "Nel menu tocca <b>🎓 Studia</b> e scegli la materia in alto: qui c'è tutto quello che serve per l'esame di quella materia, su tutte le sue lezioni.",
+     "In cima: <b>Il tuo tutor</b> e il <b>Ripasso del giorno</b>. Poi i <b>giorni all'esame</b> e il piano di oggi (se non hai messo la data, tocca «Metti la data»).",
+     "Sotto, in riquadri: domande più probabili, piano di studio, test a crocette, interrogazione a voce, simulazione scritta, flashcard, Chiedi su tutta la materia, glossario, libro di testo, mappa per la verifica. In fondo i tuoi voti.",
+     "Le lezioni con gli appunti ma <b>senza materia</b> compaiono in cima con «✎ Metti la materia»: un tocco e passano sotto la materia giusta."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "spark",
+    "v": "esame",
+    "t": "Preparazione all'esame",
+    "p": [
+     "In <b>Studia</b> scegli la materia e tocca <b>🎯 Domande più probabili</b>: Claude guarda gli appunti di tutte le lezioni e mette in cima quello che torna più volte o su cui il docente insiste. Tocca una domanda per lo schema della risposta.",
+     "<b>Data dell'esame e piano di studio</b>: scegli la data e arriva il piano giorno per giorno (argomenti, ripassi, simulazioni, la domenica riposo). <b>📅 Nel calendario</b> o <b>PDF</b>.",
+     "<b>☑ Test a crocette</b>: 10, 20 o 30 domande, la difficoltà e, se vuoi, <b>come all'esame vero</b> (1 minuto a domanda, −0,25 per gli errori). Poi voto e, per ogni errore, perché era sbagliata con lezione e minuto. Le sbagliate vanno nelle flashcard; puoi rifare solo quelle.",
+     "<b>🎤 Interrogazione a voce</b>: il docente fa 3 domande, tu rispondi parlando; se manca qualcosa ti fa una domanda in più. Alla fine voto, cosa va bene e cosa manca, e come hai parlato (tempo, «cioè» ed «ehm», pause).",
+     "<b>✍ Simulazione scritta</b>: domande nuove su tutto il corso; rispondi senza guardare gli appunti, poi <b>Correggi</b>: punti, voto in trentesimi e cosa ripassare.",
+     "Costo: da 1 a pochi centesimi per prova. La voce si trascrive sul PC: a Claude va solo il testo."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "cards",
+    "v": "rg",
+    "t": "Ripasso del giorno",
+    "p": [
+     "In <b>Studia</b> (o nello Spazio DSA) tocca <b>🃏 Ripasso del giorno</b>: ogni giorno poche carte scelte fra tutte le lezioni, con materia, lezione e argomento ben visibili.",
+     "Le sbagliate tornano il giorno dopo, le sapute dopo 2, 4, 8 giorni… e più spesso quando l'esame è vicino.",
+     "Quattro modi: <b>con le carte</b>, <b>a voce</b> (dici la risposta e ti dice le parole chiave dette e mancanti), <b>a crocette</b> (risposte sbagliate nuove ogni settimana) e <b>lampo</b> (5 minuti).",
+     "Vedi i giorni di fila e quanto sei pronto per l'esame.",
+     "Non costa niente."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "chat",
+    "v": "tutor",
+    "t": "Il tuo tutor",
+    "p": [
+     "In <b>Studia</b> tocca <b>🧑‍🏫 Il tuo tutor</b>: sa quando hai l'esame, quanto sei pronto e dove sbagli (test, interrogazioni, ripasso).",
+     "Ogni giorno ti dice <b>cosa fare oggi</b>, con i minuti, da spuntare: toccando una cosa si apre lo strumento giusto (per esempio il punto della lezione da riascoltare).",
+     "<b>Dove sbagli</b>: gli argomenti con più errori e da dove vengono; le lezioni mai ripassate.",
+     "<b>La chat</b>: chiedigli cosa studiare, se ce la fai, di interrogarti. Risponde sapendo tutto questo, con i minuti della lezione e le pagine del libro."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "pdf",
+    "v": "libro",
+    "t": "Libro di testo",
+    "p": [
+     "In <b>Studia</b> tocca <b>📘 Libro di testo</b> e aggiungi il PDF del libro o delle dispense (o le foto delle pagine). Lo leggo sul tuo PC: non va su internet.",
+     "Per ogni lezione trovi <b>le pagine giuste</b> del libro, con le frasi della lezione evidenziate.",
+     "<b>«Nel libro, ma a lezione non si è detto»</b>: le cose del libro che il prof ha saltato, da guardare prima dell'esame.",
+     "Il libro compare anche nella pagina della lezione, nelle flashcard, nel glossario e nelle risposte di Chiedi e del tutor («libro p. 42»)."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "abc",
+    "v": "glossario",
+    "t": "Glossario della materia",
+    "p": [
+     "In <b>Studia</b> tocca <b>📖 Glossario</b>: tutte le parole difficili delle lezioni, spiegate semplici, con i doppioni uniti da Claude.",
+     "Per ogni parola: la slide, la frase vera del prof e <b>▶ Senti il prof</b> dal punto giusto; le parole collegate e le ★ importanti.",
+     "Cerca una parola, salva il <b>PDF</b> o tocca <b>🃏 Ripassa le parole</b>.",
+     "Costo: circa 1 centesimo, si aggiorna quando arrivano lezioni nuove."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "star",
+    "v": "dsa",
+    "t": "Modalità DSA",
+    "p": [
+     "Accendi la <b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima trovi gli strumenti più utili per chi ha un DSA, il resto sotto in «Altro».",
+     "<b>⭐ Spazio DSA</b> (prima voce del menu): scegli materia e lezione e trovi gli strumenti in ordine: in aula, dopo la lezione, per la verifica, per il docente. «Gli strumenti che uso» prepara il foglio per il <b>PDP</b>.",
+     "<b>👓 Come leggo meglio</b>: carattere (Atkinson Hyperlegible, OpenDyslexic, Lexend), grandezza, spazio, colore dello sfondo, <b>sillabe colorate</b> e <b>righello di lettura</b>. Vale per appunti, Ascolta, Karaoke, flashcard e PDF.",
+     "<b>🗺 Mappa per la verifica</b> (Studia): un foglio A4 con le parole chiave delle lezioni della verifica e le formule; togli quello che non vuoi, scrivi nome e classe, poi PDF o Stampa (strumento compensativo, L. 170/2010).",
+     "Nei test il 30% di tempo in più; domande e risposte si possono ascoltare e dettare a voce."
+    ],
+    "g": "dsa"
    },
    {
     "ico": "lib",
@@ -226,33 +338,10 @@ const GUIDA = {
     "p": [
      "Qui trovi tutto quello che hai registrato o importato. La copertina ha il colore della materia: stessa materia, stesso colore.",
      "<b>Cerca in tutto</b>: nella casella in alto scrivi un nome, una data <b>o una parola detta</b>. Sopra l'elenco compare «Detto in…»: in quali registrazioni, a che minuto e chi parlava. Tocca una frase e la riascolti da lì. Trova anche se scrivi senza accenti.",
-     "Su ogni registrazione: <b>Apri appunti</b>, <b>Ripassa</b> e <b>⋯ Altro</b>. Se gli appunti non ci sono ancora c'è <b>Crea appunti</b>: resti qui e vedi la barra che avanza.",
-     "In <b>⋯ Altro</b>: Chiedi alla lezione, Capitoli (l'indice: tocca un argomento e il video riparte da lì), Chi parla, Condividi, Trascrizione, Video; poi crea o rifai gli appunti, mappa mentale, infografica, statistiche, spezzone da mandare, slide del docente, rinomina, apri la cartella, elimina il video (libera spazio, gli appunti restano) o tutta la registrazione (va nel Cestino).",
+     "Tocca una registrazione per aprire <b>la sua pagina</b>, con tutto in riquadri (capitolo «La pagina della lezione»). Se gli appunti non ci sono ancora c'è <b>Crea appunti</b>: resti qui e vedi la barra che avanza.",
      "<b>☁ nel cloud</b> vuol dire che la copia nel cloud è fatta (capitolo «Copia nel cloud»). Se il PC si è spento mentre preparava i file, tocca <b>Completa</b>."
     ],
     "g": "lez"
-   },
-   {
-    "ico": "lib",
-    "v": "menu",
-    "g": "lez",
-    "t": "Il menu «⋯ Altro», voce per voce",
-    "p": [
-     "Su ogni registrazione tocca <b>⋯ Altro</b>. Le voci cambiano un po' da una registrazione all'altra: compaiono solo quelle che servono. Ecco cosa fa ognuna.",
-     "<b>Chiedi alla lezione</b>: scrivi una domanda su quello che si è detto; risponde con slide e minuto. Meno di 1 centesimo a domanda.",
-     "<b>Capitoli</b>: l'indice degli argomenti. Tocca un argomento e il video riparte da lì; con ✂ accanto a un capitolo fai uno spezzone.",
-     "<b>Chi parla</b>: la trascrizione con i nomi di chi ha parlato; da qui dai i nomi alle voci e apri le statistiche.",
-     "<b>Condividi</b>: manda appunti o verbale per email, Word, Google Docs, calendario, Slack, Teams, Notion o CRM.",
-     "<b>Trascrizione</b>: apre il PDF «Per Claude» con tutto quello che è stato detto. <b>Video</b>: riguardi la registrazione (se il video c'è ancora).",
-     "<b>Crea appunti con Claude</b>: c'è quando gli appunti non sono stati fatti. <b>Crea anche in Formato Esame</b> (o in Cornell): aggiunge l'altro formato, quelli che hai restano. <b>Completa gli appunti</b>: fa le parti che mancano. Costo: circa 0,20 $ per ora di registrazione (prima te lo dice).",
-     "<b>Rifai appunti</b>: li rifà da capo, per esempio dopo aver aggiunto le parole difficili. Quelli di prima vengono sostituiti. Stesso costo.",
-     "<b>Mappa mentale</b>: lo schema ad albero della lezione. <b>Infografica (una pagina)</b>: tutta la registrazione in un foglio. Circa 1 centesimo ciascuna, una volta sola; si salvano in PDF.",
-     "<b>Riconosci chi parla</b>: separa le voci, se non è già stato fatto. Gratis, sul PC. <b>Statistiche</b>: durata, chi ha parlato e quanto, domande, argomenti. Gratis.",
-     "<b>✂ Spezzone da mandare</b>: scegli dal… al… e crei un pezzo di video con sottotitoli o solo audio.",
-     "<b>Aggiungi le slide del docente (PDF)…</b>: mette le slide originali negli appunti, accanto alle parole (capitolo «Le slide del docente»).",
-     "<b>Rinomina</b>: cambia il nome della registrazione, dei file e degli appunti. <b>Apri la cartella</b>: apre in Esplora file la cartella della lezione.",
-     "<b>Elimina il video</b>: libera spazio; appunti, slide e trascrizione restano. <b>Elimina la registrazione</b>: va nel Cestino di Windows, da dove la recuperi se ti sbagli."
-    ]
    },
    {
     "ico": "chat",
@@ -261,10 +350,10 @@ const GUIDA = {
     "p": [
      "Il programma <b>separa le voci da solo</b>, sul PC: nella trascrizione, negli appunti e nel verbale c'è scritto chi ha detto cosa. La prima volta scarica un modello di 26 MB.",
      "Nelle riunioni e nei webinar Claude <b>propone i nomi</b> guardando i partecipanti e come si chiamano tra loro (✨ = suggerito). Se non è sicuro resta «Voce 3». In aula: chi parla di più è «Docente», gli altri «Domanda».",
-     "Tocca <b>⋯ Altro → Chi parla</b>: vedi la trascrizione con i nomi. Tocca una frase per riascoltarla.",
+     "Nella pagina della lezione tocca <b>Chi parla</b>: vedi la trascrizione con i nomi. Tocca una frase per riascoltarla.",
      "<b>Dai i nomi alle voci…</b>: ascolta un pezzo (▶ Ascolta) e scrivi chi è, oppure tocca uno dei nomi proposti sotto. Salva: trascrizione e file si aggiornano.",
-     "<b>Statistiche</b> (da Chi parla o dal ⋯ Altro): durata, persone, domande, cose da fare; quanto ha parlato ciascuno, l'intervento più lungo e quanto è durato ogni argomento.",
-     "Per le registrazioni fatte prima: <b>⋯ Altro</b> → «Riconosci chi parla». Si spegne in Impostazioni («Riconosci chi parla»). Può sbagliare: i nomi si correggono quando vuoi."
+     "<b>Statistiche</b> (da Chi parla o dalla pagina della lezione): durata, persone, domande, cose da fare; quanto ha parlato ciascuno, l'intervento più lungo e quanto è durato ogni argomento.",
+     "Per le registrazioni fatte prima: nella pagina della lezione, «Riconosci chi parla». Si spegne in Impostazioni («Riconosci chi parla»). Può sbagliare: i nomi si correggono quando vuoi."
     ],
     "g": "lez"
    },
@@ -273,12 +362,12 @@ const GUIDA = {
     "v": "condividi",
     "t": "Condividi, calendario e spezzoni",
     "p": [
-     "Tocca <b>⋯ Altro → Condividi</b> e scegli dove mandare il verbale (o gli appunti).",
+     "Nella pagina della lezione tocca <b>Condividi</b> e scegli dove mandare il verbale (o gli appunti).",
      "<b>Email</b>: scrivi gli indirizzi (si ricordano per la prossima volta) e tocca <b>Apri in Outlook / Posta</b> (il PDF e il calendario delle cose da fare sono già allegati) oppure <b>Apri in Gmail</b> (si apre Gmail con tutto scritto: il PDF lo trascini dalla cartella che si apre). Il programma non manda niente da solo: premi Invia tu.",
      "<b>Word</b>: il file .docx da modificare. <b>Google Docs</b>: se sul PC c'è «Google Drive per computer» il file va da solo nel tuo Drive, cartella «Verba Manent IA»; altrimenti lo trascini nella pagina di Drive che si apre.",
      "<b>Cose da fare nel calendario</b>: controlla le date (quelle dette a voce, come «venerdì», sono già calcolate) e tocca <b>Outlook</b> o <b>Google Calendar</b>.",
      "<b>Slack, Teams, Notion, CRM</b>: si collegano una volta sola, con pochi passi spiegati e un indirizzo (o una chiave) da incollare. Con «Manda il riassunto da solo» il verbale parte da solo dopo ogni riunione. Indirizzi e chiavi restano sul PC, protetti.",
-     "<b>✂ Spezzone da mandare</b> (⋯ Altro, o ✂ accanto a un capitolo): scegli dal… al… e tocca <b>Video con sottotitoli</b> o <b>Solo audio</b>. Lo trovi nella cartella «Spezzoni»: da lì lo mandi per email o lo trascini in WhatsApp."
+     "<b>✂ Spezzone da mandare</b> (pagina della lezione, o ✂ accanto a un capitolo): scegli dal… al… e tocca <b>Video con sottotitoli</b> o <b>Solo audio</b>. Lo trovi nella cartella «Spezzoni»: da lì lo mandi per email o lo trascini in WhatsApp."
     ],
     "g": "lez"
    },
@@ -291,6 +380,20 @@ const GUIDA = {
      "Spunta la casella quando una cosa è fatta. In alto scegli <b>Aperte</b>, <b>Fatte</b> o <b>Tutte</b>, e una persona per vedere solo le sue.",
      "In rosso con ⚠ quelle scadute. Tocca il nome della riunione (▶) per riascoltare il momento in cui se n'è parlato.",
      "Le cose spuntate da sole nella riunione dopo hanno scritto «spuntata dal verbale del…»."
+    ],
+    "g": "lez"
+   },
+   {
+    "ico": "share",
+    "v": "sincronizza",
+    "t": "Sincronizza PC e telefono",
+    "p": [
+     "Le stesse lezioni, gli stessi appunti e lo stesso ripasso sul PC e sul telefono. Si fa una volta sola, in <b>Impostazioni → 🔄 Sincronizza</b>.",
+     "<b>Sul PC</b>: «Collega un telefono». Compare un <b>QR</b> con sotto un codice di 6 cifre.",
+     "<b>Sul telefono</b>: «Collegati al PC» → <b>📷 Inquadra il QR del PC</b> (oppure scrivi il codice). PC e telefono devono essere sulla stessa rete Wi-Fi o sull'hotspot del telefono.",
+     "Da lì in poi si scambiano da soli lezioni, appunti, foto, ripasso e voti, ogni minuto, quando sono sulla stessa rete. Se la stessa cosa cambia su tutti e due, si unisce senza perdere niente; una lezione eliminata da una parte sparisce anche dall'altra.",
+     "<b>☁️ Anche fuori casa</b>: accedi con Google Drive e le lezioni passano dal tuo Drive, ognuna in uno <b>zip chiuso con una password</b>. Il telefono collegato col QR riceve accesso e password dal PC. Scrivi la password su un foglio: serve solo se perdi PC e telefono insieme.",
+     "In basso a sinistra (PC) vedi sempre «🔄 Sincronizzato 2 min fa». I video non passano, a meno che tu li scelga."
     ],
     "g": "lez"
    },
@@ -387,7 +490,9 @@ const GUIDA = {
    "primi": "Primi passi",
    "reg": "Registrare",
    "gia": "Hai già la lezione?",
-   "studio": "Studiare",
+   "studio": "Studiare una lezione",
+   "materia": "Studiare una materia",
+   "dsa": "Per chi ha un DSA",
    "lez": "Le mie registrazioni",
    "imp": "Impostazioni",
    "prob": "Aiuto"
@@ -464,7 +569,7 @@ const GUIDA = {
      "The name must say what it is: <b>the subject or the topic</b>, for example «Chemistry – Sugars». Names like «b», «aaa», «Lecture» or «test» are not accepted: a grey notice appears and RECORD stays off.",
      "<b>Two recordings cannot have the same name.</b> If the name is taken, the program says so and suggests free names, for example «Calculus 1 – 17/10»: one tap and you use it.",
      "If it starts from the calendar with a generic title, the program adds date and time by itself (for example «Lecture – 17/10 19.10»), so the recording never gets stuck.",
-     "To change it later: <b>⋯ More → Rename</b>. It also renames the files and the notes."
+     "To change it later: lecture page → <b>Rename</b>. It also renames the files and the notes."
     ],
     "g": "reg",
     "v": "nome"
@@ -509,6 +614,18 @@ const GUIDA = {
     "g": "reg"
    },
    {
+    "ico": "scr",
+    "v": "foto",
+    "t": "Classroom photos, handwritten notes and noisy rooms",
+    "p": [
+     "<b>📷 Photo of the board</b>: while recording tap «Photo of the board» (on the PC «Add a photo»). The photo is linked to the minute of the lecture and Claude reads what's written.",
+     "Later, on the lecture page, <b>Lecture photos</b>: see the photo, the text that was read and hear the lecturer at that very moment.",
+     "<b>✍ Handwritten notes and photocopies</b> (lecture page): photograph your sheets or photocopies; Claude reads them and adds them to the lecture, so they also end up in «Ask», the tutor and redone notes.",
+     "<b>🔇 Noisy classroom</b>: removes background noise before transcribing. It switches on by itself when needed; you can turn it on in Record. For a lecture already done: lecture page → «Noisy classroom» → transcribe again."
+    ],
+    "g": "reg"
+   },
+   {
     "ico": "imp",
     "v": "importa",
     "t": "Importing a video, an audio or a link",
@@ -538,7 +655,7 @@ const GUIDA = {
     "p": [
      "If the lecturer publishes the slides as a PDF, the program puts them in the notes <b>next to when the lecturer talks about them</b>, instead of the screen photos: they are sharper.",
      "<b>Before recording</b> (in class): «Where is it held?» → <b>In class</b> → <b>Lecturer's slides</b> → <b>Choose the PDF…</b>. They are only for that recording.",
-     "<b>After the lecture</b>: on the recording tap <b>⋯ More → Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides (it tells you the cost first); the previous ones stay as a copy.",
+     "<b>After the lecture</b>: on the lecture page tap <b>Add the lecturer's slides (PDF)…</b>. The notes are redone with the slides (it tells you the cost first); the previous ones stay as a copy.",
      "The PDF is copied into the lecture's folder: you can move or delete the original."
     ],
     "g": "gia",
@@ -553,8 +670,23 @@ const GUIDA = {
      "<b>Exam format</b> (lectures): the most likely questions with stars (★★★ = the lecturer stressed it), the answer outline, keywords and a mock exam. With several parts, the full PDF starts with a single ranking of the questions.",
      "<b>Minutes</b> (meetings) and <b>Key points</b> (webinars): chosen by the program from what you record.",
      "<b>✎ My format</b>: in Settings describe in your own words how you want the notes (or tap a ready example) and test it with <b>Try it</b> on a finished recording.",
-     "Choose the format in <b>Settings</b>: it applies to the next recordings. For a finished recording: <b>⋯ More</b> → «Also create in…».",
+     "Choose the format in <b>Settings</b>: it applies to the next recordings. For a finished recording: on the lecture page, <b>＋ Also create in…</b>.",
      "Claude writes the notes: <b>always check them</b>. What Claude adds on its own is <b>in purple</b> («added by Claude»); quotes, minutes and slides that don't match the recording show <b>⚠ to check</b>."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "lib",
+    "v": "lezione",
+    "t": "The lecture page",
+    "p": [
+     "In «My recordings» tap a lecture: its page opens, with everything in <b>tiles</b> grouped by purpose.",
+     "<b>Read</b>: the notes in every format (Cornell, Exam format…), Listen to the notes, transcript, video. With «＋ Also create in…» you add another format.",
+     "<b>Understand</b>: Ask the lecture, map, infographic, chapters, Karaoke, Podcast, lecture photos, handwritten notes, textbook.",
+     "<b>Review</b>: flashcards and, if the lecture has a course, Study. <b>Share</b>: email, Word, calendar, clips, who's speaking, statistics.",
+     "Below are the housekeeping items: rename, redo the notes, lecturer's slides, noisy classroom, open the folder, delete the video or the lecture.",
+     "If the lecture has no course you see «⚠ Course missing»: tap <b>✎ Add the course</b> and you'll find it in Study.",
+     "At the top there's always <b>← Back</b> with the path (for example «My recordings › Physiology – Lecture 3»): each blue part takes you back there."
     ],
     "g": "studio"
    },
@@ -563,39 +695,11 @@ const GUIDA = {
     "v": "ripasso",
     "t": "Reviewing with flashcards",
     "p": [
-     "In «My recordings» tap <b>Review</b> on a lecture. Or use the <b>Review</b> line at the top: choose the subject from the menu (it shows how many questions there are) and tap <b>Review</b>, with the questions of all the lectures of that subject.",
-     "Choose which questions: <b>those to review first</b> (recommended), all in random order, or only the ★★★ ones from the Exam format.",
-     "Read the question and think of the answer. Tap the card to flip it, then <b>I knew it</b> or <b>To review</b> (keyboard: space, ← and →).",
-     "Those to review come first next time. It's free: it uses the questions already in the notes."
-    ],
-    "g": "studio"
-   },
-   {
-    "ico": "spark",
-    "v": "esame",
-    "t": "Exam preparation",
-    "p": [
-     "In «My recordings», in the <b>Review</b> line at the top, choose the subject and tap <b>🎯 Prepare for the exam</b> (for subjects with at least one lecture with notes).",
-     "<b>The most likely questions of the whole course</b>: Claude looks at the notes of all lectures. What comes back in several lectures, or what the lecturer stresses, goes up. Tap a question to see the outline of the answer. It updates by itself when a new lecture arrives (about 1-3 cents).",
-     "<b>Exam date</b>: choose it and the day-by-day <b>study plan</b> arrives: topics in order, reviews, simulations, Sunday off. With <b>📅 To calendar</b> it goes to Outlook or Google Calendar. <b>Save as PDF</b> to print it.",
-     "<b>✍ Written mock exam</b>: new questions on the whole course. Answer as in the written exam, without looking at the notes, then tap <b>Correct</b>: points for each question, what is right, what is missing, mark out of 30 and what to review first.",
-     "<b>🎤 Oral exam</b>: as in an oral exam. The examiner asks 3 questions, you tap the microphone and answer out loud; if something is missing you get a <b>follow-up question</b>. At the end: mark, what is right and what is missing, and <b>how you spoke</b> (time, «um» and «uh», pauses). Your voice is transcribed on the PC: Claude only receives the text.",
-     "<b>☑ Multiple-choice test</b>: 10 questions with 4 answers on the whole course, like exam tests. <b>Correct</b>: mark, right and wrong answers and, for every mistake, <b>why it was wrong</b>, with the lecture and minute (tap to see it again) and «Ask the lecture». Wrong ones go to the «to review» flashcards; you can redo <b>only the wrong ones</b> (free).",
-     "<b>The lecture page</b>: tap a lecture in «My recordings» and find everything in tiles: <b>Read</b>, <b>Understand</b>, <b>Review</b>, <b>Share</b>. «⋯ More» keeps rename, redo the notes, lecturer slides, folder, delete.",
-     "<b>🎧 Lecture podcast</b> (lecture page): the key points in 8 or 20 minutes, with a narrator and, at the key moments, <b>the lecturer's real voice</b> from the recording; the word you hear lights up. On the PC you can save it as MP3 or send it to the phone.",
-     "<b>📷 Class photos</b>: while recording, «Photo of the board» (on PC «Add a photo») links it to the minute; then in «Lecture photos» you see what is written and hear the lecturer at that moment. <b>✍ Handwritten notes and photocopies</b> (lecture page): Claude reads photos of your sheets and adds them to the lecture; in Textbook also a photographed book. <b>🔇 Noisy classroom</b>: removes noise before transcribing (it also turns on by itself); for past lectures, «⋯ More → Noisy classroom».",
-     "<b>📘 Textbook</b> (Study): add the PDF of the book or the handouts; I read it on your device, it does not go online. For each lecture the right pages, «In the book, but not said in class», the page with the lecture sentences highlighted. The book also shows on the lecture page, in flashcards, in the glossary and in Ask and tutor answers.",
-     "<b>🧑‍🏫 Your tutor</b> (Study and DSA space): it knows when your exam is, how ready you are and where you go wrong (tests, oral practice, review). Every day it tells you what to do, with the minutes, to tick off; tapping an item opens the right tool. The chat answers knowing all this, with the lecture points to listen to again.",
-     "<b>📖 Subject glossary</b> (Study and DSA space): all the difficult words of the lectures, duplicates merged by Claude, explained simply. For each word the slide, the lecturer's real sentence and «▶ Hear the lecturer» from the right point; related words, ★ important ones, search, PDF and «Review the words».",
-     "<b>👓 How I read best</b> (DSA space and Settings): choose the font (Atkinson Hyperlegible, OpenDyslexic, Lexend), size, line and letter spacing, background colour, coloured syllables (Italian) and the reading ruler that follows your finger or mouse. It applies to notes, Listen, Karaoke, flashcards and DSA PDFs.",
-     "<b>🃏 Daily review</b> (Study and DSA space): every day a few cards chosen from all lectures, with subject, lecture and topic clearly shown. Wrong ones come back the next day, known ones after 2, 4, 8 days, more often as the exam gets close. Four modes: cards, by voice (it tells you the key words you said and missed), multiple choice (new wrong answers every week), quick. On the phone a reminder at the time you choose.",
-     "<b>⭐ DSA space</b> (first menu item, only with DSA mode on): choose subject and lecture and find the tools in order: in class, after the lecture, for the test, for the teacher. «The tools I use» makes the sheet for the learning plan. Everything else is under «More».",
-     "<b>🗺 Test map</b> (Study): choose the lectures of the test and get an A4 sheet with the key words and a formulas and values box. Remove the words you don't want, write name and class, then PDF or Print (compensatory tool, Italian Law 170/2010).",
-     "<b>🎤 Lecture karaoke</b> (lecture page): the lecturer's real voice with the words lighting up and the slide of that moment beside it; tap a word to start from there. «📏 One line at a time» dims the other lines.",
-     "<b>🎓 Study</b> (menu on the left): choose the course and get the days to the exam, today's plan, multiple-choice test, oral exam, written mock exam, flashcards and Ask on the whole course, and your marks.",
-     "<b>Multiple-choice test</b>: choose 10, 20 or 30 questions, the difficulty and, if you want, <b>like the real exam</b> (1 minute per question, −0.25 for each wrong answer).",
-     "<b>Dyslexia mode</b> (at the top of the lecture and Study pages, or in Settings): the most useful tools first (listening, maps, easy-to-read notes, flashcards and tests read aloud, dictated Ask and written answers), everything else in grey below; legible font, more space, cream background and 30% more time in tests.",
-     "At the top left the <b>←</b> arrow takes you back to the page you came from."
+     "On the lecture page tap <b>Flashcards</b>, or in <b>Study</b> choose the course: the questions of all its lectures.",
+     "Choose which questions: <b>the ones to review first</b> (recommended), all shuffled, or only the ★★★ of the Exam format.",
+     "Read the question and think of the answer. Tap the card to flip it: you see the outline, the slide and the minute of the lecture. Then <b>I knew it</b> or <b>To review</b> (space, ← and →).",
+     "The ones to review come first next time. It costs nothing: it uses the questions already in the notes.",
+     "<b>⬇ Export for Anki</b>: the same cards in a file for Anki (PC, Mac, AnkiDroid, iPhone), with the slide and one deck per course. If you export again after new lectures, Anki updates the cards with no duplicates and without losing your reviews."
     ],
     "g": "studio"
    },
@@ -604,12 +708,125 @@ const GUIDA = {
     "v": "chiedi",
     "t": "Ask, map and infographic",
     "p": [
-     "<b>Ask the lecture</b> (on the recording: <b>⋯ More → Ask the lecture</b>): write what you didn't understand. The answer uses only what was said and shows slide and minute: tap the minute to see that point again. You can also ask about the <b>whole subject</b>. Less than 1 cent per question.",
-     "<b>🔊 Listen to the notes</b> (⋯ More): the program reads the notes aloud and highlights the sentence; tap a sentence to start from there. With <b>Aa Easy reading</b> (also in Settings) the font is more legible, with more space and a cream background: helpful with dyslexia.",
-     "<b>Mind map</b> (⋯ More): the tree outline, to save as PDF or print. <b>Infographic</b> (⋯ More): the whole recording on one page. About 1 cent, once.",
-     "From these pages go back with the <b>←</b> arrow at the top: it takes you to the page you came from."
+     "<b>Ask the lecture</b> (lecture page): write what you didn't understand. The answer only uses what was said and shows slide and minute: tap the minute to see that point again. If there's a textbook, it also quotes the page. In Study you ask about <b>the whole course</b>. Less than 1 cent per question.",
+     "You can also <b>dictate</b> the question with the 🎤 microphone.",
+     "<b>Mind map</b>: the tree outline of the lecture, to save as PDF or print. <b>Infographic</b>: the whole recording on one page. About 1 cent, only once.",
+     "<b>Chapters</b>: the index of topics; tap a topic and the lecture restarts from there."
     ],
     "g": "studio"
+   },
+   {
+    "ico": "aud",
+    "v": "ascolta",
+    "t": "Listen to the notes and Karaoke",
+    "p": [
+     "<b>🔊 Listen to the notes</b> (lecture page): the program reads the notes aloud and the sentence being read lights up; tap a sentence to restart from there. Choose the speed.",
+     "<b>🎤 Lecture karaoke</b>: the lecturer's real voice with the words lighting up as they speak, and next to it the slide of that moment. Tap a word to restart from there.",
+     "<b>📏 One line at a time</b> (Karaoke): darkens the other lines, so you don't lose your place.",
+     "It costs nothing: it uses the recording and notes you already have."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "aud",
+    "v": "podcast",
+    "t": "Lecture podcast",
+    "p": [
+     "On the lecture page tap <b>🎧 Podcast</b>: the key points in <b>8 minutes</b> (Short) or <b>20</b> (Full), to listen to on the bus or while walking.",
+     "Three styles: <b>One voice</b> (a narrator), <b>Two voices</b> (Emma asks the questions you'd ask, Jack explains) and <b>Debate</b> (two opposite ideas on a point of the lecture, for law, history, philosophy…).",
+     "At the key moments it's always <b>the lecturer, with their real voice</b> from the recording. The words you hear light up; tap a piece to listen from there, «Review» opens the lecture at that minute.",
+     "<b>⬇ Save as MP3</b> or <b>📤 Send to the phone</b>.",
+     "Cost: a few cents, only once (Claude only writes the running order; the voices are the PC's)."
+    ],
+    "g": "studio"
+   },
+   {
+    "ico": "cards",
+    "v": "studia",
+    "t": "Study: the course page",
+    "p": [
+     "In the menu tap <b>🎓 Study</b> and choose the course at the top: here is everything you need for that course's exam, across all its lectures.",
+     "At the top: <b>Your tutor</b> and the <b>Daily review</b>. Then the <b>days to the exam</b> and today's plan (if you haven't set the date, tap «Set the date»).",
+     "Below, in tiles: most likely questions, study plan, multiple-choice test, oral exam, written mock exam, flashcards, Ask about the whole course, glossary, textbook, test map. At the bottom your marks.",
+     "Lectures with notes but <b>no course</b> appear at the top with «✎ Add the course»: one tap and they move under the right course."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "spark",
+    "v": "esame",
+    "t": "Exam preparation",
+    "p": [
+     "In <b>Study</b> choose the course and tap <b>🎯 Most likely questions</b>: Claude reads the notes of all lectures and puts at the top what comes up most or what the lecturer stresses. Tap a question for the answer outline.",
+     "<b>Exam date and study plan</b>: pick the date and you get a day-by-day plan (topics, reviews, mock exams, Sunday off). <b>📅 To the calendar</b> or <b>PDF</b>.",
+     "<b>☑ Multiple-choice test</b>: 10, 20 or 30 questions, the difficulty and, if you like, <b>like the real exam</b> (1 minute per question, −0.25 per mistake). Then a mark and, for each mistake, why it was wrong with lecture and minute. Wrong ones go to the flashcards; you can redo just those.",
+     "<b>🎤 Oral exam</b>: the lecturer asks 3 questions, you answer by speaking; if something is missing you get a follow-up question. At the end a mark, what's good and what's missing, and how you spoke (time, «like» and «um», pauses).",
+     "<b>✍ Written mock exam</b>: new questions on the whole course; answer without looking at the notes, then <b>Correct</b>: points, mark out of 30 and what to review.",
+     "Cost: from 1 to a few cents per attempt. Your voice is transcribed on the PC: only the text goes to Claude."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "cards",
+    "v": "rg",
+    "t": "Daily review",
+    "p": [
+     "In <b>Study</b> (or the Dyslexia space) tap <b>🃏 Daily review</b>: a few cards a day chosen from all lectures, with course, lecture and topic clearly shown.",
+     "Wrong ones come back the next day, known ones after 2, 4, 8 days… and more often as the exam gets closer.",
+     "Four ways: <b>with cards</b>, <b>by voice</b> (say the answer and it tells you the keywords you said and missed), <b>multiple choice</b> (new wrong answers every week) and <b>quick</b> (5 minutes).",
+     "You see your streak and how ready you are for the exam.",
+     "It costs nothing."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "chat",
+    "v": "tutor",
+    "t": "Your tutor",
+    "p": [
+     "In <b>Study</b> tap <b>🧑‍🏫 Your tutor</b>: it knows when your exam is, how ready you are and where you make mistakes (tests, oral exams, reviews).",
+     "Every day it tells you <b>what to do today</b>, with the minutes, to tick off: tapping an item opens the right tool (for example the point of the lecture to listen to again).",
+     "<b>Where you go wrong</b>: the topics with the most mistakes and where they come from; lectures never reviewed.",
+     "<b>The chat</b>: ask it what to study, whether you'll make it, to quiz you. It answers knowing all this, with lecture minutes and textbook pages."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "pdf",
+    "v": "libro",
+    "t": "Textbook",
+    "p": [
+     "In <b>Study</b> tap <b>📘 Textbook</b> and add the PDF of the book or handouts (or photos of the pages). It's read on your PC: it doesn't go online.",
+     "For each lecture you find <b>the right pages</b> of the book, with the lecture's sentences highlighted.",
+     "<b>«In the book, but not said in class»</b>: what the lecturer skipped, to check before the exam.",
+     "The book also shows on the lecture page, in flashcards, in the glossary and in the answers of Ask and the tutor («book p. 42»)."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "abc",
+    "v": "glossario",
+    "t": "Course glossary",
+    "p": [
+     "In <b>Study</b> tap <b>📖 Glossary</b>: all the difficult words of the lectures, explained simply, with duplicates merged by Claude.",
+     "For each word: the slide, the lecturer's real sentence and <b>▶ Hear the lecturer</b> from the right point; related words and ★ important ones.",
+     "Search a word, save the <b>PDF</b> or tap <b>🃏 Review the words</b>.",
+     "Cost: about 1 cent; it updates when new lectures arrive."
+    ],
+    "g": "materia"
+   },
+   {
+    "ico": "star",
+    "v": "dsa",
+    "t": "Dyslexia mode",
+    "p": [
+     "Turn on <b>Dyslexia mode</b> (at the top of the lecture and in Study, or in Settings): the most useful tools for dyslexic students come first, the rest below in «More».",
+     "<b>⭐ Dyslexia space</b> (first menu item): choose course and lecture and find the tools in order: in class, after the lecture, for the test, for the teacher. «The tools I use» prepares the sheet for the learning plan (<b>PDP</b>).",
+     "<b>👓 How I read best</b>: font (Atkinson Hyperlegible, OpenDyslexic, Lexend), size, spacing, background colour, <b>coloured syllables</b> and <b>reading ruler</b>. It applies to notes, Listen, Karaoke, flashcards and PDFs.",
+     "<b>🗺 Test map</b> (Study): an A4 sheet with the keywords of the lectures in the test and the formulas; remove what you don't want, write name and class, then PDF or Print (compensatory tool, Italian law 170/2010).",
+     "Tests give 30% more time; questions and answers can be listened to and dictated by voice."
+    ],
+    "g": "dsa"
    },
    {
     "ico": "lib",
@@ -618,33 +835,10 @@ const GUIDA = {
     "p": [
      "Here you find everything you recorded or imported. The cover has the subject's colour: same subject, same colour.",
      "<b>Search everything</b>: in the box at the top type a name, a date <b>or a word that was said</b>. «Said in…» appears above the list: in which recordings, at which minute and who was speaking. Tap a sentence to hear it again from there. It also finds words typed without accents.",
-     "On each recording: <b>Open notes</b>, <b>Review</b> and <b>⋯ More</b>. If there are no notes yet there is <b>Create notes</b>: you stay here and see the progress bar.",
-     "In <b>⋯ More</b>: Ask the lecture, Chapters (the index: tap a topic and the video starts from there), Who speaks, Share, Transcript, Video; then create or redo notes, mind map, infographic, statistics, clip to send, lecturer's slides, rename, open the folder, delete the video (frees space, notes stay) or the whole recording (goes to the Recycle Bin).",
+     "Tap a recording to open <b>its page</b>, with everything in tiles (chapter «The lecture page»). If the notes aren't there yet there's <b>Create notes</b>: you stay here and see the progress bar.",
      "<b>☁ in the cloud</b> means the cloud copy is done (chapter «Copy to the cloud»). If the PC turned off while preparing the files, tap <b>Complete</b>."
     ],
     "g": "lez"
-   },
-   {
-    "ico": "lib",
-    "v": "menu",
-    "g": "lez",
-    "t": "The «⋯ More» menu, item by item",
-    "p": [
-     "On each recording tap <b>⋯ More</b>. The items change a little from one recording to another: only the useful ones appear. Here is what each does.",
-     "<b>Ask the lecture</b>: type a question about what was said; it answers with slide and minute. Less than 1 cent per question.",
-     "<b>Chapters</b>: the index of topics. Tap a topic and the video starts from there; with ✂ next to a chapter you make a clip.",
-     "<b>Who speaks</b>: the transcript with the names of who spoke; from here you name the voices and open the statistics.",
-     "<b>Share</b>: send notes or minutes by email, Word, Google Docs, calendar, Slack, Teams, Notion or CRM.",
-     "<b>Transcript</b>: opens the «Per Claude» PDF with everything that was said. <b>Video</b>: watch the recording again (if the video is still there).",
-     "<b>Create notes with Claude</b>: there when notes were not made. <b>Also create in Exam format</b> (or Cornell): adds the other format, the ones you have stay. <b>Complete the notes</b>: makes the missing parts. Cost: about 0.20 $ per recorded hour (it tells you first).",
-     "<b>Redo notes</b>: redoes them from scratch, for example after adding difficult words. The previous ones are replaced. Same cost.",
-     "<b>Mind map</b>: the tree outline of the lecture. <b>Infographic (one page)</b>: the whole recording on one sheet. About 1 cent each, once; saved as PDF.",
-     "<b>Recognise who is speaking</b>: separates the voices, if not done yet. Free, on the PC. <b>Statistics</b>: length, who spoke and how much, questions, topics. Free.",
-     "<b>✂ Clip to send</b>: choose from… to… and make a piece of video with subtitles or audio only.",
-     "<b>Add the lecturer's slides (PDF)…</b>: puts the original slides in the notes, next to the words (chapter «The lecturer's slides»).",
-     "<b>Rename</b>: changes the name of the recording, files and notes. <b>Open the folder</b>: opens the lecture's folder in File Explorer.",
-     "<b>Delete the video</b>: frees space; notes, slides and transcript stay. <b>Delete the recording</b>: goes to the Windows Recycle Bin, where you can recover it if you make a mistake."
-    ]
    },
    {
     "ico": "chat",
@@ -653,10 +847,10 @@ const GUIDA = {
     "p": [
      "The program <b>separates the voices by itself</b>, on the PC: the transcript, notes and minutes say who said what. The first time it downloads a 26 MB model.",
      "In meetings and webinars Claude <b>suggests the names</b> from the participants and how they call each other (✨ = suggested). If unsure it stays «Voice 3». In class: whoever speaks most is «Teacher», the others «Question».",
-     "Tap <b>⋯ More → Who speaks</b>: you see the transcript with the names. Tap a sentence to hear it again.",
+     "On the lecture page tap <b>Who speaks</b>: you see the transcript with the names. Tap a sentence to hear it again.",
      "<b>Name the voices…</b>: listen to a piece (▶ Listen) and type who it is, or tap one of the names below. Save: transcript and files are updated.",
-     "<b>Statistics</b> (from Who is speaking or the ⋯ More): length, people, questions, to-dos; how much each person spoke, the longest turn and how long each topic took.",
-     "For older recordings: <b>⋯ More</b> → «Recognise who is speaking». Turn it off in Settings («Recognise who is speaking»). It can make mistakes: fix the names whenever you like."
+     "<b>Statistics</b> (from Who is speaking or the lecture page): length, people, questions, to-dos; how much each person spoke, the longest turn and how long each topic took.",
+     "For older recordings: lecture page → «Recognise who is speaking». Turn it off in Settings («Recognise who is speaking»). It can make mistakes: fix the names whenever you like."
     ],
     "g": "lez"
    },
@@ -665,12 +859,12 @@ const GUIDA = {
     "v": "condividi",
     "t": "Share, calendar and clips",
     "p": [
-     "Tap <b>⋯ More → Share</b> and choose where to send the minutes (or the notes).",
+     "On the lecture page tap <b>Share</b> and choose where to send the minutes (or the notes).",
      "<b>Email</b>: type the addresses (remembered for next time) and tap <b>Open in Outlook / Mail</b> (the PDF and the to-do calendar are already attached) or <b>Open in Gmail</b> (Gmail opens with everything filled in: drag the PDF from the folder that opens). The program never sends by itself: you press Send.",
      "<b>Word</b>: the .docx file to edit. <b>Google Docs</b>: if «Google Drive for desktop» is on the PC the file goes into your Drive by itself, folder «Verba Manent IA»; otherwise drag it onto the Drive page that opens.",
      "<b>To-dos in the calendar</b>: check the dates (spoken ones like «Friday» are already worked out) and tap <b>Outlook</b> or <b>Google Calendar</b>.",
      "<b>Slack, Teams, Notion, CRM</b>: connected once, with a few explained steps and an address (or key) to paste. With «Send the summary by itself» the minutes go out after each meeting. Addresses and keys stay on the PC, protected.",
-     "<b>✂ Clip to send</b> (⋯ More, or ✂ next to a chapter): choose from… to… and tap <b>Video with subtitles</b> or <b>Audio only</b>. You find it in the «Clips» folder: send it by email or drag it into WhatsApp."
+     "<b>✂ Clip to send</b> (lecture page, or ✂ next to a chapter): choose from… to… and tap <b>Video with subtitles</b> or <b>Audio only</b>. You find it in the «Clips» folder: send it by email or drag it into WhatsApp."
     ],
     "g": "lez"
    },
@@ -683,6 +877,20 @@ const GUIDA = {
      "Tick the box when something is done. At the top choose <b>Open</b>, <b>Done</b> or <b>All</b>, and a person to see only theirs.",
      "Overdue ones are red with ⚠. Tap the meeting name (▶) to hear the moment it was discussed.",
      "Items ticked by themselves in the following meeting say «ticked by the minutes of…»."
+    ],
+    "g": "lez"
+   },
+   {
+    "ico": "share",
+    "v": "sincronizza",
+    "t": "Sync PC and phone",
+    "p": [
+     "The same lectures, notes and reviews on PC and phone. You set it up once, in <b>Settings → 🔄 Sync</b>.",
+     "<b>On the PC</b>: «Link a phone». A <b>QR code</b> appears with a 6-digit code under it.",
+     "<b>On the phone</b>: «Link to PC» → <b>📷 Scan the PC's QR code</b> (or type the code). PC and phone must be on the same Wi-Fi or the phone's hotspot.",
+     "From then on they exchange lectures, notes, photos, reviews and marks by themselves, every minute, when they're on the same network. If the same thing changes on both, it's merged without losing anything; a lecture deleted on one side disappears on the other too.",
+     "<b>☁️ Away from home too</b>: sign in with Google Drive and lectures go through your Drive, each in a <b>password-locked zip</b>. The phone linked with the QR gets access and password from the PC. Write the password on paper: you only need it if you lose PC and phone together.",
+     "At the bottom left (PC) you always see «🔄 Synced 2 min ago». Videos don't go across unless you choose them."
     ],
     "g": "lez"
    },
@@ -779,7 +987,9 @@ const GUIDA = {
    "primi": "Getting started",
    "reg": "Recording",
    "gia": "Already have the lecture?",
-   "studio": "Studying",
+   "studio": "Studying a lecture",
+   "materia": "Studying a course",
+   "dsa": "For dyslexic students",
    "lez": "My recordings",
    "imp": "Settings",
    "prob": "Help"
