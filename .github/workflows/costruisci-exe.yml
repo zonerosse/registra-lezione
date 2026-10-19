@@ -66,6 +66,13 @@ jobs:
           pip install -r requirements.txt pyinstaller==6.22.3
           Get-ChildItem app/*.py, *.py | ForEach-Object { python -m py_compile $_.FullName; if ($LASTEXITCODE -ne 0) { exit 1 } }
 
+      - name: Prova Sincronizza fuori casa (cifratura, nomi nascosti, migrazione)
+        if: steps.v.outputs.nuova == '1'
+        shell: pwsh
+        run: |
+          python tools/prova_nuvola.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
       - name: Costruisci l'exe
         if: steps.v.outputs.nuova == '1'
         shell: pwsh

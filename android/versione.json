@@ -1,7 +1,7 @@
 {
- "versione": "0.13.6",
+ "versione": "0.13.7",
  "codice": 13,
- "novita": "Cloud: messaggi più chiari quando l'accesso a Google Drive non riesce (Drive API spenta, permesso non dato, Drive pieno). In Studia compaiono anche le lezioni senza materia, con «✎ Metti la materia».",
- "novita_en": "Cloud: clearer messages when Google Drive sign-in fails (Drive API off, permission not given, Drive full). Study also shows lectures without a course, with «✎ Add the course».",
- "contenuto": 82
+ "novita": "«🔄 Sincronizza» fuori casa più riservato: nel tuo Drive i file delle lezioni hanno un codice al posto del nome e anche l'elenco delle lezioni è chiuso con la password, così chi guarda il Drive non sa quali lezioni hai. Gli zip già nel Drive si sistemano da soli al primo giro.",
+ "novita_en": "«🔄 Sync» away from home is more private: in your Drive the lecture files have a code instead of their name and the list of lectures is locked with the password too, so nobody looking at your Drive can tell which lectures you have. Zips already in your Drive are converted on the first sync.",
+ "contenuto": 83
 }

@@ -4,11 +4,18 @@
 dello studente (Google Drive o OneDrive), ognuna chiusa in uno zip con password (zip_aes.py).
 
 Nel cloud, cartella «Verba Manent IA» (su OneDrive: App › Verba Manent IA):
-  <lezione>.zip     tutti i file della lezione (come con il Wi-Fi: niente video) e i suoi PDF degli appunti
+  L-<codice>.zip    una lezione: tutti i suoi file (come con il Wi-Fi: niente video) e i suoi PDF degli appunti.
+                    Il codice viene dal nome della lezione e dalla password (HMAC): chi guarda il Drive non legge
+                    il nome della lezione, e dentro lo zip i file si chiamano f00000, f00001… (i nomi veri sono
+                    nel manifesto, che e' cifrato come il resto)
   studio.zip        materie (date d'esame, voti, glossario, libro…) e il profilo di studio (ripasso, lezioni eliminate)
-  indice.json       per ogni zip la sua «firma» (cosa c'e' dentro), cosi' si scarica solo quello che e' cambiato;
-                    e una verifica della password (non la password)
+  indice.zip        per ogni lezione la sua «firma» (cosa c'e' dentro), cosi' si scarica solo quello che e' cambiato;
+                    chiuso con la password come le lezioni
+  indice.json       solo la verifica della password (non la password) e la versione: niente nomi
   LEGGIMI.txt       cosa sono questi file e come riaprirli con 7-Zip
+
+Le versioni fino alla 3.95 chiamavano gli zip con il nome della lezione e tenevano l'indice in chiaro: al primo
+giro la versione nuova li scarica, li unisce, li ricarica con il codice e cancella quelli vecchi (migra()).
 
 Regole come per il Wi-Fi (sincronizza.py): un file nuovo si copia, se e' cambiato da una parte sola vince quella,
 se e' cambiato da tutte e due si unisce (ripasso, materie, foto, profilo) o vince il piu' recente.
@@ -19,6 +26,7 @@ accesso e password: non serve accedere anche li'.
 """
 import base64
 import hashlib
+import hmac
 import json
 import logging
 import os
@@ -42,7 +50,9 @@ log = logging.getLogger("registra_lezione")
 
 CARTELLA = "Verba Manent IA"
 STUDIO = "_studio"
-INDICE = "indice.json"
+INDICE = "indice.json"          # in chiaro: solo verifica della password e versione
+INDICE_Z = "indice.zip"         # cifrato: le lezioni con le loro firme
+MANIFESTO = ".vm/manifesto.json"
 PEZZO = 8 * 1024 * 1024            # caricamenti a pezzi da 8 MB (multiplo di 256 KB e di 320 KB)
 _APP = Path(__file__).with_name("nuvola_app.json")
 
@@ -86,12 +96,16 @@ Non serve aprirli: il programma li prende da solo. Se però hai perso PC e telef
   2. apri lo zip e scrivi la password degli zip (la trovi in Verba Manent IA: Impostazioni › Sincronizza,
      oppure sul foglio dove l'hai scritta).
 
+I nomi dei file (L-…zip) sono codici: il nome della lezione è dentro lo zip, chiuso con la password,
+così chi guarda il Drive non sa quali lezioni ci sono.
+
 Non cambiare né spostare questi file: il programma non li troverebbe più.
 
 ---
 
 Verba Manent IA – synced lessons. Each lesson is a password-protected zip (AES-256). The program reads them by
-itself; to open one by hand use 7-Zip with the zip password (Settings › Sync). Do not rename or move these files.
+itself; to open one by hand use 7-Zip with the zip password (Settings › Sync). File names (L-….zip) are codes,
+so the lesson names cannot be read without the password. Do not rename or move these files.
 """
 
 
@@ -386,10 +400,62 @@ class OneDrive(Cloud):
 
 # =========================================================================================== le «unita'» da sincronizzare
 
-def nome_zip(unita):
+_CHIAVI_NOMI = {}
+
+
+def _chiave_nomi(chiave):
+    """La chiave per i codici dei nomi: dalla password degli zip (uguale su PC e telefono)."""
+    if chiave not in _CHIAVI_NOMI:
+        _CHIAVI_NOMI[chiave] = hashlib.pbkdf2_hmac("sha256", chiave.encode("utf-8"), b"verba-manent-nomi", 20000, 32)
+    return _CHIAVI_NOMI[chiave]
+
+
+def nome_zip(unita, chiave):
+    """Il nome dello zip nel cloud: un codice (non si legge il nome della lezione)."""
+    if unita == STUDIO:
+        return "studio.zip"
+    return "L-" + hmac.new(_chiave_nomi(chiave), unita.encode("utf-8"), hashlib.sha256).hexdigest()[:24] + ".zip"
+
+
+def nome_vecchio(unita):
+    """Il nome dello zip fino alla 3.95 (il nome della lezione): serve solo per migra()."""
     if unita == STUDIO:
         return "studio.zip"
     return re.sub(r'[\\/:*?"<>|#%]+', "-", unita).strip(" .")[:180] + ".zip"
+
+
+class _Pezzo(bytearray):
+    """Un file letto da uno zip, tenuto in memoria (per l'indice). Sempre «vero», anche vuoto: zip_aes.leggi
+    scrive solo se dove_scrivo() torna qualcosa di vero."""
+    def __bool__(self):
+        return True
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def write(self, b):
+        self.extend(b)
+
+    def close(self):
+        pass
+
+
+def leggi_indice(cloud, elenco, chiave):
+    """L'indice cifrato ({"unita": {...}}), {} se non c'e' ancora. Password sbagliata: za.PasswordSbagliata."""
+    x = elenco.get(INDICE_Z)
+    if not x:
+        return {}
+    f = Path(tempfile.mkdtemp(prefix="vmia_i_")) / "i.zip"
+    try:
+        cloud.scarica(x["id"], f)
+        pezzi = {}
+        za.leggi(f, chiave, lambda nome, mt: pezzi.setdefault(nome, _Pezzo()))
+        return json.loads(bytes(pezzi.get("indice.json") or b"{}") or b"{}")
+    finally:
+        shutil.rmtree(f.parent, ignore_errors=True)
 
 
 def unita_locali(base, pacchetti, opzioni, cfg):
@@ -427,31 +493,49 @@ def firma(files):
 
 
 def _impacchetta(base, pacchetti, files, dest, chiave):
-    voci = [(rel, str(sy._dove(base, pacchetti, rel)), m["m"]) for rel, m in sorted(files.items())]
-    manifesto = json.dumps({rel: m["m"] for rel, m in files.items()}, ensure_ascii=False).encode()
-    voci.append((".vm/manifesto.json", manifesto, time.time()))
+    """Nello zip i file si chiamano f00000, f00001…: i nomi veri (che dicono la lezione) stanno nel manifesto,
+    che e' cifrato. Il formato degli zip con password lascia leggibili i nomi dei file, non il contenuto."""
+    voci, nomi = [], {}
+    for i, (rel, m) in enumerate(sorted(files.items())):
+        n = "f%05d" % i
+        voci.append((n, str(sy._dove(base, pacchetti, rel)), m["m"]))
+        nomi[n] = [rel, m["m"]]
+    manifesto = json.dumps({"v": 2, "voci": nomi}, ensure_ascii=False).encode()
+    voci.append((MANIFESTO, manifesto, time.time()))
     za.scrivi(dest, voci, chiave)
+
+
+def _sicuro(rel):
+    return bool(rel) and not rel.startswith("/") and "\\" not in rel and ".." not in rel.split("/") and ":" not in rel
 
 
 def _spacchetta(base, pacchetti, zipf, chiave, cfg, studio=True):
     """Lo zip dal cloud unito ai file di qui (stesse regole del Wi-Fi). Torna quanti file sono cambiati."""
     tmp = Path(tempfile.mkdtemp(prefix="vmia_"))
     try:
-        nomi = {}
+        letti = {}
 
         def dove(nome, mt):
-            if nome.startswith("/") or ".." in nome.split("/"):
+            if not _sicuro(nome):
                 return None
-            p = tmp / ("f%05d" % len(nomi))
-            nomi[nome] = (p, mt)
+            p = tmp / ("x%05d" % len(letti))
+            letti[nome] = (p, mt)
             return open(p, "wb")
         za.leggi(zipf, chiave, dove)
         man = {}
-        if ".vm/manifesto.json" in nomi:
-            man = json.loads(nomi.pop(".vm/manifesto.json")[0].read_bytes() or b"{}")
+        if MANIFESTO in letti:
+            man = json.loads(letti.pop(MANIFESTO)[0].read_bytes() or b"{}")
+        nomi = {}
+        if man.get("v") == 2:                    # dalla 3.96: f00000… con i nomi veri nel manifesto
+            for n, (p, mt) in letti.items():
+                rel, m = (man.get("voci") or {}).get(n, [None, None])
+                if rel and _sicuro(rel):
+                    nomi[rel] = (p, float(m if m is not None else mt))
+        else:                                    # zip fino alla 3.95: nomi veri, manifesto {rel: data}
+            for rel, (p, mt) in letti.items():
+                nomi[rel] = (p, float(man.get(rel, mt)))
         cambiati = 0
         for rel, (p, mt) in nomi.items():
-            mt = float(man.get(rel, mt))
             dest = sy._dove(base, pacchetti, rel)
             if rel == sy.PROFILO and not studio:
                 continue
@@ -488,18 +572,24 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
     studio = opzioni.get("studio", True)
     cid, nuova = cloud.cartella()
     elenco = cloud.elenco(cid)
-    if "LEGGIMI.txt" not in elenco:
-        cloud.carica(cid, "LEGGIMI.txt", LEGGIMI.encode("utf-8"))
-    indice = cloud.leggi_json(INDICE, elenco) or {}
-    if indice.get("verifica") and not chiave_giusta(chiave, indice["verifica"]):
+    if "LEGGIMI.txt" not in elenco or stato.get("leggimi") != 2:
+        x = elenco.get("LEGGIMI.txt")
+        cloud.carica(cid, "LEGGIMI.txt", LEGGIMI.encode("utf-8"), x["id"] if x else None)
+        stato["leggimi"] = 2
+    chiaro = cloud.leggi_json(INDICE, elenco) or {}
+    if chiaro.get("verifica") and not chiave_giusta(chiave, chiaro["verifica"]):
         raise za.PasswordSbagliata("indice")
+    indice = leggi_indice(cloud, elenco, chiave)
+    vecchie = dict(chiaro.get("unita") or {})          # lezioni con il nome in chiaro (fino alla 3.95)
+    if STUDIO in vecchie:                                # studio.zip ha lo stesso nome: basta spostarlo nell'indice
+        indice.setdefault("unita", {}).setdefault(STUDIO, vecchie.pop(STUDIO))
     mie = {}           # unita' -> voce dell'indice (None = tolta)
     st = {"su": 0, "giu": 0, "uniti": 0}
     lavoro = Path(tempfile.mkdtemp(prefix="vmia_z_"))
 
-    def scarica_e_unisci(u):
+    def scarica_e_unisci(nz):
         f = lavoro / "giu.zip"
-        cloud.scarica(elenco[nome_zip(u)]["id"], f)
+        cloud.scarica(elenco[nz]["id"], f)
         n = _spacchetta(base, pacchetti, f, chiave, cfg, studio)
         f.unlink(missing_ok=True)
         return n
@@ -507,7 +597,7 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
     def carica(u, files):
         f = lavoro / "su.zip"
         _impacchetta(base, pacchetti, files, f, chiave)
-        nz = nome_zip(u)
+        nz = nome_zip(u, chiave)
         x = elenco.get(nz)
         r = cloud.carica(cid, nz, str(f), x["id"] if x else None)
         if not x and isinstance(r, dict) and r.get("id"):
@@ -521,7 +611,7 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
     def una(u, locali):
         voce = (indice.get("unita") or {}).get(u)
         sl = firma(locali[u]) if u in locali else None
-        sc = voce["f"] if voce and nome_zip(u) in elenco else None
+        sc = voce["f"] if voce and nome_zip(u, chiave) in elenco else None
         if sl == sc:
             if sl:
                 ultime[u] = sl
@@ -529,7 +619,7 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
         if sc is None:
             carica(u, locali[u])
         elif sl is None or sc != ultime.get(u):
-            scarica_e_unisci(u)
+            scarica_e_unisci(nome_zip(u, chiave))
             st["giu"] += 1
             nuove = unita_locali(base, pacchetti, opzioni, cfg)
             sl2 = firma(nuove[u]) if u in nuove else None
@@ -541,6 +631,21 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
         else:
             carica(u, locali[u])
 
+    def migra(u, elim):
+        """Uno zip col nome della lezione (fino alla 3.95): unito qui, ricaricato col codice, cancellato."""
+        x = elenco.get(nome_vecchio(u))
+        if x and u not in elim:
+            scarica_e_unisci(nome_vecchio(u))
+            st["giu"] += 1
+            nuove = unita_locali(base, pacchetti, opzioni, cfg)
+            if u in nuove:
+                carica(u, nuove[u])
+        if x:
+            cloud.elimina(x["id"])
+            elenco.pop(nome_vecchio(u), None)
+        migrate.add(u)
+
+    migrate = set()
     try:
         locali = unita_locali(base, pacchetti, opzioni, cfg)
         # prima lo studio: porta le lezioni eliminate altrove
@@ -548,9 +653,18 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
             una(STUDIO, locali)
             locali = unita_locali(base, pacchetti, opzioni, cfg)
         elim = set(cfg.get("sync_eliminate") or [])
+        for u in sorted(vecchie):
+            try:
+                migra(u, elim)
+            except (za.PasswordSbagliata, ErroreAccesso):
+                raise
+            except Exception:
+                log.exception("nuvola: migra %s", u)
+        if migrate:
+            locali = unita_locali(base, pacchetti, opzioni, cfg)
         for u in list((indice.get("unita") or {})):
             if u in elim:
-                x = elenco.get(nome_zip(u))
+                x = elenco.get(nome_zip(u, chiave))
                 if x:
                     try:
                         cloud.elimina(x["id"])
@@ -571,19 +685,33 @@ def giro(cloud, base, pacchetti, cfg, opzioni, chiave, avanzamento=lambda f: Non
             except Exception:
                 log.exception("nuvola: %s", u)
         # l'indice: riletto adesso (un altro dispositivo puo' averlo cambiato nel frattempo) e aggiornato
-        if mie or not indice.get("verifica"):
+        if mie or migrate or vecchie or INDICE_Z not in elenco or not chiaro.get("verifica") or chiaro.get("versione") != 2:
             elenco = cloud.elenco(cid)
-            ind = cloud.leggi_json(INDICE, elenco) or {}
+            ind = leggi_indice(cloud, elenco, chiave)
             ind.setdefault("unita", {})
+            if STUDIO not in ind["unita"] and STUDIO in (indice.get("unita") or {}):
+                ind["unita"][STUDIO] = indice["unita"][STUDIO]
             for u, v in mie.items():
                 if v is None:
                     ind["unita"].pop(u, None)
                 else:
                     ind["unita"][u] = v
-            ind["verifica"] = ind.get("verifica") or verifica_di(chiave)
-            ind["versione"] = 1
-            x = elenco.get(INDICE)
-            cloud.carica(cid, INDICE, json.dumps(ind, ensure_ascii=False, indent=1).encode("utf-8"), x["id"] if x else None)
+            ind["versione"] = 2
+            f = lavoro / "indice.zip"
+            za.scrivi(f, [("indice.json", json.dumps(ind, ensure_ascii=False).encode("utf-8"), time.time())], chiave)
+            x = elenco.get(INDICE_Z)
+            cloud.carica(cid, INDICE_Z, str(f), x["id"] if x else None)
+            # in chiaro restano solo la verifica della password e la versione (le lezioni vecchie non migrate
+            # per un errore restano, cosi' il prossimo giro ci riprova)
+            ch = cloud.leggi_json(INDICE, elenco) or {}
+            resto = {u: v for u, v in (ch.get("unita") or {}).items() if u not in migrate and u != STUDIO}
+            nuovo_ch = {"versione": 2, "verifica": ch.get("verifica") or verifica_di(chiave)}
+            if resto:
+                nuovo_ch["unita"] = resto
+            if nuovo_ch != ch:
+                x = elenco.get(INDICE)
+                cloud.carica(cid, INDICE, json.dumps(nuovo_ch, ensure_ascii=False, indent=1).encode("utf-8"),
+                             x["id"] if x else None)
         stato["quando"] = time.strftime("%Y-%m-%dT%H:%M:%S")
         el.scrivi_json(stato_f, stato)
         avanzamento(1.0)
