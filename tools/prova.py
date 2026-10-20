@@ -362,6 +362,41 @@ print("installato")
               "app_nuova (vecchio Aggiorna) messa al suo posto dal lanciatore")
 
 
+def prova_zona_youtube(t):
+    print("Slide dallo schermo: resta solo la lavagna (pagina del browser, YouTube e barre tolte)")
+    import random
+    c = t / "youtube"
+    (c / "slide").mkdir(parents=True)
+    PL = (14, 150, 870, 650)
+    for i in range(7):
+        im = Image.new("RGB", (1366, 768), "#f1f3f4")
+        d = ImageDraw.Draw(im)
+        d.rectangle((0, 0, 1366, 70), fill="#dee1e6")
+        d.rectangle((0, 100, 1366, 140), fill="#ffffff")
+        d.rectangle(PL, fill="#fbfbf8")
+        for g in range(PL[0], PL[2], 20):
+            d.line((g, PL[1], g, PL[3]), fill="#e6eef2")
+        for g in range(PL[1], PL[3], 20):
+            d.line((PL[0], g, PL[2], g), fill="#e6eef2")
+        random.seed(10)
+        for _ in range((i + 1) * 3):
+            x, y = random.randint(PL[0] + 30, PL[2] - 200), random.randint(PL[1] + 20, PL[3] - 40)
+            d.text((x, y), "lim (1 + 1/x)^x = e", fill="#111111")
+            d.line((x, y + 14, x + 180, y + 14), fill="#333333", width=2)
+        d.ellipse((PL[2] - 120, PL[1] + 10, PL[2] - 20, PL[1] + 110), fill="#cc9966" if i % 2 else "#bb8855")
+        for j in range(5):
+            d.rectangle((890, 160 + j * 95, 1340, 240 + j * 95), fill="#dddddd")
+        d.rectangle((0, 728, 1366, 768), fill="#202124")
+        d.text((1306, 740), f"17:5{i}", fill="#ffffff")
+        d.rectangle((1110, 520, 1340, 700), fill="#ffffff", outline="#999999")
+        d.text((1125, 540), f"00:00:{40 + i}", fill="#000000")
+        im.save(c / "slide" / f"slide_{i + 1:03d}.jpg", "JPEG", quality=85)
+    z = el.zona_lezione(c)
+    controlla(z is not None and all(abs(a - b) < 30 for a, b in zip(z, PL)), f"la zona è la lavagna del video: {z} (attesa {PL})")
+    p = el.immagine_slide(c, "slide_007.jpg")
+    controlla(p.parent.name == "ritagli", "la slide salvata nei PDF è ritagliata")
+
+
 def main():
     with tempfile.TemporaryDirectory() as tmp:
         t = Path(tmp)
@@ -369,6 +404,7 @@ def main():
         prova_pausa(t)
         prova_ritaglio(t)
         prova_lavagna(t)
+        prova_zona_youtube(t)
         prova_lezione(t)
         prova_appunti(t)
         prova_richiesta_claude()
