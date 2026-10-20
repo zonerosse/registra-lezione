@@ -162,8 +162,8 @@ function barraPercorso(p) {
   if (!b) { b = document.createElement('div'); b.className = 'perc'; sec.insertBefore(b, sec.firstChild); }
   const giro = [...STORIA, p];
   b.innerHTML = `<button class="torna">← ${esc(t('indietro'))}</button><div class="briciole">` +
-    giro.map((x, i) => (i ? '<span class="sep">›</span>' : '') + (i === giro.length - 1 ? `<b>${ICO_PAG[x] || ''} ${esc(nomePagina(x))}</b>`
-      : `<a data-i="${i}">${ICO_PAG[x] || ''} ${esc(nomePagina(x))}</a>`)).join('') + '</div>';
+    giro.map((x, i) => (i ? '<span class="sep">›</span>' : '') + (i === giro.length - 1 ? `<b>${esc(nomePagina(x))}</b>`
+      : `<a data-i="${i}">${esc(nomePagina(x))}</a>`)).join('') + '</div>';
   b.querySelector('.torna').onclick = () => { const prima = STORIA.pop() || 'arch'; vai(prima, true); };
   b.querySelectorAll('.briciole a').forEach(a => a.onclick = () => { const i = +a.dataset.i, x = giro[i]; STORIA = STORIA.slice(0, i); vai(x, true); });
 }
@@ -211,6 +211,26 @@ function vai(p, tornando = false) {
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
 }
 
+/* ------------------------------------------------------------------ icone a linea al posto delle emoji */
+// Nei riquadri (.ico) le emoji diventano icone disegnate, tutte dello stesso stile e colore. Si guarda prima
+// l'azione del riquadro (karaoke e interrogazione hanno la stessa emoji 🎤), poi l'emoji.
+const ICO_AZ = {karaoke: 'g-kar', orale: 'i-mic', detta: 'i-mic', reg: 'g-reg', glos: 'g-libro', libro: 'g-libro', leggimi: 'g-voce', ascolta: 'g-voce', ascm: 'g-voce'};
+const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-cal', '📑': 'g-cap', '💬': 'i-chat', '📤': 'i-share', '✉': 'g-mail', '🃏': 'i-cards',
+  '📷': 'g-foto', '🖼': 'g-img', '🎤': 'g-kar', '📖': 'g-libro', '📘': 'g-libro', '📚': 'g-lezioni', '📲': 'g-tel', '🗺': 'i-map', '🎧': 'g-cuffie', '⭐': 'g-stella',
+  '✍': 'g-penna', '✂': 'g-forbici', '🎓': 'g-tocco', '☑': 'g-test', '📝': 'g-note', '🧑‍🏫': 'g-tutor', '▶': 'g-play', '🎙': 'i-mic', '🖨': 'g-stampa', '📋': 'g-lista',
+  '⏺': 'g-reg', '⚡': 'g-lampo', '🔇': 'g-voce', '🎯': 'g-test', '👥': 'g-tutor', '📊': 'g-lista'};
+function icoLinea(el) {
+  if (el.firstElementChild) return;
+  const em = (el.textContent || '').trim().replace(/️/g, '');
+  if (!em) return;
+  const az = el.closest('[data-ta],[data-sd]'), k = az && (az.dataset.ta || az.dataset.sd);
+  const id = (k && ICO_AZ[k]) || ICO_EM[em];
+  if (id) { el.innerHTML = `<svg><use href="#${id}"/></svg>`; el.classList.add('ico-l'); }
+}
+function icoTutte(r) { if (r.matches && r.matches('.ico')) icoLinea(r); if (r.querySelectorAll) r.querySelectorAll('.ico').forEach(icoLinea); }
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) icoTutte(n); else if (n.parentElement && n.parentElement.matches('.ico')) icoLinea(n.parentElement); })))
+  .observe(document.documentElement, {childList: true, subtree: true});
+document.addEventListener('DOMContentLoaded', () => icoTutte(document.body));
 /* ------------------------------------------------------------------ licenze */
 // i testi (quasi 1 MB) stanno in licenze.js, caricato solo quando si apre la pagina
 function apriLicenze() {
@@ -2746,18 +2766,20 @@ function collegaGlossario() {
 }
 /* ------------------------------------------------------------------ come leggo meglio */
 // Carattere, grandezza, spazio, sfondo, sillabe colorate e righello per la Modalita' DSA (R.lettura, salvato in cfg).
-const LM_FONT = {atkinson: '"Atkinson Hyperlegible",Verdana,sans-serif', opendyslexic: '"OpenDyslexic",Verdana,sans-serif', lexend: '"Lexend",Verdana,sans-serif'};
-const LM_NOMI = {atkinson: 'Atkinson Hyperlegible', opendyslexic: 'OpenDyslexic', lexend: 'Lexend'};
-const LM_SF = {crema: ['#fdf6e3', '#1f2937', '#fffbeb'], azzurro: ['#e8f3fc', '#1f2937', '#f3f9fe'], verde: ['#eaf6ea', '#1f2937', '#f4fbf4'], rosa: ['#fbeff4', '#1f2937', '#fdf6f9'], scuro: ['#1f2937', '#f1f5f9', '#f1f5f9']};
-const LMo = () => Object.assign({f: 'atkinson', g: 20, s: 2, b: 'crema', sil: false, rig: false}, (R && R.lettura) || {});
+const LM_FONT = {lexend: '"Lexend",Verdana,sans-serif', atkinson: '"Atkinson Hyperlegible",Verdana,sans-serif', opendyslexic: '"OpenDyslexic",Verdana,sans-serif'};
+const LM_NOMI = {lexend: 'Lexend', atkinson: 'Atkinson Hyperlegible', opendyslexic: 'OpenDyslexic'};
+// [sfondo del testo, colore del testo, sfondo dei riquadri, sfondo della pagina in Modalità DSA]
+const LM_SF = {grigio: ['#f7f7f5', '#1d2320', '#fbfbfa', '#f1f2f0'], azzurro: ['#eef5fa', '#1f2937', '#f7fbfe', '#eaf2f7'], verde: ['#eef5ef', '#1f2937', '#f7fbf7', '#e9f2ea'], crema: ['#fdf6e3', '#1f2937', '#fffbeb', '#f6f1e4'], scuro: ['#1f2937', '#f1f5f9', '#f1f5f9', '#f1f2f0']};
+const LM_INIZIO = {f: 'lexend', g: 20, s: 2, b: 'grigio', sil: false, rig: false};
+const LMo = () => Object.assign({}, LM_INIZIO, (R && R.lettura) || {});
 function lettura() {
-  const o = LMo(), st = document.documentElement.style, sf = LM_SF[o.b] || LM_SF.crema;
-  st.setProperty('--dsa-font', LM_FONT[o.f] || LM_FONT.atkinson);
+  const o = LMo(), st = document.documentElement.style, sf = LM_SF[o.b] || LM_SF.grigio;
+  st.setProperty('--dsa-font', LM_FONT[o.f] || LM_FONT.lexend);
   st.setProperty('--dsa-size', o.g + 'px');
   st.setProperty('--dsa-lh', [1.55, 1.95, 2.25][o.s - 1]);
   st.setProperty('--dsa-ls', ['0', '.03em', '.07em'][o.s - 1]);
   st.setProperty('--dsa-ws', ['0', '.14em', '.28em'][o.s - 1]);
-  st.setProperty('--dsa-rbg', sf[0]); st.setProperty('--dsa-rfg', sf[1]); st.setProperty('--dsa-cbg', sf[2]);
+  st.setProperty('--dsa-rbg', sf[0]); st.setProperty('--dsa-rfg', sf[1]); st.setProperty('--dsa-cbg', sf[2]); st.setProperty('--dsa-pbg', sf[3]);
   document.documentElement.classList.toggle('dsascuro', o.b === 'scuro');
 }
 const silOn = () => !!(R && R.facilitata && LMo().sil && LINGUA === 'it');
@@ -2813,6 +2835,27 @@ function righello(e) {
 document.addEventListener('mousemove', righello, {passive: true});
 document.addEventListener('touchmove', righello, {passive: true});
 document.addEventListener('touchstart', righello, {passive: true});
+// «Aa Come leggo» nello Spazio DSA: sfondo, carattere, grandezza e spazio a portata di mano; il resto in «Come leggo meglio»
+function disegnaAa() {
+  const o = LMo(), pop = $('aaPop');
+  const bt = (k, v, n, st) => `<button data-k="${k}" data-v="${v}" class="${String(o[k]) === String(v) ? 'on' : ''}"${st ? ` style="${st}"` : ''} title="${esc(n)}">${st && st.includes('background') ? '' : esc(n)}</button>`;
+  pop.innerHTML = `<div class="l">${esc(t('lm.sf'))}</div><div class="op col">${Object.keys(LM_SF).map(k => bt('b', k, t('lm.b.' + k), `background:${LM_SF[k][k === 'scuro' ? 0 : 3]}`)).join('')}</div>
+    <div class="l">${esc(t('lm.car'))}</div><div class="op">${Object.keys(LM_FONT).map(k => bt('f', k, LM_NOMI[k].replace(' Hyperlegible', ''), `font-family:${LM_FONT[k].replace(/"/g, "'")}`)).join('')}</div>
+    <div class="l">${esc(t('lm.gr'))}</div><div class="op">${[[17, 13], [20, 15], [24, 17], [28, 19]].map(([g, px]) => bt('g', g, 'A', `font-size:${px}px`)).join('')}</div>
+    <div class="l">${esc(t('lm.sp'))}</div><div class="op">${[1, 2, 3].map(s => bt('s', s, t('lm.sp' + s))).join('')}</div>
+    <div class="giu"><button id="aaTutte">${esc(t('aa.tutte'))}</button><button id="aaInizio">${esc(t('aa.inizio'))}</button></div>`;
+  const salva = async x => { R.lettura = {...LMo(), ...x}; lettura(); disegnaAa(); await A.imposta('lettura', R.lettura); };
+  pop.querySelectorAll('[data-k]').forEach(b => b.onclick = e => { e.stopPropagation(); const k = b.dataset.k; salva({[k]: k === 'g' || k === 's' ? +b.dataset.v : b.dataset.v}); });
+  $('aaTutte').onclick = () => { aaChiudi(); vai('lm'); };
+  $('aaInizio').onclick = e => { e.stopPropagation(); salva({...LM_INIZIO}); };
+}
+function aaChiudi() { $('aaPop').classList.add('hidden'); $('aaB').setAttribute('aria-expanded', 'false'); }
+function collegaAa() {
+  $('aaB').onclick = e => { e.stopPropagation(); const ap = $('aaPop').classList.contains('hidden'); if (ap) disegnaAa(); $('aaPop').classList.toggle('hidden', !ap); $('aaB').setAttribute('aria-expanded', ap); };
+  $('aaPop').onclick = e => e.stopPropagation();
+  document.addEventListener('click', () => { if (!$('aaPop').classList.contains('hidden')) aaChiudi(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('aaPop').classList.contains('hidden')) aaChiudi(); });
+}
 function disegnaLM() {
   const o = LMo();
   const seg = (id, vals, cur) => `<div class="seg" id="${id}">${vals.map(([v, n, st]) => `<span data-v="${v}" class="${v === cur ? 'on' : ''}"${st ? ` style="${st}"` : ''}>${esc(n)}</span>`).join('')}</div>`;
@@ -3203,8 +3246,6 @@ async function disegnaSpazioDsa() {
   $('sdScegli').innerHTML = lz.length ? `<label for="sdM">${esc(t('sd.materia'))}</label><select id="sdM">${mats.map(x => `<option value="${esc(x)}"${x === SD.m ? ' selected' : ''}>${esc(x || t('sd.senza'))}</option>`).join('')}</select>
     <label for="sdL" style="margin-left:6px">${esc(t('sd.lezione'))}</label><select id="sdL">${lm.map(x => `<option value="${esc(x.cartella)}"${x.cartella === SD.c ? ' selected' : ''}>${esc((SD.m ? mvSenzaMateria(x.nome, SD.m) : x.nome) + (x.quando ? ' · ' + x.quando : ''))}</option>`).join('')}</select>`
     : `<div class="hint">${esc(t('sd.nessuna'))}</div>`;
-  $('sdScegli').insertAdjacentHTML('beforeend', `<button class="btn b-ghost b-sm" id="sdLM" style="margin-left:auto">${esc(t('lm.sd'))}</button>`);
-  $('sdLM').onclick = () => vai('lm');
   if ($('sdM')) { $('sdM').onchange = () => { SD.m = $('sdM').value; SD.c = null; disegnaSpazioDsa(); }; $('sdL').onchange = () => { SD.c = $('sdL').value; disegnaSpazioDsa(); }; }
   // perche' uno strumento non si puo' usare ancora (la piastrella resta, in chiaro, e al tocco lo dice)
   const nl = !l && 'sd.no.lez', tr = nl || (!l.trascritta && 'sd.no.tr'), ap = nl || (!l.n_appunti && 'sd.no.ap'), cap = nl || (!l.capitoli && 'sd.no.cap');
@@ -4224,7 +4265,7 @@ function lgMostra(v) {
   const br = lgBriciole();
   if (br) {
     br.querySelector('b:not(.lgbr)').classList.add('hidden');
-    br.insertAdjacentHTML('beforeend', `<a class="lgbr">${ICO_PAG.lg} ${esc(t('lg.nome'))}</a><span class="sep lgbr">›</span><b class="lgbr">${esc(corto(v.titolo, 40))}</b>`);
+    br.insertAdjacentHTML('beforeend', `<a class="lgbr">${esc(t('lg.nome'))}</a><span class="sep lgbr">›</span><b class="lgbr">${esc(corto(v.titolo, 40))}</b>`);
     br.querySelector('a.lgbr').onclick = () => apriLeggimi();
   }
   lgVel(); lgPagina();
@@ -4407,7 +4448,7 @@ function collegaNovita() {
   $('chIn').addEventListener('keydown', e => { if (e.key === 'Enter') inviaDomanda(); });
   $('chNuova').onclick = async () => { if (!CH.tutta) await A.chiedi_cancella(CH.lez.cartella); CH.storia = []; disegnaChiedi(); };
   $('mpPdf').onclick = async () => { if (!MP.dati) return; clearTimeout(MP_SALVA); await A.mappa_salva(MP.lez.cartella, MP.dati); await A.mappa_pdf(MP.lez.cartella, true, MP.modo === 'tu'); };
-  collegaMappa(); collegaLeggimi(); collegaDetta();
+  collegaMappa(); collegaLeggimi(); collegaDetta(); collegaAa();
   $('mpRifai').onclick = async () => { if (MP.lez && await conferma(t('mp.rifai.t'), t('mp.rifai.c'))) apriMappa(MP.lez, true); };
 }
 

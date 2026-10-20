@@ -617,10 +617,10 @@ class Motore:
     def _lettura(self):
         """«Come leggo meglio»: carattere, grandezza, spazio, sfondo, sillabe colorate, righello."""
         d = self.cfg.get("lettura") or {}
-        return {"f": d.get("f") if d.get("f") in el.FONT_DSA else "atkinson",
+        return {"f": d.get("f") if d.get("f") in el.FONT_DSA else "lexend",
                 "g": d.get("g") if d.get("g") in (17, 20, 24, 28) else 20,
                 "s": d.get("s") if d.get("s") in (1, 2, 3) else 2,
-                "b": d.get("b") if d.get("b") in el.SFONDI_PDF else "crema",
+                "b": d.get("b") if d.get("b") in el.SFONDI_PDF else "grigio",
                 "sil": bool(d.get("sil")), "rig": bool(d.get("rig"))}
 
     def imposta(self, campo, valore):

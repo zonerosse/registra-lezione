@@ -783,12 +783,12 @@ FONT_FACILE = Path(__file__).resolve().parent / "interfaccia" / "font"
 
 
 # «Come leggo meglio» (Modalita' DSA): carattere e sfondo scelti dallo studente, anche nei PDF
-LETTURA = {"f": "atkinson", "b": "crema"}
+LETTURA = {"f": "lexend", "b": "grigio"}
 FONT_DSA = {"atkinson": ("AtkinsonHyperlegible-Regular.ttf", "AtkinsonHyperlegible-Bold.ttf"),
             "opendyslexic": ("OpenDyslexic-Regular.otf", "OpenDyslexic-Bold.otf"),
             "lexend": ("Lexend-Regular.ttf", "Lexend-Bold.ttf")}
-SFONDI_PDF = {"crema": (255, 251, 235), "azzurro": (232, 243, 252), "verde": (234, 246, 234), "rosa": (251, 239, 244),
-              "scuro": (255, 251, 235)}     # lo sfondo scuro non si stampa: nel PDF crema
+SFONDI_PDF = {"grigio": (243, 244, 242), "crema": (255, 251, 235), "azzurro": (232, 243, 252), "verde": (234, 246, 234),
+              "scuro": (243, 244, 242)}     # lo sfondo scuro non si stampa: nel PDF grigio
 
 
 def font_dsa():
@@ -801,7 +801,7 @@ def font_dsa():
 
 
 def sfondo_pdf():
-    return SFONDI_PDF.get(LETTURA.get("b") or "crema", SFONDI_PDF["crema"])
+    return SFONDI_PDF.get(LETTURA.get("b") or "grigio", SFONDI_PDF["grigio"])
 
 
 def _font_pdf(pdf, facile=False):

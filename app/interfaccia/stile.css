@@ -1150,3 +1150,57 @@ html.dsa .dpfoglio{font-family:var(--dsa-font);font-size:var(--dsa-size);line-he
 html.web .con-mic{display:none!important}
 @media (max-width:620px){.lgtre{grid-template-columns:1fr}.lgrec{flex-wrap:wrap}}
 .mp-tasti button.b-rec{background:#e11d48;color:#fff;border-color:#e11d48}
+
+/* ===================================================================== grafica sobria (4.2)
+   Un solo colore d'accento, icone a linea su fondo tenue, niente sfumature e ombre forti. In Modalità DSA
+   la pagina prende lo sfondo scelto in «Come leggo meglio» (di partenza grigio chiaro), il carattere scelto
+   (di partenza Lexend) e l'accento verde petrolio. */
+:root{--acc:#0369a1;--accs:#e8f2fb;--pbg:#f6f8fb}
+html.dsa{--acc:#0f766e;--accs:#e3f1ee;--pbg:var(--dsa-pbg,#f1f2f0)}
+body{background:var(--pbg)}
+.main{background:var(--pbg)}
+.side{background:#0b2440}
+.side::after{display:none}
+.logo{box-shadow:none}
+.nav a{border-radius:9px;color:#b8cbe0}
+.nav a.on{background:rgba(34,211,238,.1);box-shadow:none;color:#fff}
+.nav a.on::before{display:none}
+.nav a.on svg{color:var(--cyan)}
+.statobox{background:none;border:0;border-top:1px solid rgba(255,255,255,.08);border-radius:0;padding:12px 4px 4px}
+.card{box-shadow:none;border:1px solid #e6ebf1}
+.ico,.ico.i-blue,.ico.i-teal,.ico.i-vio,.ico.i-green,.ico.i-org,.banda .ico,#v-arch .banda .ico{background:var(--accs);color:var(--acc);box-shadow:none}
+.ico svg{width:20px;height:20px}
+.ico.ico-l svg{width:20px;height:20px}
+.tile{box-shadow:none;border:1px solid #e6ebf1;transition:border-color .12s,box-shadow .12s}
+.tile:hover{border-color:#bcd3e8;box-shadow:0 4px 14px rgba(15,27,45,.06);background:#fff}
+.tile .ico{width:38px;height:38px;border-radius:10px}
+.tile .num{color:var(--acc);background:var(--accs);border-radius:6px}
+.tile .bd{background:var(--accs);color:var(--acc);border-radius:6px}
+.src{box-shadow:none}
+.lbl{letter-spacing:.07em}
+html.dsa .altri .tile .ico{background:#eef0ee;color:#6a726c}
+/* Modalità DSA: il carattere scelto su tutte le pagine, i numeri dei momenti con l'accento */
+html.dsa .main{font-family:var(--dsa-font);letter-spacing:.015em;word-spacing:.06em}
+html.dsa .main .btn,html.dsa .main .in,html.dsa .main select{font-family:var(--dsa-font)}
+html.dsa .card,html.dsa .tile{background:#fff;border-color:#dfe2dd}
+html.dsascuro .card,html.dsascuro .tile{background:#fff}
+html.dsa .sdmom h3 .n{background:var(--acc)}
+html.dsa .b-main{background:var(--acc)}
+html.dsa .sw.on{background:var(--acc)}
+html.dsa .tile:hover{border-color:#9fcfc6}
+/* «Aa Come leggo»: le scelte veloci in alto nello Spazio DSA */
+.aa{position:relative}
+.aa-b{display:inline-flex;align-items:center;gap:8px;border:1px solid #dfe2dd;background:#fff;border-radius:10px;padding:7px 12px;font-weight:600;color:var(--ink);font-size:13.5px}
+.aa-b b{font-size:16px;font-family:var(--dsa-font)}
+.aa-pop{position:absolute;right:0;top:44px;width:340px;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(15,27,45,.25);border:1px solid #e2e8f0;padding:16px;z-index:40;font-family:"Segoe UI",system-ui,sans-serif;letter-spacing:0;word-spacing:0}
+.aa-pop .l{font-weight:700;margin:14px 0 7px;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:#64748b}.aa-pop .l:first-child{margin-top:0}
+.aa-pop .op{display:flex;gap:6px;flex-wrap:wrap}
+.aa-pop .op button{border:1.5px solid #dbe3ec;background:#fff;border-radius:9px;padding:7px 11px;font-size:13px;color:#0f1b2d}
+.aa-pop .op button.on{border-color:var(--acc);box-shadow:0 0 0 2px var(--accs)}
+.aa-pop .col button{width:44px;height:32px;padding:0}
+.aa-pop .giu{margin-top:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid #eef2f6;padding-top:12px;font-size:13px}
+.aa-pop .giu button{border:0;background:none;color:var(--acc);font-weight:600;padding:0;font-size:13px}
+@media (max-width:520px){.aa-pop{position:fixed;left:12px;right:12px;width:auto;top:auto;bottom:80px}}
+html:not(.android) .nav a.navdsa.on{background:rgba(34,211,238,.1);box-shadow:none}
+html:not(.android) .nav a.navdsa.on::before{display:none}
+.bric b,.briciole b{font-weight:600}
