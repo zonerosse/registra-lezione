@@ -43,6 +43,12 @@ const TQ = {
     t_nogoogle: 'Per il web serve l\'accesso con Google (passo 1): lo puoi fare dopo da Impostazioni › Inizia qui.',
     t_no: 'Non ho il telefono adesso', t_fine: 'Fatto: inizia a registrare',
     imp_t: '🚀 Inizia qui', imp_s: 'Google, Claude, telefono e web in 3 passi.', imp_b: 'Apri…',
+    // sul telefono
+    p3_tel: 'PC', imp_s_tel: 'Google, Claude e PC in 3 passi.', g_salta_tel: 'Salta: uso Verba Manent solo su questo telefono',
+    inv_t: 'Ho un invito', inv_s: "Te l'ha mandato chi ti presta le chiavi (WhatsApp o email): incollalo qui.", inv_b: 'Attiva',
+    inv_vuoto: "Incolla il messaggio dell'invito (inizia con VMIA-INVITO-1:).", chiave_t: 'Ho una chiave mia', chiave_s: 'Inizia con sk-ant-: incollala e la controllo.',
+    pc_t: 'Le stesse lezioni del PC', pc_s: 'Sul PC apri Verba Manent › Impostazioni › Sincronizza: compare un QR. Tocca qui sotto e inquadralo.',
+    pc_b: 'Collegati al PC', pc_h: 'PC e telefono sulla stessa rete Wi-Fi. Puoi farlo anche dopo da Impostazioni › Sincronizza.', pc_no: 'Non ho il PC adesso',
   },
   en: {
     p1: 'Google', p2: 'Claude', p3: 'Phone and web',
@@ -81,6 +87,11 @@ const TQ = {
     t_nogoogle: 'The web needs the Google sign-in (step 1): you can do it later from Settings › Start here.',
     t_no: "I don't have the phone now", t_fine: 'Done: start recording',
     imp_t: '🚀 Start here', imp_s: 'Google, Claude, phone and web in 3 steps.', imp_b: 'Open…',
+    p3_tel: 'PC', imp_s_tel: 'Google, Claude and PC in 3 steps.', g_salta_tel: 'Skip: I only use Verba Manent on this phone',
+    inv_t: 'I have an invitation', inv_s: 'The person lending you the keys sent it (WhatsApp or email): paste it here.', inv_b: 'Activate',
+    inv_vuoto: 'Paste the invitation message (it starts with VMIA-INVITO-1:).', chiave_t: 'I have my own key', chiave_s: 'It starts with sk-ant-: paste it and I will check it.',
+    pc_t: 'The same lectures as on the PC', pc_s: 'On the PC open Verba Manent › Settings › Sync: a QR appears. Tap below and scan it.',
+    pc_b: 'Connect to the PC', pc_h: 'PC and phone on the same Wi-Fi. You can also do it later from Settings › Sync.', pc_no: 'I do not have the PC now',
   },
 };
 const tq = (k, p) => { let s = (TQ[LINGUA] || TQ.it)[k] || TQ.it[k] || k; for (const [a, b] of Object.entries(p || {})) s = s.split('{' + a + '}').join(b); return s; };
@@ -89,6 +100,7 @@ const L_CHIAVI = 'https://console.anthropic.com/settings/keys', L_FATT = 'https:
 const G_SVG = '<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
 
 let V = null, fine = null, poll = null, codice = null;
+const TEL = typeof ANDROID !== 'undefined' && ANDROID;     // sul telefono: «Ho un invito» e il passo 3 «Collegati al PC»
 const ferma = () => { if (poll) { clearInterval(poll); poll = null; } };
 function chiudi() {
   ferma();
@@ -100,7 +112,7 @@ function chiudi() {
   if (f) f();
 }
 function passi(n) {
-  return `<div class="iq-passi">${['p1', 'p2', 'p3'].map((k, i) => `<div class="${i + 1 < n ? 'fatto' : i + 1 === n ? 'ora' : ''}"><i></i>${i + 1 < n ? '✓ ' : (i + 1) + ' · '}${sq(tq(k))}</div>`).join('')}</div>`;
+  return `<div class="iq-passi">${['p1', 'p2', TEL ? 'p3_tel' : 'p3'].map((k, i) => `<div class="${i + 1 < n ? 'fatto' : i + 1 === n ? 'ora' : ''}"><i></i>${i + 1 < n ? '✓ ' : (i + 1) + ' · '}${sq(tq(k))}</div>`).join('')}</div>`;
 }
 function mostra(n, html) { V.querySelector('.dlg').innerHTML = passi(n) + html; }
 const okBox = (t, s) => `<div class="iq-ok"><span class="s">✓</span><div><b>${sq(t)}</b><span class="hint">${sq(s)}</span></div></div>`;
@@ -137,7 +149,7 @@ async function passo1(err) {
     </div>
     <button class="iq-g" id="iqG">${G_SVG}${sq(tq('g_b'))}</button>
     <div class="dlgerr" id="iqErr">${sq(err || '')}</div>
-    <div class="pv-bt"><a id="iqSalta">${sq(tq('g_salta'))}</a><span class="hint">${sq(tq('g_dopo'))}</span></div>`);
+    <div class="pv-bt"><a id="iqSalta">${sq(tq(TEL ? 'g_salta_tel' : 'g_salta'))}</a><span class="hint">${sq(tq('g_dopo'))}</span></div>`);
   V.querySelector('#iqG').onclick = () => accedi();
   V.querySelector('#iqSalta').onclick = passo2;
 }
@@ -184,7 +196,11 @@ async function passo2() {
     return;
   }
   const link = (u, t) => `<a class="iq-link" data-u="${u}">${sq(t)}</a>`;
-  mostra(2, `<h3>${sq(tq('c_t'))}</h3><div class="tx">${sq(tq('c_s'))}</div>
+  const invito = TEL ? `<div class="iq-inv"><b>${sq(tq('inv_t'))}</b><div class="hint">${sq(tq('inv_s'))}</div>
+      <div class="iq-campo"><input class="in" id="iqInv" placeholder="VMIA-INVITO-1:…" autocomplete="off"><button class="btn b-main b-sm" id="iqInvOk">${sq(tq('inv_b'))}</button></div>
+      <div class="dlgerr" id="iqInvErr"></div></div>
+    <div style="margin-top:12px"><b>${sq(tq('chiave_t'))}</b><div class="hint">${sq(tq('chiave_s'))}</div></div>` : '';
+  mostra(2, `<h3>${sq(tq('c_t'))}</h3><div class="tx">${sq(tq('c_s'))}</div>${invito}
     <div class="iq-campo"><input class="in" id="iqK" type="password" placeholder="sk-ant-…" autocomplete="off"><button class="btn b-ghost b-sm" id="iqInc">${sq(tq('incolla'))}</button></div>
     <div class="dlgerr" id="iqErr"></div>
     <details class="iq-dove" open><summary>${sq(tq('c_dove'))}</summary><ol>
@@ -194,6 +210,14 @@ async function passo2() {
     <div class="pv-bt"><a id="iqDopo">${sq(tq('c_dopo'))}</a><button class="btn b-main" id="iqAv">${sq(tq('avanti'))}</button></div>
     <div class="hint" style="text-align:center;margin-top:10px">${sq(tq('c_nota'))}</div>`);
   const inp = V.querySelector('#iqK'), err = V.querySelector('#iqErr');
+  if (TEL) V.querySelector('#iqInvOk').onclick = async () => {
+    const x = V.querySelector('#iqInv').value.trim(), e = V.querySelector('#iqInvErr');
+    if (!x) { e.textContent = tq('inv_vuoto'); return; }
+    let r = {};
+    try { r = await A.invito_attiva(x); } catch (er) { r = {ok: false, msg: String(er)}; }
+    if (!r || !r.ok) { e.textContent = (r && (r.msg || r.errore)) || '?'; return; }
+    via(); passo3();
+  };
   let aperto = false;
   V.querySelectorAll('.iq-link').forEach(a => a.onclick = () => { aperto = true; A.apri(a.dataset.u); });
   const incolla = async () => { const x = (await leggiAppunti()).replace(/\s+/g, ''); if (x.startsWith('sk-ant-')) { inp.value = x; return true; } return false; };
@@ -217,6 +241,16 @@ async function passo2() {
 // ------------------------------------------------------------------ 3 · Telefono e web
 async function passo3() {
   ferma();
+  if (TEL) {
+    mostra(3, `<h3>${sq(tq('pc_t'))}</h3><div class="tx">${sq(tq('pc_s'))}</div>
+      <div style="text-align:center;margin-top:14px"><button class="btn b-main" id="iqPc">${sq(tq('pc_b'))}</button></div>
+      <div class="hint" style="margin-top:10px">${sq(tq('pc_h'))}</div>
+      <div class="pv-bt"><a id="iqNo">${sq(tq('pc_no'))}</a><button class="btn b-main" id="iqFine">${sq(tq('t_fine'))}</button></div>`);
+    V.querySelector('#iqNo').onclick = chiudi;
+    V.querySelector('#iqFine').onclick = chiudi;
+    V.querySelector('#iqPc').onclick = () => { chiudi(); vai('sy'); SY.modo = 'collega'; SY.fatto = ''; disegnaSY(true); };
+    return;
+  }
   const n = await A.nuvola_stato();
   let qr = '', cod = '';
   try {
@@ -270,16 +304,15 @@ window.iniziaQui = function (poi) {
   document.body.appendChild(V);
   passo1();
 };
-// Impostazioni › Inizia qui (solo sul PC)
+// Impostazioni › Inizia qui (PC e telefono)
 function rigaImpostazioni() {
-  if (typeof ANDROID !== 'undefined' && ANDROID) return;
   const primo = document.querySelector('#v-imp .imsez');
   const c = document.getElementById('iqImp');
   if (c && c.dataset.l === LINGUA) return;
   if (c) c.remove();
   if (!primo) return;
   const d = document.createElement('div'); d.className = 'card'; d.id = 'iqImp'; d.dataset.l = LINGUA; d.style.marginBottom = '14px';
-  d.innerHTML = `<div class="set"><div class="t"><b>${sq(tq('imp_t'))}</b><span>${sq(tq('imp_s'))}</span></div><button class="btn b-ghost b-sm" id="iqImpB">${sq(tq('imp_b'))}</button></div>`;
+  d.innerHTML = `<div class="set"><div class="t"><b>${sq(tq('imp_t'))}</b><span>${sq(tq(TEL ? 'imp_s_tel' : 'imp_s'))}</span></div><button class="btn b-ghost b-sm" id="iqImpB">${sq(tq('imp_b'))}</button></div>`;
   primo.parentNode.insertBefore(d, primo);
   d.querySelector('#iqImpB').onclick = () => window.iniziaQui();
 }

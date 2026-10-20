@@ -134,7 +134,10 @@ jobs:
           js 01-benvenuto ""
           js 02-prima-di-iniziare "document.querySelector('.velo [data-l=it]').click()"
           js 03-prima-spuntata "$(giu 1) var c=document.querySelector('#pvCk'); c.checked=true; c.onchange();"
-          js 04-registra "document.querySelector('#pvOk').click()"
+          js 04-inizia-qui "document.querySelector('#pvOk').click()" 6
+          js 04b-inizia-claude "document.querySelector('#iqSalta').click()"
+          js 04c-inizia-pc "document.querySelector('#iqDopo').click()"
+          js 04-registra "document.querySelector('#iqNo').click()"
           js 05-registra-meta "$(giu 0.5)"
           js 06-registra-fondo "$(giu 1)"
           js 07-lezioni "$(vai arch)"
@@ -154,10 +157,11 @@ jobs:
           print("VMIA-INVITO-1:" + base64.urlsafe_b64encode(bytes(a ^ b for a, b in zip(d, fl))).decode().rstrip("="))
           PY
           )
-          P=$(cat "$DATI/porta.txt")
-          echo "== api invito_attiva" >> esito/api.txt
-          curl -s -m 20 -X POST -d "[\"$INV\"]" http://127.0.0.1:$P/api/invito_attiva >> esito/api.txt; echo >> esito/api.txt
+          P=$(cat "$DATI/porta.txt" 2>/dev/null || true)
+          echo "== api invito_attiva (porta $P)" >> esito/api.txt
+          [ -n "$P" ] && (curl -s -m 20 -X POST -d "[\"$INV\"]" http://127.0.0.1:$P/api/invito_attiva >> esito/api.txt || echo "curl $?" >> esito/api.txt); echo >> esito/api.txt
           js 11b-invito "$(vai imp) setTimeout(function(){var x=document.querySelector('#hoTxt'); x.scrollIntoView(); x.value='$INV'; document.querySelector('#hoVai').click();},800);" 10
+          js 11c-informazioni "document.querySelector('#imInfo').click()"
           js 12-guida "$(vai guida)"
           js 13-guida-meta "$(giu 0.5)"
           js 14-guida-fondo "$(giu 1)"

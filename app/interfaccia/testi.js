@@ -248,7 +248,7 @@ const TESTI = {
     'in.cart.t': 'Cartella delle lezioni', 'in.cart': 'Non riesco a usare la cartella delle lezioni. Scegline un\'altra in Impostazioni.',
     'dnd.t': '🔕 Prima di iniziare: «Non disturbare»', 'dnd': 'Così i suoni delle notifiche (mail, WhatsApp, Windows) non finiscono nella registrazione.',
     'dnd.passi': '1. Tocca «Apri Non disturbare»<br>2. Nella finestra di Windows accendi «Non disturbare»<br>3. Torna qui e tocca «Fatto, inizia»',
-    'dnd.ck': 'Non mostrarlo più (si riattiva in Impostazioni)', 'dnd.apri': 'Apri Non disturbare', 'dnd.stesso': 'Inizia lo stesso', 'dnd.fatto': 'Fatto, inizia',
+    'dnd.tel': 'Così suonerie e notifiche (chiamate, WhatsApp, mail) non finiscono nella registrazione.', 'dnd.passi.ip': '1. Scorri in giù dall\'angolo in alto a destra<br>2. Tocca «Full immersion» (la luna)<br>3. Scegli «Non disturbare» e torna qui', 'dnd.passi.and': '1. Scorri in giù dall\'alto dello schermo<br>2. Tocca «Non disturbare»<br>3. Torna qui e tocca «Fatto, inizia»', 'im.info': 'Informazioni', 'im.info.s': 'Versione, licenze, assistenza', 'in.agg.app': 'Gli aggiornamenti arrivano dall\'App Store.', 'in.agg.tel': 'Gli aggiornamenti si cercano in Impostazioni.', 'dnd.ck': 'Non mostrarlo più (si riattiva in Impostazioni)', 'dnd.apri': 'Apri Non disturbare', 'dnd.stesso': 'Inizia lo stesso', 'dnd.fatto': 'Fatto, inizia',
     // registrazione
     'lv.pausa': '❚❚ IN PAUSA da {t} · non registro niente', 'lv.slide': 'slide catturate', 'lv.reg': 'registrati', 'lv.pac': 'parti pronte',
     'lv.ultime': 'Ultime slide', 'lv.sole': 'si aggiornano da sole', 'lv.vuoto': 'Le slide compaiono qui appena cambiano sullo schermo.',
@@ -591,7 +591,7 @@ const TESTI = {
     'in.cart.t': 'Lectures folder', 'in.cart': 'I can\'t use the lectures folder. Choose another one in Settings.',
     'dnd.t': '🔕 Before you start: «Do not disturb»', 'dnd': "So notification sounds (mail, WhatsApp, Windows) don't end up in the recording.",
     'dnd.passi': '1. Tap «Open Do not disturb»<br>2. In the Windows window turn on «Do not disturb»<br>3. Come back here and tap «Done, start»',
-    'dnd.ck': "Don't show this again (turn it back on in Settings)", 'dnd.apri': 'Open Do not disturb', 'dnd.stesso': 'Start anyway', 'dnd.fatto': 'Done, start',
+    'dnd.tel': 'So ringtones and notifications (calls, WhatsApp, mail) do not end up in the recording.', 'dnd.passi.ip': '1. Swipe down from the top-right corner<br>2. Tap «Focus» (the moon)<br>3. Choose «Do Not Disturb» and come back here', 'dnd.passi.and': '1. Swipe down from the top of the screen<br>2. Tap «Do not disturb»<br>3. Come back here and tap «Done, start»', 'im.info': 'About', 'im.info.s': 'Version, licenses, support', 'in.agg.app': 'Updates come from the App Store.', 'in.agg.tel': 'Check for updates in Settings.', 'dnd.ck': "Don't show this again (turn it back on in Settings)", 'dnd.apri': 'Open Do not disturb', 'dnd.stesso': 'Start anyway', 'dnd.fatto': 'Done, start',
     'lv.pausa': "❚❚ PAUSED for {t} · I'm not recording", 'lv.slide': 'slides captured', 'lv.reg': 'recorded', 'lv.pac': 'parts ready',
     'lv.ultime': 'Latest slides', 'lv.sole': 'updated automatically', 'lv.vuoto': 'Slides appear here as soon as they change on screen.',
     'lv.parti': 'Parts and notes', 'lv.pz': 'Pause (break)', 'lv.ri': 'Resume recording', 'lv.fine': 'Stop', 'lv.riduci': 'You can minimise this window: recording continues.',
