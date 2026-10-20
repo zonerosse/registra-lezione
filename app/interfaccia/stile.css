@@ -1332,3 +1332,16 @@ table.an-lz td:first-child{white-space:nowrap}
 .tile{padding:9px 11px;gap:10px}
 .tile .ico{width:32px!important;height:32px!important;border-radius:9px!important}
 .tile small{margin-top:1px}
+/* ---- Fruibilità sul telefono: tasti più comodi da toccare, scritte leggibili */
+html.android .chip{padding:8px 13px;font-size:13.5px;min-height:36px;display:inline-flex;align-items:center}
+html.android .lnk{padding:9px 4px;font-size:13px}
+html.android .perc .briciole a{padding:7px 8px}
+html.android #v-chiedi .row,html.android #ddCard .row,html.android #v-tu .row{flex-wrap:wrap}
+html.android #chIn,html.android #ddIn,html.android #tuIn{flex:1 1 100%}
+html.android #chVai,html.android #ddVai,html.android #tuVai{flex:1}
+@media (max-width:560px){.an-assi span{font-size:10.5px}.an-assi span:nth-child(even){visibility:hidden}.an-bar span{display:none;font-size:11px}.an-bar.sel span,.an-bar.ora span{display:block}}
+.cov small{font-size:11px}
+.fth em{font-size:11px}
+html.android .matlez button{padding:7px 12px;font-size:13px}
+html.android .capi .spz{padding:6px 12px;opacity:.75}
+html.android .fare input{width:22px;height:22px}
