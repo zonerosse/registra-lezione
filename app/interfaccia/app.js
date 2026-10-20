@@ -1650,7 +1650,8 @@ async function mostraMomento(cartella, sec, slide, nome) {
 
 /* ------------------------------------------------------------------ mappa mentale */
 let MP = {lez: null, dati: null};
-const COLORI_MAPPA = ['#0369a1', '#7c3aed', '#c2410c', '#059669', '#be123c', '#0891b2'];
+// colori freddi e sobri (niente viola, arancio o rosso, che sulle voci chiare diventano rosati)
+const COLORI_MAPPA = ['#0369a1', '#0f766e', '#15803d', '#475569', '#155e75', '#4d7c0f'];
 async function apriMappa(l, rifai = false) {
   MP = {lez: l, dati: null};
   $('mpSub').textContent = `${l.nome} · ${l.quando}`;

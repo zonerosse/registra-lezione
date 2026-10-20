@@ -1204,3 +1204,15 @@ html.dsa .tile:hover{border-color:#9fcfc6}
 html:not(.android) .nav a.navdsa.on{background:rgba(34,211,238,.1);box-shadow:none}
 html:not(.android) .nav a.navdsa.on::before{display:none}
 .bric b,.briciole b{font-weight:600}
+/* niente rosa, viola e arancio: copertine, etichette e bottoni nei toni freddi dell'accento */
+:root{--cor:var(--acc)}
+.c0{background:#0369a1}.c1{background:#0f766e}.c2{background:#15803d}.c3{background:#475569}.c4{background:#155e75}.c5{background:#0d4275}
+.cov{box-shadow:none}
+.b-cor{background:var(--acc)}
+.bar.cor i{background:var(--acc)}
+.p-cor,.p-vio{background:var(--accs);color:var(--acc)}
+.lez .inf>b+.ftag,.lez .ftag{color:#475569;background:#eef1f4}
+.lez .ftag.esame{color:var(--acc);background:var(--accs)}
+.cap ul li::before{color:var(--acc)}.cap.perche summary .n{background:var(--accs);color:var(--acc)}
+.err,.esd.esame,.tcopz button.errata,.dvvia{background:#f8fafc}
+.b-pz{background:#b45309}.live.pz{background:#7c2d12}

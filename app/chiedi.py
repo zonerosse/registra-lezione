@@ -309,7 +309,7 @@ def disposizione(dati, W=900):
     return {"W": W, "H": H, "cx": W / 2, "cy": H / 2, "rami": out}
 
 
-COLORI = ["#0369a1", "#7c3aed", "#c2410c", "#059669", "#be123c", "#0891b2"]
+COLORI = ["#0369a1", "#0f766e", "#15803d", "#475569", "#155e75", "#4d7c0f"]
 
 
 def pdf_mappa(dati, info, dest):
