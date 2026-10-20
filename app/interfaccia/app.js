@@ -208,7 +208,7 @@ function vai(p, tornando = false) {
   if (p === 'fare') apriCose();
   if (p === 'and') apriAndamento();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
-  if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); if (ANDROID) $('infoAggTel').textContent = t(IPHONE ? 'in.agg.app' : 'in.agg.tel'); }
+  if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); $('infoAggTel').textContent = document.documentElement.classList.contains('web') ? t('in.agg.web') : ANDROID ? t(IPHONE ? 'in.agg.app' : 'in.agg.tel') : ''; }
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
