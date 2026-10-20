@@ -1,6 +1,6 @@
 {
- "versione": "4.5",
+ "versione": "4.6",
  "librerie": 2,
- "novita": "Nuova pagina «Andamento» (nel menu; sul telefono da Studia): ore registrate settimana per settimana, lezioni con giorno, ora e durata, ore per materia, prossimi esami, voti, ripasso e cosa resta da sistemare; per il lavoro riunioni, cose da fare e decisioni. Grafica più compatta: riquadri più bassi, meno spazio vuoto.",
- "novita_en": "New «Progress» page (in the menu; on the phone from Study): hours recorded week by week, lectures with day, time and length, hours per subject, upcoming exams, marks, review and what's left to sort out; for work, meetings, to-dos and decisions. More compact look: lower tiles, less empty space."
+ "novita": "Più comodo sul telefono: scelte e filtri più grandi da toccare, casella di «Chiedi» a tutta larghezza, collegamenti piccoli più facili da centrare, date del grafico di Andamento leggibili.",
+ "novita_en": "Easier on the phone: bigger choices and filters to tap, full-width «Ask» box, small links easier to hit, readable dates in the Progress chart."
 }
