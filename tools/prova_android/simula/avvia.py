@@ -18,6 +18,9 @@ if os.environ.get("SIM_EXTRA"):          # dati in piu' (per i video della guida
 def aa_cerca():
     tipo = (open(os.path.join(os.environ["SIM_DATI"], "agg_tipo.txt")).read().strip()
             if os.path.exists(os.path.join(os.environ["SIM_DATI"], "agg_tipo.txt")) else "apk")
+    if os.environ.get("VM_IPHONE"):      # iPhone: il controllo vero (avviso e TestFlight)
+        import android_motore
+        return android_motore.cerca_aggiornamento()
     if tipo == "zip":      # aggiornamento leggero: solo i file del programma
         return {"versione": "0.7.1", "novita": "prova", "novita_en": "test", "completo": False, "contenuto": 99,
                 "url_zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"}

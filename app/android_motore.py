@@ -17,6 +17,7 @@ solo le parti che su Windows usano cose di Windows:
 Poi apro un piccolo server solo dentro il telefono (127.0.0.1) che da' le pagine e risponde a /api/...
 """
 import json
+import re
 import logging
 import mimetypes
 import os
@@ -533,8 +534,7 @@ def _versione_locale():
 
 def cerca_aggiornamento():
     """App nuova (APK, si installa dal browser) o solo file nuovi (aggiornamento leggero, dentro l'app)."""
-    if os.environ.get("VM_IPHONE") or sys.platform == "ios":      # sull'iPhone gli aggiornamenti arrivano solo dall'App Store
-        return None
+    iphone = bool(os.environ.get("VM_IPHONE") or sys.platform == "ios")
     import urllib.request
     import ssl
     req = urllib.request.Request(AGG_URL + f"?t={int(time.time())}", headers={"User-Agent": "RegistraLezione"})
@@ -542,6 +542,12 @@ def cerca_aggiornamento():
         remota = json.loads(r.read().decode("utf-8"))
     loc = _versione_locale()
     base = {"versione": remota.get("versione"), "novita": remota.get("novita", ""), "novita_en": remota.get("novita_en", "")}
+    if iphone:      # sull'iPhone l'app non scarica niente: avvisa e apre TestFlight, dove si tocca «Aggiorna»
+        def num(v):
+            return tuple(int(x) for x in re.findall(r"\d+", str(v or "0")))
+        if num(remota.get("versione")) > num(Ponte.versione()):
+            return {**base, "completo": True, "iphone": True, "pagina": "itms-beta://"}
+        return None
     if int(remota.get("codice") or 0) > loc["codice"]:
         return {**base, "completo": True, "pagina": remota.get("apk")}
     if int(remota.get("contenuto") or 0) > int(loc["contenuto"]) and remota.get("zip"):
@@ -652,7 +658,7 @@ def _prepara(cartella_app, lingua_tel):
     import motore as mt
 
     def apri(percorso):
-        if str(percorso).startswith(("http://", "https://")):     # es. «Scarica» l'app nuova: si apre nel browser
+        if str(percorso).startswith(("http://", "https://", "itms-beta:")):     # es. «Scarica» l'app nuova: si apre nel browser
             Ponte.apriLink(str(percorso))
             return True
         p = Path(str(percorso))
