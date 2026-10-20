@@ -591,6 +591,17 @@ def riavvia():
 def _prepara(cartella_app, lingua_tel):
     os.environ["HOME"] = str(Ponte.cartellaDati())
     os.environ.pop("APPDATA", None)
+    if os.environ.get("VM_IPHONE"):
+        # sull'iPhone vero nella cartella principale dell'app non si puo' scrivere (solo Documents, Library, tmp):
+        # impostazioni, modelli e strumenti vanno in Library/Application Support
+        sup = Path(os.environ["HOME"]) / "Library" / "Application Support"
+        sup.mkdir(parents=True, exist_ok=True)
+        os.environ["APPDATA"] = os.environ["LOCALAPPDATA"] = str(sup)
+        vecchio = Path(os.environ["HOME"]) / ".config" / "RegistraLezione"
+        nuovo = sup / "RegistraLezione"
+        if vecchio.exists() and not (nuovo / "config.json").exists():
+            import shutil
+            shutil.copytree(vecchio, nuovo, dirs_exist_ok=True)
     os.environ["RL_FONT_DIR"] = str(Path(cartella_app) / "font")
     os.environ.setdefault("TMPDIR", str(Ponte.cartellaCache()))
     sys.path.insert(0, cartella_app)
