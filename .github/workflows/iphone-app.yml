@@ -83,9 +83,13 @@ jobs:
           printf '%s' "$P8" > "$K"
           AUTH="-allowProvisioningUpdates -authenticationKeyPath $K -authenticationKeyID $KEY_ID -authenticationKeyIssuerID $ISSUER"
           P=$(find build -name "*.xcodeproj" -path "*xcode*" | head -1)
+          mkdir -p ../esito-app
+          set -o pipefail
           xcodebuild -project "$P" -scheme "Verba Manent IA" -configuration Release -sdk iphoneos \
                      -destination 'generic/platform=iOS' -archivePath /tmp/vm.xcarchive \
-                     DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Automatic $AUTH archive -quiet
+                     DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Automatic $AUTH archive > /tmp/archivio.txt 2>&1 \
+            || { grep -E "error|Error|ERROR|warning: .*(sign|provision)|\*\*" /tmp/archivio.txt | tail -80 > ../esito-app/firma.txt; tail -60 /tmp/archivio.txt >> ../esito-app/firma.txt; cat ../esito-app/firma.txt; exit 65; }
+          echo "archivio fatto" > ../esito-app/firma.txt
           cat > /tmp/esporta.plist <<PL
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -98,7 +102,9 @@ jobs:
           </dict></plist>
           PL
           xcodebuild -exportArchive -archivePath /tmp/vm.xcarchive -exportOptionsPlist /tmp/esporta.plist \
-                     -exportPath /tmp/vm-export $AUTH
+                     -exportPath /tmp/vm-export $AUTH > /tmp/invio.txt 2>&1 \
+            || { grep -E "error|Error|ERROR" /tmp/invio.txt | tail -60 > ../esito-app/invio.txt; tail -60 /tmp/invio.txt >> ../esito-app/invio.txt; cat ../esito-app/invio.txt; exit 66; }
+          echo "inviato" > ../esito-app/invio.txt
           rm -f "$K"
           echo "✓ Mandata a TestFlight: tra pochi minuti compare nell'app TestFlight."
 
