@@ -1268,3 +1268,8 @@ html.dsa .altri .tile .ico,.tile.no .ico{background:#94a3b8}
 /* «Avvisa il docente» e le etichette di avviso: come gli altri avvisi, fondo neutro e riga ambra (niente giallo o arancio chiaro) */
 .avv-card{background:#fff;border:1px solid #e2e8f0;border-left:3px solid #b45309}
 .avv{background:#f6f8fb;color:#92400e;border:1px solid #e2e8f0;border-left:3px solid #b45309}
+/* Flashcard: il retro (la risposta) bianco con una fascia verde petrolio in cima, diverso dal fronte; parole chiave non più gialle */
+.retro{background:#fff}
+.retro h4{margin:-24px -30px 14px;padding:10px 30px;background:#0f766e;color:#fff;border-radius:20px 20px 0 0}
+.kw{background:#ecfdf5;color:#0f766e}
+html.dsa .carta .faccia.retro h4{color:#fff}
