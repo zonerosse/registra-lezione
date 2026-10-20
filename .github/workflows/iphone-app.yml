@@ -61,6 +61,8 @@ jobs:
           V=$(python -c "import json;print(json.load(open('../android/versione.json'))['versione'])" 2>/dev/null || echo 0.1.0)
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $V" "$PL"
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PL"
+          # usa solo la cifratura standard (HTTPS): così TestFlight non chiede ogni volta la «conformità all'esportazione»
+          /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" "$PL" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" "$PL"
           echo "versione $V ($GITHUB_RUN_NUMBER)"
 
       - name: Costruisci (senza firma, se mancano le chiavi di Apple)
