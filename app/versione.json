@@ -1,6 +1,6 @@
 {
- "versione": "4.11",
+ "versione": "4.12",
  "librerie": 2,
- "novita": "Gli indirizzi scritti nei testi ora sono link: si aprono con un clic. In «Informazioni» c'è il link al sito verbamanent.app. Il tasto destro funziona anche sui link (Apri / Copia il link) e sui testi (Copia / Seleziona tutto).",
- "novita_en": "Addresses written in the texts are now links: they open with one click. «About» has the link to the verbamanent.app website. Right-click now works on links too (Open / Copy link) and on texts (Copy / Select all)."
+ "novita": "Sull'iPhone: quando esce una versione nuova compare l'avviso con il tasto «Apri TestFlight», e in «Informazioni» la riga per aggiornare. Dalla 4.11: gli indirizzi nei testi sono link, in «Informazioni» c'è il link a verbamanent.app, tasto destro su link e testi.",
+ "novita_en": "On the iPhone: when a new version comes out you see a notice with the «Open TestFlight» button, and in «About» a line to update. From 4.11: addresses in the texts are links, «About» has the link to verbamanent.app, right-click on links and texts."
 }

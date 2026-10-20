@@ -567,11 +567,17 @@ async function aggiorna() {
 let AGG_VISTO = false;
 async function avvisoAgg() {
   const g = S.agg || {};
-  if (IPHONE) return;              // sull'iPhone gli aggiornamenti arrivano dall'App Store
   if (AGG_VISTO || g.tipo !== 'trovato' || !g.avviso || S.registro || document.querySelector('.velo')) return;
   AGG_VISTO = true;
   const d = g.dato || {};
   const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
+  if (d.iphone) {            // sull'iPhone: si installa da TestFlight. L'avviso compare una volta sola per versione
+    try { if (localStorage.getItem('vm_ip_agg') === d.versione) return; localStorage.setItem('vm_ip_agg', d.versione); } catch (_) {}
+    const v = await dialogo({titolo: t('ag.pronta', {v: d.versione}), testo: nov, html: `<div class="hint" style="margin-top:10px">${esc(t('ag.ip.s'))}</div>`,
+      bottoni: [{t: t('ag.tardi'), v: false}, {t: t('ag.ip'), cls: 'b-main', v: true}]});
+    if (v) A.installa_aggiornamento();
+    return;
+  }
   const v = await dialogo({titolo: t('ag.pronta', {v: d.versione}), testo: nov + (d.completo ? '\n\n' + t('ag.completo') : ''),
     html: d.completo ? '' : `<div class="hint" style="margin-top:10px">${esc(t('ag.riapri.s'))}</div>`,
     bottoni: [{t: t('ag.tardi'), v: false}, {t: d.completo ? t('ag.pagina') : t('ag.riapri'), cls: 'b-main', v: true}]});
@@ -1478,7 +1484,6 @@ function disegnaImpostazioni() {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
     $('swCarica').classList.toggle('on', !!R.solo_carica);
     $('andVer').textContent = t('and.agg.s', {v: R.versione});
-    if (IPHONE) ['andAgg', 'btnCercaAgg', 'aggBox'].forEach(x => $(x).classList.add('hidden'));   // sull'iPhone gli aggiornamenti li da' l'App Store
   }
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
@@ -4690,6 +4695,9 @@ function disegnaAgg() {
   if (g.tipo === 'cerco') h = `<div class="card row" style="padding:12px 14px"><span class="spin"></span><span>${esc(g.testo)}</span></div>`;
   else if (g.tipo === 'ok') h = `<div class="card row" style="padding:12px 14px"><span class="pill p-ok">✓</span><span class="sp">${esc(g.testo)}</span><button class="lnk" id="aggX">${t('chiudi')}</button></div>`;
   else if (g.tipo === 'msg') h = `<div class="card row" style="padding:12px 14px"><span class="sp">${esc(g.testo)}</span><button class="lnk" id="aggX">${t('chiudi')}</button></div>`;
+  else if (IPHONE) h = '';    // sull'iPhone qui compare solo la versione nuova (sotto)
+  if (IPHONE && g.tipo === 'trovato' && g.dato && g.dato.iphone)
+    h = `<div class="card row" style="padding:10px 12px;border-color:#bfdbfe;background:#eff6ff;text-align:left"><div class="sp"><b style="color:var(--ink);display:block">${esc(t('ag.c', {v: g.dato.versione}))}</b><span class="hint">${esc(t('ag.ip.r'))}</span></div><button class="btn b-main b-sm" id="aggOk">${esc(t('ag.ip'))}</button></div>`;
   else if (g.tipo === 'trovato') {
     const d = g.dato;
     const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
