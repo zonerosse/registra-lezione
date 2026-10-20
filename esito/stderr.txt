@@ -1,16 +1,16 @@
-2026-10-20 18:56:30.363 Verba Manent IA[9346:30241] Configuring isolated Python...
-2026-10-20 18:56:30.364 Verba Manent IA[9346:30241] Pre-initializing Python runtime...
-2026-10-20 18:56:30.368 Verba Manent IA[9346:30241] PythonHome: /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/8D38C2E8-6F96-46A1-ABC5-3E02B4017071/Verba Manent IA.app/python
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] PYTHONPATH:
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/8D38C2E8-6F96-46A1-ABC5-3E02B4017071/Verba Manent IA.app/python/lib/python3.12
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/8D38C2E8-6F96-46A1-ABC5-3E02B4017071/Verba Manent IA.app/python/lib/python3.12/lib-dynload
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/8D38C2E8-6F96-46A1-ABC5-3E02B4017071/Verba Manent IA.app/app
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] Configure argc/argv...
-2026-10-20 18:56:30.372 Verba Manent IA[9346:30241] Initializing Python runtime...
-2026-10-20 18:56:30.468 Verba Manent IA[9346:30241] Adding app_packages as site directory: /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/8D38C2E8-6F96-46A1-ABC5-3E02B4017071/Verba Manent IA.app/app_packages
-2026-10-20 18:56:30.468 Verba Manent IA[9346:30241] Running app module: verbamanent
-2026-10-20 18:56:30.487 Verba Manent IA[9346:30241] ---------------------------------------------------------------------------
-whisper_init_from_file_with_params_no_state: loading model from '/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/EC10020C-C345-4AD8-8216-31B973CCD299/ggml-small-q5_1.bin'
+2026-10-20 19:20:26.435 Verba Manent IA[11124:34629] Configuring isolated Python...
+2026-10-20 19:20:26.437 Verba Manent IA[11124:34629] Pre-initializing Python runtime...
+2026-10-20 19:20:26.441 Verba Manent IA[11124:34629] PythonHome: /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/7E7CC935-CD1C-4C0B-A071-AD26E904C48A/Verba Manent IA.app/python
+2026-10-20 19:20:26.446 Verba Manent IA[11124:34629] PYTHONPATH:
+2026-10-20 19:20:26.446 Verba Manent IA[11124:34629] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/7E7CC935-CD1C-4C0B-A071-AD26E904C48A/Verba Manent IA.app/python/lib/python3.12
+2026-10-20 19:20:26.446 Verba Manent IA[11124:34629] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/7E7CC935-CD1C-4C0B-A071-AD26E904C48A/Verba Manent IA.app/python/lib/python3.12/lib-dynload
+2026-10-20 19:20:26.446 Verba Manent IA[11124:34629] - /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/7E7CC935-CD1C-4C0B-A071-AD26E904C48A/Verba Manent IA.app/app
+2026-10-20 19:20:26.448 Verba Manent IA[11124:34629] Configure argc/argv...
+2026-10-20 19:20:26.448 Verba Manent IA[11124:34629] Initializing Python runtime...
+2026-10-20 19:20:26.560 Verba Manent IA[11124:34629] Adding app_packages as site directory: /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Bundle/Application/7E7CC935-CD1C-4C0B-A071-AD26E904C48A/Verba Manent IA.app/app_packages
+2026-10-20 19:20:26.561 Verba Manent IA[11124:34629] Running app module: verbamanent
+2026-10-20 19:20:26.577 Verba Manent IA[11124:34629] ---------------------------------------------------------------------------
+whisper_init_from_file_with_params_no_state: loading model from '/Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/CD38E45C-69F5-403D-8C57-959E05DE0895/ggml-small-q5_1.bin'
 whisper_init_with_params_no_state: use gpu    = 0
 whisper_init_with_params_no_state: flash attn = 0
 whisper_init_with_params_no_state: gpu_device = 0
