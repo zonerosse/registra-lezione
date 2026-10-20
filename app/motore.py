@@ -106,6 +106,9 @@ def salva_config(c):
 def apri(percorso):
     """Apre un file o una cartella con il programma di Windows. False se non ci riesce."""
     try:
+        if str(percorso).startswith(("http://", "https://")):    # un link nei testi: si apre nel browser
+            import webbrowser
+            return bool(webbrowser.open(str(percorso)))
         if sys.platform == "win32":
             os.startfile(str(percorso))
         else:

@@ -297,6 +297,39 @@ new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
   else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); else if (p.matches(TOGLI_SEL)) togliEm(p); if (n.parentElement) emTesto(n); }
 }))).observe(document.documentElement, {childList: true, subtree: true});
 document.addEventListener('DOMContentLoaded', () => icoTutte(document.body));
+/* ------------------------------------------------------------------ indirizzi nei testi: diventano link cliccabili (si aprono nel browser) */
+const URL_RE = /(?<![@\w.\/-])((?:https?:\/\/)?(?:[a-z0-9-]+\.)+(?:app|com|it|org|net|eu|io)(?:\/[\w\-.\/?=&%#~]*[\w\/])?)(?![\w@-])/gi;
+const URL_NO = 'a,button,textarea,input,select,option,script,style,svg,[contenteditable="true"],.no-link';
+function linkTesto(tn) {
+  const v = tn.nodeValue; if (!v || !/\.(app|com|it|org|net|eu|io)\b/i.test(v)) return;
+  const pa = tn.parentElement; if (!pa || pa.closest(URL_NO)) return;
+  URL_RE.lastIndex = 0; if (!URL_RE.test(v)) return; URL_RE.lastIndex = 0;
+  const f = document.createDocumentFragment(); let i = 0, m;
+  while ((m = URL_RE.exec(v))) {
+    if (m.index > i) f.append(v.slice(i, m.index));
+    const a = document.createElement('a'); a.className = 'url'; a.href = '#'; a.textContent = m[1];
+    a.dataset.u = /^https?:/i.test(m[1]) ? m[1] : 'https://' + m[1]; f.append(a); i = m.index + m[0].length;
+  }
+  if (i < v.length) f.append(v.slice(i));
+  tn.replaceWith(f);
+}
+function linkSotto(r) {
+  if (r.nodeType === 3) return linkTesto(r);
+  if (!r.querySelectorAll) return;
+  const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT); const ns = []; let n;
+  while ((n = w.nextNode())) ns.push(n);
+  ns.forEach(linkTesto);
+}
+function copiaTesto(x) {
+  const vecchia = () => { const ta = document.createElement('textarea'); ta.value = x; ta.style.cssText = 'position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (_) {} ta.remove(); };
+  try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(x).then(() => toast(t('dx.copiato')), () => { vecchia(); toast(t('dx.copiato')); }); return; } } catch (_) {}
+  vecchia(); toast(t('dx.copiato'));
+}
+function apriUrl(u) { if (SUL_WEB()) window.open(u, '_blank', 'noopener'); else A.apri(u); }
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.isConnected) linkSotto(n); })))
+  .observe(document.documentElement, {childList: true, subtree: true});
+document.addEventListener('DOMContentLoaded', () => linkSotto(document.body));
+document.addEventListener('click', e => { const a = e.target.closest('a.url'); if (!a) return; e.preventDefault(); e.stopPropagation(); apriUrl(a.dataset.u); }, true);
 /* ------------------------------------------------------------------ licenze */
 // i testi (quasi 1 MB) stanno in licenze.js, caricato solo quando si apre la pagina
 function apriLicenze() {
@@ -4682,13 +4715,18 @@ function disegnaAgg() {
   document.addEventListener('contextmenu', e => {
     via();
     const el = e.target.closest('input:not([type=checkbox]):not([type=radio]):not([type=date]):not([type=time]), textarea');
+    const lk = !el && e.target.closest('a.url');
     const selTesto = String(window.getSelection() || '');
-    if (!el && !selTesto) { e.preventDefault(); return; }
+    // il testo sotto il mouse (anche senza averlo selezionato): l'elemento piu' vicino con del testo
+    const blocco = !el && !lk && e.target.closest('p,li,td,th,.avviso,.avviso2,.avv,.hint,.card,.msg,.ap,.dom,div');
+    const testoBlocco = blocco ? (blocco.innerText || '').trim() : '';
     e.preventDefault();
+    if (!el && !lk && !selTesto && !testoBlocco) return;
     const scrivibile = el && !el.readOnly && !el.disabled;
     const sel = el ? (el.selectionEnd || 0) - (el.selectionStart || 0) > 0 && el.type !== 'password' : !!selTesto;
     const voci = el ? [['taglia', 'dx.taglia', 'Ctrl+X', scrivibile && sel], ['copia', 'dx.copia', 'Ctrl+C', sel], ['incolla', 'dx.incolla', 'Ctrl+V', scrivibile], null, ['tutto', 'dx.tutto', 'Ctrl+A', true]]
-      : [['copia', 'dx.copia', 'Ctrl+C', true]];
+      : lk ? [['apri', 'dx.apri', '', true], ['copialink', 'dx.copialink', '', true]]
+      : [['copia', 'dx.copia', 'Ctrl+C', true], null, ['seltesto', 'dx.seltesto', '', !!blocco]];
     const m = document.createElement('div');
     m.className = 'menu'; m.id = 'menuDx';
     m.innerHTML = voci.map(v => v ? `<button data-a="${v[0]}"${v[3] ? '' : ' disabled'}><span class="sp">${esc(t(v[1]))}</span><small class="hint">${v[2]}</small></button>` : '<div class="menusep"></div>').join('');
@@ -4700,6 +4738,10 @@ function disegnaAgg() {
       ev.stopPropagation(); via();
       const a = b.dataset.a;
       if (el) el.focus();
+      if (a === 'apri') { apriUrl(lk.dataset.u); return; }
+      if (a === 'copialink') { copiaTesto(lk.dataset.u); return; }
+      if (a === 'seltesto') { const r = document.createRange(); r.selectNodeContents(blocco); const s = getSelection(); s.removeAllRanges(); s.addRange(r); return; }
+      if (a === 'copia' && !el && !selTesto) { copiaTesto(testoBlocco); return; }
       if (a === 'copia' || a === 'taglia') document.execCommand(a === 'copia' ? 'copy' : 'cut');
       else if (a === 'tutto') el.select();
       else if (a === 'incolla') {

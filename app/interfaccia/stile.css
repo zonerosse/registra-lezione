@@ -1346,3 +1346,8 @@ html.android .matlez button{padding:7px 12px;font-size:13px}
 html.android .capi .spz{padding:6px 12px;opacity:.75}
 html.android .fare input{width:22px;height:22px}
 .iq-inv{border:1.5px solid var(--acc);box-shadow:0 0 0 3px var(--accs);border-radius:12px;padding:12px;margin:12px 0 0}.iq-inv b{color:var(--ink)}
+
+/* indirizzi nei testi: link cliccabili; testo degli avvisi selezionabile */
+a.url{color:#0369a1;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:inherit;-webkit-user-select:text;user-select:text}a.url:hover{color:#075985}
+.avviso,.avviso2,.avv,.hint,.about{-webkit-user-select:text;user-select:text}
+html.android a.url{padding:7px 0}

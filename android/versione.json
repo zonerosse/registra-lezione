@@ -1,7 +1,7 @@
 {
- "versione": "0.13.21",
+ "versione": "0.13.22",
  "codice": 13,
- "novita": "Le lezioni registrate prima si aggiornano da sole: aprendo gli appunti, i PDF vengono rifatti gratis con i colori nuovi e le slide ritagliate sulla lavagna. Sul telefono: «Inizia qui» anche su Android e iPhone (Google, Claude con «Ho un invito», collegamento al PC), «Informazioni» in Impostazioni e il promemoria «Non disturbare» con i passi del telefono. Se un invito non si attiva, ora si legge il motivo.",
- "novita_en": "Older lectures update by themselves: when you open the notes, the PDFs are remade for free with the new colours and slides cropped to the board. On the phone: «Start here» on Android and iPhone too (Google, Claude with «I have an invitation», connecting to the PC), «About» in Settings and the «Do not disturb» reminder with the phone's steps. If an invitation does not activate, the reason is now shown.",
- "contenuto": 97
+ "novita": "Gli indirizzi scritti nei testi ora sono link: si aprono con un clic. In «Informazioni» c'è il link al sito verbamanent.app. Il tasto destro funziona anche sui link (Apri / Copia il link) e sui testi (Copia / Seleziona tutto).",
+ "novita_en": "Addresses written in the texts are now links: they open with one click. «About» has the link to the verbamanent.app website. Right-click now works on links too (Open / Copy link) and on texts (Copy / Select all).",
+ "contenuto": 98
 }
