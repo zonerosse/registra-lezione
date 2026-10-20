@@ -1,0 +1,62 @@
+error: exportArchive Validation failed. Invalid bundle structure. The “Verba Manent IA.app/app_packages/numpy/core/lib/libnpymath.a” binary file is not permitted. Your app cannot contain standalone executables or libraries, other than a valid CFBundleExecutable of supported bundles. For details, visit: https://developer.apple.com/documentation/bundleresources/placing_content_in_a_bundle (ID: dd663ae2-70b7-455d-af1a-e27050b96703).
+error: exportArchive Validation failed. Invalid bundle structure. The “Verba Manent IA.app/app_packages/numpy/random/lib/libnpyrandom.a” binary file is not permitted. Your app cannot contain standalone executables or libraries, other than a valid CFBundleExecutable of supported bundles. For details, visit: https://developer.apple.com/documentation/bundleresources/placing_content_in_a_bundle (ID: 9e2e2cc2-249f-4d24-ace6-34e6d72edd29).
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._multiarray_tests.framework with the UUIDs [7D6E8428-87A1-32EE-A0D3-16A9FE395892]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._multiarray_tests.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._multiarray_umath.framework with the UUIDs [B39308E3-6291-3DA3-9650-51E5BED89CFC]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._multiarray_umath.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._operand_flag_tests.framework with the UUIDs [01D304BE-5F87-3FD9-BCF0-38C211EFE974]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._operand_flag_tests.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._rational_tests.framework with the UUIDs [6AEE3747-37C6-33EB-8F19-B79978D0144F]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._rational_tests.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._simd.framework with the UUIDs [93656F61-4C3D-3C1A-AC13-4129652ECB00]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._simd.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._struct_ufunc_tests.framework with the UUIDs [C30382CD-EBD6-306F-B0B5-3EE9310747F1]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._struct_ufunc_tests.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.core._umath_tests.framework with the UUIDs [39F1E1E8-13D3-362C-B00C-AC9E32A1D3CF]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.core._umath_tests.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.fft._pocketfft_internal.framework with the UUIDs [127E6F39-8A18-38C0-8ACE-744C724D7C94]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.fft._pocketfft_internal.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.linalg._umath_linalg.framework with the UUIDs [8212A0A9-0EF0-393C-88DA-BEA92E1E5486]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.linalg._umath_linalg.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.linalg.lapack_lite.framework with the UUIDs [7B435323-18AC-33F4-8973-A7CD3D225A31]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.linalg.lapack_lite.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._bounded_integers.framework with the UUIDs [A6D85EE5-DC15-317F-902C-3B8D69AFEEF3]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._bounded_integers.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._common.framework with the UUIDs [BF42C70A-FDBD-3378-BE85-753FA8EE9A41]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._common.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._generator.framework with the UUIDs [048BBF36-6B70-3EC4-9D8F-D8D09D0461AE]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._generator.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._mt19937.framework with the UUIDs [002273AF-7751-3770-8AE2-E47761C1C9F2]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._mt19937.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._pcg64.framework with the UUIDs [0D606D36-6033-3580-9066-E8A488ACD11F]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._pcg64.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._philox.framework with the UUIDs [B39CC248-E9E7-3872-A66C-F1E45B424865]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._philox.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random._sfc64.framework with the UUIDs [5999DB36-1989-336D-9DB5-4AE2E61BD68D]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random._sfc64.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random.bit_generator.framework with the UUIDs [4B6D2CEC-5459-300A-9CFD-93445F21D1CB]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random.bit_generator.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the numpy.random.mtrand.framework with the UUIDs [C918259E-186A-346C-9FC6-DF270A795F6B]. Ensure that the archive's dSYM folder includes a DWARF file for numpy.random.mtrand.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the pyexpat.framework with the UUIDs [38430F76-816E-36F4-8D94-A5978E4804E8]. Ensure that the archive's dSYM folder includes a DWARF file for pyexpat.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the resource.framework with the UUIDs [A5F9B032-371E-3964-8D7A-7217B27E3AC7]. Ensure that the archive's dSYM folder includes a DWARF file for resource.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the select.framework with the UUIDs [3A17ECE6-E005-3047-AE76-CA8B60120C67]. Ensure that the archive's dSYM folder includes a DWARF file for select.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the termios.framework with the UUIDs [9E0E52BC-11C9-346E-961B-4776589C90AB]. Ensure that the archive's dSYM folder includes a DWARF file for termios.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the unicodedata.framework with the UUIDs [F1C59F2C-8074-3714-8981-62DAE1360E9D]. Ensure that the archive's dSYM folder includes a DWARF file for unicodedata.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the verbamanent.vmwhisper.framework with the UUIDs [74FADF1C-8D33-393A-AE1D-992FDE13210C]. Ensure that the archive's dSYM folder includes a DWARF file for verbamanent.vmwhisper.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the xxlimited.framework with the UUIDs [3BDC8A40-7655-346A-966C-39C79154EBE3]. Ensure that the archive's dSYM folder includes a DWARF file for xxlimited.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the xxlimited_35.framework with the UUIDs [124C461E-26D4-3EF1-BF16-7AA79FB577F6]. Ensure that the archive's dSYM folder includes a DWARF file for xxlimited_35.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the xxsubtype.framework with the UUIDs [4A51FDDA-A224-3180-9D44-6EC39B06C3D8]. Ensure that the archive's dSYM folder includes a DWARF file for xxsubtype.framework with the expected UUIDs.
+
+warning: exportArchive Upload Symbols Failed. The archive did not include a dSYM for the zlib.framework with the UUIDs [C583EF72-9928-399D-989D-6C9CC178E98E]. Ensure that the archive's dSYM folder includes a DWARF file for zlib.framework with the expected UUIDs.
+
+** EXPORT FAILED **
+
