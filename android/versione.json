@@ -1,7 +1,7 @@
 {
- "versione": "0.13.19",
+ "versione": "0.13.20",
  "codice": 13,
- "novita": "I PDF degli appunti con i colori del programma: Cornell blu, Formato Esame verde petrolio, verbale blu scuro, riquadri neutri. Nel PDF della lezione completa i capitoli non si ripetono più.",
- "novita_en": "Notes PDFs in the program's colours: Cornell blue, Exam format teal, minutes dark blue, neutral boxes. In the full-lecture PDF chapters no longer repeat.",
- "contenuto": 95
+ "novita": "Sul telefono: «Inizia qui» anche su Android e iPhone (Google, Claude con «Ho un invito», collegamento al PC), «Informazioni» in Impostazioni e il promemoria «Non disturbare» con i passi del telefono. Se un invito non si attiva, ora si legge il motivo.",
+ "novita_en": "On the phone: «Start here» on Android and iPhone too (Google, Claude with «I have an invitation», connecting to the PC), «About» in Settings and the «Do not disturb» reminder with the phone's steps. If an invitation does not activate, the reason is now shown.",
+ "contenuto": 96
 }
