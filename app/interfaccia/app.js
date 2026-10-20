@@ -534,6 +534,7 @@ async function aggiorna() {
 let AGG_VISTO = false;
 async function avvisoAgg() {
   const g = S.agg || {};
+  if (IPHONE) return;              // sull'iPhone gli aggiornamenti arrivano dall'App Store
   if (AGG_VISTO || g.tipo !== 'trovato' || !g.avviso || S.registro || document.querySelector('.velo')) return;
   AGG_VISTO = true;
   const d = g.dato || {};

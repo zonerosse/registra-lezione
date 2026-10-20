@@ -146,17 +146,7 @@ jobs:
           js 10-impostazioni-meta "$(giu 0.5)"
           js 11-impostazioni-fondo "$(giu 1)"
           # invito: un invito di prova (chiave finta) incollato in Impostazioni › Ho un invito e «Attiva»
-          INV=$(python3 - <<'PY'
-          import re, ast, json, zlib, base64, hashlib
-          s = open("app/motore.py", encoding="utf-8").read()
-          sale = ast.literal_eval(re.search(r'_SALE_INVITO\s*=\s*(b["\'][^"\']*["\'])', s).group(1))
-          d = zlib.compress(json.dumps({"v": 1, "da": "Prova", "per": "iPhone", "quando": "2026-10-20", "claude": "sk-ant-prova-finta"}).encode())
-          fl = b""; i = 0
-          while len(fl) < len(d):
-              fl += hashlib.sha256(sale + i.to_bytes(4, "big")).digest(); i += 1
-          print("VMIA-INVITO-1:" + base64.urlsafe_b64encode(bytes(a ^ b for a, b in zip(d, fl))).decode().rstrip("="))
-          PY
-          )
+          INV=$(python3 tools/prove/invito_prova.py)
           P=$(cat "$DATI/porta.txt" 2>/dev/null || true)
           echo "== api invito_attiva (porta $P)" >> esito/api.txt
           [ -n "$P" ] && (curl -s -m 20 -X POST -d "[\"$INV\"]" http://127.0.0.1:$P/api/invito_attiva >> esito/api.txt || echo "curl $?" >> esito/api.txt); echo >> esito/api.txt

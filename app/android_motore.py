@@ -533,6 +533,8 @@ def _versione_locale():
 
 def cerca_aggiornamento():
     """App nuova (APK, si installa dal browser) o solo file nuovi (aggiornamento leggero, dentro l'app)."""
+    if os.environ.get("VM_IPHONE") or sys.platform == "ios":      # sull'iPhone gli aggiornamenti arrivano solo dall'App Store
+        return None
     import urllib.request
     import ssl
     req = urllib.request.Request(AGG_URL + f"?t={int(time.time())}", headers={"User-Agent": "RegistraLezione"})

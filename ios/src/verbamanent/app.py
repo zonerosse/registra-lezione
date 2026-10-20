@@ -50,6 +50,7 @@ class VerbaManent(toga.App):
 
     def _avvia(self):
         try:
+            os.environ["VM_IPHONE"] = "1"                 # niente aggiornamenti scaricati dall'app: li da' l'App Store
             sys.path.insert(0, str(QUI))                  # java.py (il ponte) e avvio_android.py
             cartella = _prepara_cartella()
             import avvio_android
