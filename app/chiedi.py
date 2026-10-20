@@ -345,8 +345,9 @@ def pdf_mappa(dati, info, dest):
 
     def rgb(h):
         return tuple(int(h[i:i + 2], 16) for i in (1, 3, 5))
+    colore = lambda i, r: rgb(COLORI[(r["ramo"].get("colore", i) if isinstance(r["ramo"].get("colore", i), int) else i) % len(COLORI)])
     for i, r in enumerate(D["rami"]):
-        c = rgb(COLORI[i % len(COLORI)])
+        c = colore(i, r)
         pdf.set_draw_color(*c)
         pdf.set_line_width(0.8)
         x0, y0 = P(D["cx"], D["cy"])
@@ -360,7 +361,7 @@ def pdf_mappa(dati, info, dest):
     pdf.set_xy(cx - 80 * sc, cy - 26 * sc)
     pdf.cell(160 * sc, 52 * sc, t(dati.get("centro", "")), align="C")
     for i, r in enumerate(D["rami"]):
-        c = rgb(COLORI[i % len(COLORI)])
+        c = colore(i, r)
         x, y = P(r["x"] - 110, r["y"] - 20)
         pdf.set_draw_color(*c)
         pdf.set_fill_color(255, 255, 255)

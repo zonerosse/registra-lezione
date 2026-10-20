@@ -211,8 +211,14 @@ class Api:
     def mappa(self, cartella, rifai=False):
         return self._m.mappa(cartella, rifai)
 
-    def mappa_pdf(self, cartella, apri_dopo=True):
-        return self._m.mappa_pdf(cartella, apri_dopo)
+    def mappa_pdf(self, cartella, apri_dopo=True, mie=False):
+        return self._m.mappa_pdf(cartella, apri_dopo, mie)
+
+    def mappa_salva(self, cartella, dati):
+        return self._m.mappa_salva(cartella, dati)
+
+    def mappa_ia(self, cartella):
+        return self._m.mappa_ia(cartella)
 
     def capitoli(self, cartella):
         return self._m.capitoli(cartella)

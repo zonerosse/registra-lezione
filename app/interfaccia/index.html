@@ -290,9 +290,14 @@
 
     <!-- MAPPA MENTALE -->
     <section class="pg hidden" id="v-mappa">
-      <div class="hd"><div><h2 data-t="mp.h">Mappa mentale</h2><p id="mpSub"></p></div><div class="row" style="gap:6px"><button class="btn b-ghost b-sm" id="mpPdf"><svg><use href="#i-doc"/></svg><span data-t="mp.pdf">Salva in PDF</span></button><button class="btn b-ghost b-sm solo-pc" id="mpStampa" data-t="mp.stampa">Stampa</button></div></div>
+      <div class="hd"><div><h2 data-t="mp.h">La mia mappa</h2><p id="mpSub"></p></div><div class="row mp-alto" style="gap:6px;flex-wrap:wrap">
+        <div class="mp-modi" id="mpModi"><button data-m="vedi" class="on" data-t="mp.m.vedi">👁 Guarda</button><button data-m="mod" data-t="mp.m.mod">✏️ Modifica</button><button data-m="tu" data-t="mp.m.tu">🧩 Costruiscila tu</button></div>
+        <div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div>
+        <button class="btn b-ghost b-sm" id="mpPdf"><svg><use href="#i-doc"/></svg><span data-t="mp.pdf">Stampa o PDF</span></button></div></div>
+      <div class="mp-aiuto" id="mpAiutoBox"><span id="mpAiuto"></span><button class="btn b-ghost b-sm mp-ann" id="mpAnn" data-t="mp.annulla">↶ Annulla</button></div>
       <div class="mappa" id="mpBox"></div>
-      <div class="row mt"><span class="hint sp" data-t="mp.nota">Si crea una volta sola e resta con la lezione.</span><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
+      <div class="row mt"><span class="hint sp" id="mpPiede" data-t="mp.nota">Si salva da sola e resta con la lezione.</span><button class="lnk" id="mpIa" data-t="mp.ia">↺ Torna alla mappa di Claude</button><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
+      <div class="mp-toast" id="mpToast"><span id="mpToastT"></span><button id="mpToastB" data-t="mp.annulla">↶ Annulla</button></div>
     </section>
 
     <!-- PAGINA DELLA LEZIONE -->

@@ -1632,7 +1632,9 @@ async function apriMappa(l, rifai = false) {
   const r = await A.mappa(l.cartella, rifai);
   if (MP.lez !== l) return;
   if (!r.ok) { $('mpBox').innerHTML = `<div class="hint" style="color:#be123c">⚠ ${esc(r.msg || '')}</div>`; return; }
-  MP.dati = r.mappa;
+  MP.dati = mpNorma(r.mappa);
+  MP.modo = 'vedi'; MP.sel = -1; MP.aiuti = {}; MP.prima = [];
+  document.querySelectorAll('#mpModi button').forEach(x => x.classList.toggle('on', x.dataset.m === 'vedi'));
   disegnaMappa();
   if (r.nuova) caricaLezioni();
 }
@@ -4009,25 +4011,140 @@ function disposizione(d, W = 900) {
   });
   return {W, H, cx: W / 2, cy: H / 2, rami: out};
 }
+/* «La mia mappa»: 👁 Guarda (🔊 per sentire), ✏️ Modifica (temi e voci, colore, togli), 🧩 Costruiscila tu (le voci le scrive lo studente).
+   Ogni cambio si salva da solo (mappa_salva); «↶ Annulla» torna indietro fino a 50 passi; il PDF e' quello che si vede. */
+function mpNorma(d) {
+  d = d || {centro: '', rami: []};
+  (d.rami || []).forEach((r, i) => {
+    r.foglie = r.foglie || [];
+    if (typeof r.colore !== 'number') r.colore = i % COLORI_MAPPA.length;
+    r.mie = Array.from({length: r.foglie.length}, (_, j) => (r.mie || [])[j] || '');
+  });
+  return d;
+}
+let MP_SALVA = null;
+function mpSalva() { clearTimeout(MP_SALVA); MP_SALVA = setTimeout(() => { if (MP.lez && MP.dati) A.mappa_salva(MP.lez.cartella, MP.dati); }, 400); }
+function mpRicorda() { MP.prima = MP.prima || []; MP.prima.push(JSON.stringify(MP.dati)); if (MP.prima.length > 50) MP.prima.shift(); }
+function mpAnnulla() {
+  if (!MP.prima || !MP.prima.length) return;
+  MP.dati = JSON.parse(MP.prima.pop()); MP.sel = -1; mpToastVia(); mpSalva(); disegnaMappa();
+}
+let MP_TT = null;
+function mpToast(x) { $('mpToastT').textContent = x; $('mpToast').classList.add('v'); clearTimeout(MP_TT); MP_TT = setTimeout(mpToastVia, 6000); }
+function mpToastVia() { $('mpToast').classList.remove('v'); }
+async function mpParla(el, testo) {
+  if (!testo || !voceDisponibile()) { if (!voceDisponibile()) toast(t('as.novoce')); return; }
+  voceFerma(); document.querySelectorAll('#mpBox .parla').forEach(x => x.classList.remove('parla'));
+  el.classList.add('parla');
+  try { await voceParla(testo, 0.95); } finally { el.classList.remove('parla'); }
+}
 function disegnaMappa() {
-  const d = MP.dati, D = disposizione(d);
-  const g = [`<svg viewBox="0 0 ${D.W} ${D.H}" font-family="Segoe UI,system-ui,sans-serif"><defs><linearGradient id="gc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0369a1"/><stop offset="1" stop-color="#0d4275"/></linearGradient></defs>`];
-  D.rami.forEach((r, i) => {
-    const c = COLORI_MAPPA[i % 6], x1 = r.x - r.lato * 110;
-    g.push(`<path d="M${D.cx} ${D.cy} C ${(D.cx + x1) / 2} ${D.cy}, ${(D.cx + x1) / 2} ${r.y}, ${x1} ${r.y}" stroke="${c}" stroke-width="3" fill="none" opacity=".55"/>`);
+  const d = MP.dati, modo = MP.modo || 'vedi', box = $('mpBox');
+  if (!d) return;
+  box.className = 'mappa mp-nuova' + (modo !== 'vedi' ? ' mp-mod' : '');
+  const ed = modo !== 'vedi';
+  const tema = (r, i) => {
+    const c = COLORI_MAPPA[r.colore % COLORI_MAPPA.length], scelto = modo === 'mod' && MP.sel === i;
+    const voci = r.foglie.map((x, j) => {
+      const mia = r.mie[j] || '', vuota = modo === 'tu' && !mia;
+      const testo = modo === 'tu' ? mia : x;
+      return `<div class="mp-v${vuota ? ' vuota' : ''}"${ed ? ' contenteditable="true"' : ''} data-i="${i}" data-j="${j}">${esc(testo || (vuota ? t('mp.scrivi') : ''))}</div>`
+        + (modo === 'tu' && MP.aiuti[i] ? `<div class="mp-sugg">💡 ${esc(x)}</div>` : '');
+    }).join('');
+    const tasti = modo === 'mod' ? `<div class="mp-tasti mp-sel"><button data-a="voce" data-i="${i}">${esc(t('mp.voce'))}</button><button data-a="colore" data-i="${i}">${esc(t('mp.colore'))}</button><button data-a="togli" data-i="${i}" class="r">${esc(t('mp.togli'))}</button></div>` : '';
+    const aiuto = modo === 'tu' ? `<div class="mp-tasti"><button data-a="aiuto" data-i="${i}">${esc(t(MP.aiuti[i] ? 'mp.aiuto.via' : 'mp.aiuto'))}</button></div>` : '';
+    return `<div class="mp-t${scelto ? ' scelto' : ''}" style="--c:${c}" data-r="${i}"><div class="mp-tt"><button class="mp-ic" data-a="senti" data-i="${i}" title="${esc(t('mp.senti'))}">🔊</button><div class="mp-tit"${modo === 'mod' ? ' contenteditable="true"' : ''} data-i="${i}">${esc(r.titolo)}</div></div>${voci}${tasti}${aiuto}</div>`;
+  };
+  const meta = Math.ceil(d.rami.length / 2);
+  const col = (da, a) => d.rami.slice(da, a).map((r, k) => tema(r, da + k)).join('');
+  box.innerHTML = `<svg class="mp-fili" id="mpFili"></svg><div class="mp-col mp-sx">${col(meta, d.rami.length)}${modo === 'mod' ? `<button class="mp-agg" data-a="tema">${esc(t('mp.tema'))}</button>` : ''}</div>
+    <div class="mp-centro"${modo === 'mod' ? ' contenteditable="true"' : ''} id="mpCen">${esc(d.centro)}</div><div class="mp-col mp-dx">${col(0, meta)}</div>`;
+  requestAnimationFrame(mpFili);
+  const tot = d.rami.reduce((s, r) => s + r.foglie.length, 0), fatte = d.rami.reduce((s, r) => s + r.mie.filter(x => x.trim()).length, 0);
+  $('mpAiutoBox').classList.toggle('mod-on', modo !== 'vedi');
+  $('mpAnn').disabled = !(MP.prima && MP.prima.length);
+  $('mpAiuto').innerHTML = modo === 'tu' ? `${esc(t('mp.a.tu'))} <span class="mp-bar"><i style="width:${tot ? Math.round(fatte / tot * 100) : 0}%"></i></span> <b>${esc(t('mp.di', {a: fatte, b: tot}))}</b>` : esc(t(modo === 'mod' ? 'mp.a.mod' : 'mp.a.vedi'));
+  $('mpPiede').textContent = t(modo === 'mod' ? 'mp.p.mod' : modo === 'tu' ? 'mp.p.tu' : 'mp.nota');
+}
+function mpScegli(i) {
+  MP.sel = i;
+  $('mpBox').querySelectorAll('.mp-t').forEach(x => x.classList.toggle('scelto', +x.dataset.r === i));
+  requestAnimationFrame(mpFili);
+}
+function mpFili() {
+  const box = $('mpBox'), s = $('mpFili'), cen = $('mpCen');
+  if (!box || !s || !cen || getComputedStyle(s).display === 'none') return;
+  const B = box.getBoundingClientRect(), C = cen.getBoundingClientRect();
+  const cx = C.left + C.width / 2 - B.left, cy = C.top + C.height / 2 - B.top;
+  s.innerHTML = [...box.querySelectorAll('.mp-t')].map(r => {
+    const R = r.getBoundingClientRect(), x = R.left > C.left ? R.left - B.left : R.right - B.left, y = R.top + 22 - B.top;
+    return `<path d="M${cx} ${cy} C ${(cx + x) / 2} ${cy}, ${(cx + x) / 2} ${y}, ${x} ${y}" stroke="${r.style.getPropertyValue('--c')}" stroke-width="3" fill="none" opacity=".5"/>`;
+  }).join('');
+}
+window.addEventListener('resize', () => { if (pagina === 'mappa') mpFili(); });
+function collegaMappa() {
+  const box = $('mpBox');
+  box.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'), d = MP.dati;
+    MP.giu = false;
+    if (!d) return;
+    if (!b) {
+      const r = e.target.closest('.mp-t');
+      // il tema si sceglie senza ridisegnare: così la parola toccata resta pronta da scrivere
+      if (MP.modo === 'mod' && r && +r.dataset.r !== MP.sel) mpScegli(+r.dataset.r);
+      const v = e.target.closest('.mp-v');
+      if (MP.modo === 'vedi' && v) mpParla(v, v.textContent);
+      return;
+    }
+    const a = b.dataset.a, i = +b.dataset.i, r = d.rami[i];
+    if (a === 'senti') { const voci = MP.modo === 'tu' ? r.mie.filter(Boolean) : r.foglie; mpParla(b.closest('.mp-t'), [r.titolo, ...voci].join('. ')); return; }
+    if (a === 'aiuto') { MP.aiuti[i] = !MP.aiuti[i]; disegnaMappa(); return; }
+    mpRicorda();
+    if (a === 'voce') { r.foglie.push(t('mp.nuova')); r.mie.push(''); }
+    if (a === 'colore') r.colore = (r.colore + 1) % COLORI_MAPPA.length;
+    if (a === 'togli') { mpToast(t('mp.tolto', {x: r.titolo})); d.rami.splice(i, 1); MP.sel = -1; }
+    if (a === 'tema') { d.rami.push({titolo: t('mp.nuovo'), foglie: ['…'], mie: [''], colore: d.rami.length % COLORI_MAPPA.length}); MP.sel = d.rami.length - 1; }
+    mpSalva(); disegnaMappa();
   });
-  const cw = Math.max(160, Math.min(260, d.centro.length * 11 + 40));
-  g.push(`<rect x="${D.cx - cw / 2}" y="${D.cy - 28}" width="${cw}" height="56" rx="28" fill="url(#gc)"/><text x="${D.cx}" y="${D.cy + 6}" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">${esc(d.centro)}</text>`);
-  D.rami.forEach((r, i) => {
-    const c = COLORI_MAPPA[i % 6];
-    g.push(`<rect x="${r.x - 110}" y="${r.y - 20}" width="220" height="40" rx="12" fill="#fff" stroke="${c}" stroke-width="2"/><text x="${r.x}" y="${r.y + 5}" text-anchor="middle" fill="${c}" font-size="14" font-weight="700">${esc(corto(r.ramo.titolo, 28))}</text>`);
-    r.ramo.foglie.forEach((f, j) => {
-      const yy = r.y + 42 + j * 30;
-      g.push(`<rect x="${r.x - 115}" y="${yy - 12}" width="230" height="24" rx="12" fill="${c}" fill-opacity=".08"/><text x="${r.x}" y="${yy + 4}" text-anchor="middle" fill="#26354a" font-size="12.5"><title>${esc(f)}</title>${esc(corto(f, 36))}</text>`);
-    });
+  // premendo un tasto mentre si scrive: non ridisegnare prima del clic, se no il tasto sparisce sotto il dito
+  box.addEventListener('pointerdown', e => { MP.giu = !!e.target.closest('[data-a]'); });
+  box.addEventListener('focusin', e => { const x = e.target; if (x.classList && x.classList.contains('vuota')) x.textContent = ''; });
+  box.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.isContentEditable) { e.preventDefault(); e.target.blur(); } });
+  box.addEventListener('focusout', e => {
+    const x = e.target, d = MP.dati;
+    if (!d || !x.isContentEditable) return;
+    const tx = x.textContent.replace(/\s+/g, ' ').trim(), prima = JSON.stringify(d);
+    if (x.id === 'mpCen') d.centro = tx || d.centro;
+    else if (x.classList.contains('mp-tit')) d.rami[+x.dataset.i].titolo = tx || d.rami[+x.dataset.i].titolo;
+    else if (x.classList.contains('mp-v')) {
+      const r = d.rami[+x.dataset.i], j = +x.dataset.j;
+      if (MP.modo === 'tu') r.mie[j] = tx;
+      else if (tx) r.foglie[j] = tx;
+      else { mpToast(t('mp.tolta', {x: r.foglie[j]})); r.foglie.splice(j, 1); r.mie.splice(j, 1); }
+    }
+    const cambiato = JSON.stringify(d) !== prima;
+    if (cambiato) { MP.prima = MP.prima || []; MP.prima.push(prima); if (MP.prima.length > 50) MP.prima.shift(); mpSalva(); }
+    if (MP.giu) { $('mpAnn').disabled = !(MP.prima && MP.prima.length); return; }
+    if (cambiato) disegnaMappa();
+    else if (x.classList.contains('vuota') && !tx) x.textContent = t('mp.scrivi');
   });
-  g.push('</svg>');
-  $('mpBox').innerHTML = g.join('');
+  $('mpModi').onclick = e => {
+    const b = e.target.closest('button'); if (!b || !MP.dati) return;
+    MP.modo = b.dataset.m; MP.sel = -1;
+    document.querySelectorAll('#mpModi button').forEach(x => x.classList.toggle('on', x === b));
+    disegnaMappa();
+  };
+  $('mpAnn').onclick = mpAnnulla; $('mpToastB').onclick = mpAnnulla;
+  $('mpIa').onclick = async () => {
+    if (!MP.lez) return;
+    const r = await A.mappa_ia(MP.lez.cartella);
+    if (!r.ok) return;
+    mpRicorda(); MP.dati = mpNorma(r.mappa); MP.sel = -1; mpSalva(); disegnaMappa(); mpToast(t('mp.rimessa'));
+  };
+  document.addEventListener('keydown', e => {
+    if (pagina !== 'mappa' || (document.activeElement && document.activeElement.isContentEditable)) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); mpAnnulla(); }
+  });
 }
 const corto = (x, n) => (x = String(x || '')).length > n ? x.slice(0, n - 1) + '…' : x;
 
@@ -4120,8 +4237,8 @@ function collegaNovita() {
   $('chVai').onclick = inviaDomanda;
   $('chIn').addEventListener('keydown', e => { if (e.key === 'Enter') inviaDomanda(); });
   $('chNuova').onclick = async () => { if (!CH.tutta) await A.chiedi_cancella(CH.lez.cartella); CH.storia = []; disegnaChiedi(); };
-  $('mpPdf').onclick = async () => { if (!MP.dati) return; const r = await A.mappa_pdf(MP.lez.cartella, false); if (r.ok) toast(t('mp.salvata')); };
-  $('mpStampa').onclick = async () => { if (MP.dati) await A.mappa_pdf(MP.lez.cartella, true); };
+  $('mpPdf').onclick = async () => { if (!MP.dati) return; clearTimeout(MP_SALVA); await A.mappa_salva(MP.lez.cartella, MP.dati); await A.mappa_pdf(MP.lez.cartella, true, MP.modo === 'tu'); };
+  collegaMappa();
   $('mpRifai').onclick = async () => { if (MP.lez && await conferma(t('mp.rifai.t'), t('mp.rifai.c'))) apriMappa(MP.lez, true); };
 }
 

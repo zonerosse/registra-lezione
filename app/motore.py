@@ -2999,6 +2999,7 @@ class Motore:
             return {"ok": False, "msg": tr("manca_chiave")}
         try:
             d, spesa = ch.crea_mappa(self.chiave(), cart)
+            el.scrivi_json(cart / "mappa_ia.json", d)          # quella di Claude, per «Torna alla mappa di Claude»
             return {"ok": True, "mappa": d, "nuova": True, "spesa": spesa}
         except ap.ErroreAppunti as e:
             return {"ok": False, "msg": str(e)}
@@ -3006,11 +3007,44 @@ class Motore:
             log.exception("mappa mentale")
             return {"ok": False, "msg": tr("ap_imprevisto")}
 
-    def mappa_pdf(self, cartella, apri_dopo=True):
+    def mappa_salva(self, cartella, dati):
+        """«La mia mappa»: quello che lo studente ha cambiato o scritto (temi, voci, colori, le sue voci in «Costruiscila tu»)."""
+        cart = Path(cartella)
+        if not (cart / "info.json").exists() or not isinstance(dati, dict):
+            return {"ok": False}
+        corto = lambda x, n: str(x or "").strip()[:n]
+        rami = []
+        for r in (dati.get("rami") or [])[:12]:
+            if not isinstance(r, dict):
+                continue
+            foglie = [corto(f, 120) for f in (r.get("foglie") or [])[:12] if corto(f, 120)]
+            mie = [corto(f, 160) for f in (r.get("mie") or [])[:12]]
+            try:
+                colore = int(r.get("colore")) % 6
+            except (TypeError, ValueError):
+                colore = len(rami) % 6
+            rami.append({"titolo": corto(r.get("titolo"), 60) or "…", "foglie": foglie, "colore": colore, "mie": mie})
+        d = {"centro": corto(dati.get("centro"), 60) or "…", "rami": rami, "mia": True}
+        if not (cart / "mappa_ia.json").exists():          # la prima volta: si tiene da parte quella di Claude
+            vecchia = el.leggi_json(cart / "mappa.json")
+            if vecchia:
+                el.scrivi_json(cart / "mappa_ia.json", vecchia)
+        el.scrivi_json(cart / "mappa.json", d)
+        return {"ok": True}
+
+    def mappa_ia(self, cartella):
+        """«Torna alla mappa di Claude»: quella fatta da Claude, prima delle modifiche."""
+        cart = Path(cartella)
+        d = el.leggi_json(cart / "mappa_ia.json") or el.leggi_json(cart / "mappa.json")
+        return {"ok": bool(d), "mappa": d}
+
+    def mappa_pdf(self, cartella, apri_dopo=True, mie=False):
         cart = Path(cartella)
         d = el.leggi_json(cart / "mappa.json")
         if not d:
             return {"ok": False}
+        if mie:          # «Costruiscila tu»: nel PDF le voci scritte dallo studente
+            d = {**d, "rami": [{**r, "foglie": [x for x in (r.get("mie") or []) if str(x).strip()]} for r in d.get("rami") or []]}
         info = el.leggi_json(cart / "info.json", {}) or {}
         L = testi.lingua_di(info)
         dest_dir = Path(self.cfg["cartella_pacchetti"])
