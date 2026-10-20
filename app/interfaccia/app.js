@@ -225,7 +225,7 @@ const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-
   '🔥': 'g-fuoco', '📎': 'g-graffetta', '📏': 'g-righello', '🎨': 'g-colore', '🎁': 'g-regalo', '💶': 'g-euro', '❓': 'g-domanda', '⏱': 'g-orologio', '⏳': 'g-orologio',
   '📍': 'g-pin', '💻': 'g-pc', '🖥': 'g-pc', '📱': 'g-tel', '💼': 'g-borsa', '🌙': 'g-luna', '🔑': 'g-chiave', '🎟': 'g-biglietto', '➕': 'g-piu', '⏸': 'g-pausa', '✅': 'g-ok',
   '📣': 'g-voce', '📢': 'g-voce', '🏠': 'g-casa', '↗': 'g-fuori', '🧑‍🎓': 'g-tocco', '🎒': 'g-borsa', '📈': 'g-lista', '🗂': 'g-cartella', '📦': 'g-cartella', '🔗': 'g-graffetta',
-  '✔': 'g-ok', '⭐️': 'g-stella', '🌟': 'g-stella', '🏆': 'g-stella', '👍': 'g-ok', '👤': 'g-tutor', '🙋': 'g-tutor', '🔔': 'g-orologio', '⏰': 'g-orologio', '🧠': 'g-idea', '☀': 'g-luce', '🤖': 'g-chip', '🧪': 'g-idea', '🎬': 'g-play', '📽': 'g-play', '🎞': 'g-play', '🔍': 'g-occhio', '🔎': 'g-occhio', '✋': 'g-no', '⛔': 'g-no', '🆕': 'g-stella', '💾': 'g-cartella', '🖱': 'g-pc', '⌨': 'g-pc', '🗣': 'g-voce', '👂': 'g-cuffie', '✈': 'g-razzo', '🏁': 'g-ok', '📞': 'g-tel', '🧾': 'g-note', '📃': 'g-note', '🗒': 'g-note'};
+  '✔': 'g-ok', '⭐️': 'g-stella', '🌟': 'g-stella', '🏆': 'g-stella', '👍': 'g-ok', '👤': 'g-tutor', '🙋': 'g-tutor', '🔔': 'g-orologio', '⏰': 'g-orologio', '🧠': 'g-idea', '☀': 'g-luce', '✎': 'i-edit', '🤖': 'g-chip', '🧪': 'g-idea', '🎬': 'g-play', '📽': 'g-play', '🎞': 'g-play', '🔍': 'g-occhio', '🔎': 'g-occhio', '✋': 'g-no', '⛔': 'g-no', '🆕': 'g-stella', '💾': 'g-cartella', '🖱': 'g-pc', '⌨': 'g-pc', '🗣': 'g-voce', '👂': 'g-cuffie', '✈': 'g-razzo', '🏁': 'g-ok', '📞': 'g-tel', '🧾': 'g-note', '📃': 'g-note', '🗒': 'g-note'};
 // famiglie: il colore del quadrato
 const FAM_AZ = {test: 'prova', orale: 'prova', scritto: 'prova', esame: 'prova', prob: 'prova', simula: 'prova',
   ascolta: 'ascolto', ascm: 'ascolto', karaoke: 'ascolto', podcast: 'ascolto', leggimi: 'ascolto', glos: 'ascolto',
@@ -246,7 +246,7 @@ function icoLinea(el) {
   el.classList.add('ico-l', 'fam-' + ((k && FAM_AZ[k]) || FAM_IC[id] || 'studio'));
 }
 // nei bottoni: l'emoji all'inizio della scritta diventa una piccola icona del colore della famiglia
-const EM_INIZIO = /^\s*((?:\p{Extended_Pictographic}|[☑✍✂▶⏺⚡↻⬇✓✔])(?:‍\p{Extended_Pictographic})*️?)\s+/u;
+const EM_INIZIO = /^\s*((?:\p{Extended_Pictographic}|[☑✍✂▶⏺⚡↻⬇✓✔✎])(?:‍\p{Extended_Pictographic})*️?)\s+/u;
 function btnIco(el) {
   const tn = el.firstChild;
   if (!tn || tn.nodeType !== 3) return;
@@ -259,7 +259,7 @@ const BTN_SEL = '.btn,.lnk,.mp-modi button,.chip,.aa-b';
 // le emoji in tutti gli altri testi: diventano piccole icone a linea (del colore del testo); quelle senza icona si tolgono.
 // Restano i segni tipografici: frecce, ✓ ✗ ✕ ★ ✎ ❚ ▶.
 const EM_TUTTE = /(?:\p{Extended_Pictographic}|[☀-➿])(?:️|‍(?:\p{Extended_Pictographic}|[☀-➿])️?)*\s?/gu;
-const EM_TIENI = new Set(['→', '←', '↑', '↓', '↗', '↶', '↷', '↺', '↻', '✓', '✗', '✕', '★', '☆', '✎', '❚', '▶', '©', '®', '™', '•', '·', '⇄']);
+const EM_TIENI = new Set(['→', '←', '↑', '↓', '↗', '↶', '↷', '↺', '↻', '✓', '✗', '✕', '★', '☆', '❚', '▶', '©', '®', '™', '•', '·', '⇄']);
 function emTesto(tn) {
   const v = tn.nodeValue; if (!v || !/[←-⯿\u{1F000}-\u{1FAFF}]/u.test(v)) return;
   const pa = tn.parentElement; if (!pa || pa.closest('[contenteditable="true"],textarea,script,style,svg,.ico,.no-ico')) return;
@@ -2344,7 +2344,7 @@ async function disegnaStudia() {
     gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('libro', '📘', t('tl.lb'), t('tl.lb.s')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
-  $('stBox2').innerHTML = cardSenzaMateria() + `<div class="card tustudia" id="tuStudia"><span class="gr">🧑‍🏫</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="gr">🃏</span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').innerHTML = cardSenzaMateria() + `<div class="card tustudia" id="tuStudia"><span class="ico fam-studio"><svg><use href="#g-tutor"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="ico fam-studio"><svg><use href="#i-cards"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
   collegaSenzaMateria();
   $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
