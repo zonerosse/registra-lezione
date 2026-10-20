@@ -3089,6 +3089,143 @@ class Motore:
         shutil.rmtree(self._orale_cartella(), ignore_errors=True)
         return {"ok": True}
 
+    def andamento(self):
+        """La pagina «Andamento»: ore registrate, lezioni, ripasso, esami, voti e cosa resta da sistemare (Studio);
+        ore di riunione, cose da fare e decisioni (Lavoro). Solo dati gia' sul dispositivo: niente Claude."""
+        import esame as es
+        import ripasso_giorno as rg_
+        import cose
+        oggi = datetime.date.today()
+        lun = oggi - datetime.timedelta(days=oggi.weekday())
+        settimane = [lun - datetime.timedelta(weeks=7 - i) for i in range(8)]
+
+        def sett(lista):
+            out = []
+            for d0 in settimane:
+                d1 = d0 + datetime.timedelta(days=6)
+                out.append({"da": d0.isoformat(), "a": d1.isoformat(),
+                            "min": round(sum(x["sec"] for x in lista if d0 <= x["giorno"] <= d1) / 60)})
+            return out
+        try:
+            elenco = self.lezioni().get("lezioni") or []
+            studio, lavoro = [], []
+            for l in elenco:
+                info = el.leggi_json(Path(l["cartella"]) / "info.json", {}) or {}
+                try:
+                    q = datetime.datetime.fromisoformat(info.get("inizio", ""))
+                except ValueError:
+                    continue
+                x = {"nome": l["nome"], "materia": l.get("materia") or "", "quando": q.isoformat(timespec="minutes"), "giorno": q.date(),
+                     "sec": int(info.get("durata") or 0), "formato": l.get("formato") or info.get("formato_appunti") or "",
+                     "modo": info.get("modo") or "", "cartella": l["cartella"], "sigla": l.get("sigla", ""), "colore": l.get("colore", ""),
+                     "pronta": l.get("stato") == "pronta", "senza_appunti": bool(l.get("crea_appunti")) and not l.get("n_appunti")}
+                (lavoro if (l.get("tipo") or "lezione") == "riunione" else studio).append(x)
+
+            # ---- studio
+            mese = oggi.replace(day=1)
+            fatti = self.cfg.get("rg_fatti") or []
+            giorni_rip = sorted({d for d in (rg_._data(g) for g in fatti) if d})
+            record, fila, prima = 0, 0, None
+            for d in giorni_rip:
+                fila = fila + 1 if prima and (d - prima).days == 1 else 1
+                record, prima = max(record, fila), d
+            n = int(self.cfg.get("rg_max") or 20)
+            rgd = rg_.oggi(BASE, n, fatti, False, False)
+            carte, lz, esami = rg_._tutte(BASE)
+            materie = {}
+            for x in studio:
+                if x["materia"]:
+                    m = materie.setdefault(x["materia"], {"materia": x["materia"], "sec": 0, "colore": x["colore"], "sigla": x["sigla"]})
+                    m["sec"] += x["sec"]
+            pronto = {m["materia"]: m["pronto"] for m in rgd.get("materie") or []}
+            lista_esami, senza_data, voti = [], [], []
+            for m in sorted({x["materia"] for x in studio if x["materia"]}):
+                d = es.leggi(BASE, m)
+                dt = rg_._data(d.get("data_esame"))
+                if dt and dt >= oggi:
+                    lista_esami.append({"materia": m, "data": dt.isoformat(), "giorni": (dt - oggi).days, "pronto": pronto.get(m, 0)})
+                elif not dt:
+                    senza_data.append(m)
+                vv = []
+                for tipo in ("test", "orali", "simulazioni"):
+                    for t_ in d.get(tipo) or []:
+                        if t_.get("voto") is not None:
+                            vv.append({"voto": int(t_["voto"]), "tipo": tipo, "quando": str(t_.get("quando") or "")[:10]})
+                vv.sort(key=lambda v: v["quando"])
+                if vv:
+                    ult = [v["voto"] for v in vv[-3:]]
+                    voti.append({"materia": m, "voti": vv[-8:], "media": round(sum(ult) / len(ult))})
+            lista_esami.sort(key=lambda e: e["giorni"])
+            sette = [oggi - datetime.timedelta(days=6 - i) for i in range(7)]
+            visti = [c for c in carte if c.get("visto") and (oggi - c["visto"]).days < 7]
+            # cosa resta da sistemare
+            per_lez = {}
+            for c in carte:
+                per_lez.setdefault(c["cartella"], []).append(c)
+            nomi = {x["cartella"]: x["nome"] for x in studio}
+            mai = [{"nome": nomi.get(k, Path(k).name), "cartella": k} for k, cs in per_lez.items() if cs and all(c["box"] is None for c in cs)]
+            sbagli = {}
+            for c in carte:
+                if c["ultimo"] == 0 and c.get("argomento"):
+                    s_ = sbagli.setdefault((c["materia"], c["argomento"]), {"materia": c["materia"], "argomento": c["argomento"], "n": 0, "cartella": c["cartella"]})
+                    s_["n"] += 1
+            debole = max(sbagli.values(), key=lambda v: v["n"], default=None)
+            settimana = sett(studio)
+            out_studio = {
+                "settimana_min": settimana[-1]["min"], "prima_min": settimana[-2]["min"], "settimane": settimana,
+                "lezioni_tot": len(studio), "lezioni_mese": sum(1 for x in studio if x["giorno"] >= mese),
+                "serie": rg_._serie(fatti), "record": record, "carte_oggi": len(rgd.get("carte") or []), "minuti_oggi": rgd.get("minuti") or 0,
+                "fatto_oggi": bool(rgd.get("fatto_oggi")),
+                "materie": sorted(({**m, "min": round(m["sec"] / 60)} for m in materie.values()), key=lambda m: -m["min"]),
+                "esami": lista_esami, "senza_data": senza_data, "voti": voti,
+                "rip7": [{"giorno": d.isoformat(), "fatto": d in set(giorni_rip)} for d in sette],
+                "rip_visti": len(visti), "rip_sapute": sum(1 for c in visti if c["ultimo"] == 1),
+                "mai": mai[:6], "n_mai": len(mai), "senza_appunti": [{"nome": x["nome"], "cartella": x["cartella"]} for x in studio if x["senza_appunti"]][:6],
+                "debole": debole,
+                "lezioni": [{k: (v.isoformat() if isinstance(v, datetime.date) else v) for k, v in x.items()} for x in sorted(studio, key=lambda x: x["quando"], reverse=True)]}
+
+            # ---- lavoro
+            lista = cose.tutte(BASE)
+            persone = {}
+            for a in lista:
+                if a["fatto"]:
+                    continue
+                p = persone.setdefault(a["chi"] or "", {"chi": a["chi"] or "", "aperte": 0, "scadute": 0, "prossima": ""})
+                p["aperte"] += 1
+                p["scadute"] += 1 if a["scaduta"] else 0
+                if a["data"] and (not p["prossima"] or a["data"] < p["prossima"]) and not a["scaduta"]:
+                    p["prossima"] = a["data"]
+            decisioni, da_decidere = [], []
+            for x in sorted(lavoro, key=lambda x: x["quando"], reverse=True):
+                cart = Path(x["cartella"])
+                info = el.leggi_json(cart / "info.json", {}) or {}
+                for k in sorted(info.get(ap.chiave_info("verbale")) or {}, key=int):
+                    v = el.leggi_json(ap.file_json(cart, k, "verbale"), {}) or {}
+                    for dd in v.get("decisioni") or []:
+                        t_ = str(dd.get("testo") or "").strip()
+                        if t_ and not any(t_ == y["testo"] for y in decisioni):
+                            decisioni.append({"testo": t_, "chi": str(dd.get("chi") or ""), "nome": x["nome"], "quando": x["quando"],
+                                              "cartella": x["cartella"], "sec": cose._sec(dd.get("dove"))})
+                    for dd in v.get("da_decidere") or []:
+                        t_ = str(dd.get("testo") or "").strip()
+                        if t_ and not any(t_ == y["testo"] for y in da_decidere):
+                            pr = v.get("prossima_riunione") or {}
+                            da_decidere.append({"testo": t_, "nome": x["nome"], "quando": x["quando"], "cartella": x["cartella"],
+                                                "prossima": str(pr.get("quando") or "") if isinstance(pr, dict) else ""})
+            sl = sett(lavoro)
+            out_lavoro = {
+                "settimana_min": sl[-1]["min"], "settimana_n": sum(1 for x in lavoro if x["giorno"] >= settimane[-1]), "settimane": sl,
+                "riunioni_tot": len(lavoro), "riunioni_mese": sum(1 for x in lavoro if x["giorno"] >= mese),
+                "aperte": sum(1 for a in lista if not a["fatto"]), "scadute": sum(1 for a in lista if a["scaduta"]),
+                "persone": sorted(persone.values(), key=lambda p: (-p["aperte"], p["chi"]))[:5],
+                "decisioni": decisioni[:6], "decisioni_mese": sum(1 for d in decisioni if d["quando"][:10] >= mese.isoformat()),
+                "da_decidere": da_decidere[:3],
+                "riunioni": [{k: (v.isoformat() if isinstance(v, datetime.date) else v) for k, v in x.items()} for x in sorted(lavoro, key=lambda x: x["quando"], reverse=True)]}
+            return {"ok": True, "studio": out_studio, "lavoro": out_lavoro, "oggi": oggi.isoformat()}
+        except Exception:
+            log.exception("andamento")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
     def cose_da_fare(self):
         import cose
         lista = cose.tutte(BASE)

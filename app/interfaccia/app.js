@@ -125,6 +125,7 @@ window.chiusura = async c => {
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
 const INTERNE = ['lg', 'dp', 'lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+if (ANDROID) INTERNE.push('and');      // sul telefono Andamento si apre da Studia: con Indietro e il percorso
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -137,6 +138,7 @@ function titoloPagina(p) {
 const ICO_PAG = {lg: '🔊', dp: '🎙', sy: '🔄', fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
+  if (p === 'and') return t('an.h');
   if (p === 'lezione' && LEZ) return LEZ.nome;
   if (p === 'podcast') return t('tl.pc');
   if (p === 'karaoke') return t('tl.kk');
@@ -189,7 +191,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'lg', 'dp', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'lg', 'dp', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'and', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -204,6 +206,7 @@ function vai(p, tornando = false) {
   segnaUso(p);
   if (p === 'studia') apriStudia();
   if (p === 'fare') apriCose();
+  if (p === 'and') apriAndamento();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
   if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); }
   if (p === 'lic') apriLicenze();
@@ -2344,7 +2347,8 @@ async function disegnaStudia() {
     gruppo(t('g.capisci'), [tile('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), '', d('tutor')), tile('libro', '📘', t('tl.lb'), t('tl.lb.s')), tile('glos', '📖', t('tl.gl'), t('tl.gl.s'), '', d('glos')), tile('chm', '💬', t('tl.chm'), t('tl.chm.s')), tile('lezioni', '📚', t('tl.lez'), t('tl.lez.s', {n: m.lez.length, m: m.m}))]);
   const v = x => x && x.length ? x.join(' · ') : '—';
   const voti = info.voti_test.length || info.voti_orali.length || info.voti_scritti.length ? t('st.voti.v', {t: v(info.voti_test), o: v(info.voti_orali), s: v(info.voti_scritti)}) : t('st.voti0');
-  $('stBox2').innerHTML = cardSenzaMateria() + `<div class="card tustudia" id="tuStudia"><span class="ico fam-studio"><svg><use href="#g-tutor"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="ico fam-studio"><svg><use href="#i-cards"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  $('stBox2').innerHTML = cardSenzaMateria() + `<div class="card tustudia" id="tuStudia"><span class="ico fam-studio"><svg><use href="#g-tutor"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.tu'))}</b><div class="hint" id="tuStudiaT">${esc(t('tl.tu.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div><div class="card rgstudia" id="rgStudia"><span class="ico fam-studio"><svg><use href="#i-cards"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('tl.rg'))}</b><div class="hint" id="rgStudiaT"></div></div><button class="btn b-main b-sm">${esc(t('rg.studia.b'))}</button></div><div class="mt"></div>` + (ANDROID ? `<div class="card andstudia an-clic" id="anStudia"><span class="ico fam-studio"><svg><use href="#g-andamento"/></svg></span><div class="sp"><b style="color:var(--ink)">${esc(t('st.and'))}</b><div class="hint">${esc(t('st.and.s'))}</div></div><button class="btn b-ghost b-sm">${esc(t('tu.studia.b'))}</button></div><div class="mt"></div>` : '') + gg + `<div class="card mt">${dsaGr}<div class="altri">${resto}</div></div><div class="card mt"><div class="lbl">${esc(t('st.voti'))}</div><div class="hint">${esc(voti)}</div></div>`;
+  if ($('anStudia')) $('anStudia').onclick = () => { STU.dentro = false; vai('and'); };
   collegaSenzaMateria();
   $('stBox2').querySelectorAll('.altri .grp').forEach(g => { if ([...g.querySelectorAll('.tile')].every(x => x.classList.contains('dup'))) g.classList.add('dup'); });
   $('stBox2').querySelectorAll('[data-ta],[data-sa]').forEach(b => b.onclick = () => tileStudia(m, b.dataset.ta || b.dataset.sa));
@@ -4706,3 +4710,101 @@ function disegnaAgg() {
     });
   });
 })();
+
+/* ------------------------------------------------------------------ andamento */
+// Una pagina sola per vedere come si sta andando. Studio: ore registrate, lezioni, ripasso, esami, voti, cosa resta da sistemare.
+// Lavoro: ore di riunione, cose da fare, decisioni. Tutto dai dati gia' sul dispositivo (niente Claude, niente costi).
+var AN = {d: null, vista: null, sel: 7, mat: null};
+async function apriAndamento() {
+  if (!AN.vista) { try { AN.vista = localStorage.getItem('vm_and') || ''; } catch (e) { AN.vista = ''; } }
+  $('anBox').innerHTML = `<div class="card"><div class="row" style="gap:10px"><span class="spin"></span>${esc(t('an.carico'))}</div></div>`;
+  const d = await A.andamento();
+  if (!d || !d.ok) { $('anBox').innerHTML = `<div class="card avviso">${esc((d && d.msg) || t('ap.err'))}</div>`; return; }
+  AN.d = d;
+  if (!AN.vista) AN.vista = !d.studio.lezioni_tot && d.lavoro.riunioni_tot ? 'lavoro' : 'studio';
+  AN.sel = 7; AN.mat = null;
+  $('anSeg').querySelectorAll('span').forEach(s => s.onclick = () => { AN.vista = s.dataset.v; try { localStorage.setItem('vm_and', AN.vista); } catch (e) {} disegnaAndamento(); });
+  disegnaAndamento();
+}
+const anHm = m => { if (m > 0 && m < 1) return t('an.min1'); m = Math.round(m || 0); return m < 60 ? t('an.min', {m}) : t('an.ore', {h: Math.floor(m / 60), m: String(m % 60).padStart(2, '0')}); };
+const anGiorno = (iso, lungo) => new Date(iso.length > 10 ? iso : iso + 'T12:00').toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', lungo ? {weekday: 'short', day: 'numeric', month: 'short'} : {day: 'numeric', month: 'short'});
+const anSett = s => { const a = new Date(s.da + 'T12:00'), b = new Date(s.a + 'T12:00'), M = x => x.toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {month: 'short'});
+  return a.getMonth() === b.getMonth() ? `${a.getDate()}-${b.getDate()} ${M(b)}` : `${a.getDate()} ${M(a)}-${b.getDate()} ${M(b)}`; };
+const anKpi = (ico, tit, num, sotto) => `<div class="card an-k"><span class="ico fam-studio"><svg><use href="#${ico}"/></svg></span><div><small>${esc(tit)}</small><b>${esc(num)}</b><em>${sotto}</em></div></div>`;
+function anGrafico(sett, sel, id) {
+  const max = Math.max(60, ...sett.map(s => s.min));
+  return `<div class="an-graf" id="${id}">${sett.map((s, i) => `<div class="an-col"><div class="an-bar${i === sett.length - 1 ? ' ora' : ''}${i === sel ? ' sel' : ''}" data-i="${i}" style="height:${Math.max(2, s.min / max * 100)}%"><span>${s.min ? esc(anHm(s.min)) : ''}</span></div></div>`).join('')}</div>
+    <div class="an-assi">${sett.map(s => `<span>${esc(anSett(s))}</span>`).join('')}</div>`;
+}
+async function anApri(cartella) {
+  const l = ((await A.lezioni()).lezioni || []).find(x => x.cartella === cartella);
+  if (l) { LEZ = l; apriLezione(l); }
+}
+function disegnaAndamento() {
+  const d = AN.d; if (!d) return;
+  const lav = AN.vista === 'lavoro';
+  $('anSeg').querySelectorAll('span').forEach(s => s.classList.toggle('on', s.dataset.v === AN.vista));
+  $('anSub').textContent = t(lav ? 'an.sub.l' : 'an.sub.s');
+  $('anBox').innerHTML = lav ? anLavoro(d.lavoro) : anStudio(d.studio);
+  $('anBox').querySelectorAll('.an-bar').forEach(b => b.onclick = () => { AN.sel = +b.dataset.i; AN.mat = null; disegnaAndamento(); });
+  $('anBox').querySelectorAll('[data-mat]').forEach(r => r.onclick = () => { AN.mat = AN.mat === r.dataset.mat ? null : r.dataset.mat; disegnaAndamento(); });
+  $('anBox').querySelectorAll('[data-lez]').forEach(r => r.onclick = () => anApri(r.dataset.lez));
+  $('anBox').querySelectorAll('[data-studia]').forEach(r => r.onclick = () => apriStudia(r.dataset.studia));
+  $('anBox').querySelectorAll('[data-ripassa]').forEach(r => r.onclick = () => { const c = JSON.parse(r.dataset.ripassa); iniziaRipasso(c, t('an.mai.rip'), 'prima'); });
+  $('anBox').querySelectorAll('[data-rg]').forEach(r => r.onclick = () => apriRipassoGiorno());
+  $('anBox').querySelectorAll('[data-vai]').forEach(r => r.onclick = () => vai(r.dataset.vai));
+}
+function anStudio(s) {
+  if (!s.lezioni_tot) return `<div class="card an-vuoto"><h3>${esc(t('an.vuoto.s'))}</h3><p class="hint">${esc(t('an.vuoto.s2'))}</p><button class="btn b-main" data-vai="reg">${esc(t('an.vuoto.b'))}</button></div>`;
+  const diff = s.settimana_min - s.prima_min;
+  const kpi = `<div class="an-kpi">` +
+    anKpi('g-orologio', t('an.k.ore'), anHm(s.settimana_min), diff ? `<span class="${diff > 0 ? 'an-su' : 'an-giu'}">${diff > 0 ? '+' : '−'}${esc(anHm(Math.abs(diff)))}</span> ${esc(t('an.k.ore.s'))}` : esc(t('an.k.ore.u'))) +
+    anKpi('i-lib', t('an.k.lez'), String(s.lezioni_tot), esc(t('an.k.lez.s', {n: s.lezioni_mese}))) +
+    anKpi('g-fuoco', t('an.k.fila'), String(s.serie), esc(s.record ? t('an.k.fila.s', {n: s.record}) : t('an.k.fila.0'))) +
+    `<div class="card an-k an-clic" data-rg="1"><span class="ico fam-studio"><svg><use href="#i-cards"/></svg></span><div><small>${esc(t('an.k.carte'))}</small><b>${s.fatto_oggi ? '✓' : s.carte_oggi}</b><em>${esc(s.fatto_oggi ? t('an.k.carte.f') : s.carte_oggi ? t('an.k.carte.s', {m: s.minuti_oggi}) : t('an.k.carte.0'))}</em></div></div></div>`;
+  const esami = s.esami.map(e => `<div class="an-es an-clic" data-studia="${esc(e.materia)}"><div class="an-gg${e.giorni <= 10 ? ' vic' : ''}"><b>${e.giorni}</b><small>${esc(t(e.giorni === 1 ? 'an.g1' : 'an.gg'))}</small></div>
+      <div class="sp"><strong>${esc(e.materia)}</strong><div class="hint">${esc(anGiorno(e.data))} · ${esc(e.pronto ? t('an.pronto', {p: e.pronto}) : t('an.pronto0'))}</div><div class="an-pr"><i style="width:${Math.max(2, e.pronto)}%"></i></div></div></div>`).join('') +
+    s.senza_data.map(m => `<div class="an-es"><div class="an-gg no"><b>—</b></div><div class="sp"><strong>${esc(m)}</strong><div class="hint">${esc(t('an.nodata'))}</div></div><button class="btn b-ghost b-sm" data-studia="${esc(m)}">${esc(t('an.metti'))}</button></div>`).join('');
+  const maxm = Math.max(1, ...s.materie.map(m => m.min));
+  const mat = s.materie.map(m => `<div class="an-mat an-clic${AN.mat && AN.mat !== m.materia ? ' spento' : ''}${AN.mat === m.materia ? ' on' : ''}" data-mat="${esc(m.materia)}"><span><i class="c${m.colore}"></i>${esc(m.materia)}</span><div class="an-b2"><i class="c${m.colore}" style="width:${m.min / maxm * 100}%"></i></div><em>${esc(anHm(m.min))}</em></div>`).join('');
+  const sw = s.settimane[AN.sel];
+  const righe = AN.mat ? s.lezioni.filter(l => l.materia === AN.mat).slice(0, 12) : s.lezioni.filter(l => l.giorno >= sw.da && l.giorno <= sw.a);
+  const tit = AN.mat ? t('an.lz.mat', {m: AN.mat}) : t('an.lz.sett', {s: anSett(sw)});
+  const tot = righe.reduce((a, l) => a + l.sec, 0) / 60;
+  const fmt = f => f === 'esame' ? t('an.f.esame') : f === 'cornell' ? 'Cornell' : f === 'verbale' ? t('an.f.verbale') : f === 'punti' ? t('an.f.punti') : (f || '—');
+  const tab = righe.length ? `<table class="an-lz"><thead><tr><th>${esc(t('an.lz.q'))}</th><th>${esc(t('an.lz.l'))}</th><th class="q">${esc(t('an.lz.f'))}</th><th class="n">${esc(t('an.lz.d'))}</th></tr></thead><tbody>${righe.map(l =>
+    `<tr class="an-clic" data-lez="${esc(l.cartella)}"><td>${esc(anGiorno(l.quando, true))}<small>${esc(t('an.lz.ora', {o: l.quando.slice(11, 16).replace(':', '.')}))}${l.modo ? ' · ' + esc(t(l.modo === 'aula' ? 'an.aula' : 'an.online')) : ''}</small></td>
+      <td><div class="an-ln"><span class="an-cov c${l.colore}">${esc(l.sigla)}</span><b>${esc(l.nome)}</b></div></td><td class="q">${esc(fmt(l.formato))}</td><td class="n">${esc(anHm(l.sec / 60))}</td></tr>`).join('')}</tbody></table>`
+    : `<div class="hint">${esc(t('an.lz.vuoto'))}</div>`;
+  const voti = s.voti.map(v => `<div class="an-voto an-clic" data-studia="${esc(v.materia)}"><span>${esc(v.materia)}</span><div class="an-punti">${v.voti.map(x => `<i class="${x.voto >= 26 ? 'alto' : ''}" title="${esc(t('an.v.' + x.tipo))}${x.quando ? ' · ' + esc(anGiorno(x.quando)) : ''}">${x.voto}</i>`).join('')}</div><em>${v.media}</em></div>`).join('');
+  const dn = ['an.d0', 'an.d1', 'an.d2', 'an.d3', 'an.d4', 'an.d5', 'an.d6'];
+  const rip7 = `<div class="an-sett">${s.rip7.map(g => `<div><i class="${g.fatto ? 'si' : ''}"></i>${esc(t(dn[new Date(g.giorno + 'T12:00').getDay()]))}</div>`).join('')}</div>
+    <div class="hint" style="margin-top:12px">${s.rip_visti ? esc(t('an.rip.s', {s: s.rip_sapute, n: s.rip_visti, p: Math.round(s.rip_sapute / s.rip_visti * 100)})) : esc(t('an.rip.0'))}</div>`;
+  const fix = [];
+  if (s.n_mai) fix.push(`<div class="an-fix"><span class="ico fam-studio"><svg><use href="#i-cards"/></svg></span><div class="sp"><b>${esc(t(s.n_mai === 1 ? 'an.mai1' : 'an.mai', {n: s.n_mai}))}</b><small>${esc(s.mai.map(x => x.nome).join(', '))}</small></div><button class="btn b-ghost b-sm" data-ripassa="${esc(JSON.stringify(s.mai.map(x => x.cartella)))}">${esc(t('an.rip.b'))}</button></div>`);
+  if (s.debole) fix.push(`<div class="an-fix"><span class="ico fam-prova"><svg><use href="#i-check"/></svg></span><div class="sp"><b>${esc(t('an.deb', {a: s.debole.argomento}))}</b><small>${esc(s.debole.materia)} · ${esc(t(s.debole.n === 1 ? 'an.deb.s1' : 'an.deb.s', {n: s.debole.n}))}</small></div><button class="btn b-ghost b-sm" data-lez="${esc(s.debole.cartella)}">${esc(t('an.rivedi'))}</button></div>`);
+  if (s.senza_appunti.length) fix.push(`<div class="an-fix"><span class="ico fam-scrivi"><svg><use href="#i-doc"/></svg></span><div class="sp"><b>${esc(t(s.senza_appunti.length === 1 ? 'an.noap1' : 'an.noap', {n: s.senza_appunti.length}))}</b><small>${esc(s.senza_appunti.map(x => x.nome).join(', '))}</small></div><button class="btn b-ghost b-sm" data-lez="${esc(s.senza_appunti[0].cartella)}">${esc(t('an.crea'))}</button></div>`);
+  if (s.senza_data.length) fix.push(`<div class="an-fix"><span class="ico fam-mappe"><svg><use href="#g-orologio"/></svg></span><div class="sp"><b>${esc(t(s.senza_data.length === 1 ? 'an.nod1' : 'an.nod', {n: s.senza_data.length}))}</b><small>${esc(t('an.nod.s', {m: s.senza_data.join(', ')}))}</small></div><button class="btn b-ghost b-sm" data-studia="${esc(s.senza_data[0])}">${esc(t('an.metti'))}</button></div>`);
+  return kpi +
+    `<div class="an-due"><div class="card"><div class="lbl">${esc(t('an.graf.s'))}</div>${anGrafico(s.settimane, AN.sel, 'anGr')}<div class="hint" style="margin-top:8px">${esc(t('an.graf.h'))}</div></div>
+      <div class="card"><div class="lbl">${esc(t('an.esami'))}</div>${esami || `<div class="hint">${esc(t('an.esami.0'))}</div>`}</div></div>` +
+    `<div class="an-due an-due2"><div class="card"><div class="lbl">${esc(t('an.mat'))}</div>${mat || `<div class="hint">${esc(t('an.mat.0'))}</div>`}<div class="hint" style="margin-top:8px">${esc(t('an.mat.h'))}</div></div>
+      <div class="card"><div class="an-lzh"><div class="lbl">${esc(tit)}</div><small>${esc(t(righe.length === 1 ? 'an.lz.n1' : 'an.lz.n', {n: righe.length, d: anHm(tot)}))}</small></div>${tab}</div></div>` +
+    `<div class="an-due"><div class="card"><div class="lbl">${esc(t('an.voti'))}</div>${voti ? voti + `<div class="hint" style="margin-top:6px">${esc(t('an.voti.h'))}</div>` : `<div class="hint">${esc(t('an.voti.0'))}</div>`}</div>
+      <div class="card"><div class="lbl">${esc(t('an.rip7'))}</div>${rip7}</div></div>` +
+    (fix.length ? `<div class="card"><div class="lbl">${esc(t('an.fix'))}</div>${fix.join('')}</div>` : `<div class="card"><div class="lbl">${esc(t('an.fix'))}</div><div class="hint">${esc(t('an.fix.0'))}</div></div>`);
+}
+function anLavoro(w) {
+  if (!w.riunioni_tot) return `<div class="card an-vuoto"><h3>${esc(t('an.vuoto.l'))}</h3><p class="hint">${esc(t('an.vuoto.l2'))}</p><button class="btn b-main" data-vai="reg">${esc(t('an.vuoto.b'))}</button></div>`;
+  const kpi = `<div class="an-kpi">` +
+    anKpi('g-orologio', t('an.l.ore'), anHm(w.settimana_min), esc(t(w.settimana_n === 1 ? 'an.l.ore.s1' : 'an.l.ore.s', {n: w.settimana_n}))) +
+    anKpi('i-lib', t('an.l.riu'), String(w.riunioni_tot), esc(t('an.k.lez.s', {n: w.riunioni_mese}))) +
+    `<div class="card an-k an-clic" data-vai="fare"><span class="ico fam-studio"><svg><use href="#g-ok"/></svg></span><div><small>${esc(t('an.l.fare'))}</small><b>${w.aperte}</b><em>${w.scadute ? `<span class="an-giu">${esc(t('an.l.scad', {n: w.scadute}))}</span>` : esc(t('an.l.scad0'))}</em></div></div>` +
+    anKpi('i-doc', t('an.l.dec'), String(w.decisioni_mese), esc(t('an.l.dec.s'))) + `</div>`;
+  const pers = w.persone.map(p => `<div class="an-es an-clic" data-vai="fare"><div class="an-gg${p.scadute ? ' vic' : ''}"><b>${p.aperte}</b><small>${esc(t('an.l.aperte'))}</small></div><div class="sp"><strong>${esc(p.chi || t('an.l.nessuno'))}</strong><div class="hint">${esc([p.scadute ? t('an.l.scad', {n: p.scadute}) : '', p.prossima ? t('an.l.pross', {d: anGiorno(p.prossima, true)}) : ''].filter(Boolean).join(' · '))}</div></div></div>`).join('');
+  const dec = w.decisioni.map(x => `<div class="an-fix"><span class="ico fam-studio"><svg><use href="#i-lib"/></svg></span><div class="sp"><b>${esc(x.testo)}</b><small>${esc(x.nome)} · ${esc(anGiorno(x.quando))}${x.chi ? ' · ' + esc(x.chi) : ''}</small></div><button class="btn b-ghost b-sm" data-lez="${esc(x.cartella)}">${esc(t('an.l.apri'))}</button></div>`).join('') +
+    w.da_decidere.map(x => `<div class="an-fix"><span class="ico fam-prova"><svg><use href="#g-orologio"/></svg></span><div class="sp"><b>${esc(t('an.l.dadec', {t: x.testo}))}</b><small>${esc(x.prossima ? t('an.l.prossima', {q: x.prossima}) : x.nome)}</small></div><button class="btn b-ghost b-sm" data-lez="${esc(x.cartella)}">${esc(t('an.l.apri'))}</button></div>`).join('');
+  return kpi + `<div class="an-due"><div class="card"><div class="lbl">${esc(t('an.graf.l'))}</div>${anGrafico(w.settimane, -1, 'anGrL')}</div>
+      <div class="card"><div class="lbl">${esc(t('an.l.chi'))}</div>${pers || `<div class="hint">${esc(t('an.l.chi0'))}</div>`}</div></div>
+    <div class="card"><div class="lbl">${esc(t('an.l.ultime'))}</div>${dec || `<div class="hint">${esc(t('an.l.dec0'))}</div>`}</div>`;
+}
