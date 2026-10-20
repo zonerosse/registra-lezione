@@ -240,7 +240,7 @@ if (ANDROID) {
        {
         "e": "⭐",
         "b": "Modalità DSA",
-        "x": ": ascolto, mappe, carattere e sillabe colorate.",
+        "x": ": Leggimi, Scrivi parlando, mappe, carattere e sillabe colorate.",
         "v": "dsa"
        },
        {
@@ -427,13 +427,13 @@ if (ANDROID) {
    "v": "tel-lezione",
    "t": "La pagina della lezione",
    "p": [
-    "In «Le mie registrazioni» tocca una lezione: si apre la sua pagina, con tutto in <b>riquadri</b> divisi per gruppi.",
+    "In «Lezioni» tocca una lezione: si apre la sua pagina, con tutto in <b>riquadri</b> divisi per gruppi.",
     "<b>Leggi</b>: gli appunti in ogni formato (Cornell, Formato Esame…), Ascolta gli appunti, trascrizione, video. Con «＋ Crea anche in…» aggiungi un altro formato.",
     "<b>Capisci</b>: Chiedi alla lezione, mappa, infografica, capitoli, Karaoke, Podcast, foto della lezione, appunti a mano, libro di testo.",
     "<b>Ripassa</b>: flashcard e, se la lezione ha la materia, Studia. <b>Condividi</b>: email, Word, calendario, spezzoni, chi parla, statistiche.",
-    "Sotto ci sono il riquadro <b>📎 Materiali del prof</b> (slide in PDF e libro) e le cose di servizio: rinomina, rifai gli appunti, aula rumorosa, apri la cartella, elimina il video o la lezione.",
+    "Sotto ci sono il riquadro <b>📎 Materiali del prof</b> (slide in PDF e libro) e le cose di servizio: rinomina, rifai gli appunti, aula rumorosa, apri la cartella, elimina l'audio o la lezione.",
     "Se la lezione non ha la materia compare «⚠ Materia mancante»: tocca <b>✎ Metti la materia</b> e la ritrovi in Studia.",
-    "In alto c'è sempre <b>← Indietro</b> con il percorso (per esempio «Le mie registrazioni › Fisiologia – Lezione 3»): ogni parte blu ti riporta lì."
+    "In alto c'è sempre <b>← Indietro</b> con il percorso (per esempio «Le mie lezioni › Fisiologia – Lezione 3»): ogni parte blu ti riporta lì."
    ],
    "g": "studio"
   },
@@ -457,7 +457,7 @@ if (ANDROID) {
    "p": [
     "<b>Chiedi alla lezione</b> (pagina della lezione): scrivi cosa non hai capito. La risposta usa solo quello che si è detto e indica slide e minuto: tocca il minuto e rivedi quel punto. Se c'è il libro di testo, cita anche la pagina. In Studia chiedi su <b>tutta la materia</b>. Meno di 1 centesimo a domanda.",
     "Puoi anche <b>dettare</b> la domanda con il microfono 🎤.",
-    "<b>🗺 La mia mappa</b>: la mappa mentale della lezione, che puoi cambiare. <b>👁 Guarda</b> (tocca 🔊 o una voce per sentirla), <b>✏️ Modifica</b> (tocca una parola per cambiarla; su ogni tema ➕ voce, 🎨 colore, 🗑 togli; ↶ Annulla se sbagli) e <b>🧩 Costruiscila tu</b> (scrivi o detta 🎙 le voci, 💡 Aiuto se sei bloccato). Si salva da sola; «Stampa o PDF» stampa quella che vedi. <b>Infografica</b>: tutta la registrazione in una pagina. Circa 1 centesimo, una volta sola.",
+    "<b>🗺 La mia mappa</b> (riquadro «Mappa mentale» della lezione): la mappa mentale della lezione, che puoi cambiare. <b>👁 Guarda</b> (tocca 🔊 o una voce per sentirla), <b>✏️ Modifica</b> (tocca una parola per cambiarla; su ogni tema ➕ voce, 🎨 colore, 🗑 togli; ↶ Annulla se sbagli) e <b>🧩 Costruiscila tu</b> (scrivi o detta 🎙 le voci, 💡 Aiuto se sei bloccato). Si salva da sola; «Stampa o PDF» stampa quella che vedi. <b>Infografica</b>: tutta la registrazione in una pagina. Circa 1 centesimo, una volta sola.",
     "<b>Capitoli</b>: l'indice degli argomenti; tocca un argomento e la lezione riparte da lì."
    ],
    "g": "studio"
@@ -520,7 +520,7 @@ if (ANDROID) {
     "In <b>Studia</b> (o nello Spazio DSA) tocca <b>🃏 Ripasso del giorno</b>: ogni giorno poche carte scelte fra tutte le lezioni, con materia, lezione e argomento ben visibili.",
     "Le sbagliate tornano il giorno dopo, le sapute dopo 2, 4, 8 giorni… e più spesso quando l'esame è vicino.",
     "Quattro modi: <b>con le carte</b>, <b>a voce</b> (dici la risposta e ti dice le parole chiave dette e mancanti), <b>a crocette</b> (risposte sbagliate nuove ogni settimana) e <b>lampo</b> (5 minuti).",
-    "Vedi i giorni di fila e quanto sei pronto per l'esame. il promemoria arriva all'ora che scegli.",
+    "Vedi i giorni di fila e quanto sei pronto per l'esame. Il promemoria arriva all'ora che scegli.",
     "Non costa niente."
    ],
    "g": "materia"
@@ -566,11 +566,12 @@ if (ANDROID) {
    "v": "tel-dsa",
    "t": "Modalità DSA",
    "p": [
-    "Accendi la <b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima trovi gli strumenti più utili per chi ha un DSA, il resto sotto in «Altro».",
-    "<b>⭐ Spazio DSA</b> (prima voce del menu): scegli materia e lezione e trovi gli strumenti in ordine: in aula, dopo la lezione, per la verifica, per il docente. «Gli strumenti che uso» prepara il foglio per il <b>PDP</b>.",
+    "Accendi la <b>Modalità DSA</b> (in alto nella lezione e in Studia, o in Impostazioni): in cima trovi gli strumenti più utili per chi ha un DSA, il resto sotto in «Altro». Appena la accendi il programma passa a uno stile più riposante: sfondo grigio chiaro, carattere Lexend, colore verde petrolio.",
+    "la voce <b>DSA</b> del menu (compare quando la Modalità DSA è accesa): scegli materia e lezione e trovi gli strumenti in ordine: in aula, dopo la lezione, per la verifica, per il docente. «Gli strumenti che uso» prepara il foglio per il <b>PDP</b>.",
      "<b>🔊 Leggimi</b> (Spazio DSA): qualsiasi PDF, foto di una pagina o testo copiato letto ad alta voce, con la frase che si illumina; tocca una frase per sentire da lì. Il PDF è gratis, la foto la legge Claude (meno di 1 centesimo). In «Letti di recente» lo riapri dove eri rimasto.",
      "<b>🎙 Scrivi parlando</b> (Spazio DSA): parli e il testo si scrive da solo, anche senza internet. <b>🔊 Rileggimelo</b> te lo fa sentire, <b>✨ Sistema punti e virgole</b> mette solo la punteggiatura, poi <b>📋 Copia</b>.",
-    "<b>👓 Come leggo meglio</b>: carattere (Atkinson Hyperlegible, OpenDyslexic, Lexend), grandezza, spazio, colore dello sfondo, <b>sillabe colorate</b> e <b>righello di lettura</b>. Vale per appunti, Ascolta, Karaoke, flashcard e PDF.",
+    "<b>👓 Come leggo meglio</b>: carattere (Lexend, quello di partenza, Atkinson Hyperlegible, OpenDyslexic), grandezza, spazio, colore dello sfondo (grigio, azzurro, verde, crema, scuro), <b>sillabe colorate</b> e <b>righello di lettura</b>. Vale per appunti, Ascolta, Karaoke, flashcard e PDF. Nello Spazio DSA il pulsante <b>Aa Come leggo</b> cambia al volo sfondo, carattere, grandezza e spazio; «Come all'inizio» torna alle scelte di partenza.",
+     "<b>🗺 La mia mappa</b> (Spazio DSA → Mappa della lezione): Guarda e ascolta, Modifica, oppure Costruiscila tu scrivendo o dettando le voci con 🎙 Detta.",
     "<b>🗺 Mappa per la verifica</b> (Studia): un foglio A4 con le parole chiave delle lezioni della verifica e le formule; togli quello che non vuoi, scrivi nome e classe, poi PDF o Stampa (strumento compensativo, L. 170/2010).",
     "Nei test il 30% di tempo in più; domande e risposte si possono ascoltare e dettare a voce."
    ],
@@ -846,7 +847,7 @@ if (ANDROID) {
        {
         "e": "⭐",
         "b": "Dyslexia mode",
-        "x": ": listening, maps, font and coloured syllables.",
+        "x": ": Read to me, write by speaking, maps, font and coloured syllables.",
         "v": "dsa"
        },
        {
@@ -1033,13 +1034,13 @@ if (ANDROID) {
    "v": "tel-lezione",
    "t": "The lecture page",
    "p": [
-    "In «My recordings» tap a lecture: its page opens, with everything in <b>tiles</b> grouped by purpose.",
+    "In «Lectures» tap a lecture: its page opens, with everything in <b>tiles</b> grouped by purpose.",
     "<b>Read</b>: the notes in every format (Cornell, Exam format…), Listen to the notes, transcript, video. With «＋ Also create in…» you add another format.",
     "<b>Understand</b>: Ask the lecture, map, infographic, chapters, Karaoke, Podcast, lecture photos, handwritten notes, textbook.",
     "<b>Review</b>: flashcards and, if the lecture has a course, Study. <b>Share</b>: email, Word, calendar, clips, who's speaking, statistics.",
-    "Below are the <b>📎 Lecturer's materials</b> box (slides PDF and textbook) and the housekeeping items: rename, redo the notes, noisy classroom, open the folder, delete the video or the lecture.",
-    "If the lecture has no course you see «⚠ Course missing»: tap <b>✎ Add the course</b> and you'll find it in Study.",
-    "At the top there's always <b>← Back</b> with the path (for example «My recordings › Physiology – Lecture 3»): each blue part takes you back there."
+    "Below are the <b>📎 Lecturer's materials</b> box (slides PDF and textbook) and the housekeeping items: rename, redo the notes, noisy classroom, open the folder, delete the audio or the lecture.",
+    "If the lecture has no course you see «⚠ No subject»: tap <b>✎ Add the subject</b> and you'll find it in Study.",
+    "At the top there's always <b>← Back</b> with the path (for example «My lectures › Physiology – Lecture 3»): each blue part takes you back there."
    ],
    "g": "studio"
   },
@@ -1063,7 +1064,7 @@ if (ANDROID) {
    "p": [
     "<b>Ask the lecture</b> (lecture page): write what you didn't understand. The answer only uses what was said and shows slide and minute: tap the minute to see that point again. If there's a textbook, it also quotes the page. In Study you ask about <b>the whole course</b>. Less than 1 cent per question.",
     "You can also <b>dictate</b> the question with the 🎤 microphone.",
-    "<b>🗺 My map</b>: the lecture's mind map, which you can change. <b>👁 View</b> (tap 🔊 or an item to hear it), <b>✏️ Edit</b> (tap a word to change it; on each topic ➕ item, 🎨 colour, 🗑 remove; ↶ Undo if you slip) and <b>🧩 Build it yourself</b> (write or dictate 🎙 the items, 💡 Help if you are stuck). It saves itself; «Print or PDF» prints what you see. <b>Infographic</b>: the whole recording on one page. About 1 cent, only once.",
+    "<b>🗺 My map</b> (the «Mind map» tile on the lecture page): the lecture's mind map, which you can change. <b>👁 View</b> (tap 🔊 or an item to hear it), <b>✏️ Edit</b> (tap a word to change it; on each topic ➕ item, 🎨 colour, 🗑 remove; ↶ Undo if you slip) and <b>🧩 Build it yourself</b> (write or dictate 🎙 the items, 💡 Help if you are stuck). It saves itself; «Print or PDF» prints what you see. <b>Infographic</b>: the whole recording on one page. About 1 cent, only once.",
     "<b>Chapters</b>: the index of topics; tap a topic and the lecture restarts from there."
    ],
    "g": "studio"
@@ -1123,10 +1124,10 @@ if (ANDROID) {
    "v": "tel-rg",
    "t": "Daily review",
    "p": [
-    "In <b>Study</b> (or the Dyslexia space) tap <b>🃏 Daily review</b>: a few cards a day chosen from all lectures, with course, lecture and topic clearly shown.",
+    "In <b>Study</b> (or the DSA space) tap <b>🃏 Daily review</b>: a few cards a day chosen from all lectures, with course, lecture and topic clearly shown.",
     "Wrong ones come back the next day, known ones after 2, 4, 8 days… and more often as the exam gets closer.",
     "Four ways: <b>with cards</b>, <b>by voice</b> (say the answer and it tells you the keywords you said and missed), <b>multiple choice</b> (new wrong answers every week) and <b>quick</b> (5 minutes).",
-    "You see your streak and how ready you are for the exam. the reminder comes at the time you choose.",
+    "You see your streak and how ready you are for the exam. The reminder comes at the time you choose.",
     "It costs nothing."
    ],
    "g": "materia"
@@ -1172,11 +1173,12 @@ if (ANDROID) {
    "v": "tel-dsa",
    "t": "Dyslexia mode",
    "p": [
-    "Turn on <b>Dyslexia mode</b> (at the top of the lecture and in Study, or in Settings): the most useful tools for dyslexic students come first, the rest below in «More».",
-    "<b>⭐ Dyslexia space</b> (first menu item): choose course and lecture and find the tools in order: in class, after the lecture, for the test, for the teacher. «The tools I use» prepares the sheet for the learning plan (<b>PDP</b>).",
+    "Turn on <b>Dyslexia mode</b> (at the top of the lecture and in Study, or in Settings): the most useful tools for dyslexic students come first, the rest below in «More». As soon as you turn it on, the program switches to a calmer look: light grey background, Lexend font, teal accent.",
+    "the <b>DSA</b> menu item (shown when Dyslexia mode is on): choose course and lecture and find the tools in order: in class, after the lecture, for the test, for the teacher. «The tools I use» prepares the sheet for the learning plan (<b>PDP</b>).",
      "<b>🔊 Read to me</b> (DSA space): any PDF, photo of a page or copied text read aloud, with the sentence lighting up; tap a sentence to listen from there. PDFs are free, photos are read by Claude (less than 1 cent). «Recently read» reopens it where you left off.",
      "<b>🎙 Write by speaking</b> (DSA space): you speak and the text writes itself, even offline. <b>🔊 Read it back</b> lets you hear it, <b>✨ Fix full stops and commas</b> only adds punctuation, then <b>📋 Copy</b>.",
-    "<b>👓 How I read best</b>: font (Atkinson Hyperlegible, OpenDyslexic, Lexend), size, spacing, background colour, <b>coloured syllables</b> and <b>reading ruler</b>. It applies to notes, Listen, Karaoke, flashcards and PDFs.",
+    "<b>👓 How I read best</b>: font (Lexend, the default, Atkinson Hyperlegible, OpenDyslexic), size, spacing, background colour (grey, blue, green, cream, dark), <b>coloured syllables</b> and <b>reading ruler</b>. It applies to notes, Listen, Karaoke, flashcards and PDFs. In the DSA space the <b>Aa How I read</b> button changes background, font, size and spacing on the spot; «Back to default» restores the starting choices.",
+     "<b>🗺 My map</b> (DSA space → Lecture map): View and listen, Edit, or Build it yourself by typing or dictating the items with 🎙 Dictate.",
     "<b>🗺 Test map</b> (Study): an A4 sheet with the keywords of the lectures in the test and the formulas; remove what you don't want, write name and class, then PDF or Print (compensatory tool, Italian law 170/2010).",
     "Tests give 30% more time; questions and answers can be listened to and dictated by voice."
    ],
