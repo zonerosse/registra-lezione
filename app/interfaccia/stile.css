@@ -1314,3 +1314,21 @@ table.an-lz .n{text-align:right;font-weight:700;color:var(--ink);white-space:now
 table.an-lz td:first-child{white-space:nowrap}
 @media (max-width:1250px){table.an-lz .q{display:none}}
 @media (max-width:900px){.an-due2{grid-template-columns:minmax(0,1fr)}}
+/* ---- Più ordine e compattezza (versione leggera): stessi riquadri dei video, solo meno spazio */
+.pg{padding:18px 26px 26px}
+.hd{margin-bottom:12px}.hd h2{font-size:22px}
+.card{padding:14px 16px}
+.mt{margin-top:10px!important}
+/* riquadri di scelta: stessa forma, più bassi */
+.dove,.ai{gap:8px}
+.aiopt{padding:10px 12px!important;border-radius:12px!important;border-width:1.5px!important}
+.aiopt.on{box-shadow:0 0 0 3px rgba(2,132,199,.08)!important}
+.aiopt .rd{top:10px!important;right:10px!important;width:16px!important;height:16px!important}
+.dove .ico,.ai .ico{width:28px!important;height:28px!important;border-radius:8px!important}.dove .ico svg,.ai .ico svg{width:15px;height:15px}
+.aiopt b{margin:6px 0 2px!important;font-size:14px}.aiopt small{font-size:12.5px!important;line-height:1.35!important}
+.clopt{padding:8px 6px!important}.clopt .ico{width:30px!important;height:30px!important;margin-bottom:4px!important}
+/* riquadri delle azioni: stessa disposizione, più bassi */
+.tiles{gap:8px}
+.tile{padding:9px 11px;gap:10px}
+.tile .ico{width:32px!important;height:32px!important;border-radius:9px!important}
+.tile small{margin-top:1px}
