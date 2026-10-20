@@ -200,11 +200,11 @@ async function passo2() {
   }
   const link = (u, t) => `<a class="iq-link" data-u="${u}">${sq(t)}</a>`;
   const invito = TEL ? `<div class="iq-inv"><b>${sq(tq('inv_t'))}</b><div class="hint">${sq(tq('inv_s'))}</div>
-      <div class="iq-campo"><input class="in" id="iqInv" placeholder="VMIA-INVITO-1:…" autocomplete="off"><button class="btn b-main b-sm" id="iqInvOk">${sq(tq('inv_b'))}</button></div>
+      <div class="iq-campo"><input class="in" id="iqInv" placeholder="VMIA-INVITO-1:…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn b-main b-sm" id="iqInvOk">${sq(tq('inv_b'))}</button></div>
       <div class="dlgerr" id="iqInvErr"></div></div>
     <div style="margin-top:12px"><b>${sq(tq('chiave_t'))}</b><div class="hint">${sq(tq('chiave_s'))}</div></div>` : '';
   mostra(2, `<h3>${sq(tq('c_t'))}</h3><div class="tx">${sq(tq('c_s'))}</div>${invito}
-    <div class="iq-campo"><input class="in" id="iqK" type="password" placeholder="sk-ant-…" autocomplete="off"><button class="btn b-ghost b-sm" id="iqInc">${sq(tq('incolla'))}</button></div>
+    <div class="iq-campo"><input class="in" id="iqK" type="password" placeholder="sk-ant-…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="btn b-ghost b-sm" id="iqInc">${sq(tq('incolla'))}</button></div>
     <div class="dlgerr" id="iqErr"></div>
     <details class="iq-dove" open><summary>${sq(tq('c_dove'))}</summary><ol>
       <li>${tq('c_d1', {l: link(L_CHIAVI, tq('l_chiavi'))})}</li><li>${tq('c_d2', {l: link(L_FATT, tq('l_fatt'))})}</li>

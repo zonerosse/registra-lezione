@@ -843,7 +843,9 @@ class Motore:
     def _leggi_invito(self, testo):
         import base64
         import zlib
-        m = re.search(r"VMIA-INVITO-1:([A-Za-z0-9_\-]+)", str(testo or ""))
+        # il telefono puo' cambiare l'inizio in minuscolo (correzione automatica dell'iPhone)
+        t = re.sub(r"(?i)vmia-invito-1:\s*", "VMIA-INVITO-1:", str(testo or ""))
+        m = re.search(r"VMIA-INVITO-1:([A-Za-z0-9_\-]+)", t)
         if not m:
             return None
         c = m.group(1)
