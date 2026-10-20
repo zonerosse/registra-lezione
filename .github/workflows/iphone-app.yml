@@ -54,6 +54,8 @@ jobs:
         run: |
           python -m pip install -q --upgrade pip briefcase
           briefcase create iOS --no-input 2>&1 | tail -30
+          # Apple non accetta librerie statiche (.a) dentro l'app: quelle di numpy non servono a niente
+          find build -path "*app_packages*" -name "*.a" -print -delete
           # numero di costruzione sempre nuovo (Apple non accetta due invii con lo stesso numero)
           PL=$(find build -name "*-Info.plist" -path "*xcode*" | head -1)
           V=$(python -c "import json;print(json.load(open('../android/versione.json'))['versione'])" 2>/dev/null || echo 0.1.0)
