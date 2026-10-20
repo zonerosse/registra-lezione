@@ -1323,7 +1323,7 @@ async function invitoCopiato() {
 }
 async function attivaInvito(testo) {
   const r = await A.invito_attiva(testo);
-  if (!r.ok) { await dialogo({titolo: t('ho.h'), testo: r.msg || ''}); return false; }
+  if (!r.ok) { await dialogo({titolo: t('ho.h'), testo: r.msg || r.errore || ''}); return false; }
   await rileggi();
   disegnaHoPronto();
   await dialogo({titolo: t('ho.h'), testo: t('ho.ok', {c: [r.claude ? t('ho.ok.cl') : '', r.server ? t('ho.ok.srv') : ''].filter(Boolean).join(' ' + t('ho.e') + ' ')})});
@@ -1360,7 +1360,7 @@ function disegnaInviti() {
   };
   $('hoVai').onclick = async () => {
     const r = await A.invito_attiva($('hoTxt').value);
-    if (!r.ok) { $('hoEsito').style.color = '#be123c'; $('hoEsito').textContent = '⚠ ' + (r.msg || ''); return; }
+    if (!r.ok) { $('hoEsito').style.color = '#be123c'; $('hoEsito').textContent = '⚠ ' + (r.msg || r.errore || '?'); return; }
     $('hoTxt').value = '';
     $('hoEsito').style.color = '#059669';
     $('hoEsito').textContent = t('ho.ok', {c: [r.claude ? t('ho.ok.cl') : '', r.server ? t('ho.ok.srv') : ''].filter(Boolean).join(' ' + t('ho.e') + ' ')});
