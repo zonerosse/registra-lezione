@@ -1,7 +1,7 @@
 {
- "versione": "0.13.18",
+ "versione": "0.13.19",
  "codice": 13,
- "novita": "Slide dallo schermo: resta solo la lavagna. Il programma toglie da solo barre del browser, pagina di YouTube, menu e barra delle applicazioni, guardando cosa cambia da una slide all'altra.",
- "novita_en": "Slides from the screen: only the board is kept. The program removes browser bars, the YouTube page, menus and the taskbar by itself, by looking at what changes from one slide to the next.",
- "contenuto": 94
+ "novita": "I PDF degli appunti con i colori del programma: Cornell blu, Formato Esame verde petrolio, verbale blu scuro, riquadri neutri. Nel PDF della lezione completa i capitoli non si ripetono più.",
+ "novita_en": "Notes PDFs in the program's colours: Cornell blue, Exam format teal, minutes dark blue, neutral boxes. In the full-lecture PDF chapters no longer repeat.",
+ "contenuto": 95
 }
