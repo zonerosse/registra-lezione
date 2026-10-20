@@ -22,11 +22,20 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('«Prima di iniziare»: «Inizia» spento senza spunta, dice «telefono»', await p.isDisabled('#pvOk') && (await p.innerText('.velo')).includes('telefono'));
     await p.check('#pvCk'); await p.click('#pvOk'); await p.waitForTimeout(500);
     passo('«Prima di iniziare»: spunta salvata', (await p.evaluate(() => A.riepilogo())).privacy_ok === true);
+    // «Inizia qui» si apre da solo anche sul telefono: Google (salta), Claude con «Ho un invito», poi «Collegati al PC»
+    await p.waitForSelector('#iqVelo', {timeout: 10000}); await foto('00a-inizia-qui');
+    passo('«Inizia qui» al primo avvio, con «solo su questo telefono»', (await p.innerText('#iqVelo')).includes('telefono'));
+    await p.click('#iqSalta'); await p.waitForTimeout(600); await foto('00a2-inizia-claude');
+    passo('«Inizia qui», passo Claude: c\'è «Ho un invito»', await p.isVisible('#iqInv') && await p.isVisible('#iqInvOk'));
+    await p.click('#iqInvOk'); await p.waitForTimeout(300);
+    passo('«Ho un invito» vuoto: spiega cosa incollare', (await p.innerText('#iqInvErr')).includes('VMIA-INVITO-1'));
+    await p.click('#iqDopo'); await p.waitForTimeout(600); await foto('00a3-inizia-pc');
+    passo('«Inizia qui», ultimo passo: «Collegati al PC»', await p.isVisible('#iqPc'));
+    await p.click('#iqNo'); await p.waitForTimeout(500);
+    passo('«Inizia qui» si chiude', !(await p.isVisible('#iqVelo')) && (await p.evaluate(() => A.riepilogo())).inizia_fatto !== false);
     passo('aspetto da telefono', await p.evaluate(() => document.documentElement.classList.contains('android') && getComputedStyle(document.querySelector('.side .brand')).display === 'none'));
     passo('chiave di Claude (protetta dal telefono)', (await p.evaluate(() => A.prova_chiave('sk-ant-prova'))).ok);
     await p.evaluate(() => A.imposta('appunti_attivi', true)); await rileggiPagina();
-    await p.click('#nav [data-p="fare"]'); await p.waitForTimeout(800); await foto('00b-fare-vuota');
-    passo('«Da fare» vuota: spiega cos\'è e porta a registrare una riunione', await p.isVisible('.cfvuoto') && await p.isVisible('#cfRiu'));
     // all'apertura: avviso della versione nuova (qui l'aggiornamento è finto)
     await p.waitForSelector('.velo', {timeout: 12000}).catch(() => {});
     const av = await p.$('.velo') ? await p.textContent('.velo') : '';
@@ -34,10 +43,17 @@ const passo = (n, ok, d = '') => { esito.passi.push({n, ok: !!ok, d: String(d).s
     passo('all\'apertura: avviso «È pronta la versione…»', av.includes('99.0'), av.slice(0, 80));
     if (await p.$('.velo')) { await p.click('.velo button >> nth=0'); await p.waitForTimeout(800); }
     passo('«Più tardi» chiude l\'avviso', !(await p.$('.velo')));
+    await p.click('#nav [data-p="fare"]'); await p.waitForTimeout(800); await foto('00b-fare-vuota');
+    passo('«Da fare» vuota: spiega cos\'è e porta a registrare una riunione', await p.isVisible('.cfvuoto') && await p.isVisible('#cfRiu'));
     await p.click('#nav [data-p="reg"]'); await p.waitForTimeout(500);
     await p.click('#doveBox [data-m="aula"]'); await foto('01-pronto');
     // «Durante»
     await p.fill('#nome', 'Analisi 1 – Derivate'); await p.click('#quandoBox [data-q="durante"]'); await p.click('#btnRec');
+    // prima registrazione: promemoria «Non disturbare» con i passi del telefono; «Non mostrarlo più» lo spegne
+    await p.waitForSelector('.dlg .passi', {timeout: 5000}).catch(() => {});
+    passo('promemoria «Non disturbare» con i passi del telefono', (await p.$('.dlg .passi')) && (await p.innerText('.dlg')).includes('Scorri'));
+    await foto('01a-non-disturbare');
+    if (await p.$('.dlg .passi')) { await p.check('.dlg input[type=checkbox]'); await p.click('.dlg .b-rec'); }
     await p.waitForTimeout(6000); await foto('02-registro');
     let s = await st();
     passo('registra', s.registro && s.secondi > 2, `secondi ${s.secondi}`);

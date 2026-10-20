@@ -208,7 +208,7 @@ function vai(p, tornando = false) {
   if (p === 'fare') apriCose();
   if (p === 'and') apriAndamento();
   if (p === 'imp') { avanzate(); disegnaCloud(); disegnaInviti(); disegnaImpostazioni(); disegnaParole(); disegnaCalendario(); disegnaCollegamenti(); }
-  if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); $('infoAggTel').textContent = document.documentElement.classList.contains('web') ? t('in.agg.web') : ANDROID ? t(IPHONE ? 'in.agg.app' : 'in.agg.tel') : ''; }
+  if (p === 'info') { disegnaAgg(); $('swRap').classList.toggle('on', !!R.rapporti); $('infoAggTel').textContent = document.documentElement.classList.contains('web') ? t('in.agg.web') : IPHONE ? t('in.agg.app') : ''; }
   if (p === 'lic') apriLicenze();
   if (p === 'guida') disegnaGuida(linguaGuida || LINGUA);
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
@@ -1445,7 +1445,7 @@ function disegnaImpostazioni() {
     $('segQuando').querySelectorAll('span').forEach(x => x.classList.toggle('on', x.dataset.v === R.quando));
     $('swCarica').classList.toggle('on', !!R.solo_carica);
     $('andVer').textContent = t('and.agg.s', {v: R.versione});
-    if (IPHONE) $('andAgg').classList.add('hidden');
+    if (IPHONE) ['andAgg', 'btnCercaAgg', 'aggBox'].forEach(x => $(x).classList.add('hidden'));   // sull'iPhone gli aggiornamenti li da' l'App Store
   }
   $('impCart').textContent = R.cartella;
   $('impBase').textContent = R.base;
