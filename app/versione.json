@@ -1,6 +1,6 @@
 {
- "versione": "4.12",
+ "versione": "4.13",
  "librerie": 2,
- "novita": "Sull'iPhone: quando esce una versione nuova compare l'avviso con il tasto «Apri TestFlight», e in «Informazioni» la riga per aggiornare. Dalla 4.11: gli indirizzi nei testi sono link, in «Informazioni» c'è il link a verbamanent.app, tasto destro su link e testi.",
- "novita_en": "On the iPhone: when a new version comes out you see a notice with the «Open TestFlight» button, and in «About» a line to update. From 4.11: addresses in the texts are links, «About» has the link to verbamanent.app, right-click on links and texts."
+ "novita": "Nuovo campo «Cerca»: scrivi cosa vuoi fare (libro, chiave, mappa, test…) e il programma ti porta lì, con il capitolo della guida e le lezioni dove la parola è stata detta. Sul PC in alto nel menu (anche Ctrl+K), sul telefono la lente in alto a destra.",
+ "novita_en": "New «Search» box: type what you want to do (textbook, key, map, test…) and the program takes you there, with the guide chapter and the lectures where the word was said. On the PC at the top of the menu (also Ctrl+K), on the phone the magnifier at the top right."
 }

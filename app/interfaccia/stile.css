@@ -1351,3 +1351,33 @@ html.android .fare input{width:22px;height:22px}
 a.url{color:#0369a1;text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:inherit;-webkit-user-select:text;user-select:text}a.url:hover{color:#075985}
 .avviso,.avviso2,.avv,.hint,.about{-webkit-user-select:text;user-select:text}
 html.android a.url{padding:7px 0}
+
+/* ===================================================================== Cerca (cerca.js)
+   PC: il campo in alto nel menu a sinistra e i risultati accanto; telefono: la lente in alto a destra e i risultati in alto. */
+.cx-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:0 10px;margin:0 2px 12px;position:relative;z-index:1}
+.cx-box:focus-within{border-color:rgba(34,211,238,.6);background:rgba(255,255,255,.1)}
+.cx-box svg{width:15px;height:15px;color:#8fb3d6;flex:none}
+.cx-box input{flex:1;min-width:0;background:none;border:0;outline:none;color:#fff;font:inherit;font-size:13.5px;padding:9px 0}
+.cx-box input::placeholder{color:#8fb3d6}
+.cx-box kbd{font:10.5px "Segoe UI",system-ui,sans-serif;color:#8fb3d6;border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:0 4px}
+.cx-ris{position:fixed;left:262px;top:62px;width:470px;max-width:calc(100vw - 280px);max-height:72vh;overflow:auto;background:#fff;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 18px 44px rgba(15,27,45,.22);padding:8px;z-index:60}
+.cx-gr{font-size:11px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.07em;padding:8px 8px 4px}
+.cx-r{display:flex;gap:10px;align-items:center;padding:8px;border-radius:9px;cursor:pointer}
+.cx-r:hover,.cx-r.sel{background:var(--accs)}
+.cx-ico{width:30px;height:30px;border-radius:8px;background:var(--accs);color:var(--acc);display:grid;place-items:center;flex:none}
+.cx-r.sel .cx-ico,.cx-r:hover .cx-ico{background:#fff}
+.cx-ico svg{width:16px;height:16px}
+.cx-tx{flex:1;min-width:0}.cx-tx b{display:block;color:var(--ink);font-size:13.5px;font-weight:600}.cx-tx small{display:block;color:var(--mut);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cx-tx mark{background:#fde68a66;color:inherit;border-radius:2px;padding:0 1px}
+.cx-vai{font-size:12px;color:var(--acc);font-weight:600;white-space:nowrap}
+.cx-vuoto{padding:14px 10px;color:var(--mut);font-size:13.5px}
+.cx-luce{box-shadow:0 0 0 3px var(--accs),0 0 0 4px var(--acc)!important;transition:box-shadow .3s;border-radius:12px}
+.cx-lente{position:fixed;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid #e2e8f0;background:#fff;color:var(--acc);display:grid;place-items:center;z-index:40;box-shadow:0 2px 8px rgba(15,27,45,.08)}
+.cx-lente svg{width:18px;height:18px}
+.cx-campo{display:flex;align-items:center;gap:8px;border:1.5px solid var(--acc);box-shadow:0 0 0 3px var(--accs);border-radius:10px;padding:0 10px;margin:2px 2px 6px}
+.cx-campo svg{width:16px;height:16px;color:var(--mut);flex:none}
+.cx-campo input{flex:1;min-width:0;border:0;outline:none;font:inherit;font-size:16px;padding:10px 0;background:none;color:var(--ink)}
+.cx-x{border:0;background:none;color:var(--mut);font-size:16px;padding:6px}
+html.android .cx-ris{left:8px;right:8px;top:8px;width:auto;max-width:none;max-height:calc(100dvh - 96px)}
+html.android .hd{padding-right:44px}
+html.android body.cx-aperto .cx-lente{display:none}
