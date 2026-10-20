@@ -1134,3 +1134,19 @@ html.dsa .mappa.mp-nuova{background:var(--dsa-rbg)}html.dsa .mp-v,html.dsa .mp-t
   .mappa .mp-fili{display:none}.mp-centro{order:-1;width:100%}.mp-dx{order:0}.mp-sx{order:1}
   .mp-modi{width:100%}.mp-modi button{flex:1;padding:10px 6px}
 }
+
+/* 🔊 Leggimi e 🎙 Scrivi parlando */
+.lgtre .bd{background:#ecfdf5;color:#047857}.lgtre .bd.bd-c{background:#e0f2fe;color:#0369a1}
+.lgrec{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-top:6px;background:#fff}
+.lgrec b{color:var(--ink)}.lgrec .sp{flex:1;min-width:0}
+.lgx{border:0;background:none;color:var(--mut);font-size:15px;padding:6px 8px;cursor:pointer;border-radius:8px}.lgx:hover{background:var(--soft)}
+.lgpag{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--ink)}
+.lgtesto{font-size:17px;line-height:1.8;max-height:62vh;overflow:auto;padding:8px 4px}
+.lgtesto p{margin:0 0 12px}
+.lgscan{background:#f8fafc;border:1px dashed #cbd5e1;border-radius:12px;padding:16px}
+.dpfoglio{width:100%;font-size:17px;line-height:1.7;resize:vertical;display:block}
+html.dsa .dpfoglio{font-family:var(--dsa-font);font-size:var(--dsa-size);line-height:var(--dsa-lh);background:var(--dsa-rbg);color:var(--dsa-rfg)}
+.dpmic{font-size:16px;padding:12px 20px}
+html.web .con-mic{display:none!important}
+@media (max-width:620px){.lgtre{grid-template-columns:1fr}.lgrec{flex-wrap:wrap}}
+.mp-tasti button.b-rec{background:#e11d48;color:#fff;border-color:#e11d48}

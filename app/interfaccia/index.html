@@ -283,7 +283,7 @@
       <div class="hd"><div><h2 data-t="ch.h">Chiedi alla lezione</h2><p id="chSub"></p></div><div class="seg hidden" id="chSeg"></div></div>
       <div class="card">
         <div class="chat" id="chat"></div>
-        <div class="row" style="margin-top:12px;gap:8px"><input class="in sp" id="chIn" data-tp="ch.ph" placeholder="Scrivi cosa non hai capito…" autocomplete="off" maxlength="600"><button class="btn b-ghost solo-dsa" id="chMic" title="🎤">🎤</button><button class="btn b-main" id="chVai" data-t="ch.vai">Chiedi</button></div>
+        <div class="row" style="margin-top:12px;gap:8px"><input class="in sp" id="chIn" data-tp="ch.ph" placeholder="Scrivi cosa non hai capito…" autocomplete="off" maxlength="600"><button class="btn b-ghost con-mic" id="chMic" title="🎤">🎤</button><button class="btn b-main" id="chVai" data-t="ch.vai">Chiedi</button></div>
         <div class="row" style="margin-top:8px"><span class="hint sp" data-t="ch.costo">Meno di 1 centesimo a domanda · risponde solo con quello che c'è nella lezione: se il docente non l'ha detto, te lo dice.</span><button class="lnk" id="chNuova" data-t="ch.nuova">Nuova conversazione</button></div>
       </div>
     </section>
@@ -297,7 +297,6 @@
       <div class="mp-aiuto" id="mpAiutoBox"><span id="mpAiuto"></span><button class="btn b-ghost b-sm mp-ann" id="mpAnn" data-t="mp.annulla">↶ Annulla</button></div>
       <div class="mappa" id="mpBox"></div>
       <div class="row mt"><span class="hint sp" id="mpPiede" data-t="mp.nota">Si salva da sola e resta con la lezione.</span><button class="lnk" id="mpIa" data-t="mp.ia">↺ Torna alla mappa di Claude</button><button class="lnk" id="mpRifai" data-t="mp.rifai">Rifalla</button></div>
-      <div class="mp-toast" id="mpToast"><span id="mpToastT"></span><button id="mpToastB" data-t="mp.annulla">↶ Annulla</button></div>
     </section>
 
     <!-- PAGINA DELLA LEZIONE -->
@@ -433,6 +432,54 @@
         <div class="hint" style="margin-top:8px" data-t="as.hint">Tocca una frase per far partire la lettura da lì. La frase che sto leggendo è evidenziata.</div></div>
       <div class="card mt"><div class="seg hidden" id="asFmt" style="margin-bottom:12px"></div><div class="ap" id="asBox"></div></div>
     </section>
+
+    <!-- LEGGIMI: qualsiasi testo letto a voce -->
+    <section class="pg hidden" id="v-lg">
+      <div class="hd"><div><h2 id="lgH" data-t="lg.h">🔊 Leggimi</h2><p id="lgSub" data-t="lg.sub">Qualsiasi testo letto ad alta voce, con la frase che si illumina.</p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
+      <div id="lgScelta">
+        <div class="card"><div class="lbl" data-t="lg.cosa">Cosa vuoi sentire?</div>
+          <div class="tiles lgtre">
+            <button class="tile" id="lgPdf"><span class="ico i-blue">📄</span><span><b data-t="lg.pdf">Un PDF</b><small data-t="lg.pdf.s">Un capitolo del libro, una dispensa, le slide del prof.</small><span class="bd" data-t="lg.gratis">Gratis</span></span></button>
+            <button class="tile" id="lgFoto"><span class="ico i-blue">📷</span><span><b data-t="lg.foto">Una foto della pagina</b><small id="lgFotoS" data-t="lg.foto.s">Fotografa il libro o un foglio (sul PC: scegli la foto).</small><span class="bd bd-c" data-t="lg.foto.c">Con Claude · meno di 1 centesimo a pagina</span></span></button>
+            <button class="tile" id="lgIncolla"><span class="ico i-blue">📋</span><span><b data-t="lg.incolla">Un testo copiato</b><small data-t="lg.incolla.s">Da un sito, un'email, un messaggio: incollalo qui.</small><span class="bd" data-t="lg.gratis">Gratis</span></span></button>
+          </div>
+          <input type="file" id="lgFile" accept=".pdf,image/*" class="hidden">
+          <div id="lgRecenti"></div>
+        </div>
+      </div>
+      <div id="lgLettore" class="hidden">
+        <div class="card">
+          <div class="asbarra">
+            <button class="btn b-main" id="lgPlay"></button>
+            <div class="seg" id="lgVel"><span data-v="0.8" data-t="lg.piano">🐢 Piano</span><span data-v="1" data-t="as.normale">Normale</span><span data-v="1.2" data-t="lg.veloce">🐇 Veloce</span></div>
+            <span class="sp"></span>
+            <div class="lgpag" id="lgPag"><button class="btn b-ghost b-sm" id="lgPrima">‹</button><span id="lgPagN"></span><button class="btn b-ghost b-sm" id="lgDopo">›</button></div>
+          </div>
+          <div class="ap lgtesto mt" id="lgTesto"></div>
+          <div class="hint mt" id="lgNota" data-t="lg.nota">👆 Tocca una frase per sentire da lì. Alla fine della pagina passa da solo alla prossima.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCRIVI PARLANDO -->
+    <section class="pg hidden" id="v-dp">
+      <div class="hd"><div><h2 data-t="dp.h">🎙 Scrivi parlando</h2><p data-t="dp.sub">Parli, e il testo si scrive da solo. Funziona anche senza internet, non usa Claude.</p></div><div class="dsaint" data-dsa><span data-t="dsa.nome">Modalità DSA</span><span class="sw"></span></div></div>
+      <div class="card">
+        <div class="asbarra"><button class="btn b-rec dpmic" id="dpMic" data-t="dp.parla">🎙 Parla</button><span class="hint" id="dpH" data-t="dp.h1">Tocca, parla quanto vuoi, poi tocca di nuovo.</span></div>
+        <textarea class="in dpfoglio mt" id="dpTx" rows="9" data-tp="dp.ph" placeholder="Qui compare quello che dici…"></textarea>
+        <div class="row mt" style="gap:8px;flex-wrap:wrap">
+          <button class="btn b-ghost b-sm" id="dpRileggi" data-t="dp.rileggi">🔊 Rileggimelo</button>
+          <button class="btn b-ghost b-sm" id="dpSistema" data-t="dp.sistema">✨ Sistema punti e virgole</button>
+          <button class="btn b-ghost b-sm" id="dpCopia" data-t="dp.copia">📋 Copia</button>
+          <span class="sp"></span>
+          <button class="btn b-ghost b-sm" id="dpSvuota" data-t="dp.svuota">🗑 Ricomincia</button>
+        </div>
+        <div class="hint mt" data-t="dp.nota">🔊 Rileggimelo ti fa sentire quello che hai scritto, così ti accorgi se manca qualcosa. ✨ Sistema usa Claude (meno di 1 centesimo) e non cambia le tue parole: mette solo punti, virgole e maiuscole.</div>
+      </div>
+    </section>
+
+    <!-- l'avviso col tasto Annulla (mappa, Scrivi parlando): fuori dalle pagine, cosi' si vede in tutte -->
+    <div class="mp-toast" id="mpToast"><span id="mpToastT"></span><button id="mpToastB" data-t="mp.annulla">↶ Annulla</button></div>
 
     <!-- CAPITOLI -->
     <section class="pg hidden" id="v-cap">

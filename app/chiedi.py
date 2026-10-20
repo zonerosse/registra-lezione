@@ -675,6 +675,10 @@ def leggi_foto(chiave, file, tipo="lavagna", lingua=None):
     if tipo == "lavagna":
         cosa = ("una foto fatta a lezione (lavagna, slide proiettata o cartellone). Scrivi in poche righe cosa c'e' scritto o "
                 "disegnato: formule (scritte in modo leggibile), parole, schemi descritti a parole. Niente commenti.")
+    elif tipo == "leggimi":
+        cosa = ("la foto di una pagina (libro, fotocopia, foglio) che uno studente con dislessia vuole ascoltare letta ad alta "
+                "voce. Trascrivi il testo da leggere, nell'ordine di lettura, cosi' com'e': niente numeri di pagina, intestazioni o "
+                "note a margine ripetute; le formule scrivile come si leggono. Niente commenti prima o dopo.")
     else:
         cosa = ("la foto di un foglio: appunti scritti a mano dallo studente, una fotocopia o una pagina di libro. Trascrivi TUTTO "
                 "il testo, nell'ordine, anche le formule; le parole abbreviate completale tra [quadre] se sei sicuro; se una "
@@ -686,3 +690,39 @@ def leggi_foto(chiave, file, tipo="lavagna", lingua=None):
     r = _chiama(chiave, corpo)
     testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text").strip()
     return {"testo": testo, "spesa": _costo(r.get("usage", {}))}
+
+
+def leggi_pagina_pdf(chiave, pdf, n, lingua=None):
+    """Una pagina di un PDF scansionato (senza testo): Claude la legge. {"testo", "spesa"}."""
+    import base64, io
+    import docente
+    lingua = lingua or testi.LINGUA
+    pp = docente._pypdf()
+    w = pp.PdfWriter()
+    w.add_page(pp.PdfReader(str(pdf)).pages[n])
+    buf = io.BytesIO()
+    w.write(buf)
+    corpo = {"model": MODELLO, "max_tokens": 2500,
+             "system": ("Ti mando una pagina (libro, dispensa, fotocopia) che uno studente con dislessia vuole ascoltare letta ad "
+                        "alta voce. Trascrivi il testo da leggere, nell'ordine di lettura, cosi' com'e': niente numeri di pagina o "
+                        "intestazioni; le formule scrivile come si leggono. Niente commenti prima o dopo. "
+                        f"Scrivi in {testi.nome_lingua(lingua, 'it')}."),
+             "messages": [{"role": "user", "content": [
+                 {"type": "document", "source": {"type": "base64", "media_type": "application/pdf",
+                                                 "data": base64.b64encode(buf.getvalue()).decode()}},
+                 {"type": "text", "text": "Ecco la pagina."}]}]}
+    r = _chiama(chiave, corpo)
+    testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text").strip()
+    return {"testo": testo, "spesa": _costo(r.get("usage", {}))}
+
+
+def sistema_dettato(chiave, testo):
+    """Mette punti, virgole e maiuscole a un testo dettato, SENZA cambiare le parole. {"testo", "spesa"}."""
+    corpo = {"model": MODELLO, "max_tokens": 4000,
+             "system": ("Ti mando un testo dettato a voce da uno studente con dislessia. Aggiungi solo la punteggiatura, le "
+                        "maiuscole e gli a capo dove servono. NON cambiare, togliere o aggiungere parole e non correggere lo stile. "
+                        "Rispondi solo con il testo sistemato."),
+             "messages": [{"role": "user", "content": str(testo)[:12000]}]}
+    r = _chiama(chiave, corpo)
+    out = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text").strip()
+    return {"testo": out or testo, "spesa": _costo(r.get("usage", {}))}

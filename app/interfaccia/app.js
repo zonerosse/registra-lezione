@@ -97,6 +97,7 @@ function dialogo({titolo, testo = '', html = '', bottoni = null, ck = null}) {
         const c = v.querySelector('#dlgCk');
         const campo = v.querySelector('input.in');
         dialogo.valore = campo ? campo.value : null;
+        const ta = v.querySelector('textarea'); dialogo.area = ta ? ta.value : null;
         v.remove(); ok(ck ? {v: b.v, ck: c && c.checked} : b.v);
       };
       bt.appendChild(e);
@@ -123,7 +124,7 @@ window.chiusura = async c => {
 
 /* ------------------------------------------------------------------ navigazione */
 // pagine «di dentro»: hanno la freccia per tornare alla pagina da cui sei arrivato
-const INTERNE = ['lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
+const INTERNE = ['lg', 'dp', 'lezione', 'podcast', 'karaoke', 'verifica', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'];
 let STORIA = [];
 function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
@@ -133,7 +134,7 @@ function titoloPagina(p) {
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
-const ICO_PAG = {sy: '🔄', fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
+const ICO_PAG = {lg: '🔊', dp: '🎙', sy: '🔄', fo: '📷', sc: '✍', ru: '🔇', lb: '📘', tu: '🧑‍🏫', gl: '📖', lm: '👓', rg: '🃏', dsa: '⭐', verifica: '🗺', karaoke: '🎤', podcast: '🎧', arch: '📚', studia: '🎓', lezione: '📄', esame: '🎯', rip: '🃏', chiedi: '💬', mappa: '🗺', ascolta: '🔊', cap: '📑', ig: '🖼', voci: '👥', stat: '📊',
                  reg: '⏺', fare: '✓', imp: '⚙', guida: '📖', info: 'ℹ', lic: '📄'};
 function nomePagina(p) {
   if (p === 'lezione' && LEZ) return LEZ.nome;
@@ -149,6 +150,8 @@ function nomePagina(p) {
   if (p === 'fo') return t('fo.nome');
   if (p === 'sc') return t('sc.nome');
   if (p === 'ru') return t('ru.nome');
+  if (p === 'lg') return t('lg.nome');
+  if (p === 'dp') return t('dp.nome');
   if (p === 'rip') return RP && RP.giorno ? RP.titolo : t('tl.flash');
   if (p === 'studia') return t('nav.studia') + (STU.m ? ' · ' + STU.m : '');
   return titoloPagina(p) || t('indietro');
@@ -174,6 +177,8 @@ function vai(p, tornando = false) {
   if (p !== 'ru' && RU && RU.poll) { clearInterval(RU.poll); RU.poll = null; }
   if (p !== 'sy' && SY.poll) syChiudi();
   if (p !== 'rip' && RP && RP.ascolto) { RP.ascolto = false; try { A.detta_fine(); } catch (e) {} }
+  if (p !== 'lg' && LG.attivo) lgFerma();
+  if (DT) dettaVia();
   if (!tornando) {
     const interna = INTERNE.includes(p) || (p === 'studia' && STU.dentro);
     STU.dentro = false;
@@ -184,7 +189,7 @@ function vai(p, tornando = false) {
   // nel menu resta acceso da dove si e' partiti (Le mie registrazioni o Studia)
   const radice = STORIA.length ? STORIA[0] : p;
   document.querySelectorAll('#nav a').forEach(a => a.classList.toggle('on', a.dataset.p === (['lezione', 'podcast', 'karaoke', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame'].includes(radice) ? 'arch' : radice === 'lic' ? 'info' : radice)));
-  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
+  ['pronto', 'importa', 'itesto', 'reg', 'fine', 'arch', 'dsa', 'lg', 'dp', 'rg', 'lm', 'sy', 'gl', 'tu', 'lb', 'fo', 'sc', 'ru', 'lezione', 'podcast', 'karaoke', 'verifica', 'studia', 'rip', 'chiedi', 'mappa', 'ascolta', 'cap', 'ig', 'voci', 'stat', 'esame', 'fare', 'imp', 'guida', 'info', 'lic'].forEach(x => $('v-' + x).classList.add('hidden'));
   if (p === 'reg') $('v-' + ((S.vista || 'pronto') === 'pronto' && IT ? 'itesto' : (S.vista || 'pronto') === 'pronto' && IV ? 'importa' : (S.vista || 'pronto'))).classList.remove('hidden');
   else $('v-' + p).classList.remove('hidden');
   document.querySelectorAll('.pg > .perc').forEach(x => x.remove());
@@ -192,6 +197,8 @@ function vai(p, tornando = false) {
   $('main').scrollTop = 0;
   if (p === 'arch') caricaLezioni();
   if (p === 'dsa') disegnaSpazioDsa();
+  if (p === 'lg') apriLeggimi();
+  if (p === 'dp') apriDetta();
   if (p === 'lm') disegnaLM();
   if (p === 'sy') apriSY();
   segnaUso(p);
@@ -3206,7 +3213,7 @@ async function disegnaSpazioDsa() {
   const mom = (n, tit, sub, tiles) => `<div class="sdmom"><h3><span class="n">${n}</span>${esc(tit)} <small>${esc(sub)}</small></h3><div class="tiles">${tiles.join('')}</div></div>`;
   $('sdBox').innerHTML =
     mom(1, t('sd.m1'), t('sd.m1.s'), [T('reg', '⏺', t('sd.reg'), t('sd.reg.s')), T('detta', '🎙', t('sd.detta'), t('sd.detta.s'))]) +
-    mom(2, t('sd.m2'), t('sd.m2.s'), [T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
+    mom(2, t('sd.m2'), t('sd.m2.s'), [T('leggimi', '🔊', t('lg.nome'), t('sd.lg.s')), T('ascolta', '🔊', t('tl.asc'), t('sd.asc.s'), ap), T('karaoke', '🎤', t('tl.kk'), t('sd.kk.s'), tr), T('appunti_dsa', '📄', t('sd.ap'), t('sd.ap.s'), ap),
       T('podcast', '🎧', t('sd.pc'), t('sd.pc.s'), tr), T('mappa', '🗺', t('sd.mappa'), t('sd.mappa.s'), tr), T('giorno', '🃏', t('sd.rg'), t('sd.rg.s')), T('glos', '📖', t('tl.gl'), t('tl.dsa.gl.s'), mt)]) +
     mom(3, t('sd.m3'), t('sd.m3.s'), [T('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), mt), T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
       T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
@@ -3220,29 +3227,14 @@ async function disegnaSpazioDsa() {
 async function azioneDsa(a) {
   const l = SD.l, m = SD.mat;
   if (a === 'reg') return vai('reg');
-  if (a === 'detta') return scriviParlando();
+  if (a === 'detta') return vai('dp');
+  if (a === 'leggimi') return vai('lg');
   if (a === 'giorno') return apriRipassoGiorno();
   if (a === 'arch') return vai('arch');
   if (a === 'strumenti') return strumentiDsa();
   if (a === 'firma') return apriMappaVerifica(m);
   if (['mverif', 'orale', 'test', 'scritto', 'piano', 'prob', 'glos', 'tutor'].includes(a)) return tileStudia(m, a);
   return tileLezione(l, a);
-}
-async function scriviParlando() {
-  const html = `<textarea class="in" id="spTx" rows="7" style="margin-top:10px;resize:vertical"></textarea>
-    <div class="row" style="margin-top:8px;gap:8px;flex-wrap:wrap"><button class="btn b-ghost b-sm" id="spMic">${esc(t('sd.sp.detta'))}</button><button class="btn b-ghost b-sm" id="spCopia">${esc(t('sd.sp.copia'))}</button><span class="hint" id="spOk"></span></div>`;
-  const p = dialogo({titolo: t('sd.sp.t'), testo: t('sd.sp.s'), html, bottoni: [{t: t('chiudi'), cls: 'b-main', v: true}]});
-  setTimeout(() => {
-    const tx = $('spTx'); if (!tx) return;
-    $('spMic').onclick = () => detta($('spMic'), tx);
-    $('spCopia').onclick = () => {
-      const fatto = () => { $('spOk').textContent = t('sd.sp.copiato'); };
-      try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(tx.value).then(fatto, () => { tx.focus(); tx.select(); document.execCommand('copy'); fatto(); }); return; } } catch (e) {}
-      tx.focus(); tx.select(); try { document.execCommand('copy'); } catch (e) {} fatto();
-    };
-  }, 30);
-  await p;
-  if (DT && DT.btn && !document.body.contains(DT.btn)) { const d = DT; DT = null; clearInterval(d.poll); try { await A.detta_fine(); } catch (e) {} }
 }
 async function strumentiDsa() {
   const ok = await dialogo({titolo: t('sd.str.t'), testo: t('sd.str.q'), html: `<input class="in" style="margin-top:10px" maxlength="60" placeholder="${esc(t('mv.nome.ph'))}" value="${esc(R.nome_classe || '')}">`,
@@ -3392,21 +3384,25 @@ async function apriAscoltaMateria(m) {
 /* ------------------------------------------------------------------ dettatura (Modalità DSA) */
 // Si registra dal microfono, si trascrive sul PC o sul telefono e il testo va nel campo. Niente Claude.
 var DT = null;
-async function detta(btn, campo) {
+// si esce dalla pagina mentre si detta: il microfono si spegne (quello che si e' detto si perde)
+function dettaVia() { const d = DT; DT = null; clearInterval(d.poll); try { A.detta_fine(); } catch (e) {} }
+async function detta(btn, campo, testi) {
+  if (SUL_WEB()) { toast(t('dp.noweb')); return; }
+  if (DT && !document.body.contains(DT.btn)) dettaVia();
   if (DT && DT.btn !== btn) return;
   if (DT) {                                   // secondo tocco: fine
     const d = DT; DT = null; clearInterval(d.poll);
     btn.disabled = true; btn.innerHTML = `<span class="spin" style="width:13px;height:13px"></span>${esc(t('dt.lav'))}`;
     const r = await A.detta_fine();
-    btn.disabled = false; btn.textContent = d.testo; btn.classList.remove('b-rec');
-    if (r.ok) { campo.value = (campo.value.trim() ? campo.value.trim() + ' ' : '') + r.testo; campo.dispatchEvent(new Event('input')); } else toast(r.msg || '');
+    btn.disabled = false; btn.textContent = d.testo; if (!d.rosso) btn.classList.remove('b-rec'); if (d.testi) d.testi(false);
+    if (r.ok) { if (typeof campo === 'function') campo(r.testo); else { campo.value = (campo.value.trim() ? campo.value.trim() + ' ' : '') + r.testo; campo.dispatchEvent(new Event('input')); } } else toast(r.msg || '');
     return;
   }
   voceFerma(); segnaUso('detta');
   const r = await A.detta_avvia();
   if (!r.ok) { toast(r.msg || ''); return; }
-  DT = {btn, testo: btn.textContent};
-  btn.classList.add('b-rec'); btn.textContent = t('dt.ferma');
+  DT = {btn, testo: btn.textContent, testi, rosso: btn.classList.contains('b-rec')};
+  btn.classList.add('b-rec'); btn.textContent = t('dt.ferma'); if (testi) testi(true);
   DT.poll = setInterval(async () => { const l = await A.detta_livello(); if (DT && l.ok) btn.style.boxShadow = `0 0 0 ${2 + Math.round((l.livello || 0) * 10)}px rgba(225,29,72,.15)`; }, 300);
 }
 
@@ -4052,7 +4048,7 @@ function disegnaMappa() {
         + (modo === 'tu' && MP.aiuti[i] ? `<div class="mp-sugg">💡 ${esc(x)}</div>` : '');
     }).join('');
     const tasti = modo === 'mod' ? `<div class="mp-tasti mp-sel"><button data-a="voce" data-i="${i}">${esc(t('mp.voce'))}</button><button data-a="colore" data-i="${i}">${esc(t('mp.colore'))}</button><button data-a="togli" data-i="${i}" class="r">${esc(t('mp.togli'))}</button></div>` : '';
-    const aiuto = modo === 'tu' ? `<div class="mp-tasti"><button data-a="aiuto" data-i="${i}">${esc(t(MP.aiuti[i] ? 'mp.aiuto.via' : 'mp.aiuto'))}</button></div>` : '';
+    const aiuto = modo === 'tu' ? `<div class="mp-tasti"><button data-a="aiuto" data-i="${i}">${esc(t(MP.aiuti[i] ? 'mp.aiuto.via' : 'mp.aiuto'))}</button><button data-a="detta" data-i="${i}" class="con-mic">${esc(t('mp.detta'))}</button></div>` : '';
     return `<div class="mp-t${scelto ? ' scelto' : ''}" style="--c:${c}" data-r="${i}"><div class="mp-tt"><button class="mp-ic" data-a="senti" data-i="${i}" title="${esc(t('mp.senti'))}">🔊</button><div class="mp-tit"${modo === 'mod' ? ' contenteditable="true"' : ''} data-i="${i}">${esc(r.titolo)}</div></div>${voci}${tasti}${aiuto}</div>`;
   };
   const meta = Math.ceil(d.rami.length / 2);
@@ -4099,6 +4095,8 @@ function collegaMappa() {
     const a = b.dataset.a, i = +b.dataset.i, r = d.rami[i];
     if (a === 'senti') { const voci = MP.modo === 'tu' ? r.mie.filter(Boolean) : r.foglie; mpParla(b.closest('.mp-t'), [r.titolo, ...voci].join('. ')); return; }
     if (a === 'aiuto') { MP.aiuti[i] = !MP.aiuti[i]; disegnaMappa(); return; }
+    // 🎙 Detta: quello che dici va nella prima voce ancora vuota del tema
+    if (a === 'detta') { detta(b, tx => { const rr = MP.dati.rami[i], j = rr.mie.findIndex(x => !String(x || '').trim()); if (j < 0) { toast(t('mp.piene')); return; } mpRicorda(); rr.mie[j] = tx; mpSalva(); disegnaMappa(); }); return; }
     mpRicorda();
     if (a === 'voce') { r.foglie.push(t('mp.nuova')); r.mie.push(''); }
     if (a === 'colore') r.colore = (r.colore + 1) % COLORI_MAPPA.length;
@@ -4145,6 +4143,175 @@ function collegaMappa() {
     if (pagina !== 'mappa' || (document.activeElement && document.activeElement.isContentEditable)) return;
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); mpAnnulla(); }
   });
+}
+/* ------------------------------------------------------------------ 🔊 Leggimi */
+// PDF, foto di una pagina o testo incollato, letti a voce con la frase che si illumina. «Letti di recente» resta
+// fuori dalle lezioni (nella cartella del programma): si riapre senza rifare niente e senza pagare di nuovo Claude.
+const SUL_WEB = () => document.documentElement.classList.contains('web');
+var LG = {attivo: false, v: null, pag: 0, frasi: [], i: 0, vel: 1};
+function lgBriciole() {
+  // nel percorso in alto, col testo aperto: «… › Leggimi › titolo»
+  const br = $('v-lg').querySelector(':scope > .perc .briciole');
+  if (br) { br.querySelectorAll('.lgbr').forEach(x => x.remove()); br.querySelectorAll('b.hidden').forEach(x => x.classList.remove('hidden')); }
+  return br;
+}
+async function apriLeggimi() {
+  lgFerma(); LG.v = null; lgBriciole();
+  $('lgScelta').classList.remove('hidden'); $('lgLettore').classList.add('hidden');
+  $('lgH').textContent = t('lg.h'); $('lgSub').textContent = t('lg.sub');
+  $('lgFotoS').textContent = t(ANDROID ? 'lg.foto.s' : 'lg.foto.s.pc');
+  disegnaFacilitata();
+  const r = await A.leggimi_elenco();
+  const el = (r && r.elenco) || [];
+  const ico = {pdf: '📄', foto: '📷', testo: '📋'};
+  $('lgRecenti').innerHTML = el.length ? `<div class="lbl" style="margin-top:18px">${esc(t('lg.recenti'))} <span class="hint" style="font-weight:400">${esc(t('lg.recenti.s'))}</span></div>` +
+    el.map(v => `<div class="lgrec">${ico[v.tipo] || '📄'}<span class="sp"><b>${esc(v.titolo)}</b> <span class="hint">· ${esc(v.n === 1 ? t('lg.pagina1') : t('lg.pagine', {n: v.n}))} · ${esc(quandoBreve(v.quando))}</span></span>
+      <button class="btn b-ghost b-sm" data-ap="${esc(v.id)}">${esc(t('lg.riapri'))}</button><button class="lgx" data-via="${esc(v.id)}" title="${esc(t('lg.togli'))}">✕</button></div>`).join('') : '';
+  $('lgRecenti').querySelectorAll('[data-ap]').forEach(b => b.onclick = async () => { const x = await A.leggimi_apri(b.dataset.ap); if (x.ok) lgMostra(x.voce); else toast(x.msg || ''); });
+  $('lgRecenti').querySelectorAll('[data-via]').forEach(b => b.onclick = async () => { await A.leggimi_togli(b.dataset.via); apriLeggimi(); });
+}
+function quandoBreve(iso) {
+  try { const d = new Date(iso), oggi = new Date(); const g = Math.round((new Date(oggi.toDateString()) - new Date(d.toDateString())) / 864e5);
+    if (g === 0) return t('lg.oggi'); if (g === 1) return t('lg.ieri'); return d.toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {day: 'numeric', month: 'short'}); } catch (e) { return ''; }
+}
+const lgSpesa = x => x < 0.01 ? t('lg.spesa0') : t('lg.spesa', {c: num(x.toFixed(2))});
+function lgAttesa(testo) { $('lgRecenti').innerHTML = `<div class="row mt" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(testo)}</div>`; }
+async function lgDaFile(f) {
+  // versione web: il file si sceglie nella pagina e arriva al motore come testo base64
+  const b64 = await new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(String(r.result).split(',')[1] || ''); r.onerror = no; r.readAsDataURL(f); });
+  lgAttesa(t(/\.pdf$/i.test(f.name) ? 'lg.lav.pdf' : 'lg.lav.foto'));
+  lgFatto(await A.leggimi_file(f.name, b64));
+}
+function lgFatto(r) {
+  if (!r || !r.ok) { if (r && r.msg) dialogo({titolo: t('lg.nome'), testo: r.msg}); apriLeggimi(); return; }
+  if (r.spesa) toast(lgSpesa(r.spesa));
+  lgMostra(r.voce);
+}
+async function lgScegliPdf() {
+  if (SUL_WEB()) { $('lgFile').accept = '.pdf'; $('lgFile').click(); return; }
+  const f = await A.scegli_pdf();
+  if (!f || !f.ok) { if (f && f.msg) dialogo({titolo: t('lg.nome'), testo: f.msg}); return; }
+  lgAttesa(t('lg.lav.pdf'));
+  lgFatto(await A.leggimi_pdf(f.percorso, f.nome));
+}
+async function lgScegliFoto() {
+  if (SUL_WEB()) { $('lgFile').accept = 'image/*'; $('lgFile').click(); return; }
+  let s;
+  if (ANDROID) {
+    const come = await dialogo({titolo: t('lg.foto'), testo: t('lg.foto.come'), bottoni: [{t: t('lg.foto.galleria'), v: 'g'}, {t: t('lg.foto.scatta'), cls: 'b-main', v: 's'}]});
+    if (!come) return;
+    s = come === 's' ? await A.scatta_foglio() : await A.scegli_immagini();
+  } else s = await A.scegli_immagini();
+  const per = s && (s.percorsi || (s.percorso ? [s.percorso] : []));
+  if (!s || !s.ok || !per || !per.length) return;
+  lgAttesa(t('lg.lav.foto'));
+  lgFatto(await A.leggimi_foto(per));
+}
+async function lgIncolla() {
+  const p = dialogo({titolo: t('lg.incolla.t'), testo: t('lg.incolla.q'), html: `<textarea class="in" id="lgIn" rows="8" style="margin-top:10px;resize:vertical"></textarea>`,
+    bottoni: [{t: t('annulla'), v: false}, {t: t('lg.incolla.si'), cls: 'b-main', v: true}]});
+  setTimeout(() => $('lgIn') && $('lgIn').focus(), 60);
+  if (!await p) return;
+  lgFatto(await A.leggimi_testo(dialogo.area || ''));
+}
+function lgMostra(v) {
+  lgFerma(); LG.v = v; LG.pag = Math.min(v.pag || 0, v.pagine.length - 1);
+  $('lgScelta').classList.add('hidden'); $('lgLettore').classList.remove('hidden');
+  $('lgH').textContent = v.titolo;
+  // nel percorso in alto compare anche il titolo: «Spazio DSA › Leggimi › …»
+  const br = lgBriciole();
+  if (br) {
+    br.querySelector('b:not(.lgbr)').classList.add('hidden');
+    br.insertAdjacentHTML('beforeend', `<a class="lgbr">${ICO_PAG.lg} ${esc(t('lg.nome'))}</a><span class="sep lgbr">›</span><b class="lgbr">${esc(corto(v.titolo, 40))}</b>`);
+    br.querySelector('a.lgbr').onclick = () => apriLeggimi();
+  }
+  lgVel(); lgPagina();
+}
+function lgVel() { $('lgVel').querySelectorAll('span').forEach(s => s.classList.toggle('on', +s.dataset.v === LG.vel)); }
+function lgPlayTesto() { $('lgPlay').textContent = t(LG.attivo ? 'as.pausa' : LG.i > 0 ? 'as.continua' : 'as.leggi'); }
+async function lgPagina() {
+  const v = LG.v, n = v.pagine.length, testo = v.pagine[LG.pag] || '';
+  $('lgPag').classList.toggle('hidden', n < 2);
+  $('lgPagN').textContent = t('lg.pagn', {a: LG.pag + 1, b: n});
+  $('lgPrima').disabled = LG.pag === 0; $('lgDopo').disabled = LG.pag >= n - 1;
+  $('lgSub').textContent = v.tipo === 'pdf' ? t('lg.sub.pdf', {a: LG.pag + 1, b: n}) : v.tipo === 'foto' ? t('lg.sub.foto', {n: n === 1 ? t('lg.pagina1') : t('lg.pagine', {n})}) : t('lg.sub.testo');
+  A.leggimi_segna(v.id, LG.pag);
+  LG.i = 0; LG.frasi = [];
+  if (!testo.trim()) {
+    $('lgTesto').innerHTML = v.tipo === 'pdf' ? `<div class="lgscan"><div>${esc(t('lg.scan'))}</div><button class="btn b-main b-sm mt" id="lgScan">${esc(t('lg.scan.b'))}</button> <span class="hint">${esc(t('lg.scan.c'))}</span></div>` : `<div class="hint">${esc(t('lg.vuota'))}</div>`;
+    if ($('lgScan')) $('lgScan').onclick = async () => {
+      $('lgTesto').innerHTML = `<div class="row" style="gap:10px;color:var(--mut)"><span class="spin"></span>${esc(t('lg.lav.pag'))}</div>`;
+      const r = await A.leggimi_pagina(v.id, LG.pag);
+      if (LG.v !== v) return;
+      if (!r.ok) { dialogo({titolo: t('lg.nome'), testo: r.msg || ''}); v.pagine[LG.pag] = ''; return lgPagina(); }
+      v.pagine[LG.pag] = r.testo; if (r.spesa) toast(lgSpesa(r.spesa));
+      lgPagina();
+    };
+    lgPlayTesto(); return false;
+  }
+  let k = 0;
+  $('lgTesto').innerHTML = testo.split(/\n{2,}/).map(par => `<p>${par.split(/(?<=[.?!;:])\s+|\n/).filter(x => x.trim()).map(f => `<span class="fr" data-n="${k++}">${esc(f)}</span>`).join(' ')}</p>`).join('');
+  LG.frasi = [...$('lgTesto').querySelectorAll('.fr')];
+  LG.frasi.forEach((x, j) => x.onclick = () => lgLeggi(j));
+  silabizza($('lgTesto'));
+  lgPlayTesto(); return true;
+}
+function lgSegna(k) { LG.frasi.forEach((x, j) => x.classList.toggle('ora', j === k)); if (LG.frasi[k]) LG.frasi[k].scrollIntoView({block: 'center', behavior: 'smooth'}); }
+async function lgLeggi(k) {
+  if (!voceDisponibile()) { toast(t('as.novoce')); return; }
+  voceFerma();
+  const giro = {}; LG.giro = giro; LG.attivo = true; LG.i = Math.max(0, k); lgPlayTesto();
+  while (LG.giro === giro) {
+    if (LG.i >= LG.frasi.length) {                    // fine pagina: si passa da soli alla prossima (se ha testo)
+      if (LG.pag < LG.v.pagine.length - 1) { LG.pag++; if (await lgPagina()) { LG.attivo = true; lgPlayTesto(); continue; } }
+      break;
+    }
+    lgSegna(LG.i);
+    const ok = await voceParla(LG.frasi[LG.i].textContent, LG.vel);
+    if (LG.giro !== giro) return;
+    if (!ok) { LG.attivo = false; lgPlayTesto(); if (LG.i === k) toast(t('as.novoce')); return; }
+    LG.i++;
+  }
+  if (LG.giro === giro) { LG.attivo = false; LG.i = 0; lgSegna(-1); lgPlayTesto(); }
+}
+function lgFerma() { LG.giro = null; if (LG.attivo) voceFerma(); LG.attivo = false; if ($('lgPlay')) lgPlayTesto(); }
+function collegaLeggimi() {
+  $('lgPdf').onclick = lgScegliPdf; $('lgFoto').onclick = lgScegliFoto; $('lgIncolla').onclick = lgIncolla;
+  $('lgFile').onchange = () => { const f = $('lgFile').files[0]; $('lgFile').value = ''; if (f) lgDaFile(f); };
+  $('lgPlay').onclick = () => { if (!LG.frasi.length) return; if (LG.attivo) lgFerma(); else lgLeggi(LG.i); };
+  $('lgVel').onclick = e => { const s = e.target.closest('span[data-v]'); if (!s) return; LG.vel = +s.dataset.v; lgVel(); if (LG.attivo) lgLeggi(LG.i); };
+  $('lgPrima').onclick = () => { if (LG.pag > 0) { lgFerma(); LG.pag--; lgPagina(); } };
+  $('lgDopo').onclick = () => { if (LG.pag < LG.v.pagine.length - 1) { lgFerma(); LG.pag++; lgPagina(); } };
+}
+
+/* ------------------------------------------------------------------ 🎙 Scrivi parlando */
+var DP = {prima: null};
+function apriDetta() { disegnaFacilitata(); $('dpH').textContent = t('dp.h1'); setTimeout(() => $('dpTx').focus(), 50); }
+function collegaDetta() {
+  const tx = $('dpTx');
+  $('dpMic').onclick = () => detta($('dpMic'), tx, on => { $('dpH').textContent = t(on ? 'dp.h2' : 'dp.h3'); });
+  $('dpRileggi').onclick = () => { if (!tx.value.trim()) return toast(t('dp.vuoto')); voceFerma(); voceParla(tx.value.trim()); };
+  $('dpCopia').onclick = () => {
+    if (!tx.value.trim()) return toast(t('dp.vuoto'));
+    const fatto = () => toast(t('dp.copiato'));
+    try { if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(tx.value).then(fatto, () => { tx.focus(); tx.select(); document.execCommand('copy'); fatto(); }); return; } } catch (e) {}
+    tx.focus(); tx.select(); try { document.execCommand('copy'); } catch (e) {} fatto();
+  };
+  $('dpSistema').onclick = async () => {
+    if (!tx.value.trim()) return toast(t('dp.vuoto'));
+    const b = $('dpSistema'), prima = tx.value; b.disabled = true; b.textContent = t('dp.lav');
+    const r = await A.detta_sistema(prima);
+    b.disabled = false; b.textContent = t('dp.sistema');
+    if (!r.ok) { dialogo({titolo: t('dp.nome'), testo: r.msg || ''}); return; }
+    DP.prima = prima; tx.value = r.testo; dpAvviso(t('dp.sistemato'));
+  };
+  $('dpSvuota').onclick = () => { if (!tx.value.trim()) return; DP.prima = tx.value; tx.value = ''; dpAvviso(t('dp.svuotato')); };
+}
+function dpAvviso(x) {
+  // come nella mappa: l'avviso col tasto Annulla (si torna al testo di prima)
+  $('mpToastT').textContent = x; $('mpToast').classList.add('v');
+  $('mpToastB').onclick = () => { if (DP.prima != null) { $('dpTx').value = DP.prima; DP.prima = null; } mpToastVia(); $('mpToastB').onclick = mpAnnulla; };
+  clearTimeout(MP_TT); MP_TT = setTimeout(() => { mpToastVia(); $('mpToastB').onclick = mpAnnulla; }, 6000);
 }
 const corto = (x, n) => (x = String(x || '')).length > n ? x.slice(0, n - 1) + '…' : x;
 
@@ -4238,7 +4405,7 @@ function collegaNovita() {
   $('chIn').addEventListener('keydown', e => { if (e.key === 'Enter') inviaDomanda(); });
   $('chNuova').onclick = async () => { if (!CH.tutta) await A.chiedi_cancella(CH.lez.cartella); CH.storia = []; disegnaChiedi(); };
   $('mpPdf').onclick = async () => { if (!MP.dati) return; clearTimeout(MP_SALVA); await A.mappa_salva(MP.lez.cartella, MP.dati); await A.mappa_pdf(MP.lez.cartella, true, MP.modo === 'tu'); };
-  collegaMappa();
+  collegaMappa(); collegaLeggimi(); collegaDetta();
   $('mpRifai').onclick = async () => { if (MP.lez && await conferma(t('mp.rifai.t'), t('mp.rifai.c'))) apriMappa(MP.lez, true); };
 }
 

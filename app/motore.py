@@ -2758,6 +2758,163 @@ class Motore:
         finally:
             shutil.rmtree(cart, ignore_errors=True)       # l'audio della dettatura non si tiene
 
+    def detta_sistema(self, testo):
+        """✨ Sistema punti e virgole: Claude mette la punteggiatura al testo dettato, senza cambiare le parole."""
+        if not str(testo or "").strip():
+            return {"ok": False, "msg": tr("lg_vuoto")}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            return {"ok": True, **ch.sistema_dettato(self.chiave(), testo)}
+        except Exception as e:
+            log.exception("sistema dettato")
+            return {"ok": False, "msg": str(e) if isinstance(e, ap.ErroreAppunti) else tr("es_err")}
+
+    # ------------------------------------------------------------------ 🔊 Leggimi: qualsiasi testo letto a voce
+    # PDF, foto di una pagina o testo incollato. Restano in «Letti di recente» (fuori dalle lezioni), cosi' si
+    # riaprono senza rifare niente e senza pagare di nuovo Claude.
+
+    LEGGIMI_MAX = 20
+
+    def _lg_cartella(self):
+        c = CONFIG.parent / "leggimi"
+        c.mkdir(parents=True, exist_ok=True)
+        return c
+
+    def _lg_salva(self, v):
+        el.scrivi_json(self._lg_cartella() / f"{v['id']}.json", v)
+        tutte = sorted(self._lg_cartella().glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True)
+        for f in tutte[self.LEGGIMI_MAX:]:
+            f.unlink(missing_ok=True)
+            (f.parent / f"{f.stem}.pdf").unlink(missing_ok=True)
+
+    def _lg_nuova(self, tipo, titolo, pagine, pdf=None):
+        i = datetime.datetime.now().strftime("%Y%m%d%H%M%S") + f"{len(pagine):03d}"
+        v = {"id": i, "tipo": tipo, "titolo": str(titolo)[:120], "pagine": pagine, "pag": 0,
+             "quando": datetime.datetime.now().isoformat(timespec="seconds")}
+        if pdf and any(not p.strip() for p in pagine):         # pagine scansionate: il PDF serve per farle leggere a Claude
+            try:
+                shutil.copyfile(pdf, self._lg_cartella() / f"{i}.pdf")
+                v["pdf"] = True
+            except OSError:
+                log.exception("leggimi: copia del pdf")
+        self._lg_salva(v)
+        return {"ok": True, "voce": v}
+
+    def leggimi_elenco(self):
+        out = []
+        for f in sorted(self._lg_cartella().glob("*.json"), key=lambda f: f.stat().st_mtime, reverse=True):
+            v = el.leggi_json(f, None)
+            if v:
+                out.append({k: v.get(k) for k in ("id", "tipo", "titolo", "quando", "pag")} | {"n": len(v.get("pagine") or [])})
+        return {"ok": True, "elenco": out}
+
+    def leggimi_apri(self, i):
+        v = el.leggi_json(self._lg_cartella() / f"{Path(str(i)).name}.json", None)
+        if not v:
+            return {"ok": False, "msg": tr("lg_err")}
+        self._lg_salva(v)                                       # torna in cima a «Letti di recente»
+        return {"ok": True, "voce": v}
+
+    def leggimi_segna(self, i, pag):
+        f = self._lg_cartella() / f"{Path(str(i)).name}.json"
+        v = el.leggi_json(f, None)
+        if v:
+            v["pag"] = max(0, min(int(pag or 0), len(v["pagine"]) - 1))
+            el.scrivi_json(f, v)
+        return {"ok": bool(v)}
+
+    def leggimi_togli(self, i):
+        n = Path(str(i)).name
+        (self._lg_cartella() / f"{n}.json").unlink(missing_ok=True)
+        (self._lg_cartella() / f"{n}.pdf").unlink(missing_ok=True)
+        return self.leggimi_elenco()
+
+    def leggimi_pdf(self, percorso, nome=None):
+        def pulisci(p):
+            # nel PDF le righe vanno a capo a meta' frase: si riuniscono (anche le parole spezzate col trattino)
+            p = re.sub(r"[ \t]*\n[ \t]*", "\n", p or "")
+            p = re.sub(r"(\w)-\n(\w)", r"\1\2", p)
+            return re.sub(r"(?<!\n)\n(?!\n)", " ", p).strip()
+        pagine = [pulisci(p) for p in dc.testi_pagine(percorso)]
+        if not pagine:
+            return {"ok": False, "msg": tr("lg_err")}
+        return self._lg_nuova("pdf", Path(nome or percorso).stem, pagine, pdf=percorso)
+
+    def leggimi_testo(self, testo):
+        testo = str(testo or "").strip()[:200000]
+        if not testo:
+            return {"ok": False, "msg": tr("lg_vuoto")}
+        parole = testo.split()
+        titolo = " ".join(parole[:7]) + ("…" if len(parole) > 7 else "")
+        # i testi lunghi a pagine da circa 3000 caratteri, tagliando tra un paragrafo e l'altro
+        pagine, cur = [], ""
+        for par in re.split(r"\n\s*\n", testo):
+            if cur and len(cur) + len(par) > 3000:
+                pagine.append(cur.strip()); cur = ""
+            cur += par + "\n\n"
+        if cur.strip():
+            pagine.append(cur.strip())
+        return self._lg_nuova("testo", titolo, pagine)
+
+    def leggimi_foto(self, percorsi):
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        pagine, spesa = [], 0.0
+        for p in [x for x in percorsi or [] if x][:30]:
+            try:
+                r = ch.leggi_foto(self.chiave(), p, "leggimi")
+                spesa += r["spesa"]
+                if r["testo"]:
+                    pagine.append(r["testo"])
+            except ap.ErroreAppunti as e:
+                return {"ok": False, "msg": str(e)}
+            except Exception:
+                log.exception("leggimi: foto %s", p)
+        if not pagine:
+            return {"ok": False, "msg": tr("sc_err")}
+        r = self._lg_nuova("foto", f"{tr('lg_foto')} – {datetime.date.today().strftime('%d/%m/%Y')}", pagine)
+        return {**r, "spesa": spesa}
+
+    def leggimi_pagina(self, i, n):
+        """Una pagina scansionata (senza testo): la legge Claude, una volta sola."""
+        f = self._lg_cartella() / f"{Path(str(i)).name}.json"
+        v = el.leggi_json(f, None)
+        if not v:
+            return {"ok": False, "msg": tr("lg_err")}
+        n = int(n)
+        if v["pagine"][n].strip():
+            return {"ok": True, "testo": v["pagine"][n], "spesa": 0}
+        pdf = f.with_suffix(".pdf")
+        if not pdf.exists():
+            return {"ok": False, "msg": tr("lg_nofile")}
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            r = ch.leggi_pagina_pdf(self.chiave(), pdf, n)
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("leggimi: pagina %s", n)
+            return {"ok": False, "msg": tr("lg_err")}
+        v["pagine"][n] = r["testo"] or "…"
+        el.scrivi_json(f, v)
+        return {"ok": True, **r}
+
+    def leggimi_file(self, nome, dati_b64):
+        """Sulla versione web il file arriva dalla pagina (non c'e' la finestra per sceglierlo)."""
+        tmp = self._lg_cartella() / "_arrivo"
+        shutil.rmtree(tmp, ignore_errors=True)
+        tmp.mkdir()
+        p = tmp / Path(str(nome)).name
+        try:
+            p.write_bytes(base64.b64decode(dati_b64))
+            if p.suffix.lower() == ".pdf":
+                return self.leggimi_pdf(str(p), nome)
+            return self.leggimi_foto([str(p)])
+        finally:
+            shutil.rmtree(tmp, ignore_errors=True)
+
     # ------------------------------------------------------------------ appunti facili da leggere (Modalità DSA)
 
     def appunti_dsa(self, cartella, formato=None):

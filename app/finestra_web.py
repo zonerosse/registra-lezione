@@ -598,6 +598,36 @@ class Api:
     def aggiungi_docente(self, cartella, pdf):
         return self._m.aggiungi_docente(cartella, pdf)
 
+    def detta_sistema(self, testo):
+        return self._m.detta_sistema(testo)
+
+    def leggimi_elenco(self):
+        return self._m.leggimi_elenco()
+
+    def leggimi_apri(self, i):
+        return self._m.leggimi_apri(i)
+
+    def leggimi_segna(self, i, pag):
+        return self._m.leggimi_segna(i, pag)
+
+    def leggimi_togli(self, i):
+        return self._m.leggimi_togli(i)
+
+    def leggimi_pdf(self, percorso, nome=None):
+        return self._m.leggimi_pdf(percorso, nome)
+
+    def leggimi_testo(self, testo):
+        return self._m.leggimi_testo(testo)
+
+    def leggimi_foto(self, percorsi):
+        return self._m.leggimi_foto(percorsi)
+
+    def leggimi_pagina(self, i, n):
+        return self._m.leggimi_pagina(i, n)
+
+    def leggimi_file(self, nome, dati_b64):
+        return self._m.leggimi_file(nome, dati_b64)
+
     def scegli_pdf(self):
         """Finestra di Windows per scegliere il PDF delle slide del docente."""
         try:
