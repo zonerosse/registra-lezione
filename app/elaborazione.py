@@ -593,6 +593,127 @@ def zona_contenuto(img):
     return (x0 * k, y0 * k, min(W, x1 * k), min(H, y1 * k))
 
 
+def _componente_grande(m):
+    """La zona piu' grande di celle True attaccate (4 vicini) in una griglia: ritorna (y0, x0, y1, x1, n) o None."""
+    h, w = m.shape
+    visto = [[False] * w for _ in range(h)]
+    meglio = None
+    for y in range(h):
+        for x in range(w):
+            if not m[y, x] or visto[y][x]:
+                continue
+            pila, n = [(y, x)], 0
+            visto[y][x] = True
+            y0 = y1 = y
+            x0 = x1 = x
+            while pila:
+                cy, cx = pila.pop()
+                n += 1
+                y0, y1, x0, x1 = min(y0, cy), max(y1, cy), min(x0, cx), max(x1, cx)
+                for ny, nx in ((cy + 1, cx), (cy - 1, cx), (cy, cx + 1), (cy, cx - 1)):
+                    if 0 <= ny < h and 0 <= nx < w and m[ny, nx] and not visto[ny][nx]:
+                        visto[ny][nx] = True
+                        pila.append((ny, nx))
+            if meglio is None or n > meglio[4]:
+                meglio = (y0, x0, y1 + 1, x1 + 1, n)
+    return meglio
+
+
+def _allarga_lavagna(foto, zona):
+    """Dalla zona dove si scrive, allargo fino ai bordi della lavagna: righe e colonne dello stesso fondo."""
+    import numpy as np
+    from PIL import Image
+    with Image.open(foto) as im:
+        g = np.asarray(im.convert("L"), dtype=np.int16)
+    H, W = g.shape
+    x0, y0, x1, y1 = zona
+    dentro = g[y0:y1, x0:x1]
+    fondo = int(np.bincount(dentro.ravel().clip(0, 255).astype(np.int64)).argmax())
+    B = 12                                  # guardo strisce di 12 pixel: una riga del quadretto non ferma l'allargamento
+    simile = lambda v: v.size and (np.abs(v - fondo) <= 4).mean() >= 0.7
+    while x0 - B >= 0 and simile(g[y0:y1, x0 - B:x0]):
+        x0 -= B
+    while x1 + B <= W and simile(g[y0:y1, x1:x1 + B]):
+        x1 += B
+    while y0 - B >= 0 and simile(g[y0 - B:y0, x0:x1]):
+        y0 -= B
+    while y1 + B <= H and simile(g[y1:y1 + B, x0:x1]):
+        y1 += B
+    pad = 4
+    return (max(0, x0 - pad), max(0, y0 - pad), min(W, x1 + pad), min(H, y1 + pad))
+
+
+def zona_lezione(cartella):
+    """La «lavagna» di una registrazione dallo schermo: la zona che cambia da una slide all'altra.
+    Barre del browser, pagina di YouTube, menu, barra delle applicazioni restano uguali e vengono tolti;
+    l'orologio e le finestrelle piccole sono zone troppo piccole e non contano.
+    Ritorna (x0, y0, x1, y1) in pixel delle foto dello schermo, oppure None. Salvata in slide/zona.json."""
+    import numpy as np
+    from PIL import Image
+    cart = Path(cartella) / "slide"
+    foto = sorted(p for p in cart.glob("slide_*.jpg"))
+    if not foto:
+        return None
+    f = cart / "zona.json"
+    gia = leggi_json(f, {}) or {}
+    if gia.get("n") == len(foto) and "zona" in gia:
+        return tuple(gia["zona"]) if gia["zona"] else None
+    zona = None
+    try:
+        with Image.open(foto[0]) as im0:
+            W, H = im0.size
+        if len(foto) >= 2:
+            k = 8                                    # una cella ogni 8x8 pixel della foto
+            w, h = max(1, W // k), max(1, H // k)
+            scelte = foto if len(foto) <= 40 else [foto[round(i * (len(foto) - 1) / 39)] for i in range(40)]
+            pila = []
+            for p in scelte:
+                with Image.open(p) as im:
+                    if im.size != (W, H):
+                        continue
+                    pila.append(np.asarray(im.convert("L").resize((w, h), Image.BILINEAR), dtype=np.int16))
+            if len(pila) >= 2:
+                a = np.stack(pila)
+                cambia = (a.max(axis=0) - a.min(axis=0)) > 28
+                # celle piu' grandi (4x4) per unire i tratti di una lavagna scritta a mano
+                g = 4
+                hh, ww = h // g, w // g
+                if hh and ww:
+                    c = cambia[: hh * g, : ww * g].reshape(hh, g, ww, g).mean(axis=(1, 3)) > 0.08
+                    d = c.copy()                       # allargo di 2 celle: i pezzi scritti qua e la' si uniscono
+                    for _ in range(2):
+                        e = d.copy()
+                        e[1:] |= d[:-1]; e[:-1] |= d[1:]; e[:, 1:] |= d[:, :-1]; e[:, :-1] |= d[:, 1:]
+                        d = e
+                    comp = _componente_grande(d)
+                    if comp:                           # torno alle celle che cambiano davvero, dentro la zona trovata
+                        y0, x0, y1, x1, n = comp
+                        dentro = c[y0:y1, x0:x1]
+                        if dentro.any():
+                            ys, xs = np.where(dentro)
+                            comp = (y0 + ys.min(), x0 + xs.min(), y0 + ys.max() + 1, x0 + xs.max() + 1, int(dentro.sum()))
+                    if comp:
+                        y0, x0, y1, x1, n = comp
+                        area = (y1 - y0) * (x1 - x0) / float(hh * ww)
+                        if area >= 0.04 and n >= 4:
+                            px = k * g
+                            x0, y0 = max(0, x0 * px), max(0, y0 * px)
+                            x1, y1 = min(W, x1 * px), min(H, y1 * px)
+                            x0, y0, x1, y1 = _allarga_lavagna(foto[-1], (x0, y0, x1, y1))
+                            if (x1 - x0) * (y1 - y0) < 0.93 * W * H:
+                                zona = (int(x0), int(y0), int(x1), int(y1))
+        if zona is None:                              # una slide sola, o niente che cambi: il modo di prima
+            with Image.open(foto[0]) as im0:
+                zona = zona_contenuto(im0)
+    except Exception:
+        log.exception("zona della lavagna")
+        zona = None
+    if gia.get("zona") != (list(zona) if zona else None):
+        shutil.rmtree(cart / "ritagli", ignore_errors=True)       # zona cambiata: i ritagli vanno rifatti
+    scrivi_json(f, {"n": len(foto), "zona": list(zona) if zona else None})
+    return zona
+
+
 def immagine_slide(cartella, nome, originale=False):
     """Percorso della slide da mettere nei PDF: ritagliata sulla presentazione se si puo'.
     L'originale (schermo intero) resta in slide/, il ritaglio va in slide/ritagli/.
@@ -610,8 +731,10 @@ def immagine_slide(cartella, nome, originale=False):
     if rit.exists():
         return rit
     try:
+        zona = zona_lezione(cartella) if nome.startswith("slide_") else None
         with Image.open(orig) as im:
-            zona = zona_contenuto(im)
+            if zona is None:
+                zona = zona_contenuto(im)
             if zona is None:
                 return orig
             rit.parent.mkdir(exist_ok=True)
