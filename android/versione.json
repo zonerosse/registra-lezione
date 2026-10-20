@@ -1,7 +1,7 @@
 {
  "versione": "0.13.23",
  "codice": 13,
- "novita": "Sull'iPhone: quando esce una versione nuova compare l'avviso con il tasto «Apri TestFlight», e in «Informazioni» la riga per aggiornare. Dalla 4.11: gli indirizzi nei testi sono link, in «Informazioni» c'è il link a verbamanent.app, tasto destro su link e testi.",
- "novita_en": "On the iPhone: when a new version comes out you see a notice with the «Open TestFlight» button, and in «About» a line to update. From 4.11: addresses in the texts are links, «About» has the link to verbamanent.app, right-click on links and texts.",
- "contenuto": 98
+ "novita": "Sull'iPhone: quando esce una versione nuova compare l'avviso con il tasto «Apri TestFlight», e in «Informazioni» la riga per aggiornare. Dalla 4.11: gli indirizzi nei testi sono link, in «Informazioni» c'è il link a verbamanent.app, tasto destro su link e testi. Sull'iPhone le impostazioni (chiave, invito) ora restano salvate.",
+ "novita_en": "On the iPhone: when a new version comes out you see a notice with the «Open TestFlight» button, and in «About» a line to update. From 4.11: addresses in the texts are links, «About» has the link to verbamanent.app, right-click on links and texts. On the iPhone settings (key, invitation) are now kept.",
+ "contenuto": 99
 }
