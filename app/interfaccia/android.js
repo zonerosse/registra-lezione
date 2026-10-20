@@ -500,6 +500,19 @@ if (ANDROID) {
   },
   {
    "ico": "spark",
+   "t": "Andamento: come stai andando",
+   "p": [
+    "<b>Andamento</b> (nel menu; sul telefono da Studia) mette in una pagina sola come stai andando. In alto scegli <b>Studio</b> o <b>Lavoro</b>.",
+    "Studio, in alto: ore registrate questa settimana (e la differenza con la scorsa), lezioni in tutto, giorni di ripasso di fila con il record, carte da ripassare oggi.",
+    "Il grafico delle <b>ore settimana per settimana</b>: tocca una settimana e sotto vedi le sue lezioni, con giorno, ora, online o in aula, formato e durata. Accanto i <b>prossimi esami</b> con i giorni che mancano e quanto sei pronto.",
+    "<b>Ore per materia</b>: tocca una materia per vedere solo le sue ultime lezioni. Poi i <b>voti</b> di test, interrogazioni e simulazioni e il ripasso degli ultimi 7 giorni.",
+    "<b>Cosa resta da sistemare</b>: lezioni mai ripassate, dove sbagli di più, lezioni senza appunti, materie senza data d'esame. Ogni riga ha il tasto per farlo subito.",
+    "Lavoro: ore di riunione, riunioni in tutto, cose da fare aperte e scadute, chi ha più cose da fare e le ultime decisioni. Tutto dai dati che hai già: non costa niente."
+   ],
+   "g": "materia"
+  },
+  {
+   "ico": "spark",
    "v": "tel-esame",
    "t": "Preparazione all'esame",
    "p": [
@@ -1102,6 +1115,19 @@ if (ANDROID) {
     "At the top: <b>Your tutor</b> and the <b>Daily review</b>. Then the <b>days to the exam</b> and today's plan (if you haven't set the date, tap «Set the date»).",
     "Below, in tiles: most likely questions, study plan, multiple-choice test, oral exam, written mock exam, flashcards, Ask about the whole course, glossary, textbook, test map. At the bottom your marks.",
     "Lectures with notes but <b>no course</b> appear at the top with «✎ Add the course»: one tap and they move under the right course."
+   ],
+   "g": "materia"
+  },
+  {
+   "ico": "spark",
+   "t": "Progress: how you're doing",
+   "p": [
+    "<b>Progress</b> (in the menu; on the phone from Study) shows on one page how you're doing. At the top choose <b>Study</b> or <b>Work</b>.",
+    "Study, at the top: hours recorded this week (and the difference from last week), lectures in total, review days in a row with your record, cards to review today.",
+    "The chart of <b>hours week by week</b>: tap a week and below you see its lectures, with day, time, online or in class, format and length. Next to it the <b>upcoming exams</b> with the days left and how ready you are.",
+    "<b>Hours per subject</b>: tap a subject to see only its latest lectures. Then the <b>marks</b> of tests, oral exams and mock exams, and the review of the last 7 days.",
+    "<b>Still to sort out</b>: lectures never reviewed, where you go wrong most, lectures without notes, subjects without an exam date. Each row has the button to do it now.",
+    "Work: meeting hours, meetings in total, open and overdue to-dos, who has the most to do and the latest decisions. All from the data you already have: it costs nothing."
    ],
    "g": "materia"
   },

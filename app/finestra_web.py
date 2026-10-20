@@ -488,6 +488,9 @@ class Api:
     def orale_chiudi(self):
         return self._m.orale_chiudi()
 
+    def andamento(self):
+        return self._m.andamento()
+
     def cose_da_fare(self):
         return self._m.cose_da_fare()
 
