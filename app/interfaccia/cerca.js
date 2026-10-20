@@ -181,7 +181,9 @@ function chiudi() {
 }
 function disegna(q) {
   const box = riquadro(), ws = parole(q);
-  if (!ws.length) { chiudi(); return; }
+  const dove = TEL ? $('cxLista') : box;
+  if (TEL && !dove) return;
+  if (!ws.length) { if (TEL) { dove.innerHTML = ''; VOCI = []; } else chiudi(); return; }
   const F = cercaFunzioni(ws), G = cercaGuida(ws);
   VOCI = [];
   const riga = (ico, tit, sotto, bt, fa, ws2) => { VOCI.push(fa); const n = VOCI.length - 1;
@@ -195,17 +197,9 @@ function disegna(q) {
       return riga('g-lezioni', x.nome, `«…${(f.testo || '').slice(0, 70)}…» · ${f.ora || ''}`, cq('apri'), () => mostraMomento(x.cartella, f.sec, null, x.nome), lr.parole && lr.parole.length ? lr.parole : ws); }).join('');
   }
   if (!h) h = `<div class="cx-vuoto">${sq(cq('niente', {q}))}</div>`;
-  if (TEL) h = `<div class="cx-campo"><svg><use href="#i-srch"/></svg><input id="cxInTel" value="${sq(q)}" placeholder="${sq(cq('ph_tel'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="cx-x" id="cxX">✕</button></div>` + h;
-  const foc = document.activeElement && document.activeElement.id === 'cxInTel';
-  box.innerHTML = h;
+  dove.innerHTML = h;
   box.classList.remove('hidden');
-  box.querySelectorAll('.cx-r').forEach(r => r.onclick = () => esegui(+r.dataset.n));
-  if (TEL) {
-    const i = $('cxInTel');
-    i.oninput = () => cambia(i.value); i.onkeydown = tasti;
-    $('cxX').onclick = chiudi;
-    if (foc) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }
-  }
+  dove.querySelectorAll('.cx-r').forEach(r => r.onclick = () => esegui(+r.dataset.n));
 }
 function esegui(n) {
   const fa = VOCI[n]; if (!fa) return;
@@ -256,7 +250,7 @@ function monta() {
 }
 function disegnaVuoto() {
   const box = riquadro();
-  box.innerHTML = `<div class="cx-campo"><svg><use href="#i-srch"/></svg><input id="cxInTel" placeholder="${sq(cq('ph_tel'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="cx-x" id="cxX">✕</button></div>`;
+  box.innerHTML = `<div class="cx-campo"><svg><use href="#i-srch"/></svg><input id="cxInTel" enterkeyhint="search" placeholder="${sq(cq('ph_tel'))}" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="cx-x" id="cxX">✕</button></div><div id="cxLista"></div>`;
   box.classList.remove('hidden');
   const i = $('cxInTel'); i.oninput = () => cambia(i.value); i.onkeydown = tasti; $('cxX').onclick = chiudi;
   setTimeout(() => i.focus(), 50);

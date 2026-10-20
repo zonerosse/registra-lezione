@@ -1,7 +1,7 @@
 {
- "versione": "0.13.25",
+ "versione": "0.13.26",
  "codice": 13,
- "novita": "Nuovo campo «Cerca»: scrivi cosa vuoi fare (libro, chiave, mappa, test…) e il programma ti porta lì, con il capitolo della guida e le lezioni dove la parola è stata detta. Sul PC in alto nel menu (anche Ctrl+K), sul telefono la lente in alto a destra.",
- "novita_en": "New «Search» box: type what you want to do (textbook, key, map, test…) and the program takes you there, with the guide chapter and the lectures where the word was said. On the PC at the top of the menu (also Ctrl+K), on the phone the magnifier at the top right.",
- "contenuto": 101
+ "novita": "Telefono: la ricerca non si chiude più alla prima lettera, e la lente è più grande e ben visibile.",
+ "novita_en": "Phone: search no longer closes at the first letter, and the magnifier is bigger and easy to see.",
+ "contenuto": 102
 }
