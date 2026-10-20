@@ -1,7 +1,7 @@
 {
- "versione": "0.13.13",
- "codice": 13,
- "novita": "Grafica nuova, più sobria: icone disegnate con un colore per famiglia al posto delle emoji. Modalità DSA con sfondo grigio chiaro, carattere Lexend e accento verde petrolio, e «Aa Come leggo» per cambiarli. L'icona di «Da fare» in basso ora si vede.",
- "novita_en": "New, cleaner look: drawn icons with one colour per family instead of emoji. Dyslexia mode with a light grey background, Lexend font and teal accent, and «Aa How I read» to change them. The «To do» icon at the bottom is now visible.",
- "contenuto": 89
+ "versione": "0.13.14",
+ "codice": 14,
+ "novita": "Ancora meno emoji: in tutte le pagine (guida, privacy, informazioni, opzioni del cloud) diventano icone disegnate, più grandi dove serve. In Studia tutor e ripasso con le icone a quadrato; avvisi senza arancio chiaro; via gli ultimi lilla.",
+ "novita_en": "Even fewer emoji: on every page (guide, privacy, info, cloud options) they become drawn icons, larger where needed. In Study, tutor and review with square icons; warnings without light orange; the last lilac touches are gone.",
+ "contenuto": 90
 }
