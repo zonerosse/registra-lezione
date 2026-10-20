@@ -211,25 +211,55 @@ function vai(p, tornando = false) {
   if (p === 'reg' && S.vista === 'pronto') { setTimeout(() => $('nome').focus(), 50); }
 }
 
-/* ------------------------------------------------------------------ icone a linea al posto delle emoji */
-// Nei riquadri (.ico) le emoji diventano icone disegnate, tutte dello stesso stile e colore. Si guarda prima
-// l'azione del riquadro (karaoke e interrogazione hanno la stessa emoji 🎤), poi l'emoji.
+/* ------------------------------------------------------------------ icone al posto delle emoji */
+// Nei riquadri (.ico) e nei bottoni le emoji diventano icone disegnate. Riquadri: quadrato pieno con un colore
+// spento per famiglia (studio, ascolto, mappe, prove, scrittura) e l'icona bianca. Si guarda prima l'azione
+// del riquadro (karaoke e interrogazione hanno la stessa emoji 🎤), poi l'emoji.
 const ICO_AZ = {karaoke: 'g-kar', orale: 'i-mic', detta: 'i-mic', reg: 'g-reg', glos: 'g-libro', libro: 'g-libro', leggimi: 'g-voce', ascolta: 'g-voce', ascm: 'g-voce'};
 const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-cal', '📑': 'g-cap', '💬': 'i-chat', '📤': 'i-share', '✉': 'g-mail', '🃏': 'i-cards',
   '📷': 'g-foto', '🖼': 'g-img', '🎤': 'g-kar', '📖': 'g-libro', '📘': 'g-libro', '📚': 'g-lezioni', '📲': 'g-tel', '🗺': 'i-map', '🎧': 'g-cuffie', '⭐': 'g-stella',
   '✍': 'g-penna', '✂': 'g-forbici', '🎓': 'g-tocco', '☑': 'g-test', '📝': 'g-note', '🧑‍🏫': 'g-tutor', '▶': 'g-play', '🎙': 'i-mic', '🖨': 'g-stampa', '📋': 'g-lista',
-  '⏺': 'g-reg', '⚡': 'g-lampo', '🔇': 'g-voce', '🎯': 'g-test', '👥': 'g-tutor', '📊': 'g-lista'};
+  '⏺': 'g-reg', '⚡': 'g-lampo', '🔇': 'g-voce', '🎯': 'g-bersaglio', '👥': 'g-tutor', '📊': 'g-lista', '🔁': 'g-ripeti', '↻': 'g-ripeti', '🔄': 'g-ripeti', '✨': 'g-scintille',
+  '💡': 'g-idea', '🚀': 'g-razzo', '🔒': 'g-lucchetto', '🗑': 'i-trash', '✏️': 'i-edit', '✏': 'i-edit', '🧩': 'g-puzzle', '👁': 'g-occhio', '⬇': 'g-giu', '🌐': 'g-mondo'};
+// famiglie: il colore del quadrato
+const FAM_AZ = {test: 'prova', orale: 'prova', scritto: 'prova', esame: 'prova', prob: 'prova', simula: 'prova',
+  ascolta: 'ascolto', ascm: 'ascolto', karaoke: 'ascolto', podcast: 'ascolto', leggimi: 'ascolto', glos: 'ascolto',
+  mappa: 'mappe', mappe: 'mappe', mverif: 'mappe', firma: 'mappe', infografica: 'mappe', capitoli: 'mappe',
+  scritti: 'scrivi', detta: 'scrivi', tras: 'scrivi', word: 'scrivi', gdocs: 'scrivi', strumenti: 'scrivi', condividi: 'scrivi', email: 'scrivi', manda: 'scrivi', spezzone: 'scrivi', video: 'scrivi', foto: 'scrivi'};
+const FAM_IC = {'g-test': 'prova', 'g-bersaglio': 'prova', 'g-stella': 'prova', 'i-mic': 'prova', 'g-voce': 'ascolto', 'g-kar': 'ascolto', 'g-cuffie': 'ascolto', 'g-libro': 'ascolto',
+  'i-map': 'mappe', 'g-img': 'mappe', 'g-cap': 'mappe', 'g-penna': 'scrivi', 'g-note': 'scrivi', 'g-lista': 'scrivi', 'g-stampa': 'scrivi', 'i-share': 'scrivi', 'g-mail': 'scrivi',
+  'g-tel': 'scrivi', 'g-foto': 'scrivi', 'g-forbici': 'scrivi', 'g-play': 'scrivi'};
+const emPulita = x => (x || '').replace(/️/g, '').trim();
 function icoLinea(el) {
   if (el.firstElementChild) return;
-  const em = (el.textContent || '').trim().replace(/️/g, '');
+  const em = emPulita(el.textContent);
   if (!em) return;
   const az = el.closest('[data-ta],[data-sd]'), k = az && (az.dataset.ta || az.dataset.sd);
   const id = (k && ICO_AZ[k]) || ICO_EM[em];
-  if (id) { el.innerHTML = `<svg><use href="#${id}"/></svg>`; el.classList.add('ico-l'); }
+  if (!id) return;
+  el.innerHTML = `<svg><use href="#${id}"/></svg>`;
+  el.classList.add('ico-l', 'fam-' + ((k && FAM_AZ[k]) || FAM_IC[id] || 'studio'));
 }
-function icoTutte(r) { if (r.matches && r.matches('.ico')) icoLinea(r); if (r.querySelectorAll) r.querySelectorAll('.ico').forEach(icoLinea); }
-new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => { if (n.nodeType === 1) icoTutte(n); else if (n.parentElement && n.parentElement.matches('.ico')) icoLinea(n.parentElement); })))
-  .observe(document.documentElement, {childList: true, subtree: true});
+// nei bottoni: l'emoji all'inizio della scritta diventa una piccola icona del colore della famiglia
+const EM_INIZIO = /^\s*((?:\p{Extended_Pictographic}|[☑✍✂▶⏺⚡↻⬇])(?:‍\p{Extended_Pictographic})*️?)\s+/u;
+function btnIco(el) {
+  const tn = el.firstChild;
+  if (!tn || tn.nodeType !== 3) return;
+  const m = tn.nodeValue.match(EM_INIZIO); if (!m) return;
+  const e = emPulita(m[1]), id = e === '🎤' ? 'i-mic' : ICO_EM[e]; if (!id) return;     // nei bottoni 🎤 è sempre il microfono
+  tn.nodeValue = tn.nodeValue.slice(m[0].length);
+  el.insertAdjacentHTML('afterbegin', `<svg class="bico fam-${FAM_IC[id] || 'studio'}"><use href="#${id}"/></svg>`);
+}
+const BTN_SEL = '.btn,.lnk,.mp-modi button,.chip,.aa-b';
+function icoTutte(r) {
+  if (!r.querySelectorAll) return;
+  if (r.matches('.ico')) icoLinea(r); if (r.matches(BTN_SEL)) btnIco(r);
+  r.querySelectorAll('.ico').forEach(icoLinea); r.querySelectorAll(BTN_SEL).forEach(btnIco);
+}
+new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
+  if (n.nodeType === 1) icoTutte(n);
+  else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); }
+}))).observe(document.documentElement, {childList: true, subtree: true});
 document.addEventListener('DOMContentLoaded', () => icoTutte(document.body));
 /* ------------------------------------------------------------------ licenze */
 // i testi (quasi 1 MB) stanno in licenze.js, caricato solo quando si apre la pagina

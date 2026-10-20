@@ -1216,3 +1216,15 @@ html:not(.android) .nav a.navdsa.on::before{display:none}
 .cap ul li::before{color:var(--acc)}.cap.perche summary .n{background:var(--accs);color:var(--acc)}
 .err,.esd.esame,.tcopz button.errata,.dvvia{background:#f8fafc}
 .b-pz{background:#b45309}.live.pz{background:#7c2d12}
+/* icone «C»: quadrato pieno, colore spento per famiglia, icona bianca */
+:root{--f-studio:#0369a1;--f-ascolto:#0f766e;--f-mappe:#15803d;--f-prova:#b45309;--f-scrivi:#475569}
+.ico.ico-l,.ico,.ico.i-blue,.ico.i-teal,.ico.i-vio,.ico.i-green,.ico.i-org,.banda .ico,#v-arch .banda .ico{background:var(--f-studio);color:#fff}
+.ico.i-teal{background:var(--f-ascolto)}.ico.i-green{background:var(--f-mappe)}.ico.i-org{background:var(--f-prova)}.ico.i-vio{background:var(--f-scrivi)}
+.ico.fam-studio{background:var(--f-studio)}.ico.fam-ascolto{background:var(--f-ascolto)}.ico.fam-mappe{background:var(--f-mappe)}.ico.fam-prova{background:var(--f-prova)}.ico.fam-scrivi{background:var(--f-scrivi)}
+.ico svg{stroke-width:2}
+html.dsa .altri .tile .ico,.tile.no .ico{background:#94a3b8}
+/* l'icona dentro i bottoni: piccola, del colore della famiglia (bianca nei bottoni pieni) */
+.bico{width:16px;height:16px;flex:none;vertical-align:-3px;margin-right:6px;color:var(--f-studio)}
+.bico.fam-ascolto{color:var(--f-ascolto)}.bico.fam-mappe{color:var(--f-mappe)}.bico.fam-prova{color:var(--f-prova)}.bico.fam-scrivi{color:var(--f-scrivi)}
+.b-main .bico,.b-rec .bico,.b-cor .bico,.b-pz .bico,.b-ri .bico,.mp-modi button.on .bico{color:inherit}
+.b-main .bico,.b-rec .bico,.b-cor .bico,.b-pz .bico,.b-ri .bico{color:#fff}
