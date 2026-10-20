@@ -2167,7 +2167,7 @@ async function pcSuona(k) {
       const testo = p.tipo === 'prof' ? p.frasi.map(f => f.testo).join(' ') : p.testo;
       const pos = []; let c = 0; parole(testo).forEach(w => { const j = testo.indexOf(w, c); pos.push(j); c = j + w.length; });
       let stima = null;
-      if (ANDROID) { let w = 0; stima = setInterval(() => { if (PCS.giro === giro) pcSegna(kk, Math.min(pos.length - 1, w++)); }, 420 / PCS.vel); }
+      if (VOCE_APP()) { let w = 0; stima = setInterval(() => { if (PCS.giro === giro) pcSegna(kk, Math.min(pos.length - 1, w++)); }, 420 / PCS.vel); }
       ok = await voceParla(testo, PCS.vel, ci => { let w = 0; while (w + 1 < pos.length && pos[w + 1] <= ci) w++; pcSegna(kk, w); }, p.tipo === 'a' ? 0 : p.tipo === 'b' ? 1 : -1);
       if (stima) clearInterval(stima);
     }
@@ -3503,7 +3503,9 @@ function disegnaTest() {
 // Sul PC (e su Mac e iPhone) parla la finestra con la voce del sistema; sul telefono Android la finestra
 // non ha voce e parla l'app (A.voce_*). voceParla() finisce quando la frase e' detta (true) o fermata (false).
 let VOCE_GIRO = 0;
-const voceDisponibile = () => ANDROID || !!window.speechSynthesis;
+// la voce del telefono solo nell'app Android; sul web (anche dal telefono) quella del browser
+const VOCE_APP = () => ANDROID && !document.documentElement.classList.contains('web');
+const voceDisponibile = () => VOCE_APP() || !!window.speechSynthesis;
 const perLaVoce = s => String(s || '').replace(/[★•]/g, '').replace(/−/g, '-').replace(/→/g, ', ').replace(/\s+/g, ' ').trim();
 // chi: -1 la voce di sempre; 0 / 1 le due voci del podcast a due voci (Giulia femminile, Marco maschile o piu' basso)
 function vocePer(chi) {
@@ -3522,7 +3524,7 @@ function voceParla(testo, vel = 1, onParola = null, chi = -1) {
   testo = perLaVoce(testo);
   return new Promise(async fatto => {
     if (!testo) return fatto(true);
-    if (ANDROID) {
+    if (VOCE_APP()) {
       const r = await A.voce_parla(testo, vel, LINGUA, chi);
       if (!r || !r.ok) return fatto(false);
       while (giro === VOCE_GIRO) { await pausa(200); const o = await A.voce_occupata(); if (!o.occupata) break; }
@@ -3543,7 +3545,7 @@ function voceParla(testo, vel = 1, onParola = null, chi = -1) {
 }
 function voceFerma() {
   VOCE_GIRO++;
-  if (ANDROID) { try { A.voce_ferma(); } catch (e) {} return; }
+  if (VOCE_APP()) { try { A.voce_ferma(); } catch (e) {} return; }
   try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {}
 }
 
@@ -3625,7 +3627,7 @@ function asFerma(daCapo) {
 // microfono; la risposta si trascrive sul PC e Claude decide se fare una «domanda in più». Alla fine il voto.
 var OR = {orale: null};   // var: vai() lo guarda anche prima che arrivi qui
 function orLeggi(testo) { voceParla(testo); }
-const orVoce = () => voceDisponibile() && (ANDROID || (() => { try { return speechSynthesis.getVoices().length > 0; } catch (e) { return false; } })());
+const orVoce = () => voceDisponibile() && (VOCE_APP() || (() => { try { return speechSynthesis.getVoices().length > 0; } catch (e) { return false; } })());
 function orStop() {
   if (OR.poll) clearInterval(OR.poll); OR.poll = null;
   if (OR.audio) { try { OR.audio.pause(); } catch (e) {} OR.audio = null; }
