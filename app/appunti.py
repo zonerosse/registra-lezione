@@ -695,7 +695,7 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
             except Exception:
                 pass
             break
-    VIOLA, GRIGIO = (124, 58, 237), (107, 118, 134)
+    VIOLA, GRIGIO = (3, 105, 161), (107, 118, 134)            # titoli delle sezioni: blu (era viola)
 
     def t(s):
         s = str(s or "")
@@ -766,7 +766,14 @@ def pdf_appunti_parti(parti, info, destinazione, unite=None):
 
     completa = len(parti) > 1
     fmt0 = formato_di(parti[0][0])
-    capitoli_tutti = [c for d, _, _ in parti for c in (d.get("capitoli") or [])]
+    capitoli_tutti, _visti = [], set()          # senza doppioni: lo stesso capitolo detto in due parti vale una volta
+    for d, _, _ in parti:
+        for c in (d.get("capitoli") or []):
+            k = (str(c.get("inizio") or "")[:8], str(c.get("titolo") or "").strip().lower())
+            if k not in _visti:
+                _visti.add(k)
+                capitoli_tutti.append(c)
+    capitoli_tutti.sort(key=lambda c: str(c.get("inizio") or ""))
     for indice, (dati, etichetta, slide) in enumerate(parti):
         stato["slide"], stato["usate"] = slide or {}, set()
         pdf.add_page()
@@ -955,7 +962,7 @@ def _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO
     """Il verbale di una riunione: in breve, decisioni, cose da fare (chi, entro quando), da decidere,
     prossima riunione, punti discussi."""
     L = testi.lingua_di(info)
-    ARANCIO = (194, 65, 12)
+    ARANCIO = (13, 66, 117)             # verbale: blu scuro (era arancio)
     _intestazione_semplice(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO, copertina, L,
                            avviso="vb_controlla")
     if info.get("partecipanti"):
@@ -984,8 +991,8 @@ def _scrivi_verbale(pdf, font, t, testo, dati, info, etichetta, completa, GRIGIO
     if dati.get("azioni"):
         _sezione_colore(pdf, font, t, tr("vb_azioni", L), ARANCIO)
         pdf.set_font(font, "", 9.5)
-        pdf.set_fill_color(255, 247, 237)
-        pdf.set_draw_color(253, 186, 116)
+        pdf.set_fill_color(240, 246, 251)
+        pdf.set_draw_color(203, 221, 236)
         pdf.set_text_color(0, 0, 0)
         with pdf.table(col_widths=(58, 22, 20), line_height=5.4, text_align="LEFT") as tab:
             r = tab.row()
@@ -1070,7 +1077,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
     from fpdf.enums import MethodReturnValue
     dati = normalizza(dati)
     L = testi.lingua_di(info)
-    VIOLA, VIOLA_CHIARO, LINEA = (124, 58, 237), (243, 237, 255), (214, 204, 245)
+    VIOLA, VIOLA_CHIARO, LINEA = (3, 105, 161), (240, 246, 251), (203, 221, 236)   # Cornell: blu e azzurro chiaro (era viola)
     pdf.set_font(font, "B", 17)
     if copertina:
         testo(dati.get("titolo", "") or tr("pdf_appunti_di", L, e=etichetta), 8)
@@ -1090,7 +1097,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
         testo(tr("pdf_sotto", L, data=el._data_it(info.get('inizio', '')), tit=dati.get('titolo', '')), 5)
         pdf.set_text_color(0, 0, 0)
     pdf.set_font(font, "", 8.5)
-    pdf.set_text_color(124, 58, 237)
+    pdf.set_text_color(3, 105, 161)
     testo(tr("wb_uso" if webinar else "pdf_studia", L), 4.4)
     pdf.set_text_color(0, 0, 0)
 
@@ -1291,8 +1298,9 @@ def _scrivi_esame(pdf, font, t, testo, immagine, dati, info, etichetta, completa
     parole chiave, errore da evitare), legenda delle parole chiave, simulazione d'esame."""
     from fpdf.enums import MethodReturnValue
     L = testi.lingua_di(info)
-    ARANCIO, ARANCIO_SCURO, ARANCIO_CHIARO, BORDO = (194, 65, 12), (124, 45, 18), (255, 247, 237), (253, 186, 116)
-    GIALLO, GIALLO_BORDO, GIALLO_TESTO = (254, 243, 199), (252, 211, 77), (146, 64, 14)
+    # Formato Esame: verde petrolio (era arancio); i riquadri gialli diventano grigio chiaro con il bordo ambra
+    ARANCIO, ARANCIO_SCURO, ARANCIO_CHIARO, BORDO = (15, 118, 110), (17, 78, 74), (240, 249, 248), (167, 214, 208)
+    GIALLO, GIALLO_BORDO, GIALLO_TESTO = (246, 248, 251), (217, 119, 6), (51, 65, 85)
     larg = pdf.w - pdf.l_margin - pdf.r_margin
     fondo = pdf.h - pdf.b_margin
 
