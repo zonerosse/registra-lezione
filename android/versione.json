@@ -1,7 +1,7 @@
 {
- "versione": "0.13.12",
+ "versione": "0.13.13",
  "codice": 13,
- "novita": "Nuova «🗺 La mia mappa»: cambi la mappa della lezione o la costruisci da solo, con Annulla, Aiuto e detta 🎙. Nello Spazio DSA: «🔊 Leggimi» legge ad alta voce PDF, foto della pagina (scatta o dalla galleria) e testi copiati; «🎙 Scrivi parlando» a pagina intera.",
- "novita_en": "New «🗺 My map»: change the lecture map or build it yourself, with Undo, Help and 🎙 dictation. In the DSA space: «🔊 Read to me» reads PDFs, page photos (camera or gallery) and copied text aloud; «🎙 Write by speaking» as a full page.",
- "contenuto": 88
+ "novita": "Grafica nuova, più sobria: icone disegnate con un colore per famiglia al posto delle emoji. Modalità DSA con sfondo grigio chiaro, carattere Lexend e accento verde petrolio, e «Aa Come leggo» per cambiarli. L'icona di «Da fare» in basso ora si vede.",
+ "novita_en": "New, cleaner look: drawn icons with one colour per family instead of emoji. Dyslexia mode with a light grey background, Lexend font and teal accent, and «Aa How I read» to change them. The «To do» icon at the bottom is now visible.",
+ "contenuto": 89
 }
