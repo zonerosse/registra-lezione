@@ -1,7 +1,7 @@
 {
- "versione": "0.13.11",
+ "versione": "0.13.12",
  "codice": 13,
- "novita": "Le lezioni del PC arrivano in pochi secondi, appena apri l'app. «Accedi con Google» riprova da solo se il telefono toglie internet all'app, e se non va scrive il motivo preciso. Guida aggiornata con i passi giusti per la chiave di Claude.",
- "novita_en": "Lectures from the PC arrive within seconds, as soon as you open the app. «Sign in with Google» retries by itself if the phone cuts the app's internet, and if it fails it shows the exact reason. Guide updated with the right steps for the Claude key.",
- "contenuto": 87
+ "novita": "Nuova «🗺 La mia mappa»: cambi la mappa della lezione o la costruisci da solo, con Annulla, Aiuto e detta 🎙. Nello Spazio DSA: «🔊 Leggimi» legge ad alta voce PDF, foto della pagina (scatta o dalla galleria) e testi copiati; «🎙 Scrivi parlando» a pagina intera.",
+ "novita_en": "New «🗺 My map»: change the lecture map or build it yourself, with Undo, Help and 🎙 dictation. In the DSA space: «🔊 Read to me» reads PDFs, page photos (camera or gallery) and copied text aloud; «🎙 Write by speaking» as a full page.",
+ "contenuto": 88
 }
