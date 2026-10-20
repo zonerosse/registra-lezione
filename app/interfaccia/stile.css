@@ -1254,3 +1254,9 @@ html.dsa .altri .tile .ico,.tile.no .ico{background:#94a3b8}
 .mp{border-color:#cfe0f1;background:#fff}
 .mpr{border-top-color:#e6ebf1}
 .b-rec{background:#e11d48}
+/* icone nei testi più grandi dove fanno da «punto elenco»: guida, privacy, informazioni, impostazioni */
+.eico{width:1.3em;height:1.3em;vertical-align:-.3em;margin-right:.15em}
+#v-guida .eico,.velo .eico{width:1.45em;height:1.45em;vertical-align:-.35em}
+.btn .eico,.lnk .eico,.chip .eico,.pill .eico,p .eico,.hint .eico,small .eico{width:1.1em;height:1.1em;vertical-align:-.18em}
+#v-guida .eico{width:20px;height:20px;min-width:20px;vertical-align:-5px;margin-right:4px}#v-guida h3 .eico,#v-guida summary .eico{width:22px;height:22px}
+#v-guida summary .eico{display:none}

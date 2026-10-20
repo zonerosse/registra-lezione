@@ -225,7 +225,7 @@ const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-
   '🔥': 'g-fuoco', '📎': 'g-graffetta', '📏': 'g-righello', '🎨': 'g-colore', '🎁': 'g-regalo', '💶': 'g-euro', '❓': 'g-domanda', '⏱': 'g-orologio', '⏳': 'g-orologio',
   '📍': 'g-pin', '💻': 'g-pc', '🖥': 'g-pc', '📱': 'g-tel', '💼': 'g-borsa', '🌙': 'g-luna', '🔑': 'g-chiave', '🎟': 'g-biglietto', '➕': 'g-piu', '⏸': 'g-pausa', '✅': 'g-ok',
   '📣': 'g-voce', '📢': 'g-voce', '🏠': 'g-casa', '↗': 'g-fuori', '🧑‍🎓': 'g-tocco', '🎒': 'g-borsa', '📈': 'g-lista', '🗂': 'g-cartella', '📦': 'g-cartella', '🔗': 'g-graffetta',
-  '✔': 'g-ok', '⭐️': 'g-stella', '🌟': 'g-stella', '🏆': 'g-stella', '👍': 'g-ok', '👤': 'g-tutor', '🙋': 'g-tutor', '🔔': 'g-orologio', '⏰': 'g-orologio', '🧠': 'g-idea', '☀': 'g-luce'};
+  '✔': 'g-ok', '⭐️': 'g-stella', '🌟': 'g-stella', '🏆': 'g-stella', '👍': 'g-ok', '👤': 'g-tutor', '🙋': 'g-tutor', '🔔': 'g-orologio', '⏰': 'g-orologio', '🧠': 'g-idea', '☀': 'g-luce', '🤖': 'g-chip', '🧪': 'g-idea', '🎬': 'g-play', '📽': 'g-play', '🎞': 'g-play', '🔍': 'g-occhio', '🔎': 'g-occhio', '✋': 'g-no', '⛔': 'g-no', '🆕': 'g-stella', '💾': 'g-cartella', '🖱': 'g-pc', '⌨': 'g-pc', '🗣': 'g-voce', '👂': 'g-cuffie', '✈': 'g-razzo', '🏁': 'g-ok', '📞': 'g-tel', '🧾': 'g-note', '📃': 'g-note', '🗒': 'g-note'};
 // famiglie: il colore del quadrato
 const FAM_AZ = {test: 'prova', orale: 'prova', scritto: 'prova', esame: 'prova', prob: 'prova', simula: 'prova',
   ascolta: 'ascolto', ascm: 'ascolto', karaoke: 'ascolto', podcast: 'ascolto', leggimi: 'ascolto', glos: 'ascolto',
