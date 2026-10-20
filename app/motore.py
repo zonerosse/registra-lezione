@@ -1604,6 +1604,12 @@ class Motore:
             return []
         ap.sistema_vecchi(cart)
         info = el.leggi_json(Path(cart) / "info.json", {}) or {}
+        if info.get("stato") == "pronta" and int(info.get("pdf_v") or 0) < ap.PDF_V and not (self.occupato and self.cartella_corrente and Path(self.cartella_corrente) == Path(cart)):
+            try:            # PDF fatti con una versione vecchia: rifatti dai .json (colori nuovi, slide sulla lavagna), gratis
+                ap.rifai_pdf(cart, self.cfg["cartella_pacchetti"])
+                info = el.leggi_json(Path(cart) / "info.json", {}) or {}
+            except Exception:
+                log.exception("rifai i PDF vecchi")
         out = []
         for formato in ap.FORMATI:
             nome = ((info.get("mio") or {}).get("nome") or tr("fmt_mio")) if formato == "mio" else tr(f"fmt_{formato}")

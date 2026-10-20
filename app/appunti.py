@@ -1786,6 +1786,43 @@ def parti_json(cartella, formato):
     return sorted(out)
 
 
+PDF_V = 2          # cambia quando cambia l'aspetto dei PDF: quelli fatti prima si rifanno da soli dai .json (senza Claude)
+
+
+def rifai_pdf(cartella, cartella_pacchetti):
+    """Rifà i PDF degli appunti di una registrazione dai file .json gia' salvati: niente Claude, niente costi.
+    Serve quando cambia l'aspetto (colori, slide ritagliate sulla lavagna). Torna quanti PDF ha rifatto."""
+    cartella = Path(cartella)
+    info = el.leggi_json(cartella / "info.json", {}) or {}
+    pac = info.get("pacchetti") or {}
+    L = testi.lingua_di(info)
+    n = 0
+    for formato in FORMATI:
+        fatti = info.get(chiave_info(formato)) or {}
+        for k, dest in fatti.items():
+            dati = el.leggi_json(file_json(cartella, k, formato))
+            if not dati or not dest:
+                continue
+            base = Path(pac.get(str(k)) or "").stem
+            etichetta = base.split(" – ")[-1] if " – " in base else f"{tr('parte', L)} {k}"
+            mappa = el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or []
+            slide = {m["n"]: (str(el.immagine_slide(cartella, m["file"])) if m.get("file") else None, m.get("inizio", 0))
+                     for m in mappa}
+            try:
+                Path(dest).parent.mkdir(parents=True, exist_ok=True)
+                pdf_appunti(dati, info, etichetta, str(dest), slide)
+                n += 1
+            except Exception:
+                log.exception("rifai pdf %s parte %s", formato, k)
+        if fatti:
+            try:
+                appunti_lezione_completa(cartella, cartella_pacchetti, formato)
+            except Exception:
+                log.exception("rifai pdf completo %s", formato)
+    el.aggiorna_info(cartella, pdf_v=PDF_V)
+    return n
+
+
 def pdf_dsa(cartella, formato, cartella_pacchetti):
     """Il PDF degli appunti di tutta la registrazione per la Modalita' DSA, rifatto dai file .json (senza Claude).
     El.FACILITATA va accesa da chi chiama. Torna il percorso del PDF."""
