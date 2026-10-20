@@ -1,7 +1,7 @@
 {
- "versione": "0.13.20",
+ "versione": "0.13.21",
  "codice": 13,
- "novita": "Sul telefono: «Inizia qui» anche su Android e iPhone (Google, Claude con «Ho un invito», collegamento al PC), «Informazioni» in Impostazioni e il promemoria «Non disturbare» con i passi del telefono. Se un invito non si attiva, ora si legge il motivo.",
- "novita_en": "On the phone: «Start here» on Android and iPhone too (Google, Claude with «I have an invitation», connecting to the PC), «About» in Settings and the «Do not disturb» reminder with the phone's steps. If an invitation does not activate, the reason is now shown.",
- "contenuto": 96
+ "novita": "Le lezioni registrate prima si aggiornano da sole: aprendo gli appunti, i PDF vengono rifatti gratis con i colori nuovi e le slide ritagliate sulla lavagna. Sul telefono: «Inizia qui» anche su Android e iPhone (Google, Claude con «Ho un invito», collegamento al PC), «Informazioni» in Impostazioni e il promemoria «Non disturbare» con i passi del telefono. Se un invito non si attiva, ora si legge il motivo.",
+ "novita_en": "Older lectures update by themselves: when you open the notes, the PDFs are remade for free with the new colours and slides cropped to the board. On the phone: «Start here» on Android and iPhone too (Google, Claude with «I have an invitation», connecting to the PC), «About» in Settings and the «Do not disturb» reminder with the phone's steps. If an invitation does not activate, the reason is now shown.",
+ "contenuto": 97
 }
