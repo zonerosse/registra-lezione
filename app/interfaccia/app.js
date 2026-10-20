@@ -220,7 +220,12 @@ const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-
   '📷': 'g-foto', '🖼': 'g-img', '🎤': 'g-kar', '📖': 'g-libro', '📘': 'g-libro', '📚': 'g-lezioni', '📲': 'g-tel', '🗺': 'i-map', '🎧': 'g-cuffie', '⭐': 'g-stella',
   '✍': 'g-penna', '✂': 'g-forbici', '🎓': 'g-tocco', '☑': 'g-test', '📝': 'g-note', '🧑‍🏫': 'g-tutor', '▶': 'g-play', '🎙': 'i-mic', '🖨': 'g-stampa', '📋': 'g-lista',
   '⏺': 'g-reg', '⚡': 'g-lampo', '🔇': 'g-voce', '🎯': 'g-bersaglio', '👥': 'g-tutor', '📊': 'g-lista', '🔁': 'g-ripeti', '↻': 'g-ripeti', '🔄': 'g-ripeti', '✨': 'g-scintille',
-  '💡': 'g-idea', '🚀': 'g-razzo', '🔒': 'g-lucchetto', '🗑': 'i-trash', '✏️': 'i-edit', '✏': 'i-edit', '🧩': 'g-puzzle', '👁': 'g-occhio', '⬇': 'g-giu', '🌐': 'g-mondo'};
+  '💡': 'g-idea', '🚀': 'g-razzo', '🔒': 'g-lucchetto', '🗑': 'g-cestino', '✏': 'i-edit', '🧩': 'g-puzzle', '👁': 'g-occhio', '⬇': 'g-giu', '🌐': 'g-mondo',
+  '🚫': 'g-no', '🟢': 'g-nuvola', '🔵': 'g-nuvola', '☁': 'g-nuvola', '📁': 'g-cartella', '📂': 'g-cartella', '⚙': 'g-ingr', '🛠': 'g-ingr', '👓': 'g-occhiali', '⚠': 'g-avviso',
+  '🔥': 'g-fuoco', '📎': 'g-graffetta', '📏': 'g-righello', '🎨': 'g-colore', '🎁': 'g-regalo', '💶': 'g-euro', '❓': 'g-domanda', '⏱': 'g-orologio', '⏳': 'g-orologio',
+  '📍': 'g-pin', '💻': 'g-pc', '🖥': 'g-pc', '📱': 'g-tel', '💼': 'g-borsa', '🌙': 'g-luna', '🔑': 'g-chiave', '🎟': 'g-biglietto', '➕': 'g-piu', '⏸': 'g-pausa', '✅': 'g-ok',
+  '📣': 'g-voce', '📢': 'g-voce', '🏠': 'g-casa', '↗': 'g-fuori', '🧑‍🎓': 'g-tocco', '🎒': 'g-borsa', '📈': 'g-lista', '🗂': 'g-cartella', '📦': 'g-cartella', '🔗': 'g-graffetta',
+  '✔': 'g-ok', '⭐️': 'g-stella', '🌟': 'g-stella', '🏆': 'g-stella', '👍': 'g-ok', '👤': 'g-tutor', '🙋': 'g-tutor', '🔔': 'g-orologio', '⏰': 'g-orologio', '🧠': 'g-idea', '☀': 'g-luce'};
 // famiglie: il colore del quadrato
 const FAM_AZ = {test: 'prova', orale: 'prova', scritto: 'prova', esame: 'prova', prob: 'prova', simula: 'prova',
   ascolta: 'ascolto', ascm: 'ascolto', karaoke: 'ascolto', podcast: 'ascolto', leggimi: 'ascolto', glos: 'ascolto',
@@ -251,6 +256,30 @@ function btnIco(el) {
   el.insertAdjacentHTML('afterbegin', `<svg class="bico fam-${FAM_IC[id] || 'studio'}"><use href="#${id}"/></svg>`);
 }
 const BTN_SEL = '.btn,.lnk,.mp-modi button,.chip,.aa-b';
+// le emoji in tutti gli altri testi: diventano piccole icone a linea (del colore del testo); quelle senza icona si tolgono.
+// Restano i segni tipografici: frecce, ✓ ✗ ✕ ★ ✎ ❚ ▶.
+const EM_TUTTE = /(?:\p{Extended_Pictographic}|[☀-➿])(?:️|‍(?:\p{Extended_Pictographic}|[☀-➿])️?)*\s?/gu;
+const EM_TIENI = new Set(['→', '←', '↑', '↓', '↗', '↶', '↷', '↺', '↻', '✓', '✗', '✕', '★', '☆', '✎', '❚', '▶', '©', '®', '™', '•', '·', '⇄']);
+function emTesto(tn) {
+  const v = tn.nodeValue; if (!v || !/[←-⯿\u{1F000}-\u{1FAFF}]/u.test(v)) return;
+  const pa = tn.parentElement; if (!pa || pa.closest('[contenteditable="true"],textarea,script,style,svg,.ico,.no-ico')) return;
+  let cambiato = false;
+  const html = esc(v).replace(EM_TUTTE, m => {
+    const e = m.trim(), ep = emPulita(e);
+    if (EM_TIENI.has(ep)) return m;
+    cambiato = true;
+    const id = ICO_EM[ep] || ICO_EM[e];
+    return id ? `<svg class="eico"><use href="#${id}"/></svg>${m.endsWith(' ') ? ' ' : ''}` : '';
+  });
+  if (!cambiato) return;
+  const s = document.createElement('span'); s.className = 'etx'; s.innerHTML = html; tn.replaceWith(s);
+}
+function emSotto(r) {
+  if (r.nodeType === 3) return emTesto(r);
+  const w = document.createTreeWalker(r, NodeFilter.SHOW_TEXT); const ns = []; let n;
+  while ((n = w.nextNode())) ns.push(n);
+  ns.forEach(emTesto);
+}
 // titoletti ed etichette di stato (stile A): niente emoji, solo testo (le etichette hanno il pallino colorato dal CSS)
 const TOGLI_SEL = '.lbl,.pill,.ftag,.grp>.lbl';
 function togliEm(el) { const tn = el.firstChild; if (tn && tn.nodeType === 3) { const m = tn.nodeValue.match(EM_INIZIO); if (m) tn.nodeValue = tn.nodeValue.slice(m[0].length); } }
@@ -258,10 +287,11 @@ function icoTutte(r) {
   if (!r.querySelectorAll) return;
   if (r.matches('.ico')) icoLinea(r); if (r.matches(BTN_SEL)) btnIco(r); if (r.matches(TOGLI_SEL)) togliEm(r);
   r.querySelectorAll('.ico').forEach(icoLinea); r.querySelectorAll(BTN_SEL).forEach(btnIco); r.querySelectorAll(TOGLI_SEL).forEach(togliEm);
+  emSotto(r);
 }
 new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
   if (n.nodeType === 1) icoTutte(n);
-  else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); else if (p.matches(TOGLI_SEL)) togliEm(p); }
+  else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); else if (p.matches(TOGLI_SEL)) togliEm(p); if (n.parentElement) emTesto(n); }
 }))).observe(document.documentElement, {childList: true, subtree: true});
 document.addEventListener('DOMContentLoaded', () => icoTutte(document.body));
 /* ------------------------------------------------------------------ licenze */

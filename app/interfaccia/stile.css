@@ -1237,3 +1237,20 @@ html.dsa .altri .tile .ico,.tile.no .ico{background:#94a3b8}
 .pill.p-ok,.pill.p-blue,.pill.p-red,.pill.p-warn,.pill.p-vio,.pill.p-cor,.pill.p-grey,.pill.p-calma{background:#f1f5f9;color:#334155;border:0}
 .pill.p-red{color:#9f1239}
 .lez .ftag,.lez .inf>b+.ftag,.lez .ftag.esame{background:#f1f5f9;color:#334155}
+/* emoji nei testi → icone a linea (vedi emTesto in app.js) */
+.eico{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none;color:var(--acc);stroke-width:2}
+.etx{display:contents}
+.btn .eico,.lnk .eico,.chip .eico,.pill .eico,.nav .eico,.side .eico{color:inherit}
+.b-main .eico,.b-rec .eico{color:#fff}
+/* via gli ultimi lilla e viola: tutto nei toni dell'accento */
+.hero-ok.lav{background:linear-gradient(135deg,#f0f9ff,#f6f8fb)}
+.cornell .q{background:var(--accs);color:var(--acc);border-right-color:#cfe0f1;border-bottom-color:#e6ebf1}
+.cap.perche{border-color:#d6e4f0;background:#fff}
+.cita{background:var(--accs);color:var(--acc)}.cita:hover{background:#d6e8f7}
+.retro li.agg{color:var(--acc)}.aggb{background:var(--acc)}
+.esd.simulazione{background:#f6f8fb}
+.bolla{background:#f1f5f9}
+.li-l.lg{background:var(--accs);color:var(--acc)}.li-l.gp{background:#f1f5f9;color:#9f1239}.li-l.ms{background:#f1f5f9;color:#b45309}
+.mp{border-color:#cfe0f1;background:#fff}
+.mpr{border-top-color:#e6ebf1}
+.b-rec{background:#e11d48}
