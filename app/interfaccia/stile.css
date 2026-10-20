@@ -1228,3 +1228,12 @@ html.dsa .altri .tile .ico,.tile.no .ico{background:#94a3b8}
 .bico.fam-ascolto{color:var(--f-ascolto)}.bico.fam-mappe{color:var(--f-mappe)}.bico.fam-prova{color:var(--f-prova)}.bico.fam-scrivi{color:var(--f-scrivi)}
 .b-main .bico,.b-rec .bico,.b-cor .bico,.b-pz .bico,.b-ri .bico,.mp-modi button.on .bico{color:inherit}
 .b-main .bico,.b-rec .bico,.b-cor .bico,.b-pz .bico,.b-ri .bico{color:#fff}
+/* etichette di stato (stile A): grigie, con un pallino del colore giusto */
+.pill{background:#f1f5f9;color:#334155;border:0;gap:6px}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:#94a3b8;flex:none}
+.pill:has(svg)::before{display:none}
+.pill.p-ok::before{background:var(--ok)}.pill.p-blue::before{background:var(--blue)}.pill.p-red::before{background:#be123c}.pill.p-warn::before{background:#b45309}
+.pill.p-vio::before,.pill.p-cor::before{background:var(--acc)}.pill.p-calma::before{background:var(--acc)}
+.pill.p-ok,.pill.p-blue,.pill.p-red,.pill.p-warn,.pill.p-vio,.pill.p-cor,.pill.p-grey,.pill.p-calma{background:#f1f5f9;color:#334155;border:0}
+.pill.p-red{color:#9f1239}
+.lez .ftag,.lez .inf>b+.ftag,.lez .ftag.esame{background:#f1f5f9;color:#334155}

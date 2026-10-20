@@ -241,7 +241,7 @@ function icoLinea(el) {
   el.classList.add('ico-l', 'fam-' + ((k && FAM_AZ[k]) || FAM_IC[id] || 'studio'));
 }
 // nei bottoni: l'emoji all'inizio della scritta diventa una piccola icona del colore della famiglia
-const EM_INIZIO = /^\s*((?:\p{Extended_Pictographic}|[☑✍✂▶⏺⚡↻⬇])(?:‍\p{Extended_Pictographic})*️?)\s+/u;
+const EM_INIZIO = /^\s*((?:\p{Extended_Pictographic}|[☑✍✂▶⏺⚡↻⬇✓✔])(?:‍\p{Extended_Pictographic})*️?)\s+/u;
 function btnIco(el) {
   const tn = el.firstChild;
   if (!tn || tn.nodeType !== 3) return;
@@ -251,14 +251,17 @@ function btnIco(el) {
   el.insertAdjacentHTML('afterbegin', `<svg class="bico fam-${FAM_IC[id] || 'studio'}"><use href="#${id}"/></svg>`);
 }
 const BTN_SEL = '.btn,.lnk,.mp-modi button,.chip,.aa-b';
+// titoletti ed etichette di stato (stile A): niente emoji, solo testo (le etichette hanno il pallino colorato dal CSS)
+const TOGLI_SEL = '.lbl,.pill,.ftag,.grp>.lbl';
+function togliEm(el) { const tn = el.firstChild; if (tn && tn.nodeType === 3) { const m = tn.nodeValue.match(EM_INIZIO); if (m) tn.nodeValue = tn.nodeValue.slice(m[0].length); } }
 function icoTutte(r) {
   if (!r.querySelectorAll) return;
-  if (r.matches('.ico')) icoLinea(r); if (r.matches(BTN_SEL)) btnIco(r);
-  r.querySelectorAll('.ico').forEach(icoLinea); r.querySelectorAll(BTN_SEL).forEach(btnIco);
+  if (r.matches('.ico')) icoLinea(r); if (r.matches(BTN_SEL)) btnIco(r); if (r.matches(TOGLI_SEL)) togliEm(r);
+  r.querySelectorAll('.ico').forEach(icoLinea); r.querySelectorAll(BTN_SEL).forEach(btnIco); r.querySelectorAll(TOGLI_SEL).forEach(togliEm);
 }
 new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(n => {
   if (n.nodeType === 1) icoTutte(n);
-  else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); }
+  else if (n.nodeType === 3 && n.parentElement) { const p = n.parentElement; if (p.matches('.ico')) icoLinea(p); else if (p.matches(BTN_SEL)) btnIco(p); else if (p.matches(TOGLI_SEL)) togliEm(p); }
 }))).observe(document.documentElement, {childList: true, subtree: true});
 document.addEventListener('DOMContentLoaded', () => icoTutte(document.body));
 /* ------------------------------------------------------------------ licenze */
