@@ -503,7 +503,11 @@ class Motore:
             s["pronti"] = sum(1 for p in parti if p.get("stato") == "ok")
             s["ha_appunti"] = any(p.get("ap") == "ok" for p in parti)
             s["spesa"] = self._spesa()
-            s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
+            try:      # l'anteprima non deve mai fermare la pagina
+                s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
+            except Exception:
+                log.exception("anteprima appunti")
+                s["cornell"] = None
             s["formato"] = self.formato_vista
             s["importa"] = self.imp
             s["sync"] = self._sync_breve()
@@ -550,7 +554,7 @@ class Motore:
                                      "appunto": " → ".join((q.get("schema") or [])[:3])} for q in dom[:2]],
                         "riassunto": "", "n_domande": len(dom), "n_kw": len(d.get("parole_chiave") or []),
                         "simulazione": bool(d.get("simulazione"))}
-            blocchi = d.get("blocchi") or []
+            blocchi = [b for b in (d.get("blocchi") or []) if isinstance(b, dict)]
             if not blocchi:
                 continue
             return {"formato": "webinar" if fd == "webinar" else "cornell", "blocchi": [{"domanda": b.get("domanda", ""),

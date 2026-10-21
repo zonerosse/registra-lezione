@@ -113,6 +113,8 @@ def controlla(dati, cartella, n_slide=0, L="it"):
         voci, altri = (dati.get("decisioni") or []) + (dati.get("azioni") or []) + \
             (dati.get("da_decidere") or []) + (dati.get("punti_discussi") or []), "verbale"
     for v in voci:
+        if not isinstance(v, dict):
+            continue
         avvisi = []
         if esame:
             perche = v.get("perche") or ""

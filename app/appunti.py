@@ -437,15 +437,61 @@ def e_esame(dati):
     return dati.get("formato") == "esame" or "domande_probabili" in dati
 
 
+def _voce(b, campo, testo):
+    """Una voce scritta male (testo, lista, numero) diventa una voce vera."""
+    if isinstance(b, dict):
+        if isinstance(b.get(testo), str):
+            b[testo] = [b[testo]] if b[testo].strip() else []
+        elif b.get(testo) is not None and not isinstance(b.get(testo), list):
+            b[testo] = [str(b[testo])]
+        if isinstance(b.get(testo), list):
+            b[testo] = [x if isinstance(x, str) else (x.get("testo") or x.get(testo) or " ".join(str(v) for v in x.values()))
+                        if isinstance(x, dict) else str(x) for x in b[testo] if x not in (None, "")]
+        return b
+    if isinstance(b, (list, tuple)):
+        righe = [str(x) for x in b if x not in (None, "")]
+        return {campo: "", testo: righe}
+    return {campo: "", testo: [str(b)]}
+
+
 def ripara(dati):
-    """Appunti scritti male (una riga di testo al posto di una domanda o di una sezione): diventano voci vere."""
+    """Appunti scritti male (una riga di testo al posto di una domanda o di una sezione,
+    una lista scritta come testo o come dizionario): diventano voci vere."""
     if not isinstance(dati, dict):
         return dati
     for chiave, campo, testo in (("blocchi", "domanda", "appunti"), ("domande_probabili", "domanda", "schema"),
-                                 ("sezioni", "titolo", "punti")):
+                                 ("sezioni", "titolo", "punti"), ("decisioni", "testo", "punti"),
+                                 ("punti_discussi", "titolo", "punti"), ("azioni", "cosa", "punti"),
+                                 ("sezioni_extra", "titolo", "punti"), ("formulario", "simbolo", "significato"),
+                                 ("esercizi_svolti", "titolo", "passaggi")):
+        if chiave not in dati:
+            continue
         v = dati.get(chiave)
-        if isinstance(v, list) and any(not isinstance(b, dict) for b in v):
-            dati[chiave] = [b if isinstance(b, dict) else {campo: "", testo: [str(b)]} for b in v]
+        if v is None:
+            continue
+        if isinstance(v, str) and v.strip()[:1] == "{":
+            try:
+                v = json.loads(v)
+            except ValueError:
+                pass
+        if isinstance(v, dict):
+            v = [v] if (campo in v or testo in v) else [x if isinstance(x, dict) else {campo: str(k), testo: [str(x)]}
+                                                        for k, x in v.items()]
+        elif isinstance(v, str):
+            try:            # a volte Claude scrive la lista come testo JSON
+                j = json.loads(v)
+                v = j if isinstance(j, list) else [j]
+            except ValueError:
+                v = [v] if v.strip() else []
+        elif not isinstance(v, list):
+            v = [v]
+        if chiave == "formulario":
+            dati[chiave] = [b if isinstance(b, dict) else {"simbolo": "", "significato": str(b)} for b in v if b not in (None, "")]
+        elif chiave in ("decisioni", "punti_discussi", "azioni"):
+            # nel verbale una riga di testo è la voce stessa
+            dati[chiave] = [{campo: b} if isinstance(b, str) else _voce(b, campo, testo) for b in v if b not in (None, "")]
+        else:
+            dati[chiave] = [_voce(b, campo, testo) for b in v if b not in (None, "")]
     return dati
 
 
@@ -1277,6 +1323,7 @@ def _scrivi_parte(pdf, font, t, testo, sezione, immagine, dati, info, etichetta,
 
 def _legenda_verita(pdf, font, t, voci, L):
     """In fondo: cosa vogliono dire il viola ("aggiunto da Claude") e "da verificare"."""
+    voci = [v for v in voci if isinstance(v, dict)]
     agg = any(v.get("aggiunte") for v in voci)
     avv = any(v.get("avvisi") for v in voci)
     if not (agg or avv):
@@ -1887,6 +1934,7 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                 dati["dall_ultima"] = int(k) == 1 and bool(info0.get("aperte_prima"))
             except Exception:
                 log.exception("cose fatte")
+        dati = ripara(dati)
         try:      # controllo di verita': citazioni, minuti e slide confrontati con la registrazione
             import verifica
             n_slide = len(el.leggi_json(cartella / f"pacchetto_{int(k):03d}.json", []) or [])

@@ -1,8 +1,8 @@
 {
- "versione": "4.16",
+ "versione": "4.17",
  "librerie": 2,
- "novita": "Sistemazioni interne per Scripta Manent, il gemello pensato per chi ha un DSA. Qui non cambia niente.",
- "novita_en": "Internal changes for Scripta Manent, the twin for students with dyslexia and other learning difficulties. Nothing changes here.",
- "novita_sm": "Scripta Manent tutto nuovo: pagine più chiare e tutto il testo facile da leggere. Compiti con la voce del prof e i pezzi con il tempo, Matematica con frazioni, percentuali e convertitore, le formule delle tue lezioni, la finestrella in miniatura con «Segna questo momento», i voti della scuola e «In verifica posso usare».",
- "novita_sm_en": "Scripta Manent all new: clearer pages and all text easy to read. Homework with the teacher's voice and timed parts, Maths with fractions, percentages and a converter, the formulas from your lessons, the small window with «Mark this moment», school grades and «In tests I can use»."
+ "novita": "Risolto il blocco a fine registrazione: a volte Claude scriveva gli appunti in modo strano, il PDF di una parte non veniva fatto e la pagina si fermava (tempo fermo, «Fine» che non risponde). Ora gli appunti scritti male vengono sistemati da soli.",
+ "novita_en": "Fixed the freeze at the end of a recording: sometimes Claude wrote the notes in an odd way, one part's PDF was not made and the page stopped (timer stuck, «Finish» not responding). Badly written notes are now fixed automatically.",
+ "novita_sm": "Risolto il blocco a fine registrazione: se gli appunti arrivano scritti male, ora vengono sistemati da soli e la pagina non si ferma più.",
+ "novita_sm_en": "Fixed the freeze at the end of a recording: badly written notes are now fixed automatically and the page no longer stops."
 }
