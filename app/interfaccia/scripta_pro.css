@@ -419,3 +419,45 @@ html.scripta.android .smr-momenti{grid-template-columns:1fr}
 /* dopo */
 html.scripta #v-fine .hero-ok{background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:12px;box-shadow:none}
 html.scripta #v-fine .check{background:var(--sm-okt);color:var(--sm-ok);box-shadow:none}
+
+/* ===== Studia ===== */
+html.scripta #v-studia.sms{max-width:1240px}
+html.scripta #v-studia.sms #stMat,html.scripta #v-studia.sms .hd .dsaint{display:none!important}
+html.scripta .sms-oggi{display:flex;gap:18px;align-items:center;padding:18px 20px;flex-wrap:wrap}
+html.scripta .sms-big{width:46px;height:46px}
+html.scripta .sms-gr{flex:1;min-width:240px}.sms-gr b{display:block;font-size:18px;color:var(--sm-ink)}.sms-gr small{color:var(--sm-ard);font-size:15px}
+html.scripta .sms-serie{display:flex;gap:4px}
+html.scripta .sms-serie i{width:24px;height:24px;border-radius:6px;background:var(--sm-lin2);display:grid;place-items:center;font-style:normal;font-size:12px;color:var(--sm-ard);font-weight:700}
+html.scripta .sms-serie i.si{background:var(--sm-pet);color:#fff}
+html.scripta .sms-serie i.og{outline:2px solid var(--sm-pet);outline-offset:1px}
+html.scripta .sms-fila{display:block;font-size:14px;color:var(--sm-ard);margin-top:5px}
+html.scripta .sms-mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+html.scripta .sms-mc{display:flex;flex-direction:column;gap:8px;padding:14px 16px;border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:12px;text-align:left;border-top:4px solid var(--c);cursor:pointer;font-family:inherit;color:var(--sm-ink)}
+html.scripta .sms-mc:hover{border-color:#A9C9C5;border-top-color:var(--c)}
+html.scripta .sms-tt{display:flex;align-items:center;gap:8px}.sms-tt b{font-size:17px;flex:1}
+html.scripta .sms-ver{font-size:15px}.sms-ver b{color:var(--sm-amb)}
+html.scripta .sms-pr{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--sm-ard)}
+html.scripta .sms-bar{flex:1;height:5px;background:var(--sm-lin2);border-radius:3px;overflow:hidden}html.scripta .sms-bar i{display:block;height:100%}
+html.scripta .sms-piede{font-size:15px;color:var(--sm-ard)}
+html.scripta .sms-mtesta{margin-bottom:6px}
+html.scripta .sms-k{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+html.scripta .sms-k .card{padding:12px 14px}.sms-k b{display:block;font-size:22px;color:var(--sm-ink)}.sms-k small{color:var(--sm-ard);font-size:15px}
+html.scripta .sms-tabs{margin:14px 0 18px}
+html.scripta .sms-pw{display:grid;grid-template-columns:1fr 330px;gap:20px;align-items:start}
+html.scripta .sms-cosa{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--sm-lin2)}
+html.scripta .sms-cosa:first-child{border-top:0}
+html.scripta .sms-cosa b{display:block;font-size:15px;color:var(--sm-ink)}.sms-cosa small{display:block;color:var(--sm-ard);font-size:15px}
+html.scripta .sms-cosa.fatto b{color:var(--sm-ard)}
+html.scripta .sms-tutor{padding:14px 16px}
+html.scripta .sms-tt2{font-size:15px;color:var(--sm-ink)}
+html.scripta .sms-tutor ol{list-style:none;margin:8px 0 0;padding:0}
+html.scripta .sms-tutor li{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--sm-lin2);font-size:15px}
+html.scripta .sms-tutor li:first-child{border-top:0}
+html.scripta .sms-voti{display:flex;align-items:flex-end;gap:10px;height:130px}
+html.scripta .sms-voti div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:14px;color:var(--sm-ard);max-width:60px}
+html.scripta .sms-voti i{width:100%;max-width:34px;border-radius:5px 5px 0 0;background:var(--sm-ind)}
+html.scripta .sms-voti i.b{background:var(--sm-pet)}html.scripta .sms-voti i.r{background:var(--sm-amb)}html.scripta .sms-voti i.s{opacity:.7}
+html.scripta .sms-vv{color:var(--sm-ink);font-weight:700}
+html.scripta.android .sms-mgrid,html.scripta.android .sms-pw{grid-template-columns:1fr}
+html.scripta.android .sms-k{grid-template-columns:1fr 1fr}
+@media (max-width:1100px){html.scripta .sms-mgrid{grid-template-columns:1fr 1fr}html.scripta .sms-pw{grid-template-columns:1fr}}

@@ -550,3 +550,67 @@ def promemoria_ora(base):
             v.pop("ricorda", None)
         _salva(base, lista)
     return pronti
+
+
+# ------------------------------------------------------------------ Studia: voti della scuola, momenti segnati, cosa posso usare in verifica
+
+def voti_scuola(base, materia=None):
+    lista = el.leggi_json(Path(base) / "voti_scuola.json", []) or []
+    lista = [v for v in lista if isinstance(v, dict) and v.get("id")]
+    if materia:
+        lista = [v for v in lista if str(v.get("materia") or "").lower() == str(materia).lower()]
+    return sorted(lista, key=lambda v: v.get("data") or "")
+
+
+def voto_nuovo(base, v):
+    try:
+        voto = round(float(str(v.get("voto")).replace(",", ".")), 2)
+    except (TypeError, ValueError):
+        return None
+    if not 0 <= voto <= 10:
+        return None
+    data = str(v.get("data") or "")[:10]
+    try:
+        datetime.date.fromisoformat(data)
+    except ValueError:
+        data = datetime.date.today().isoformat()
+    x = {"id": uuid.uuid4().hex[:10], "materia": str(v.get("materia") or "").strip()[:60], "voto": voto, "data": data,
+         "tipo": v.get("tipo") if v.get("tipo") in ("scritto", "orale", "pratico") else "scritto", "nota": str(v.get("nota") or "").strip()[:120]}
+    lista = el.leggi_json(Path(base) / "voti_scuola.json", []) or []
+    lista.append(x)
+    el.scrivi_json(Path(base) / "voti_scuola.json", lista)
+    return x
+
+
+def voto_togli(base, vid):
+    lista = el.leggi_json(Path(base) / "voti_scuola.json", []) or []
+    tolto = next((v for v in lista if v.get("id") == vid), None)
+    el.scrivi_json(Path(base) / "voti_scuola.json", [v for v in lista if v.get("id") != vid])
+    return tolto
+
+
+def momenti(base, materia, tipi=("chiarire",)):
+    """I momenti segnati durante le lezioni di una materia (di base «Non ho capito»), dal piu' recente."""
+    out = []
+    try:
+        cartelle = [p for p in Path(base).iterdir() if p.is_dir() and (p / "note.json").exists()]
+    except OSError:
+        return out
+    for c in cartelle:
+        info = el.leggi_json(c / "info.json", {}) or {}
+        if materia and str(info.get("materia") or "").lower() != str(materia).lower():
+            continue
+        for n in el.leggi_json(c / "note.json", []) or []:
+            if isinstance(n, dict) and (not tipi or n.get("tipo") in tipi):
+                out.append({"cartella": str(c), "nome": info.get("nome", c.name), "inizio": info.get("inizio", ""), "sec": n.get("sec", 0),
+                            "ora": n.get("ora", ""), "tipo": n.get("tipo", ""), "testo": n.get("testo", "")})
+    return sorted(out, key=lambda x: (x["inizio"], x["sec"]), reverse=True)
+
+
+VERIFICA_VOCI = ("mappe", "formulario", "calcolatrice", "tabelline", "tempo", "orale", "lettore", "meno")
+
+
+def in_verifica(cfg):
+    """Cosa il piano della scuola permette in verifica (Impostazioni): le voci spuntate."""
+    v = cfg.get("sm_verifica")
+    return [x for x in v if x in VERIFICA_VOCI] if isinstance(v, list) else ["mappe", "formulario", "calcolatrice", "tempo"]

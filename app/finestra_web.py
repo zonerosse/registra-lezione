@@ -672,6 +672,21 @@ class Api:
     def sm_promemoria(self):
         return self._m.sm_promemoria()
 
+    def sm_voti(self, materia=None):
+        return self._m.sm_voti(materia)
+
+    def sm_voto_nuovo(self, voto):
+        return self._m.sm_voto_nuovo(voto)
+
+    def sm_voto_togli(self, vid, materia=None):
+        return self._m.sm_voto_togli(vid, materia)
+
+    def sm_momenti(self, materia, tipi=None):
+        return self._m.sm_momenti(materia, tipi)
+
+    def sm_verifica(self, voci=None):
+        return self._m.sm_verifica(voci)
+
     def sm_compito_nuovo(self, voce):
         return self._m.sm_compito_nuovo(voce)
 

@@ -3043,6 +3043,33 @@ class Motore:
         import strumenti_sm as sm
         return {"ok": True, "pronti": sm.promemoria_ora(BASE)}
 
+    # Studia: voti della scuola, momenti segnati, cosa posso usare in verifica
+    def sm_voti(self, materia=None):
+        import strumenti_sm as sm
+        return {"ok": True, "voti": sm.voti_scuola(BASE, materia)}
+
+    def sm_voto_nuovo(self, voto):
+        import strumenti_sm as sm
+        v = sm.voto_nuovo(BASE, voto or {})
+        return {"ok": bool(v), "voti": sm.voti_scuola(BASE, (voto or {}).get("materia"))}
+
+    def sm_voto_togli(self, vid, materia=None):
+        import strumenti_sm as sm
+        t = sm.voto_togli(BASE, vid)
+        return {"ok": bool(t), "tolto": t, "voti": sm.voti_scuola(BASE, materia)}
+
+    def sm_momenti(self, materia, tipi=None):
+        import strumenti_sm as sm
+        return {"ok": True, "momenti": sm.momenti(BASE, materia, tuple(tipi) if tipi else ("chiarire",))}
+
+    def sm_verifica(self, voci=None):
+        """Senza argomenti: le voci spuntate. Con una lista: le salva."""
+        import strumenti_sm as sm
+        if voci is not None:
+            self.cfg["sm_verifica"] = [x for x in voci if x in sm.VERIFICA_VOCI]
+            salva_config(self.cfg)
+        return {"ok": True, "voci": sm.in_verifica(self.cfg)}
+
     def sm_compito_nuovo(self, voce):
         import strumenti_sm as sm
         v = sm.aggiungi_voce(voce or {}, BASE)

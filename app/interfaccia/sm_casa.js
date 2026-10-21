@@ -81,6 +81,7 @@ function smCasaPrepara() {
   smInfoGiro(document.querySelector('.side'));
   if (typeof smLezioniPrepara === 'function') smLezioniPrepara();
   if (typeof smRegistraAttiva === 'function') smRegistraAttiva();
+  if (typeof smStudiaPrepara === 'function') smStudiaPrepara();
   if (typeof LZ !== 'undefined' && LZ) { smlCaricaExtra().then(() => { try { disegnaLezioni(); } catch (e) {} }); }
   // ogni pagina che si apre: le spiegazioni diventano (i) (anche quelle che arrivano dopo, con i dati)
   const vaiPrima = vai;
