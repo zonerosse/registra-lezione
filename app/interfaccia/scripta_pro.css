@@ -98,7 +98,7 @@ html.scripta .smx-num{width:28px;height:28px;border-radius:50%;border:1.5px soli
 html.scripta.android .pg > :not(.perc):not(.hd){margin-left:14px;margin-right:14px}
 html.scripta.android .hd{padding:14px}
 html.scripta.android .perc{padding:10px 14px}
-html.scripta.android .smx-tabs{gap:18px}
+html.scripta.android .smx-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));gap:6px;border-bottom:0;overflow:visible;margin-bottom:14px}html.scripta.android .smx-tabs button{white-space:normal;border:1px solid var(--sm-lin);border-radius:9px;background:var(--sm-carta);padding:10px 8px;margin:0;text-align:center;line-height:1.25;min-width:0}html.scripta.android .smx-tabs button.on{background:var(--sm-pett);border-color:var(--sm-pet);color:var(--sm-pet)}
 
 /* ===== I miei strumenti (la casa) ===== */
 html.scripta #v-dsa.smcasa > .card:not(#sdBox){display:none}
