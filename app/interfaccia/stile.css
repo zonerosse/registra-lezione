@@ -1555,4 +1555,4 @@ html.scripta body,html.scripta button,html.scripta input,html.scripta select,htm
 html.scripta body{letter-spacing:.02em;word-spacing:.08em;line-height:1.5}
 html.scripta body *{text-transform:none!important;font-style:normal!important}
 html.scripta body *:not(a):not(.lnk){text-decoration-line:none}
-html.scripta small,html.scripta .hint,html.scripta .sub{font-size:max(13px,1em*.9)}
+html.scripta small,html.scripta .hint,html.scripta .sub{font-size:max(13px,.9em)}
