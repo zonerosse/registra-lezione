@@ -717,6 +717,21 @@ class Api:
     def sm_testo_togli(self, tid):
         return self._m.sm_testo_togli(tid)
 
+    def sm_det(self):
+        return self._m.sm_det()
+
+    def sm_det_spesa(self, s, sid=None):
+        return self._m.sm_det_spesa(s, sid)
+
+    def sm_det_togli(self, sid):
+        return self._m.sm_det_togli(sid)
+
+    def sm_det_doc(self, k, si):
+        return self._m.sm_det_doc(k, si)
+
+    def sm_det_foto(self, percorsi):
+        return self._m.sm_det_foto(percorsi)
+
     def sm_ricordami(self, vid, quando):
         return self._m.sm_ricordami(vid, quando)
 

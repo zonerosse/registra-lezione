@@ -616,3 +616,9 @@ html.scripta .smg-pr:first-child{border-top:0}html.scripta .smg-pr .smg-play{wid
 html.scripta .smg-prt{flex:1;min-width:0;display:flex;flex-direction:column}html.scripta .smg-prt b{font-size:18px;overflow-wrap:anywhere}html.scripta .smg-prt span{font-size:15px;color:var(--sm-ard);overflow-wrap:anywhere}
 html.scripta .smg-liv{display:flex;gap:3px}html.scripta .smg-liv i{width:8px;height:8px;border-radius:50%;background:var(--sm-lin)}html.scripta .smg-liv i.on{background:var(--sm-ok)}
 html.scripta .smg-pr.ok .smg-prt b::after{content:" ✓";color:var(--sm-ok)}
+/* Famiglia: settimana per i genitori, detrazione del 19% */
+html.scripta .smf-set{border:1px solid var(--sm-lin);border-radius:12px;background:var(--sm-carta);padding:14px 16px}
+html.scripta .smf-ul{margin:0 0 6px;padding-left:20px;font-size:16px;line-height:1.55}html.scripta .smf-ul li{overflow-wrap:anywhere}
+html.scripta .smf-w{display:block;color:var(--sm-amb);font-size:15px;margin-top:3px}
+html.scripta .smf-imp{flex:none;font-size:17px;white-space:nowrap}
+html.scripta .smf-sp{align-items:flex-start}

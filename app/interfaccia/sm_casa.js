@@ -236,7 +236,7 @@ function smCasaStrumenti() {
     ['ver', tc('t.ver'), [R('tutor', 'g-tutor', t('tl.tu'), t('tl.tu.s'), mt), R('piano', 'g-cal', t('st.piano').replace(/^📅\s*/, ''), t('sd.piano.s'), mt), R('mverif', 'i-map', t('tl.mv'), t('sd.mv.s'), mt),
       R('orale', 'i-mic', t('tl.orale'), t('sd.orale.s'), mt), R('test', 'g-test', t('tl.dsa.test'), t('sd.test.s'), mt), R('scritto', 'g-penna', t('tl.dsa.scr'), t('sd.scr.s'), mt),
       R('prob', 'g-stella', t('tl.prob'), t('tl.prob.s'), mt)]],
-    ['doc', tc('t.doc'), [R('firma', 'g-stampa', t('sd.firma'), t('sd.firma.s'), mt), R('strumenti', 'g-lista', t('sd.str'), t('sd.str.s')), R('smgen', 'g-utenti', ts('gen.t'), ts('gen.s'))]],
+    ['doc', tc('t.doc'), [R('firma', 'g-stampa', t('sd.firma'), t('sd.firma.s'), mt), R('strumenti', 'g-lista', t('sd.str'), t('sd.str.s')), R('smgen', 'g-utenti', ts('gen.t'), ts('gen.s')), R('smdet', 'g-euro', ts('det.h'), ts('sd.det.s'))]],
   ];
   if (!SCHEDE.some(s => s[0] === SMC.tab)) SMC.tab = 'aula';
   $('smcTabs').innerHTML = SCHEDE.map(([k, n, r]) => `<button class="${k === SMC.tab ? 'on' : ''}" data-k="${k}">${esc(n)}<span class="c">${r.length}</span></button>`).join('');

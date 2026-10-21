@@ -1052,3 +1052,103 @@ def testo_togli(base, tid):
     d["testi"] = [x for x in d["testi"] if x.get("id") != tid]
     _ling_salva(base, d)
     return d["testi"]
+
+
+# ------------------------------------------------------------------ Famiglia: Detrazione del 19% (strumenti per DSA)
+# Codice 44 del 730 (righi E8-E10): strumenti compensativi e sussidi tecnici e informatici, fino alla fine delle superiori.
+# Servono: diagnosi DSA, fattura o scontrino parlante con il codice fiscale e cosa si e' comprato, il collegamento con il
+# disturbo (nella diagnosi o in un certificato), la prova del pagamento. Qui si tiene solo l'elenco: niente consulenza.
+
+DET_DOC = ("diagnosi", "collegamento", "fatture", "pagamenti", "online")
+DET_PAG = ("carta", "bancomat", "bonifico", "app", "contanti")
+
+
+def _det_file(base):
+    return Path(base) / "detrazione.json"
+
+
+def det_dati(base):
+    d = el.leggi_json(_det_file(base), {}) or {}
+    if not isinstance(d, dict):
+        d = {}
+    d["spese"] = sorted([s for s in d.get("spese") or [] if isinstance(s, dict) and s.get("id")], key=lambda s: s.get("data") or "")
+    d["doc"] = {k: bool((d.get("doc") or {}).get(k)) for k in DET_DOC} if isinstance(d.get("doc"), dict) else {k: False for k in DET_DOC}
+    return d
+
+
+def _det_pulisci(s):
+    try:
+        imp = round(float(str(s.get("importo") or "0").replace("€", "").replace(".", "").replace(",", ".") if "," in str(s.get("importo") or "")
+                          else str(s.get("importo") or "0").replace("€", "")), 2)
+    except ValueError:
+        imp = 0.0
+    data = str(s.get("data") or "")[:10]
+    try:
+        datetime.date.fromisoformat(data)
+    except ValueError:
+        data = datetime.date.today().isoformat()
+    return {"cosa": str(s.get("cosa") or "").strip()[:160], "negozio": str(s.get("negozio") or "").strip()[:80], "importo": max(0.0, imp),
+            "data": data, "pag": s.get("pag") if s.get("pag") in DET_PAG else "carta", "cf": bool(s.get("cf")),
+            "foto": [str(x)[:500] for x in (s.get("foto") or []) if str(x).strip()][:4]}
+
+
+def det_spesa(base, s, sid=None):
+    """Aggiunge (o cambia, con sid) una spesa."""
+    d = det_dati(base)
+    x = _det_pulisci(s or {})
+    if not x["cosa"]:
+        return d
+    if sid:
+        for v in d["spese"]:
+            if v["id"] == sid:
+                v.update(x)
+    else:
+        d["spese"].append({"id": uuid.uuid4().hex[:10], **x})
+    el.scrivi_json(_det_file(base), d)
+    return det_dati(base)
+
+
+def det_togli(base, sid):
+    d = det_dati(base)
+    tolta = next((v for v in d["spese"] if v["id"] == sid), None)
+    d["spese"] = [v for v in d["spese"] if v["id"] != sid]
+    el.scrivi_json(_det_file(base), d)
+    return det_dati(base), tolta
+
+
+def det_doc(base, k, si):
+    d = det_dati(base)
+    if k in DET_DOC:
+        d["doc"][k] = bool(si)
+        el.scrivi_json(_det_file(base), d)
+    return d
+
+
+def det_foto(chiave, base, foto):
+    """La foto della fattura o dello scontrino: Claude legge data, negozio, cosa, importo, se c'e' il codice fiscale
+    e come si e' pagato. Non salva: la pagina mostra i dati e lo studente (o il genitore) li conferma."""
+    import base64
+    contenuto = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg",
+                                              "data": base64.b64encode(ch.jpeg_ridotto(f)).decode()}} for f in foto[:3]]
+    contenuto.append({"type": "text", "text": "Ecco la fattura o lo scontrino."})
+    corpo = {"model": ch.MODELLO, "max_tokens": 1200,
+             "system": ("Leggi la fattura o lo scontrino di un acquisto per uno studente con DSA (computer, programma, "
+                        "calcolatrice, registratore, licenza...). «data» = AAAA-MM-GG; «negozio» = chi l'ha venduto; «cosa» = "
+                        "cosa si e' comprato, breve; «importo» = il totale pagato in euro, con il punto per i decimali; «cf» = "
+                        "vero se c'e' un codice fiscale di una persona (non la partita IVA del negozio); «pag» = carta, bancomat, "
+                        "bonifico, app o contanti se si capisce, altrimenti vuoto. Rispondi con lo strumento «spesa»."),
+             "tools": [{"name": "spesa", "description": "I dati della spesa.",
+                        "input_schema": {"type": "object", "properties": {
+                            "data": {"type": "string"}, "negozio": {"type": "string"}, "cosa": {"type": "string"},
+                            "importo": {"type": "number"}, "cf": {"type": "boolean"}, "pag": {"type": "string"}},
+                            "required": ["cosa", "importo"]}}],
+             "messages": [{"role": "user", "content": contenuto}]}
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "spesa"})
+    r = ch._chiama(chiave, corpo)
+    d = ch.input_di(r, corpo)
+    if not str(d.get("cosa") or "").strip():
+        raise ap.ErroreAppunti(testi.tr("sm_det_err"))
+    x = _det_pulisci({**d, "importo": str(d.get("importo") or 0), "cf": str(d.get("cf")).lower() in ("true", "1", "si", "sì")})
+    x["pag"] = d.get("pag") if d.get("pag") in DET_PAG else ""
+    x["foto"] = [str(f) for f in foto[:3]]
+    return {"spesa": x, "spesa_ai": ch._costo(r.get("usage") or {})}

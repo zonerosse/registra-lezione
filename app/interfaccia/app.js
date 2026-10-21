@@ -134,7 +134,9 @@ function titoloPagina(p) {
   const n = document.querySelector(`#nav a[data-p="${p}"]`);
   if (n) return (n.querySelector('span[data-t]') || n).textContent.trim();
   const h = $('v-' + p) && $('v-' + p).querySelector('h2');
-  return h ? h.textContent.trim() : '';
+  if (!h) return '';
+  const c = h.cloneNode(true); c.querySelectorAll('.info-i').forEach(x => x.remove());   // senza la (i) delle spiegazioni
+  return c.textContent.trim();
 }
 // La barra del percorso, uguale in tutte le pagine interne: «← Indietro» e da dove sei arrivato
 // (es. «🎓 Studia · Fisiologia › 🎯 Preparazione all'esame»); ogni parte blu riporta li'.
@@ -3426,7 +3428,8 @@ async function azioneDsa(a) {
   const l = SD.l, m = SD.mat;
   if (a === 'reg') return vai('reg');
   if (a === 'smmate' || a === 'smcorr' || a === 'smcomp' || a === 'smlingue') return vai(a);
-  if (a === 'smgen') return smGenitori();
+  if (a === 'smgen') return typeof smSett === 'function' ? vai('smsett') : smGenitori();
+  if (a === 'smdet') return vai('smdet');
   if (a === 'detta') return vai('dp');
   if (a === 'leggimi') return vai('lg');
   if (a === 'giorno') return apriRipassoGiorno();

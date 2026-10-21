@@ -123,7 +123,7 @@ function smPrepara() {
     const nc = document.querySelector('#nav a[data-p="smcomp"] span'); if (nc) nc.textContent = ts('nav.comp');   // la lingua puo' arrivare dopo
     if (p !== 'smmate' && p !== 'smcorr' && p !== 'smcomp' && p !== 'smlingue') voceFermaSm();
     if (p !== 'smlingue' && typeof smgFerma === 'function') smgFerma();
-    if (SM_PAGINE.includes(p)) smTitolo(p, ts({smmate: 'mate.h', smcorr: 'corr.h', smcomp: 'comp.h', smlingue: 'ling.h'}[p]), '');   // il titolo serve gia' al percorso
+    if (SM_PAGINE.includes(p)) smTitolo(p, ts({smmate: 'mate.h', smcorr: 'corr.h', smcomp: 'comp.h', smlingue: 'ling.h', smsett: 'sett.h', smdet: 'det.h'}[p]), '');   // il titolo serve gia' al percorso
     const da = pagina;
     vaiPrima(p, tornando);
     if (!tornando && da && da !== p) { SMS.storia.push(da); if (SMS.storia.length > 15) SMS.storia.shift(); }
@@ -133,6 +133,8 @@ function smPrepara() {
     if (p === 'smcorr') smCorr();
     if (p === 'smcomp') smComp();
     if (p === 'smlingue' && typeof smLingue === 'function') smLingue();
+    if (p === 'smsett' && typeof smSett === 'function') smSett();
+    if (p === 'smdet' && typeof smDet === 'function') smDet();
   };
 }
 function smTitolo(p, h, sub) {

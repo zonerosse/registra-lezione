@@ -3242,6 +3242,39 @@ class Motore:
         import strumenti_sm as sm
         return {"ok": True, "testi": sm.testo_togli(BASE, tid)}
 
+    # Famiglia: detrazione del 19%
+    def sm_det(self):
+        import strumenti_sm as sm
+        return {"ok": True, **sm.det_dati(BASE)}
+
+    def sm_det_spesa(self, s, sid=None):
+        import strumenti_sm as sm
+        return {"ok": True, **sm.det_spesa(BASE, s or {}, sid)}
+
+    def sm_det_togli(self, sid):
+        import strumenti_sm as sm
+        d, tolta = sm.det_togli(BASE, sid)
+        return {"ok": True, **d, "tolta": tolta}
+
+    def sm_det_doc(self, k, si):
+        import strumenti_sm as sm
+        return {"ok": True, **sm.det_doc(BASE, k, si)}
+
+    def sm_det_foto(self, percorsi):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        foto = [x for x in percorsi or [] if x][:3]
+        if not foto:
+            return {"ok": False, "msg": tr("sm_pb_vuoto")}
+        try:
+            return {"ok": True, **sm.det_foto(self.chiave(), BASE, foto)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("detrazione: foto")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
     def sm_promemoria(self):
         import strumenti_sm as sm
         return {"ok": True, "pronti": sm.promemoria_ora(BASE)}
