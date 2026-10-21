@@ -152,7 +152,7 @@ def crea(carte, materia_di, dest, immagine_di, L="it"):
                     nomi_media[str(img)] = f"vmia_{_num('img', cart.name, Path(img).name, bit=48):x}{Path(img).suffix.lower() or '.jpg'}"
                     media.append((nomi_media[str(img)], str(img)))
                 slide = f'<img src="{nomi_media[str(img)]}">'
-            stelle = '<span class="st">' + "★" * c["stelle"] + "</span><br>" if c.get("stelle") else ""
+            stelle = '<span class="st">' + "★" * max(1, min(3, int(c["stelle"]) if str(c["stelle"]).lstrip("-").isdigit() else 1)) + "</span><br>" if c.get("stelle") else ""
             dom = stelle + html.escape(c["domanda"])
             fonte = html.escape(c.get("lezione") or cart.name) + (f" · min {int(c['minuto'])}" if c.get("minuto") is not None else "")
             campi = [dom, risposta_html(c, L), slide, fonte]

@@ -17,6 +17,7 @@ import html
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -88,11 +89,21 @@ def ffmpeg_exe():
     return imageio_ffmpeg.get_ffmpeg_exe()
 
 
+_APPUNTI = re.compile(r"^appunti_(?:(?:cornell|esame|verbale|webinar|mio)_)?(?:\d{3}|lezione)\.json$")
+
+
 def leggi_json(p, default=None):
     try:
-        return json.loads(Path(p).read_text(encoding="utf-8"))
+        dati = json.loads(Path(p).read_text(encoding="utf-8"))
     except Exception:
         return default
+    if _APPUNTI.match(Path(p).name):        # appunti scritti male da Claude: si sistemano sempre
+        try:
+            import appunti
+            dati = appunti.ripara(dati)
+        except Exception:
+            log.exception("ripara %s", Path(p).name)
+    return dati
 
 
 def scrivi_json(p, dati):

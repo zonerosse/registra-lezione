@@ -50,6 +50,36 @@ def _chiama(chiave, corpo, tentativi=3):
             attesa *= 2
 
 
+def input_di(r, corpo, nome=None, segni=None):
+    """Cosa ha scritto Claude nello strumento, rimesso nella forma chiesta dallo schema (liste scritte come
+    testo JSON, testi al posto delle voci, numeri come testo...). Sempre un dizionario."""
+    tools = corpo.get("tools") or []
+    nome = nome or (corpo.get("tool_choice") or {}).get("name") or (tools[0]["name"] if tools else None)
+    sc = next((t.get("input_schema") for t in tools if t.get("name") == nome), None) or {"type": "object"}
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"
+                   and (not nome or b.get("name") in (nome, None))), None) or \
+        next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    dati = (blocco or {}).get("input")
+    if not dati:                           # piano B: il JSON scritto nel testo
+        testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+        dati = testo[testo.find("{"):testo.rfind("}") + 1] if "{" in testo else {}
+    try:
+        dati = ap.aggiusta(dati, sc, segni=segni)
+    except Exception:
+        log.exception("input di %s", nome)
+    return dati if isinstance(dati, dict) else {}
+
+
+def _togli_segni(x):
+    if isinstance(x, dict):
+        x.pop("_avvolto", None)
+        for v in x.values():
+            _togli_segni(v)
+    elif isinstance(x, list):
+        for v in x:
+            _togli_segni(v)
+
+
 def strumento(chiave, corpo, campo, chiave_errore):
     """Chiama Claude OBBLIGANDOLO a usare lo strumento e torna (input, usage). Se la lista `campo` arriva vuota,
     scritta come testo JSON o tagliata (risposta troppo lunga), riprova con piu' spazio. Se non va: ErroreAppunti."""
@@ -61,26 +91,15 @@ def strumento(chiave, corpo, campo, chiave_errore):
         for k, v in (r.get("usage") or {}).items():
             if isinstance(v, (int, float)):
                 usage[k] = usage.get(k, 0) + v
-        blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-        dati = (blocco or {}).get("input") or {}
-        if not dati:                           # piano B: il JSON scritto nel testo
-            testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
-            try:
-                dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
-            except ValueError:
-                dati = {}
-        if isinstance(dati, str):
-            try:
-                dati = json.loads(dati)
-            except ValueError:
-                dati = {}
-        v = dati.get(campo) if isinstance(dati, dict) else None
-        if isinstance(v, str):                 # a volte la lista arriva come testo JSON
-            try:
-                v = json.loads(v)
-            except ValueError:
-                v = None
+        segni = []
+        dati = input_di(r, corpo, nome, segni)
+        v = dati.get(campo)
+        if isinstance(v, list):                # le voci arrivate come testo semplice non valgono (come prima)
+            v = [x for x in v if not (isinstance(x, dict) and x.pop("_avvolto", False))]
             dati[campo] = v
+        _togli_segni(dati)
+        if any(s[0] == "rotto" and (not s[1] or s[1][0] == campo) for s in segni) and not v:
+            v = None                           # la lista tagliata: si riprova con piu' spazio
         if isinstance(v, list) and any(isinstance(x, dict) for x in v):
             dati[campo] = [x for x in v if isinstance(x, dict)]
             return dati, usage
@@ -578,8 +597,7 @@ def suggerisci_nomi(cartella, chiave):
                            (f"Partecipanti: {', '.join(part)}.\n" if part else "Partecipanti: non indicati.\n") +
                            f"Voci da riconoscere: {', '.join('Voce %d' % i for i in senza)}.\n\nTrascrizione:{testo}"}]}
     r = _chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    proposte = (blocco or {}).get("input", {}).get("voci") or []
+    proposte = [p for p in input_di(r, corpo).get("voci") or [] if isinstance(p, dict)]
     usati = {str(v.get("nome") or "").lower() for v in d.get("voci") or [] if v.get("nome")}
     testo_l = testo.lower()
     dati = 0

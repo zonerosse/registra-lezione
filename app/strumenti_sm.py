@@ -44,15 +44,10 @@ def correggi(chiave, testo):
                             "required": ["testo", "correzioni"]}}],
              "messages": [{"role": "user", "content": testo}]}
     # qui una lista vuota e' una risposta valida (nessun errore): niente strumento(), che la farebbe riprovare
-    r = ch._chiama(chiave, dict(corpo, tool_choice={"type": "tool", "name": "testo_corretto"}))
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "testo_corretto"})
+    r = ch._chiama(chiave, corpo)
     uso = r.get("usage") or {}
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dati = (blocco or {}).get("input") or {}
-    if isinstance(dati, str):
-        try:
-            dati = json.loads(dati)
-        except ValueError:
-            dati = {}
+    dati = ch.input_di(r, corpo)
     if not isinstance(dati, dict) or not dati.get("testo"):
         dati = {"testo": testo, "correzioni": []}
     corr = [c for c in dati.get("correzioni") or [] if isinstance(c, dict) and c.get("da") and c.get("a") and c["da"] != c["a"]]
@@ -222,9 +217,9 @@ def compiti_da_lezione(chiave, base, cartella):
                             "required": ["voci"]}}],
              "messages": [{"role": "user", "content": testo}]}
     # una lezione senza compiti e' normale: lista vuota accettata (niente strumento(), che riproverebbe)
-    r = ch._chiama(chiave, dict(corpo, tool_choice={"type": "tool", "name": "compiti"}))
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    voci = ((blocco or {}).get("input") or {}).get("voci") or []
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "compiti"})
+    r = ch._chiama(chiave, corpo)
+    voci = ch.input_di(r, corpo).get("voci") or []
     lista = el.leggi_json(_file(base), []) or []
     gia = {(v.get("materia", "").lower(), v.get("cosa", "").lower(), v.get("per", "")) for v in lista}
     n = 0
@@ -344,21 +339,10 @@ def _aggiungi_formule(base, trovate, fonte):
 
 def _chiedi_formule(chiave, corpo):
     # una lezione o una pagina senza formule e' normale: lista vuota accettata (niente strumento(), che riproverebbe)
-    r = ch._chiama(chiave, dict(corpo, tools=[_STRUMENTO_FORMULE], tool_choice={"type": "tool", "name": "formule"}))
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    dati = (blocco or {}).get("input") or {}
-    if isinstance(dati, str):
-        try:
-            dati = json.loads(dati)
-        except ValueError:
-            dati = {}
-    trovate = dati.get("formule") if isinstance(dati, dict) else None
-    if isinstance(trovate, str):
-        try:
-            trovate = json.loads(trovate)
-        except ValueError:
-            trovate = []
-    return trovate or [], ch._costo(r.get("usage", {}))
+    corpo = dict(corpo, tools=[_STRUMENTO_FORMULE], tool_choice={"type": "tool", "name": "formule"})
+    r = ch._chiama(chiave, corpo)
+    trovate = [f for f in ch.input_di(r, corpo).get("formule") or [] if isinstance(f, dict)]
+    return trovate, ch._costo(r.get("usage", {}))
 
 
 def formule_da_lezione(chiave, base, cartella):

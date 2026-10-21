@@ -469,6 +469,18 @@ class Motore:
 
     # ------------------------------------------------------------------ stato per la finestra
 
+    def _sicuro(self, nome, fn, altrimenti=None):
+        """Una parte dello stato che non deve MAI fermare la pagina: se si rompe, la pagina va avanti senza
+        (e nel log l'errore compare una volta al minuto, non a ogni secondo)."""
+        try:
+            return fn()
+        except Exception:
+            visti = self.__dict__.setdefault("_errori_stato", {})
+            if time.monotonic() - visti.get(nome, -999) > 60:
+                visti[nome] = time.monotonic()
+                log.exception("stato: %s", nome)
+            return altrimenti
+
     def stato(self):
         with self._lock:
             s = {"vista": self.vista, "occupato": self.occupato, "registro": self.reg is not None,
@@ -476,7 +488,7 @@ class Motore:
                  "modello": self.modello_msg, "agg": self.agg, "messaggi": list(self.messaggi),
                  "audio_ok": self.audio_ok, "liberi": self.liberi,
                  "finale": self.finale, "cal_avviso": self.cal_avviso, "cal_fine": self.cal_fine,
-                 "cal_ora": self._cal_adesso()}
+                 "cal_ora": self._sicuro("calendario", self._cal_adesso)}
             if self.reg is not None:
                 r = self.reg
                 pausa = r.in_pausa
@@ -485,11 +497,12 @@ class Motore:
                     avviso = tr("avviso_audio_err")
                 elif not pausa and time.monotonic() - self.silenzio_da > 60:
                     avviso = tr("avviso_silenzio")
-                s.update(secondi=int(r.secondi()), slide=r.n_slide, gb=round(self.gb_registrati(), 2),
-                         livello=float(r.livello), livelli=list(self._livelli), pausa=pausa,
-                         pausa_sec=int(r.secondi_di_pausa()) if pausa else 0, avviso=avviso,
-                         modo=r.modo, diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav,
-                         n_note=len(self.note()), aperte=getattr(self, "aperte", []),
+                s.update(secondi=int(r.secondi()), slide=r.n_slide, pausa=pausa, avviso=avviso, modo=r.modo,
+                         gb=self._sicuro("spazio", lambda: round(self.gb_registrati(), 2), 0),
+                         livello=float(r.livello), livelli=list(self._livelli),
+                         pausa_sec=int(r.secondi_di_pausa()) if pausa else 0,
+                         diretta_on=r.diretta, diretta=self.diretta[-14:], diretta_lav=self.diretta_lav,
+                         n_note=self._sicuro("note", lambda: len(self.note()), 0), aperte=getattr(self, "aperte", []),
                          avvisa=getattr(self, "avvisa", None))
             parti = []
             for k in sorted(self.parti):
@@ -502,15 +515,11 @@ class Motore:
             s["parti"] = parti
             s["pronti"] = sum(1 for p in parti if p.get("stato") == "ok")
             s["ha_appunti"] = any(p.get("ap") == "ok" for p in parti)
-            s["spesa"] = self._spesa()
-            try:      # l'anteprima non deve mai fermare la pagina
-                s["cornell"] = self._anteprima_cornell() if self.vista == "fine" else None
-            except Exception:
-                log.exception("anteprima appunti")
-                s["cornell"] = None
+            s["spesa"] = self._sicuro("spesa", self._spesa)
+            s["cornell"] = self._sicuro("anteprima appunti", self._anteprima_cornell) if self.vista == "fine" else None
             s["formato"] = self.formato_vista
             s["importa"] = self.imp
-            s["sync"] = self._sync_breve()
+            s["sync"] = self._sicuro("sync", self._sync_breve)
             return s
 
     def _spesa(self):

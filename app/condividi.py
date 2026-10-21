@@ -62,6 +62,11 @@ def _data_reg(info):
         return datetime.datetime.now()
 
 
+def _stelle(q):
+    n = ap._in_numero(q.get("stelle"))
+    return max(1, min(3, n)) if isinstance(n, int) else 1
+
+
 def _pulisci(s):
     return re.sub(r"\s+", " ", str(s or "")).strip()
 
@@ -157,7 +162,7 @@ def documento(cartella, formato=None):
     elif formato == "esame":
         for d in parti:
             for q in d.get("domande_probabili") or []:
-                sez("★" * int(q.get("stelle") or 1) + " " + _pulisci(q.get("domanda")), numerati=True,
+                sez("★" * _stelle(q) + " " + _pulisci(q.get("domanda")), numerati=True,
                     punti=[_pulisci(x) for x in q.get("schema") or []], aggiunte=[_pulisci(x) for x in q.get("aggiunte") or []],
                     testo=(tr("cd_errore", L) + ": " + _pulisci(q["errore"])) if q.get("errore") else "")
         pk = [p for d in parti for p in d.get("parole_chiave") or [] if isinstance(p, dict)]

@@ -457,8 +457,7 @@ def orale_risposta(base, materia, n, domanda, testo, chiave, L="it"):
              "messages": [{"role": "user", "content": json.dumps({"domanda": q["domanda"], "deve_contenere": q["deve_contenere"],
                                                                   "risposta": str(testo)[:4000]}, ensure_ascii=False)}]}
     r = ch._chiama(chiave, corpo)
-    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
-    extra = str(((blocco or {}).get("input") or {}).get("domanda_in_piu") or "").strip()
+    extra = str(ch.input_di(r, corpo).get("domanda_in_piu") or "").strip()
     return extra, ch._costo(r.get("usage") or {})
 
 

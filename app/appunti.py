@@ -11,10 +11,12 @@ La chiave e' salvata cifrata con la protezione di Windows (DPAPI), legata
 all'utente del PC: copiata su un altro PC non funziona.
 """
 import base64
+import copy
 import ctypes
 import json
 import logging
 import os
+import re
 import ssl
 import sys
 import time
@@ -437,62 +439,186 @@ def e_esame(dati):
     return dati.get("formato") == "esame" or "domande_probabili" in dati
 
 
-def _voce(b, campo, testo):
-    """Una voce scritta male (testo, lista, numero) diventa una voce vera."""
-    if isinstance(b, dict):
-        if isinstance(b.get(testo), str):
-            b[testo] = [b[testo]] if b[testo].strip() else []
-        elif b.get(testo) is not None and not isinstance(b.get(testo), list):
-            b[testo] = [str(b[testo])]
-        if isinstance(b.get(testo), list):
-            b[testo] = [x if isinstance(x, str) else (x.get("testo") or x.get(testo) or " ".join(str(v) for v in x.values()))
-                        if isinstance(x, dict) else str(x) for x in b[testo] if x not in (None, "")]
-        return b
-    if isinstance(b, (list, tuple)):
-        righe = [str(x) for x in b if x not in (None, "")]
-        return {campo: "", testo: righe}
-    return {campo: "", testo: [str(b)]}
+_VIA = object()          # aggiusta: «togli questo campo»
 
 
-def ripara(dati):
-    """Appunti scritti male (una riga di testo al posto di una domanda o di una sezione,
-    una lista scritta come testo o come dizionario): diventano voci vere."""
-    if not isinstance(dati, dict):
-        return dati
-    for chiave, campo, testo in (("blocchi", "domanda", "appunti"), ("domande_probabili", "domanda", "schema"),
-                                 ("sezioni", "titolo", "punti"), ("decisioni", "testo", "punti"),
-                                 ("punti_discussi", "titolo", "punti"), ("azioni", "cosa", "punti"),
-                                 ("sezioni_extra", "titolo", "punti"), ("formulario", "simbolo", "significato"),
-                                 ("esercizi_svolti", "titolo", "passaggi")):
-        if chiave not in dati:
-            continue
-        v = dati.get(chiave)
-        if v is None:
-            continue
-        if isinstance(v, str) and v.strip()[:1] == "{":
-            try:
-                v = json.loads(v)
-            except ValueError:
-                pass
-        if isinstance(v, dict):
-            v = [v] if (campo in v or testo in v) else [x if isinstance(x, dict) else {campo: str(k), testo: [str(x)]}
-                                                        for k, x in v.items()]
-        elif isinstance(v, str):
-            try:            # a volte Claude scrive la lista come testo JSON
-                j = json.loads(v)
-                v = j if isinstance(j, list) else [j]
-            except ValueError:
-                v = [v] if v.strip() else []
-        elif not isinstance(v, list):
-            v = [v]
-        if chiave == "formulario":
-            dati[chiave] = [b if isinstance(b, dict) else {"simbolo": "", "significato": str(b)} for b in v if b not in (None, "")]
-        elif chiave in ("decisioni", "punti_discussi", "azioni"):
-            # nel verbale una riga di testo è la voce stessa
-            dati[chiave] = [{campo: b} if isinstance(b, str) else _voce(b, campo, testo) for b in v if b not in (None, "")]
+def _sembra_json(t):
+    """Testo che e' JSON scritto da Claude (con le virgolette), non un testo normale come «[00:12] ...» o «{a, b}»."""
+    t = t.strip()
+    return t[:1] in ("[", "{") and t[1:].lstrip()[:1] in ('{', '"', '[', ']', '}')
+
+
+def _da_testo_json(v):
+    """A volte Claude scrive una lista o un oggetto come testo JSON («[{...}]»): si rilegge."""
+    t = v.strip()
+    if _sembra_json(t):
+        try:
+            return json.loads(t)
+        except ValueError:
+            pass
+    return v
+
+
+def _in_testo(v):
+    if v is None:
+        return ""
+    if isinstance(v, str):
+        return v
+    if isinstance(v, bool):
+        return ""
+    if isinstance(v, (int, float)):
+        return str(v)
+    if isinstance(v, (list, tuple)):
+        return "; ".join(x for x in (_in_testo(x).strip() for x in v) if x)
+    if isinstance(v, dict):
+        return " – ".join(x for x in (_in_testo(x).strip() for x in v.values()) if x)
+    return str(v)
+
+
+def _in_numero(v):
+    """Un numero intero; _VIA se non c'e' (cosi' chi legge usa il suo valore di serie, come prima)."""
+    if isinstance(v, bool):
+        return int(v)
+    if isinstance(v, int):
+        return v
+    if isinstance(v, float):
+        return int(v) if v == v and abs(v) < 1e9 else _VIA
+    m = re.fullmatch(r"\s*(-?\d+)(?:[.,]0+)?\s*", _in_testo(v))
+    return int(m.group(1)) if m else _VIA
+
+
+def _in_decimale(v):
+    if isinstance(v, bool):
+        return _VIA
+    if isinstance(v, (int, float)):
+        return v if v == v else _VIA
+    try:
+        return float(_in_testo(v).strip().replace(",", "."))
+    except ValueError:
+        return _VIA
+
+
+def _campi(sc):
+    """(titolo, contenuto) di una voce: dove va il nome e dove va il testo, se Claude la scrive come
+    testo semplice o come «nome: testo»."""
+    prop = sc.get("properties") or {}
+    req = [k for k in sc.get("required") or [] if k in prop] or list(prop)
+    lista = next((k for k in req if prop[k].get("type") == "array" and (prop[k].get("items") or {}).get("type") == "string"), None)
+    testi_ = [k for k in req if prop[k].get("type") == "string"]
+    titolo = testi_[0] if testi_ else None
+    contenuto = lista or (testi_[1] if len(testi_) > 1 else titolo)
+    return titolo, contenuto
+
+
+def aggiusta(v, sc, voce=False, segni=None, via=()):
+    """Mette il valore nella forma chiesta dallo schema (Claude a volte sbaglia: una lista scritta come
+    testo JSON, un testo al posto di una voce, un numero scritto come testo...). I campi in piu' restano e
+    gli appunti gia' giusti non cambiano. In `segni` annota cosa ha dovuto sistemare."""
+    t = sc.get("type")
+    if isinstance(v, str) and t in ("array", "object") and _sembra_json(v):
+        nuovo = _da_testo_json(v)
+        if nuovo is v:                      # JSON tagliato o rotto: non e' un testo da tenere
+            if segni is not None:
+                segni.append(("rotto", via))
+            v = None
         else:
-            dati[chiave] = [_voce(b, campo, testo) for b in v if b not in (None, "")]
-    return dati
+            v = nuovo
+    if t == "array":
+        if v is None or v == "":
+            return []
+        it = sc.get("items") or {}
+        if isinstance(v, dict):
+            prop = it.get("properties") or {}
+            if it.get("type") == "object" and any(k in prop for k in v):
+                v = [v]
+            elif it.get("type") == "object":         # {"σ": "deviazione standard", ...}: il nome resta
+                titolo, contenuto = _campi(it)
+                v = [({titolo: str(k), **x} if titolo and not x.get(titolo) else x) if isinstance(x, dict) else
+                     ({titolo: str(k), contenuto: x} if titolo and contenuto and contenuto != titolo else {titolo or contenuto: x})
+                     for k, x in v.items()]
+            else:
+                v = [x if str(k).isdigit() else f"{k}: {_in_testo(x)}" for k, x in v.items()]
+        elif not isinstance(v, (list, tuple)):
+            v = [v]
+        out = []
+        for i, x in enumerate(v):
+            x = aggiusta(x, it, True, segni, via + (i,))
+            if x is None or x is _VIA or x == "" or x == {}:
+                continue
+            out.append(x)
+        return out
+    if t == "object":
+        prop = sc.get("properties") or {}
+        if isinstance(v, (list, tuple)) and len(v) == 1 and isinstance(v[0], dict):
+            v = v[0]
+        if not isinstance(v, dict):
+            if v is None or (isinstance(v, (str, list, tuple)) and not v):
+                return None if voce else {}
+            titolo, contenuto = _campi(sc)
+            k = contenuto or titolo
+            if not k:
+                return None if voce else {}
+            v = {k: v}
+            if segni is not None:               # chi vuole saperlo (chiedi.strumento) trova il segno sulla voce
+                segni.append(("avvolto", via))
+                v["_avvolto"] = True
+        out = dict(v)
+        for k, ps in prop.items():
+            if k in out:
+                x = aggiusta(out[k], ps, False, segni, via + (k,))
+                if x is _VIA:
+                    out.pop(k)
+                else:
+                    out[k] = x
+        if voce:                     # le voci delle liste hanno sempre i testi e le liste obbligatori
+            for k in sc.get("required") or []:
+                if k in prop and k not in out and prop[k].get("type") in ("string", "array"):
+                    out[k] = aggiusta(None, prop[k])
+        return out
+    if t == "string":
+        return _in_testo(v)
+    if t == "integer":
+        return _in_numero(v)
+    if t == "number":
+        return _in_decimale(v)
+    return v
+
+
+def ripara(dati, segni=None):
+    """Appunti scritti male (una lista scritta come testo, una riga di testo al posto di una domanda
+    o di una sezione, un numero scritto come testo...): tornano nella forma giusta del loro formato."""
+    if isinstance(dati, str):
+        dati = _da_testo_json(dati)
+    if not isinstance(dati, dict) or not dati:      # niente, o JSON tagliato: appunti vuoti (e segnati rotti)
+        if segni is not None:
+            segni.append(("rotto", ()))
+        return {}
+    if "concetti" in dati and "blocchi" not in dati:        # appunti di prima del Cornell
+        dati["concetti"] = aggiusta(dati.get("concetti"), {"type": "array", "items": {
+            "type": "object", "properties": {"titolo": {"type": "string"}, "spiegazione": {"type": "string"},
+                                             "dove": {"type": "string"}, "slide": _SLIDE},
+            "required": ["titolo", "spiegazione"]}}, segni=segni, via=("concetti",))
+        return dati
+    if "domande" in dati and "domande_probabili" not in dati and dati.get("formato") == "esame":
+        return dati
+    f = formato_di(dati)
+    sc = SCHEMI.get(f, SCHEMA)
+    try:
+        return aggiusta(dati, sc, segni=segni)
+    except Exception:
+        log.exception("ripara appunti")
+        return dati
+
+
+_PRINCIPALI = ("blocchi", "domande_probabili", "sezioni", "decisioni", "azioni", "punti_discussi", "concetti")
+
+
+def rotti(dati):
+    """True se gli appunti arrivati da Claude (o salvati) hanno la parte principale (domande, sezioni,
+    decisioni...) scritta come JSON tagliato o rotto: vanno richiesti di nuovo."""
+    segni = []
+    ripara(copy.deepcopy(dati), segni)
+    return any(s[0] == "rotto" and (not s[1] or (len(s[1]) == 1 and s[1][0] in _PRINCIPALI)) for s in segni)
 
 
 def normalizza(dati):
@@ -616,10 +742,10 @@ def _testo_note(note, lingua):
 
 def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti="it", lingua_lezione="it",
                     formato="cornell", parole=None, mio=None, partecipanti=None, note=None, aperte=None, modello=None,
-                    modello_mio=None):
+                    modello_mio=None, max_tokens=12000):
     corpo = {
         "model": MODELLO,
-        "max_tokens": 12000,
+        "max_tokens": max_tokens,
         "system": istruzioni_lingua(lingua_appunti, lingua_lezione, formato, mio, modello, modello_mio),
         "tools": [{"name": "salva_appunti", "description": "Salva gli appunti di questo tratto di registrazione.",
                    "input_schema": SCHEMI.get(formato, SCHEMA)}],
@@ -659,9 +785,11 @@ def chiedi_a_claude(chiave, pdf_bytes, tentativi=4, contesto="", lingua_appunti=
             attesa *= 2
     uso = r.get("usage", {})
     spesa = uso.get("input_tokens", 0) * PREZZO_INGRESSO + uso.get("output_tokens", 0) * PREZZO_USCITA
+    if r.get("stop_reason") == "max_tokens":
+        log.warning("appunti: risposta di Claude tagliata (troppo lunga per %s token)", corpo["max_tokens"])
     blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
     if blocco:
-        return blocco["input"], spesa
+        return blocco.get("input"), spesa
     # piano B: Claude ha risposto con il testo invece che con lo strumento
     testo = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
     dati = _json_dal_testo(testo)
@@ -1749,7 +1877,8 @@ def unisci_esame(chiave, cartella, info, pac):
             dati = json.loads(testo[testo.find("{"):testo.rfind("}") + 1])
         except ValueError:
             dati = None
-    domande = (dati or {}).get("domande") or []
+    dati = aggiusta(_da_testo_json(dati) if isinstance(dati, str) else dati, SCHEMA_UNISCI)
+    domande = [q for q in (dati or {}).get("domande") or [] if isinstance(q, dict)]
     if not domande:
         raise ErroreAppunti(tr("ap_vuoto"))
     # la slide della domanda di partenza (cosi' le flashcard hanno l'immagine)
@@ -1909,6 +2038,13 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
     if formato not in FORMATI:
         formato = info0.get("formato_appunti") if info0.get("formato_appunti") in FORMATI else "cornell"
     gia = el.leggi_json(file_json(cartella, k, formato))
+    try:
+        grezzi = json.loads(file_json(cartella, k, formato).read_text(encoding="utf-8")) if gia is not None else None
+    except Exception:
+        grezzi = None
+    if grezzi is not None and rotti(grezzi):      # salvati rotti (versioni vecchie): si richiedono a Claude
+        log.warning("appunti parte %s (%s) salvati rotti: li richiedo", k, formato)
+        gia = None
     if gia is None and parte_vuota(cartella, k):
         _segna_vuota(cartella, k)
         raise ParteVuota(k)
@@ -1923,6 +2059,28 @@ def crea_appunti(cartella, k, chiave, cartella_pacchetti, formato=None):
                                       note=note_della_parte(cartella, k),
                                       aperte=info0.get("aperte_prima") or None,
                                       modello=info0.get("modello"), modello_mio=info0.get("modello_mio"))
+        if rotti(dati):      # risposta tagliata o rotta: si riprova una volta, con piu' spazio
+            log.warning("appunti parte %s: risposta rotta (%.300r), riprovo", k, json.dumps(dati, ensure_ascii=False))
+            def _segna_spesa():          # quello che si e' speso resta segnato anche se va male
+                info_s = el.leggi_json(cartella / "info.json", {}) or {}
+                el.aggiorna_info(cartella, spesa_appunti=round(float(info_s.get("spesa_appunti") or 0) + spesa, 4))
+            try:
+                dati, spesa2 = chiedi_a_claude(chiave, pdf_bytes, contesto=el.riga_studente(info0),
+                                           lingua_appunti=testi.lingua_di(info0),
+                                           lingua_lezione=info0.get("lingua_lezione") or "it", formato=formato,
+                                           parole=el.parole_lezione(cartella), mio=info0.get("mio"),
+                                           partecipanti=info0.get("partecipanti") or None,
+                                           note=note_della_parte(cartella, k),
+                                           aperte=info0.get("aperte_prima") or None,
+                                           modello=info0.get("modello"), modello_mio=info0.get("modello_mio"),
+                                           max_tokens=24000)
+            except Exception:
+                _segna_spesa()
+                raise
+            spesa += spesa2
+            if rotti(dati):            # ancora rotta: meglio «Riprova» che appunti a meta
+                _segna_spesa()
+                raise ErroreAppunti(tr("ap_vuoto"))
         dati = ripara(dati)
         if formato == "mio" and info0.get("mio"):
             dati["mio_nome"] = info0["mio"].get("nome", "")

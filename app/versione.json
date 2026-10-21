@@ -1,8 +1,8 @@
 {
- "versione": "4.18",
+ "versione": "4.19",
  "librerie": 2,
- "novita": "Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone (lo cerca su tutta la rete di casa); se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
- "novita_en": "Connect to the PC: with the code the phone now finds the PC on iPhone too (it searches the whole home network); if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
- "novita_sm": "Risolto il blocco a fine registrazione: se gli appunti arrivano scritti male, ora vengono sistemati da soli e la pagina non si ferma più.",
- "novita_sm_en": "Fixed the freeze at the end of a recording: badly written notes are now fixed automatically and the page no longer stops."
+ "novita": "Appunti più sicuri: se Claude li manda scritti male o tagliati (lezione, esame, riunione, webinar, il mio formato), il programma li sistema da solo o li richiede, e la pagina non si blocca più a fine registrazione. Controllati anche esame, glossario, mappe, podcast, test e le altre funzioni con Claude. Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone; se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
+ "novita_en": "Safer notes: if Claude sends them badly written or cut off (lesson, exam, meeting, webinar, my format), the program fixes them by itself or asks again, and the page no longer freezes at the end of a recording. Exam, glossary, maps, podcast, tests and the other Claude features checked too. Connect to the PC: with the code the phone now finds the PC on iPhone too; if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
+ "novita_sm": "Appunti più sicuri: se Claude li manda scritti male o tagliati, il programma li sistema da solo o li richiede, e la pagina non si blocca più. Controllati anche compiti, formule, diario e le altre funzioni con Claude. Il telefono ora trova il PC col codice anche sull'iPhone.",
+ "novita_sm_en": "Safer notes: if Claude sends them badly written or cut off, the program fixes them by itself or asks again, and the page no longer freezes. Homework, formulas, diary and the other Claude features checked too. With the code the phone now finds the PC on iPhone too."
 }
