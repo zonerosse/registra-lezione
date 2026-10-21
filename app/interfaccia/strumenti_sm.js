@@ -140,7 +140,7 @@ function smTitolo(p, h, sub) {
   return s.querySelector('.smbox');
 }
 let SM_PARLA = false;
-function parlaSm(testo) { if (!SMS.voce || !testo) return; SM_PARLA = true; try { voceFerma(); } catch (e) {} voceParla(testo, 0.9); }
+function parlaSm(testo) { if (!SMS.voce || !testo) return; SM_PARLA = true; try { voceFerma(); } catch (e) {} voceParla(testo, (typeof R !== 'undefined' && R && R.sm_voce_vel) || 0.9); }
 function voceFermaSm() { if (SM_PARLA) { SM_PARLA = false; try { voceFerma(); } catch (e) {} } }
 const icoSm = id => `<svg width="18" height="18"><use href="#${id}"/></svg>`;
 

@@ -17,7 +17,7 @@ function attivaScripta() {
       'pc.dsa': 'Il podcast parte più lento, la voce narrante usa frasi corte e semplici e mentre ascolti la parola che senti si illumina. Pausa di 2 secondi dopo ogni pezzo del prof.',
       'dsa.banda': '', 'g.dsa': 'Per te', 'tc.vero.dsa': '30% di tempo in più.',
       'lm.nota': 'Così vedrai gli appunti, «Ascolta», il Karaoke, le flashcard e i PDF.',
-      'nt.chi': 'Non ho capito', 'nt.fare': 'Compito o verifica', 'nt.h': 'Segna questo momento', 'nt.s': 'Lo ritrovi negli appunti, al minuto giusto', 'pr.h': 'Registra una lezione', 'pr.p': 'Tre scelte e premi Registra. Il resto lo faccio io: trascrizione, appunti, compiti e formule.',
+      'im.mini': 'Tieni in miniatura sullo schermo', 'im.mini.s': 'Quando parte la registrazione resta solo una finestrella sempre davanti, con Pausa, Fine e i tre «Segna».', 'nt.chi': 'Non ho capito', 'nt.fare': 'Compito o verifica', 'nt.h': 'Segna questo momento', 'nt.s': 'Lo ritrovi negli appunti, al minuto giusto', 'pr.h': 'Registra una lezione', 'pr.p': 'Tre scelte e premi Registra. Il resto lo faccio io: trascrizione, appunti, compiti e formule.',
     },
     en: {
       'nav.dsa': 'My tools', 'sd.h': 'My tools', 'nav.arch': 'My lectures',
@@ -25,7 +25,7 @@ function attivaScripta() {
       'pc.dsa': 'The podcast starts slower, the narrator uses short, simple sentences and the word you hear lights up. A 2-second pause after each part of the lecturer.',
       'dsa.banda': '', 'g.dsa': 'For you', 'tc.vero.dsa': '30% more time.',
       'lm.nota': 'This is how you will see your notes, «Listen», Karaoke, flashcards and PDFs.',
-      'nt.chi': 'I did not understand', 'nt.fare': 'Homework or test', 'nt.h': 'Mark this moment', 'nt.s': 'You find it in the notes, at the right minute', 'pr.h': 'Record a lesson', 'pr.p': 'Three choices and press Record. I do the rest: transcript, notes, homework and formulas.',
+      'im.mini': 'Keep it small on the screen', 'im.mini.s': 'When recording starts only a small window stays on top, with Pause, Stop and the three «Mark».', 'nt.chi': 'I did not understand', 'nt.fare': 'Homework or test', 'nt.h': 'Mark this moment', 'nt.s': 'You find it in the notes, at the right minute', 'pr.h': 'Record a lesson', 'pr.p': 'Three choices and press Record. I do the rest: transcript, notes, homework and formulas.',
     },
   };
   for (const l in nuovi) if (TESTI[l]) Object.assign(TESTI[l], nuovi[l]);

@@ -461,3 +461,37 @@ html.scripta .sms-vv{color:var(--sm-ink);font-weight:700}
 html.scripta.android .sms-mgrid,html.scripta.android .sms-pw{grid-template-columns:1fr}
 html.scripta.android .sms-k{grid-template-columns:1fr 1fr}
 @media (max-width:1100px){html.scripta .sms-mgrid{grid-template-columns:1fr 1fr}html.scripta .sms-pw{grid-template-columns:1fr}}
+
+/* ===== Impostazioni ===== */
+html.scripta #v-imp.smi{max-width:1240px}
+html.scripta #v-imp.smi .smi-via{display:none!important}
+html.scripta #v-imp.smi .hd{align-items:center}
+html.scripta .smi-ok{display:inline-flex;align-items:center;gap:6px;color:var(--sm-ok);font-weight:600;font-size:15px}
+html.scripta .smi-w{display:grid;grid-template-columns:240px 1fr;gap:22px;align-items:start}
+html.scripta .smi-nav{position:sticky;top:70px;display:flex;flex-direction:column;gap:2px}
+html.scripta .smi-nav button{display:flex;align-items:center;gap:10px;border:0;background:none;text-align:left;padding:10px 12px;border-radius:9px;font-size:15px;font-weight:600;color:var(--sm-ard);cursor:pointer;font-family:inherit}
+html.scripta .smi-nav button.on{background:var(--sm-carta);color:var(--sm-ink);box-shadow:inset 3px 0 0 var(--sm-pet),0 0 0 1px var(--sm-lin)}
+html.scripta .smi-sez > .card{margin-top:0!important;margin-bottom:14px}
+html.scripta .smi-card{padding:4px 18px}
+html.scripta .smi-card .set,html.scripta .smi-r{display:flex;align-items:center;gap:12px;padding:13px 0;border-top:1px solid var(--sm-lin2);margin:0}
+html.scripta .smi-card .set:first-child,html.scripta .smi-card .smi-r:first-child,html.scripta .smi-card > .smi-r:first-of-type{border-top:0}
+html.scripta .smi-card .set .t{flex:1}
+html.scripta .smi-card .set .t b,html.scripta .smi-r .smx-ft b{font-size:15px;color:var(--sm-ink)}
+html.scripta .smi-card .set .t span{display:block;color:var(--sm-ard);font-size:15px}
+html.scripta .smi-r .smx-ft{flex:1}
+html.scripta .smi-ora{width:120px}
+html.scripta .smi-spunte{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+html.scripta .smi-sp{display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid var(--sm-lin);border-radius:10px;background:var(--sm-carta);text-align:left;font-weight:600;font-size:15px;color:var(--sm-ink);cursor:pointer;font-family:inherit}
+html.scripta .smi-sp .smx-cer{border-radius:6px}
+html.scripta .smi-sp.on{border-color:#BFDDD9}
+html.scripta .smi-sez .lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+html.scripta .smi-sez .card .lbl{font-size:15px;color:var(--sm-ink);text-transform:none;letter-spacing:0}
+html.scripta.android .smi-w{grid-template-columns:minmax(0,1fr)}
+html.scripta.android .smi-nav{position:static;flex-direction:row;overflow-x:auto;gap:6px}
+html.scripta.android .smi-nav button{white-space:nowrap;border:1px solid var(--sm-lin);background:var(--sm-carta)}
+html.scripta.android .smi-nav button svg{display:none}
+html.scripta.android .smi-spunte,html.scripta.android .smi-sez .lmgrid{grid-template-columns:1fr}
+html.scripta.android .smi-card .set,html.scripta.android .smi-r{flex-wrap:wrap}
+html.scripta #v-imp.smi > :not(.perc):not(.hd):not(.smi-w){display:none!important}
+html.scripta .smi-card .set .t > b{display:inline}html.scripta .smi-card .set .t > b + .info-i{vertical-align:2px}html.scripta .aiopt > b + .info-i{display:inline-grid}
+html.scripta .smi-card .set .t > span.info-i{display:inline-grid;color:var(--sm-pet);font-size:13px!important;width:22px;height:22px;margin-left:8px}html.scripta .smi-sez .aiopt > b{display:inline-block}html.scripta .smi-sez .aiopt > b + .info-i{margin-left:8px}

@@ -594,7 +594,7 @@ class Motore:
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "licenza": self.lic.stato(),
                 "nome_classe": self.cfg.get("nome_classe") or "",
-                "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")),
+                "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")), "sm_voce_vel": float(self.cfg.get("sm_voce_vel") or 0.9),
                 "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
                 "rg_promemoria": bool(self.cfg.get("rg_promemoria", True)), "rg_ora": self.cfg.get("rg_ora") or "18:00",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
@@ -681,6 +681,11 @@ class Motore:
             self.cfg["rg_ora"] = valore if re.fullmatch(r"\d{2}:\d{2}", str(valore or "")) else "18:00"
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
+        elif campo == "sm_voce_vel":
+            try:
+                self.cfg["sm_voce_vel"] = max(0.6, min(1.4, float(valore)))
+            except (TypeError, ValueError):
+                return {"ok": False, "msg": "?"}
         elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla", "inizia_fatto"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":

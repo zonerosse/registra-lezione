@@ -43,7 +43,7 @@ const SMC = {tab: 'aula', comp: null, rg: null};
 /* ------------------------------------------------------------------ solo titoli: le spiegazioni piccole diventano (i) */
 // Le righe di spiegazione sotto i titoli si nascondono; accanto al titolo compare (i): al tocco si legge e si ascolta.
 // Restano le informazioni brevi con i numeri (date, minuti, carte): sono dati, non spiegazioni.
-const SM_SPIEGA = '.side .brand small, .tile small, .sml-gc small.sp, .smr-mom small.sp, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
+const SM_SPIEGA = '.smi-card .set .t > span:not([id]), .smi-sez .aiopt > small, .side .brand small, .tile small, .sml-gc small.sp, .smr-mom small.sp, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
 function smInfoGiro(radice) {
   if (typeof SCRIPTA === 'undefined' || !SCRIPTA) return;
   (radice || document).querySelectorAll(SM_SPIEGA).forEach(el => {
@@ -52,7 +52,7 @@ function smInfoGiro(radice) {
     const testo = el.textContent.trim();
     if (!testo || (/\d/.test(testo) && testo.length < 60 && !el.classList.contains('sp') && !el.closest('.brand'))) return;
     el.classList.add('st-nasc');
-    const tit = el.parentElement.querySelector('b') || el.parentElement.querySelector('h2');
+    const tit = el.parentElement.querySelector(':scope > b') || el.parentElement.querySelector('b') || el.parentElement.querySelector('h2');
     const i = document.createElement('span');
     i.className = 'info-i'; i.setAttribute('role', 'button'); i.title = tc('cosa'); i.textContent = 'i';
     i.onclick = ev => {
@@ -64,9 +64,10 @@ function smInfoGiro(radice) {
       document.body.appendChild(pp);
       pp.style.left = Math.max(8, Math.min(innerWidth - pp.offsetWidth - 8, r.left - 20)) + 'px';
       pp.style.top = Math.min(innerHeight - pp.offsetHeight - 8, r.bottom + 8) + 'px';
-      try { voceFerma(); voceParla(ora, 0.9); } catch (e) {}
+      try { voceFerma(); voceParla(ora, (R && R.sm_voce_vel) || 0.9); } catch (e) {}
     };
-    (tit || el.parentElement).appendChild(i);
+    // un titolo con data-t si ritraduce (textContent): la (i) va accanto, non dentro
+    if (tit && (tit.hasAttribute('data-t') || tit.querySelector('[data-t]'))) tit.after(i); else (tit || el.parentElement).appendChild(i);
   });
 }
 function smInfoChiudi() { document.querySelectorAll('.info-pop').forEach(x => x.remove()); }
@@ -82,6 +83,7 @@ function smCasaPrepara() {
   if (typeof smLezioniPrepara === 'function') smLezioniPrepara();
   if (typeof smRegistraAttiva === 'function') smRegistraAttiva();
   if (typeof smStudiaPrepara === 'function') smStudiaPrepara();
+  if (typeof smImpAttiva === 'function') smImpAttiva();
   if (typeof LZ !== 'undefined' && LZ) { smlCaricaExtra().then(() => { try { disegnaLezioni(); } catch (e) {} }); }
   // ogni pagina che si apre: le spiegazioni diventano (i) (anche quelle che arrivano dopo, con i dati)
   const vaiPrima = vai;
