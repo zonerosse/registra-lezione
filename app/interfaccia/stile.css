@@ -1507,3 +1507,13 @@ html.scripta.android #tipoBox .aiopt .rd,html.scripta.android #doveBox .aiopt .r
 html.scripta.android #tipoBox .aiopt b,html.scripta.android #doveBox .aiopt b{font-size:12.5px;line-height:1.25}
 /* «I miei strumenti» senza la voce «Altro» (le stesse funzioni restano nella lezione e in Studia) */
 html.scripta #sdAltroB,html.scripta #sdAltri{display:none!important}
+/* Scripta Manent registra solo lezioni; niente da ufficio (riunioni, verbali, collegamenti) */
+html.scripta .card:has(> #tipoBox),html.scripta .nav a[data-p="fare"],html.scripta #cgCard,html.scripta #mioBox,
+html.scripta #fmtBox [data-f="mio"],html.scripta [data-t="im.fmt.tipi"]{display:none!important}
+html.scripta .sk-due{grid-template-columns:1fr}
+/* verifica in arrivo, in cima a «I miei strumenti» */
+.smverbox{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.smver{padding:12px 14px;border-left:4px solid var(--f-prova,#c2410c)}
+.smver b{color:var(--ink)}
+.smgen h3{margin:18px 0 6px;font-size:16px;color:var(--ink)}
+.smgen ul{margin:0;padding-left:20px;line-height:1.7}

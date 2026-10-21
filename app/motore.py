@@ -94,8 +94,9 @@ def leggi_config():
     c.setdefault("cartella_pacchetti", str(cartella_documenti() / tr("pacchetti_cartella")))
     c.setdefault("appunti_attivi", False)
     c.setdefault("chiave", "")
-    if ed.SCRIPTA:                  # Scripta Manent: la lettura facilitata (Modalita' DSA) e' sempre accesa
+    if ed.SCRIPTA:                  # Scripta Manent: lettura facilitata sempre accesa, si registrano solo lezioni
         c["lettura_facilitata"] = True
+        c["tipo"] = "lezione"
     return c
 
 
@@ -655,7 +656,7 @@ class Motore:
                 self.cfg["formato_appunti"] = "cornell"
                 return {"ok": False, "msg": tr("mio_vuoto")}
         elif campo == "tipo":
-            self.cfg["tipo"] = valore if valore in ap.FORMATI_TIPO else "lezione"
+            self.cfg["tipo"] = valore if valore in ap.FORMATI_TIPO and not ed.SCRIPTA else "lezione"
         elif campo == "mio":
             v = valore or {}
             self.cfg["mio"] = {"nome": str(v.get("nome") or "").strip()[:60] or tr("fmt_mio"),
@@ -2926,8 +2927,36 @@ class Motore:
 
     def sm_compiti(self):
         import strumenti_sm as sm
+        self._sm_leggi_lezioni()
         return {"ok": True, "compiti": sm.compiti(BASE), "ricorda": sm.da_ricordare(BASE),
-                "oggi": datetime.date.today().isoformat()}
+                "oggi": datetime.date.today().isoformat(), "lavoro": bool(getattr(self, "_sm_lavoro", False))}
+
+    def _sm_leggi_lezioni(self):
+        """Scripta Manent: il diario si scrive da solo. Le lezioni nuove (pronte) vanno a Claude, una alla volta e una
+        volta sola, per trovare i compiti assegnati e le verifiche annunciate."""
+        import strumenti_sm as sm
+        if not ed.SCRIPTA or not self.chiave() or getattr(self, "_sm_lavoro", False):
+            return
+        da = sm.lezioni_da_leggere(BASE)
+        if not da:
+            return
+        self._sm_lavoro = True
+
+        def lavoro():
+            try:
+                for c in da[:6]:
+                    try:
+                        r = sm.compiti_da_lezione(self.chiave(), BASE, c)
+                        info = el.leggi_json(c / "info.json", {}) or {}
+                        el.aggiorna_info(c, compiti_letti=True,
+                                         spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+                        log.info("compiti dalla lezione %s: %s", c.name, r["nuovi"])
+                    except Exception:
+                        log.exception("compiti dalla lezione %s", c.name)
+                        el.aggiorna_info(c, compiti_letti=True)
+            finally:
+                self._sm_lavoro = False
+        threading.Thread(target=lavoro, daemon=True).start()
 
     def sm_compito_nuovo(self, voce):
         import strumenti_sm as sm

@@ -178,3 +178,78 @@ def da_ricordare(base):
     oggi = datetime.date.today()
     domani = (oggi + datetime.timedelta(days=1)).isoformat()
     return [v for v in compiti(base) if not v.get("fatto") and v.get("per") in (oggi.isoformat(), domani)]
+
+
+# ------------------------------------------------------------------ il diario si scrive da solo
+# Dalla registrazione di una lezione: i compiti assegnati e le verifiche annunciate dal prof vanno in «Compiti».
+
+def compiti_da_lezione(chiave, base, cartella):
+    """Legge la trascrizione di UNA lezione e aggiunge all'elenco i compiti e le verifiche annunciati. {"nuovi", "spesa"}."""
+    cart = Path(cartella)
+    info = el.leggi_json(cart / "info.json", {}) or {}
+    testo = ch.testo_lezione(cart)
+    if len(testo.strip()) < 40:
+        return {"nuovi": 0, "spesa": 0.0}
+    try:
+        giorno = datetime.datetime.fromisoformat(str(info.get("inizio") or "")).date()
+    except ValueError:
+        giorno = datetime.date.today()
+    materia = str(info.get("materia") or "")
+    # la fine della lezione e' dove di solito si danno i compiti: se e' lunga tengo l'inizio e soprattutto la fine
+    if len(testo) > 60000:
+        testo = testo[:15000] + "\n[…]\n" + testo[-45000:]
+    corpo = {"model": ch.MODELLO, "max_tokens": 2000,
+             "system": ("Ti mando la trascrizione di una lezione registrata da uno studente. Trova SOLO i compiti che il docente "
+                        "ASSEGNA (esercizi, pagine da studiare, temi, ricerche) e le verifiche o interrogazioni che ANNUNCIA, con il "
+                        f"giorno per cui sono. La lezione e' di {GIORNI_IT[giorno.weekday()]} {giorno.isoformat()}: scrivi le date come "
+                        "AAAA-MM-GG («per giovedi'» = il primo giovedi' dopo la lezione; «per la prossima volta» senza giorno = data "
+                        "vuota). Non inventare: se il docente non assegna niente, la lista e' vuota. «cosa» breve e chiaro. "
+                        f"Materia della lezione: {materia or 'non indicata'}. Scrivi in {_lingua()}. Rispondi con lo strumento «compiti»."),
+             "tools": [{"name": "compiti", "description": "Compiti assegnati e verifiche annunciate nella lezione.",
+                        "input_schema": {"type": "object", "properties": {
+                            "voci": {"type": "array", "items": {"type": "object", "properties": {
+                                "cosa": {"type": "string"}, "per": {"type": "string", "description": "AAAA-MM-GG o vuoto"},
+                                "tipo": {"type": "string", "enum": ["compito", "verifica", "interrogazione"]}},
+                                "required": ["cosa", "tipo"]}}},
+                            "required": ["voci"]}}],
+             "messages": [{"role": "user", "content": testo}]}
+    # una lezione senza compiti e' normale: lista vuota accettata (niente strumento(), che riproverebbe)
+    r = ch._chiama(chiave, dict(corpo, tool_choice={"type": "tool", "name": "compiti"}))
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    voci = ((blocco or {}).get("input") or {}).get("voci") or []
+    lista = el.leggi_json(_file(base), []) or []
+    gia = {(v.get("materia", "").lower(), v.get("cosa", "").lower(), v.get("per", "")) for v in lista}
+    n = 0
+    for v in voci if isinstance(voci, list) else []:
+        if not isinstance(v, dict):
+            continue
+        voce = aggiungi_voce({**v, "materia": materia}, salva=False)
+        if not voce or (voce["materia"].lower(), voce["cosa"].lower(), voce["per"]) in gia:
+            continue
+        voce["fonte"] = str(info.get("nome") or cart.name)[:120]
+        lista.append(voce)
+        n += 1
+    _salva(base, lista)
+    return {"nuovi": n, "spesa": ch._costo(r.get("usage", {}))}
+
+
+def lezioni_da_leggere(base, giorni=21):
+    """Le lezioni pronte e trascritte degli ultimi giorni non ancora lette per i compiti."""
+    limite = datetime.date.today() - datetime.timedelta(days=giorni)
+    out = []
+    try:
+        cartelle = [p for p in Path(base).iterdir() if p.is_dir() and (p / "info.json").exists()]
+    except OSError:
+        return out
+    for c in cartelle:
+        info = el.leggi_json(c / "info.json", {}) or {}
+        if info.get("stato") != "pronta" or info.get("compiti_letti") or info.get("tipo", "lezione") != "lezione":
+            continue
+        try:
+            if datetime.datetime.fromisoformat(str(info.get("inizio") or "")).date() < limite:
+                continue
+        except ValueError:
+            continue
+        if any(c.glob("trascrizione_*.json")):
+            out.append(c)
+    return out

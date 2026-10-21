@@ -12,14 +12,14 @@ function attivaScripta() {
   document.title = 'Scripta Manent';
   const nuovi = {
     it: {
-      'nav.dsa': 'I miei strumenti', 'sd.h': 'I miei strumenti',
+      'nav.dsa': 'I miei strumenti', 'sd.h': 'I miei strumenti', 'nav.arch': 'Le mie lezioni',
       'sd.reg.s': 'Appunti già facili da leggere',
       'pc.dsa': 'Il podcast parte più lento, la voce narrante usa frasi corte e semplici e mentre ascolti la parola che senti si illumina. Pausa di 2 secondi dopo ogni pezzo del prof.',
       'dsa.banda': '', 'g.dsa': 'Per te', 'tc.vero.dsa': '30% di tempo in più.',
       'lm.nota': 'Così vedrai gli appunti, «Ascolta», il Karaoke, le flashcard e i PDF.',
     },
     en: {
-      'nav.dsa': 'My tools', 'sd.h': 'My tools',
+      'nav.dsa': 'My tools', 'sd.h': 'My tools', 'nav.arch': 'My lectures',
       'sd.reg.s': 'Notes that are already easy to read',
       'pc.dsa': 'The podcast starts slower, the narrator uses short, simple sentences and the word you hear lights up. A 2-second pause after each part of the lecturer.',
       'dsa.banda': '', 'g.dsa': 'For you', 'tc.vero.dsa': '30% more time.',

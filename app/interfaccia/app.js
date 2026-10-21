@@ -221,7 +221,7 @@ function vai(p, tornando = false) {
 // Nei riquadri (.ico) e nei bottoni le emoji diventano icone disegnate. Riquadri: quadrato pieno con un colore
 // spento per famiglia (studio, ascolto, mappe, prove, scrittura) e l'icona bianca. Si guarda prima l'azione
 // del riquadro (karaoke e interrogazione hanno la stessa emoji 🎤), poi l'emoji.
-const ICO_AZ = {smmate: 'g-calc', smcorr: 'g-penna', smcomp: 'g-cal', karaoke: 'g-kar', orale: 'i-mic', detta: 'i-mic', reg: 'g-reg', glos: 'g-libro', libro: 'g-libro', leggimi: 'g-voce', ascolta: 'g-voce', ascm: 'g-voce'};
+const ICO_AZ = {smgen: 'g-utenti', smmate: 'g-calc', smcorr: 'g-penna', smcomp: 'g-cal', karaoke: 'g-kar', orale: 'i-mic', detta: 'i-mic', reg: 'g-reg', glos: 'g-libro', libro: 'g-libro', leggimi: 'g-voce', ascolta: 'g-voce', ascm: 'g-voce'};
 const ICO_EM = {'📄': 'g-note', '🔊': 'g-voce', '📅': 'g-cal', '🗓': 'g-cal', '📑': 'g-cap', '💬': 'i-chat', '📤': 'i-share', '✉': 'g-mail', '🃏': 'i-cards',
   '📷': 'g-foto', '🖼': 'g-img', '🎤': 'g-kar', '📖': 'g-libro', '📘': 'g-libro', '📚': 'g-lezioni', '📲': 'g-tel', '🗺': 'i-map', '🎧': 'g-cuffie', '⭐': 'g-stella',
   '✍': 'g-penna', '✂': 'g-forbici', '🎓': 'g-tocco', '☑': 'g-test', '📝': 'g-note', '🧑‍🏫': 'g-tutor', '▶': 'g-play', '🎙': 'i-mic', '🖨': 'g-stampa', '📋': 'g-lista',
@@ -3398,7 +3398,8 @@ async function disegnaSpazioDsa() {
       T('smmate', '🧮', ts('mate.h'), ts('sd.mate.s'))]) : '') +
     mom(nn(3), t('sd.m3'), t('sd.m3.s'), [T('tutor', '🧑‍🏫', t('tl.tu'), t('tl.tu.s'), mt), T('mverif', '🗺', t('tl.mv'), t('sd.mv.s'), mt), T('orale', '🎤', t('tl.orale'), t('sd.orale.s'), mt),
       T('test', '☑', t('tl.dsa.test'), t('sd.test.s'), mt), T('scritto', '✍', t('tl.dsa.scr'), t('sd.scr.s'), mt)]) +
-    mom(nn(4), t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s'))]) +
+    mom(nn(4), SMc ? ts('m4') : t('sd.m4'), t('sd.m4.s'), [T('firma', '🖨', t('sd.firma'), t('sd.firma.s'), mt), T('strumenti', '📋', t('sd.str'), t('sd.str.s')),
+      SMc ? T('smgen', '👥', ts('gen.t'), ts('gen.s')) : ''].filter(Boolean)) +
     `<button class="sdaltro" id="sdAltroB">${esc(t(SD.altro ? 'sd.altro.su' : 'sd.altro'))}<span style="font-weight:400">${esc(t('sd.altro.s'))}</span></button>
     <div class="sdaltri${SD.altro ? '' : ' hidden'}" id="sdAltri"><div class="tiles" style="margin-top:12px">${[T('chiedi', '💬', t('tl.chiedi'), t('tl.chiedi.s'), tr), T('capitoli', '📑', t('tl.cap'), t('tl.cap.s'), cap),
       T('infografica', '🖼', t('tl.ig'), t('tl.ig.s'), tr), T('piano', '📅', t('st.piano').replace(/^📅\s*/, ''), t('sd.piano.s'), mt), T('prob', '⭐', t('tl.prob'), t('tl.prob.s'), mt), T('arch', '📚', t('sd.tutte'), t('sd.tutte.s'))].join('')}</div></div>`;
@@ -3409,6 +3410,7 @@ async function azioneDsa(a) {
   const l = SD.l, m = SD.mat;
   if (a === 'reg') return vai('reg');
   if (a === 'smmate' || a === 'smcorr' || a === 'smcomp') return vai(a);
+  if (a === 'smgen') return smGenitori();
   if (a === 'detta') return vai('dp');
   if (a === 'leggimi') return vai('lg');
   if (a === 'giorno') return apriRipassoGiorno();

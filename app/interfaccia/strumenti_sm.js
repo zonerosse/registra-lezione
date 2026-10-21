@@ -29,6 +29,12 @@ const SMT = {
     'sd.m.casa': 'A casa', 'sd.m.casa.s': 'compiti, scritti e calcoli',
     'sd.mate.s': 'Calcolatrice che parla, tabelline, formule, problemi', 'sd.corr.s': 'Corregge l\'ortografia, le parole restano tue',
     'sd.comp.s': 'Foto del diario: compiti e verifiche in ordine',
+    'nav.comp': 'Compiti', 'comp.da.lez': 'dalla lezione «{l}»', 'comp.lav.lez': 'Sto cercando i compiti nelle lezioni nuove…',
+    'ver.arriva': '{t} di {m}', 'ver.quando0': 'oggi', 'ver.quando1': 'domani', 'ver.quando': '{d}', 'ver.ripassa': 'Ripassa adesso',
+    'ver.flash': 'Flashcard', 'ver.mappa': 'Mappa per la verifica', 'ver.orale': 'Interrogazione a voce', 'ver.studia': 'Apri Studia',
+    'gen.t': 'Settimana per i genitori', 'gen.s': 'Cosa ha studiato, compiti e verifiche', 'gen.h': 'La settimana di studio',
+    'gen.dal': 'Dal {a} al {b}', 'gen.lez': 'Lezioni registrate', 'gen.fatti': 'Compiti fatti', 'gen.dafare': 'Da fare',
+    'gen.ver': 'Verifiche e interrogazioni in arrivo', 'gen.niente': 'Niente', 'm4': 'Per docente e famiglia',
   },
   en: {
     'mate.h': 'Maths', 'mate.p': 'Spoken calculations, ready tables and formulas, problems explained one step at a time.',
@@ -56,6 +62,12 @@ const SMT = {
     'sd.m.casa': 'At home', 'sd.m.casa.s': 'homework, writing and maths',
     'sd.mate.s': 'Talking calculator, tables, formulas, problems', 'sd.corr.s': 'Fixes spelling, the words stay yours',
     'sd.comp.s': 'Planner photo: homework and tests in order',
+    'nav.comp': 'Homework', 'comp.da.lez': 'from the lecture «{l}»', 'comp.lav.lez': 'Looking for homework in the new lectures…',
+    'ver.arriva': '{t} in {m}', 'ver.quando0': 'today', 'ver.quando1': 'tomorrow', 'ver.quando': '{d}', 'ver.ripassa': 'Revise now',
+    'ver.flash': 'Flashcards', 'ver.mappa': 'Map for the test', 'ver.orale': 'Spoken oral test', 'ver.studia': 'Open Study',
+    'gen.t': 'Week for parents', 'gen.s': 'What was studied, homework and tests', 'gen.h': 'The study week',
+    'gen.dal': 'From {a} to {b}', 'gen.lez': 'Recorded lectures', 'gen.fatti': 'Homework done', 'gen.dafare': 'To do',
+    'gen.ver': 'Upcoming tests', 'gen.niente': 'Nothing', 'm4': 'For teachers and family',
   },
 };
 function ts(k, p) {
@@ -75,8 +87,16 @@ function smPrepara() {
     s.className = 'pg hidden'; s.id = 'v-' + p;
     s.innerHTML = `<div class="hd"><div><h2></h2><p></p></div></div><div class="smbox"></div>`;
     main.appendChild(s);
-    if (!INTERNE.includes(p)) INTERNE.push(p);
+    if (p !== 'smcomp' && !INTERNE.includes(p)) INTERNE.push(p);
   });
+  const nav = $('nav'), arch = nav && nav.querySelector('a[data-p="arch"]');
+  if (arch && !nav.querySelector('a[data-p="smcomp"]')) {
+    const a = document.createElement('a'); a.dataset.p = 'smcomp';
+    a.innerHTML = `<svg><use href="#g-cal"/></svg><span>${esc(ts('nav.comp'))}</span><span class="cnt hidden" id="navComp"></span>`;
+    arch.after(a);
+  }
+  const prima = disegnaSpazioDsa;
+  disegnaSpazioDsa = async function () { const r = await prima.apply(this, arguments); smVerifiche(); return r; };
   const vaiPrima = vai;
   vai = function (p, tornando = false) {
     SM_PAGINE.forEach(x => { const s = $('v-' + x); if (s) s.classList.add('hidden'); });
@@ -302,6 +322,7 @@ async function smComp() {
   SMS.comp = (r && r.compiti) || []; SMS.oggi = (r && r.oggi) || new Date().toISOString().slice(0, 10);
   box.dataset.pronta = 1;
   smCompDisegna();
+  if (r && r.lavoro) { toast(ts('comp.lav.lez')); clearTimeout(SMS.giroLez); SMS.giroLez = setTimeout(() => { if (pagina === 'smcomp') smComp(); }, 15000); }
 }
 function smGiorni(d) { return Math.round((new Date(d + 'T12:00') - new Date(SMS.oggi + 'T12:00')) / 864e5); }
 function smData(d) {
@@ -319,7 +340,8 @@ function smCompDisegna() {
   const voce = v => `<div class="smvoce${v.fatto ? ' fatto' : ''}" data-id="${esc(v.id)}">
       <span class="smck${v.fatto ? ' on' : ''}" data-f="1"></span>
       <div class="sp"><b>${esc(v.materia || '')}</b>${v.tipo !== 'compito' ? ` <span class="chip smtipo">${esc(ts('comp.' + v.tipo))}</span>` : ''}
-        <div>${esc(v.cosa)}</div>${v.per ? `<small class="mutt">${esc(smData(v.per))}</small>` : ''}</div>
+        <div>${esc(v.cosa)}</div>${v.per ? `<small class="mutt">${esc(smData(v.per))}</small>` : ''}${v.fonte ? `<small class="mutt"> · ${esc(ts('comp.da.lez', {l: v.fonte}))}</small>` : ''}
+        ${v.tipo !== 'compito' && !v.fatto ? `<div class="mt"><button class="btn b-ghost b-sm" data-r="1">${icoSm('g-ripeti')} ${esc(ts('ver.ripassa'))}</button></div>` : ''}</div>
       <button class="lnk" data-a="1" title="${esc(ts('ascolta'))}">${icoSm('g-voce')}</button>
       <button class="lnk" data-x="1" title="${esc(ts('comp.togli'))}">✕</button></div>`;
   const sez = (k, aperta = true) => gruppi[k].length ? `<details class="cap smgr"${aperta ? ' open' : ''}><summary>${esc(ts('comp.' + k))} <span class="cnt">${gruppi[k].length}</span><span class="fr">›</span></summary>
@@ -346,6 +368,7 @@ function smCompDisegna() {
     const id = d.dataset.id, v = SMS.comp.find(x => x.id === id);
     d.querySelector('[data-f]').onclick = async () => { const r = await A.sm_compito(id, !v.fatto, false); SMS.comp = r.compiti; smCompDisegna(); };
     d.querySelector('[data-a]').onclick = () => { const p = SMS.voce; SMS.voce = true; parlaSm([v.materia, v.tipo !== 'compito' ? ts('comp.' + v.tipo) : '', v.cosa, v.per ? smData(v.per) : ''].filter(Boolean).join('. ')); SMS.voce = p; };
+    if (d.querySelector('[data-r]')) d.querySelector('[data-r]').onclick = () => smRipassa(v.materia, 'fcorso');
     d.querySelector('[data-x]').onclick = async () => { const r = await A.sm_compito(id, null, true); SMS.comp = r.compiti; smCompDisegna(); };
   });
 }
@@ -376,4 +399,58 @@ async function smRicorda() {
     try { localStorage.setItem('smRicordato', r.oggi); } catch (e) {}
     toast(ts('comp.ricorda', {c: r.ricorda.map(v => (v.materia ? v.materia + ': ' : '') + v.cosa).slice(0, 3).join(' · ')}));
   } catch (e) {}
+}
+
+/* ------------------------------------------------------------------ verifica in arrivo: ripasso pronto */
+function smMateria(nome) {
+  try { return materieStudia().find(x => x.m.toLowerCase() === String(nome || '').toLowerCase()) || null; } catch (e) { return null; }
+}
+function smRipassa(materia, a) {
+  const m = smMateria(materia);
+  if (!m) return vai('studia');
+  return tileStudia(m, a);
+}
+async function smVerifiche() {
+  const box = $('sdBox'); if (!box) return;
+  const r = await A.sm_compiti(); if (!r || !r.compiti) return;
+  SMS.oggi = r.oggi;
+  const vv = r.compiti.filter(v => !v.fatto && v.tipo !== 'compito' && v.per && smGiorni(v.per) >= 0 && smGiorni(v.per) <= 7).sort((x, y) => x.per.localeCompare(y.per)).slice(0, 3);
+  box.parentNode.querySelectorAll('.smverbox').forEach(x => x.remove());
+  if (!vv.length) return;
+  const d = document.createElement('div');
+  d.innerHTML = vv.map(v => {
+    const g = smGiorni(v.per), q = g === 0 ? ts('ver.quando0') : g === 1 ? ts('ver.quando1') : smData(v.per);
+    const m = smMateria(v.materia);
+    return `<div class="card smver" data-m="${esc(v.materia || '')}"><div class="row" style="gap:12px;align-items:center;flex-wrap:wrap">
+      <span class="ico fam-prova ico-l"><svg><use href="#g-bersaglio"/></svg></span>
+      <div class="sp"><b>${esc(ts('ver.arriva', {t: ts('comp.' + v.tipo), m: v.materia || '—'}))}</b><div class="hint">${esc(q)} · ${esc(v.cosa)}</div></div>
+      ${m ? `<button class="btn b-ghost b-sm" data-a="fcorso">${esc(ts('ver.flash'))}</button><button class="btn b-ghost b-sm" data-a="mverif">${esc(ts('ver.mappa'))}</button>
+        <button class="btn b-main b-sm" data-a="orale">${esc(ts('ver.orale'))}</button>` : `<button class="btn b-main b-sm" data-a="studia">${esc(ts('ver.studia'))}</button>`}</div></div>`;
+  }).join('');
+  box.parentNode.insertBefore(d, box);
+  d.className = 'smverbox';
+  d.querySelectorAll('.smver').forEach(c => c.querySelectorAll('[data-a]').forEach(b => b.onclick = () => b.dataset.a === 'studia' ? vai('studia') : smRipassa(c.dataset.m, b.dataset.a)));
+}
+
+/* ------------------------------------------------------------------ settimana per i genitori (da stampare) */
+async function smGenitori() {
+  const [r, lz] = await Promise.all([A.sm_compiti(), A.lezioni()]);
+  const oggi = new Date(), da = new Date(oggi); da.setDate(oggi.getDate() - 6);
+  const fmt = d => d.toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {day: 'numeric', month: 'long'});
+  const iso = d => d.toISOString().slice(0, 10);
+  SMS.oggi = (r && r.oggi) || iso(oggi);
+  const comp = (r && r.compiti) || [];
+  const lezioni = ((lz && lz.lezioni) || []).filter(l => {
+    const m = String(l.quando || '').match(/(\d{2})\/(\d{2})\/(\d{4})/); if (!m) return false;
+    const d = `${m[3]}-${m[2]}-${m[1]}`; return d >= iso(da) && d <= iso(oggi);
+  });
+  const li = (arr, f) => arr.length ? `<ul>${arr.map(f).join('')}</ul>` : `<p class="hint">${esc(ts('gen.niente'))}</p>`;
+  const fatti = comp.filter(v => v.fatto), dafare = comp.filter(v => !v.fatto && v.tipo === 'compito');
+  const ver = comp.filter(v => !v.fatto && v.tipo !== 'compito');
+  const html = `<p class="hint">${esc(ts('gen.dal', {a: fmt(da), b: fmt(oggi)}))}</p>
+    <h3>${esc(ts('gen.lez'))} (${lezioni.length})</h3>${li(lezioni, l => `<li><b>${esc(l.materia || '')}</b> ${esc(l.nome)} <span class="hint">${esc(l.quando)}${l.durata ? ' · ' + esc(l.durata) : ''}</span></li>`)}
+    <h3>${esc(ts('gen.ver'))}</h3>${li(ver, v => `<li><b>${esc(v.materia || '')}</b> ${esc(ts('comp.' + v.tipo))}: ${esc(v.cosa)} <span class="hint">${v.per ? esc(smData(v.per)) : ''}</span></li>`)}
+    <h3>${esc(ts('gen.dafare'))}</h3>${li(dafare, v => `<li><b>${esc(v.materia || '')}</b> ${esc(v.cosa)} <span class="hint">${v.per ? esc(smData(v.per)) : ''}</span></li>`)}
+    <h3>${esc(ts('gen.fatti'))}</h3>${li(fatti, v => `<li><b>${esc(v.materia || '')}</b> ${esc(v.cosa)}</li>`)}`;
+  smStampa(`<div class="smgen">${html}</div>`, ts('gen.h'));
 }
