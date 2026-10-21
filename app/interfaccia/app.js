@@ -573,7 +573,7 @@ async function avvisoAgg() {
   if (AGG_VISTO || g.tipo !== 'trovato' || !g.avviso || S.registro || document.querySelector('.velo')) return;
   AGG_VISTO = true;
   const d = g.dato || {};
-  const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
+  const nov = (typeof SCRIPTA !== 'undefined' && SCRIPTA && d.novita_sm) ? ((LINGUA === 'en' && d.novita_sm_en) ? d.novita_sm_en : d.novita_sm) : (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
   if (d.iphone) {            // sull'iPhone: si installa da TestFlight. L'avviso compare una volta sola per versione
     try { if (localStorage.getItem('vm_ip_agg') === d.versione) return; localStorage.setItem('vm_ip_agg', d.versione); } catch (_) {}
     const v = await dialogo({titolo: t('ag.pronta', {v: d.versione}), testo: nov, html: `<div class="hint" style="margin-top:10px">${esc(t('ag.ip.s'))}</div>`,
@@ -4733,7 +4733,7 @@ function disegnaAgg() {
     h = `<div class="card row" style="padding:10px 12px;border-color:#bfdbfe;background:#eff6ff;text-align:left"><div class="sp"><b style="color:var(--ink);display:block">${esc(t('ag.c', {v: g.dato.versione}))}</b><span class="hint">${esc(t('ag.ip.r'))}</span></div><button class="btn b-main b-sm" id="aggOk">${esc(t('ag.ip'))}</button></div>`;
   else if (g.tipo === 'trovato') {
     const d = g.dato;
-    const nov = (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
+    const nov = (typeof SCRIPTA !== 'undefined' && SCRIPTA && d.novita_sm) ? ((LINGUA === 'en' && d.novita_sm_en) ? d.novita_sm_en : d.novita_sm) : (LINGUA === 'en' && d.novita_en) ? d.novita_en : (d.novita || '');
     h = `<div class="card" style="padding:14px 16px;border-color:#bae6fd"><b style="color:var(--ink)">${esc(t('ag.c', {v: d.versione}))}</b>
       <div class="hint" style="margin:4px 0 10px">${esc(nov)}${d.completo ? '<br>' + t('ag.completo') : '<br><br>' + esc(t('ag.riapri.s'))}</div>
       <div class="row"><span class="sp"></span><button class="btn b-ghost b-sm" id="aggX">${t('ag.tardi')}</button><button class="btn b-main b-sm" id="aggOk">${d.completo ? t('ag.pagina') : t('ag.riapri')}</button></div></div>`;
