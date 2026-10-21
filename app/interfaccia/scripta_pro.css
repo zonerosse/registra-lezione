@@ -196,3 +196,71 @@ html.scripta.android .smk-sx{border-right:0;border-bottom:1px solid var(--sm-lin
 html.scripta.android .smk-lista{max-height:none}
 html.scripta.android .smk-col2{grid-template-columns:1fr}
 @media (max-width:1100px){html.scripta .smk-col2{grid-template-columns:1fr}}
+
+/* ===== Matematica ===== */
+html.scripta #v-smmate.smm .hd{align-items:center}
+html.scripta .smm-voce{display:inline-flex;align-items:center;gap:8px;font-weight:600;color:var(--sm-ink);font-size:15px}
+html.scripta .smm-tabs{margin-bottom:18px}
+html.scripta .smm-calcw{display:grid;grid-template-columns:400px 1fr;gap:20px;align-items:start}
+html.scripta .smm-calc{padding:0}
+html.scripta .smm-disp{padding:16px 18px;border-bottom:1px solid var(--sm-lin2);text-align:right}
+html.scripta .smm-espr{font-size:30px;font-weight:700;min-height:40px;word-break:break-all;color:var(--sm-ink)}
+html.scripta .smm-ris{font-size:20px;color:var(--sm-pet);font-weight:650;min-height:26px}
+html.scripta .smm-tasti{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:14px}
+html.scripta .smm-t{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:10px;padding:14px 0;font-size:22px;font-weight:600;color:var(--sm-ink);font-family:inherit;cursor:pointer}
+html.scripta .smm-t:hover{background:var(--sm-neb)}
+html.scripta .smm-t.op{background:var(--sm-indt);color:var(--sm-ind);border-color:#D6DAEC}
+html.scripta .smm-t.ug{background:var(--sm-pet);color:#fff;border-color:var(--sm-pet)}
+html.scripta .smm-t.c{color:var(--sm-ard);font-size:17px}
+html.scripta .smm-stv{font-weight:700;color:var(--sm-pet);font-size:16px}
+html.scripta .smm-tabw{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start}
+html.scripta .smm-pitw{padding:10px;overflow-x:auto}
+html.scripta .smm-pit{border-collapse:separate;border-spacing:3px}
+html.scripta .smm-pit th,html.scripta .smm-pit td{width:42px;height:38px;text-align:center;border-radius:7px;font-size:16px}
+html.scripta .smm-pit th{background:var(--sm-indt);color:var(--sm-ind);font-weight:700}
+html.scripta .smm-pit td{background:var(--sm-carta);border:1px solid var(--sm-lin2);cursor:pointer}
+html.scripta .smm-pit td:hover{border-color:var(--sm-pet)}
+html.scripta .smm-pit td.riga{background:var(--sm-pett)}
+html.scripta .smm-pit td.on{background:var(--sm-pet);color:#fff;font-weight:700;border-color:var(--sm-pet)}
+html.scripta .smm-grande{font-size:32px;font-weight:700;color:var(--sm-ink)}html.scripta .smm-grande b{color:var(--sm-pet)}
+html.scripta .smm-scelta{display:flex;flex-wrap:wrap;gap:6px}
+html.scripta .smm-scelta button{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:8px;width:42px;height:38px;font-weight:700;font-size:16px;color:var(--sm-ink);cursor:pointer;font-family:inherit}
+html.scripta .smm-scelta button.on{background:var(--sm-pet);color:#fff;border-color:var(--sm-pet)}
+html.scripta .smm-fhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 10px}
+html.scripta .smm-fcat{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+html.scripta .smm-fcat button{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:999px;padding:6px 13px;font-size:15px;font-weight:600;color:var(--sm-ard);cursor:pointer;font-family:inherit}
+html.scripta .smm-fcat button.on{background:var(--sm-ink);color:#fff;border-color:var(--sm-ink)}
+html.scripta .smm-forme{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+html.scripta .smm-forma{padding:14px;display:flex;flex-direction:column;gap:10px}
+html.scripta .smm-fh{display:flex;align-items:center;gap:12px}.smm-fh b{font-size:16px}
+html.scripta .smm-fig{width:58px;height:58px;flex:none;fill:var(--sm-pett);stroke:var(--sm-pet);stroke-width:2}
+html.scripta .smm-fr{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:var(--sm-neb);border:0;width:100%;text-align:left;color:var(--sm-ink);cursor:pointer;font-family:inherit}
+html.scripta .smm-fr:hover{background:var(--sm-pett)}
+html.scripta .smm-fr small{min-width:84px;color:var(--sm-ard);font-size:14px;font-weight:600}
+html.scripta .smm-fr span{font-size:17px;font-weight:700;flex:1}
+html.scripta .smm-fr svg{color:var(--sm-pet)}
+html.scripta .smm-pbw{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+html.scripta .smm-pbtesto{font-size:17px;line-height:1.6}
+html.scripta .smm-ps{display:grid;grid-template-columns:32px 1fr auto;gap:12px;padding:14px 16px;border-top:1px solid var(--sm-lin2);align-items:start}
+html.scripta .smm-ps:first-child{border-top:0}
+html.scripta .smm-ps.on{background:var(--sm-pett)}
+html.scripta .smm-ps.on .smx-num{background:var(--sm-pet);border-color:var(--sm-pet);color:#fff}
+html.scripta .smm-ps.letto .smx-num{background:var(--sm-ok);border-color:var(--sm-ok);color:#fff}
+html.scripta .smm-ps b{font-size:16px;display:block}
+html.scripta .smm-ps p{margin:4px 0 0;font-size:16px;line-height:1.6}
+html.scripta .smm-ps.chiuso p,html.scripta .smm-ps.chiuso .smm-calcolo{display:none}
+html.scripta .smm-calcolo{display:inline-block;margin-top:8px;font-size:18px;font-weight:700;background:var(--sm-neb);border-radius:8px;padding:5px 10px}
+html.scripta .smm-ris-on{font-size:19px;font-weight:700;color:var(--sm-pet)}
+html.scripta .smm-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+html.scripta .smm-fraz{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+html.scripta.android .smm-calcw,html.scripta.android .smm-tabw,html.scripta.android .smm-pbw,html.scripta.android .smm-2{grid-template-columns:1fr}
+html.scripta.android .smm-forme{grid-template-columns:1fr}
+html.scripta.android .smm-pit th,html.scripta.android .smm-pit td{width:30px;height:30px;font-size:14px}
+html.scripta.android .smm-ps{grid-template-columns:28px 1fr}html.scripta.android .smm-ps .btn{grid-column:2;justify-self:start}
+@media (max-width:1100px){html.scripta .smm-forme{grid-template-columns:1fr 1fr}html.scripta .smm-pbw{grid-template-columns:1fr}}
+/* formule delle mie lezioni nel nuovo stile */
+html.scripta .smfm{border-radius:12px}
+html.scripta .smfmf{font-size:18px}
+html.scripta .smfmo{font-size:14px;color:var(--sm-pet)}
+html.scripta .smfmg{text-transform:none;font-size:15px;letter-spacing:0;color:var(--sm-ink)}
+html.scripta .smfmh{display:none}

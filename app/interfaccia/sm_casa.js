@@ -43,7 +43,7 @@ const SMC = {tab: 'aula', comp: null, rg: null};
 /* ------------------------------------------------------------------ solo titoli: le spiegazioni piccole diventano (i) */
 // Le righe di spiegazione sotto i titoli si nascondono; accanto al titolo compare (i): al tocco si legge e si ascolta.
 // Restano le informazioni brevi con i numeri (date, minuti, carte): sono dati, non spiegazioni.
-const SM_SPIEGA = '.side .brand small, .tile small, .smx-ft small.sp, .smx-ft small:not(.dato), #v-dsa .hd p';
+const SM_SPIEGA = '.side .brand small, .tile small, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
 function smInfoGiro(radice) {
   if (typeof SCRIPTA === 'undefined' || !SCRIPTA) return;
   (radice || document).querySelectorAll(SM_SPIEGA).forEach(el => {
@@ -59,11 +59,12 @@ function smInfoGiro(radice) {
       ev.stopPropagation(); ev.preventDefault(); smInfoChiudi();
       const r = i.getBoundingClientRect(), pp = document.createElement('div');
       const nome = tit ? [...tit.childNodes].filter(n => !(n.classList && n.classList.contains('info-i'))).map(n => n.textContent).join('').trim() : '';
-      pp.className = 'info-pop'; pp.innerHTML = `<b>${esc(nome || tc('cosa'))}</b>${esc(testo)}`;
+      const ora = el.textContent.trim() || testo;
+      pp.className = 'info-pop'; pp.innerHTML = `<b>${esc(nome || tc('cosa'))}</b>${esc(ora)}`;
       document.body.appendChild(pp);
       pp.style.left = Math.max(8, Math.min(innerWidth - pp.offsetWidth - 8, r.left - 20)) + 'px';
       pp.style.top = Math.min(innerHeight - pp.offsetHeight - 8, r.bottom + 8) + 'px';
-      try { voceFerma(); voceParla(testo, 0.9); } catch (e) {}
+      try { voceFerma(); voceParla(ora, 0.9); } catch (e) {}
     };
     (tit || el.parentElement).appendChild(i);
   });
@@ -78,6 +79,14 @@ function smCasaPrepara() {
   const sec = $('v-dsa');
   if (sec) sec.classList.add('smcasa');
   smInfoGiro(document.querySelector('.side'));
+  // ogni pagina che si apre: le spiegazioni diventano (i) (anche quelle che arrivano dopo, con i dati)
+  const vaiPrima = vai;
+  vai = function (p, tornando) {
+    const r = vaiPrima.apply(this, arguments);
+    const giro = () => { const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) smInfoGiro(s); };
+    setTimeout(giro, 0); setTimeout(giro, 700); setTimeout(giro, 2000);
+    return r;
+  };
 }
 function smDataLunga() {
   const s = new Date().toLocaleDateString(LINGUA === 'en' ? 'en-GB' : 'it-IT', {weekday: 'long', day: 'numeric', month: 'long'});
