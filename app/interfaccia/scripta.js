@@ -29,6 +29,16 @@ function attivaScripta() {
     },
   };
   for (const l in nuovi) if (TESTI[l]) Object.assign(TESTI[l], nuovi[l]);
+  // Scripta Manent è per studenti: niente riunioni né webinar nei testi
+  const studenti = {
+    it: {'in.desc': "Registra le lezioni in aula e online. Trascrive sul tuo PC, senza mandare l'audio su internet, e prepara appunti facili da leggere, con la voce che te li legge.",
+         'pv.3': "Le tue lezioni non vengono usate per addestrare l'IA.",
+         'pv.r': 'Quando registri una lezione registri anche la voce del docente e dei compagni. Il permesso di farlo devi averlo tu: molte scuole e università hanno regole precise e il docente ha diritti sulla sua lezione. A ogni registrazione ti propongo un messaggio pronto per avvisare.'},
+    en: {'in.desc': 'Records lectures in class and online. Transcribes on your PC, without sending the audio over the internet, and prepares easy-to-read notes, with a voice that reads them to you.',
+         'pv.3': 'Your lectures are never used to train AI.',
+         'pv.r': "When you record a lecture you also record the voices of the teacher and classmates. You are responsible for having permission: many schools and universities have specific rules and teachers have rights over their lectures. For every recording I offer a ready-made message to let people know."},
+  };
+  for (const l in studenti) if (TESTI[l]) Object.assign(TESTI[l], studenti[l]);
   // sul telefono la barra in basso è stretta
   if (typeof ANDROID !== 'undefined' && ANDROID) { TESTI.it['nav.dsa'] = 'Strumenti'; TESTI.en['nav.dsa'] = 'Tools'; }
   // il nome del programma in tutti i testi

@@ -135,8 +135,10 @@ function smPrepara() {
 }
 function smTitolo(p, h, sub) {
   const s = $('v-' + p);
-  s.querySelector('.hd h2').textContent = h;
-  s.querySelector('.hd p').textContent = sub;
+  if (!s) return null;
+  const t = s.querySelector('.hd h2'), d = s.querySelector('.hd p');   // le pagine nuove (Compiti) rifanno la testata
+  if (t) t.textContent = h;
+  if (d) d.textContent = sub;
   return s.querySelector('.smbox');
 }
 let SM_PARLA = false;

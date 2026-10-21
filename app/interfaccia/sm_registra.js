@@ -64,9 +64,9 @@ function smRegistraPrepara() {
   // miniatura
   const mini = blocco('smr-opz solo-pc', `<span class="smx-fi">${smIco('i-scr')}</span><span class="smx-ft"><b>${esc(tr2('mini'))}</b><small class="sp">${esc(tr2('mini.s'))}</small></span><span class="sw" id="smrMini"></span>`);
   // registra
-  const vai = blocco('smr-vai'); vai.append(q('.recwrap'));
-  vai.insertAdjacentHTML('beforeend', `<small class="sp smr-vai-s">${esc(tr2('vai.s'))}</small>`);
-  card.append(p1, p2, p3, det, mini, vai);
+  const bVai = blocco('smr-vai'); bVai.append(q('.recwrap'));
+  bVai.insertAdjacentHTML('beforeend', `<small class="sp smr-vai-s">${esc(tr2('vai.s'))}</small>`);
+  card.append(p1, p2, p3, det, mini, bVai);
   sx.append(card);
   // di lato
   dx.innerHTML = `<h3 class="smx-h3">${esc(tr2('gia'))}</h3><div class="smx-lista">

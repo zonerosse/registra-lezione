@@ -44,9 +44,25 @@ const SMC = {tab: 'aula', comp: null, rg: null};
 // Le righe di spiegazione sotto i titoli si nascondono; accanto al titolo compare (i): al tocco si legge e si ascolta.
 // Restano le informazioni brevi con i numeri (date, minuti, carte): sono dati, non spiegazioni.
 const SM_SPIEGA = '.smi-card .set .t > span:not([id]), .smi-sez .aiopt > small, .side .brand small, .tile small, .sml-gc small.sp, .smr-mom small.sp, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
+// spiegazioni scritte piccole nelle pagine che arrivano da Verba Manent: anche loro diventano (i)
+function smSpiegazioniPiccole(radice) {
+  const out = [];
+  (radice || document).querySelectorAll('small, .sp, .hint, .tx, p, span, div').forEach(el => {
+    if (el.dataset.st || el.offsetParent === null || el.closest('.velo, .dlg, .info-pop, .smi-card, .side, .chat, .msg, .bolla, svg, .stx, .karaoke, .kar, .carta, .flash, .rip-c, table')) return;
+    if ([...el.children].some(c => !['B', 'I', 'EM', 'STRONG', 'BR', 'A', 'SPAN'].includes(c.tagName))) return;   // solo testo
+    const testo = el.textContent.trim();
+    if (testo.length < 35 || !/\s/.test(testo) || parseFloat(getComputedStyle(el).fontSize) >= 15) return;
+    const pa = el.parentElement; if (!pa) return;
+    const tit = [...pa.children].find(c => c !== el && /^(B|STRONG|H3|H4)$/.test(c.tagName) && c.textContent.trim());
+    if (tit) out.push(el);
+  });
+  return out;
+}
 function smInfoGiro(radice) {
   if (typeof SCRIPTA === 'undefined' || !SCRIPTA) return;
-  (radice || document).querySelectorAll(SM_SPIEGA).forEach(el => {
+  const tutti = [...(radice || document).querySelectorAll(SM_SPIEGA)];
+  try { tutti.push(...smSpiegazioniPiccole(radice)); } catch (e) {}
+  tutti.forEach(el => {
     if (el.dataset.st) return;
     el.dataset.st = 1;
     const testo = el.textContent.trim();
@@ -70,6 +86,19 @@ function smInfoGiro(radice) {
     if (tit && (tit.hasAttribute('data-t') || tit.querySelector('[data-t]'))) tit.after(i); else (tit || el.parentElement).appendChild(i);
   });
 }
+// nessuna scritta sotto i 15 px (regola di Scripta Manent): quello che resta piccolo si ingrandisce
+function smTestoGrande(radice) {
+  if (typeof SCRIPTA === 'undefined' || !SCRIPTA || !radice) return;
+  const w = document.createTreeWalker(radice, NodeFilter.SHOW_TEXT);
+  const visti = new Set(); let n;
+  while ((n = w.nextNode())) {
+    const el = n.parentElement;
+    if (!el || visti.has(el) || !n.textContent.trim()) continue;
+    visti.add(el);
+    if (el.closest('kbd, svg, .info-i, .recdot, .lmsf, .an-graf, canvas') || el.classList.contains('st-nasc')) continue;
+    if (parseFloat(getComputedStyle(el).fontSize) < 15) el.style.fontSize = '15px';
+  }
+}
 function smInfoChiudi() { document.querySelectorAll('.info-pop').forEach(x => x.remove()); }
 document.addEventListener('click', smInfoChiudi);
 
@@ -79,7 +108,17 @@ function smCasaPrepara() {
   disegnaSpazioDsa = smCasa;           // al posto dello Spazio DSA di Verba Manent (e dei riquadri verifica sopra)
   const sec = $('v-dsa');
   if (sec) sec.classList.add('smcasa');
-  smInfoGiro(document.querySelector('.side'));
+  smInfoGiro(document.querySelector('.side')); smTestoGrande(document.querySelector('.side'));
+  // le pagine si ridisegnano da sole (dati che arrivano, finestre): ogni volta si ricontrolla, con calma
+  let attesa = null;
+  new MutationObserver(() => {
+    if (attesa) return;                 // al massimo una volta al secondo (la pagina di registrazione cambia di continuo)
+    attesa = setTimeout(() => {
+      attesa = null;
+      const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) { smInfoGiro(s); smTestoGrande(s); }
+      document.querySelectorAll('.velo .dlg').forEach(smTestoGrande);
+    }, 1000);
+  }).observe(document.body, {childList: true, subtree: true});
   if (typeof smLezioniPrepara === 'function') smLezioniPrepara();
   if (typeof smRegistraAttiva === 'function') smRegistraAttiva();
   if (typeof smStudiaPrepara === 'function') smStudiaPrepara();
@@ -89,7 +128,7 @@ function smCasaPrepara() {
   const vaiPrima = vai;
   vai = function (p, tornando) {
     const r = vaiPrima.apply(this, arguments);
-    const giro = () => { const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) smInfoGiro(s); };
+    const giro = () => { const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) { smInfoGiro(s); smTestoGrande(s); } };
     setTimeout(giro, 0); setTimeout(giro, 700); setTimeout(giro, 2000);
     return r;
   };
