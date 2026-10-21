@@ -541,7 +541,7 @@ def cerca_aggiornamento():
     with urllib.request.urlopen(req, timeout=20, context=ssl.create_default_context()) as r:
         remota = json.loads(r.read().decode("utf-8"))
     loc = _versione_locale()
-    base = {"versione": remota.get("versione"), "novita": remota.get("novita", ""), "novita_en": remota.get("novita_en", "")}
+    base = {"versione": remota.get("versione"), "novita": remota.get("novita", ""), "novita_en": remota.get("novita_en", ""), "novita_sm": remota.get("novita_sm", ""), "novita_sm_en": remota.get("novita_sm_en", "")}
     if iphone:      # sull'iPhone l'app non scarica niente: avvisa e apre TestFlight, dove si tocca «Aggiorna»
         def num(v):
             return tuple(int(x) for x in re.findall(r"\d+", str(v or "0")))

@@ -168,6 +168,13 @@ class Api:
     def nota(self, testo, tipo=""):
         return self._m.nota(testo, tipo)
 
+    def apri_mini(self):
+        """«Tieni in miniatura»: durante la registrazione, la finestrella sempre davanti (e la grande si riduce)."""
+        if getattr(self._m, "reg", None) is None or self._mini is not None:
+            return {"ok": False}
+        threading.Thread(target=self._apri_mini, daemon=True).start()
+        return {"ok": True}
+
     def note(self, cartella=None):
         return self._m.note(cartella)
 
@@ -625,6 +632,67 @@ class Api:
     def leggimi_foto(self, percorsi):
         return self._m.leggimi_foto(percorsi)
 
+    # strumenti di Scripta Manent
+    def sm_correggi(self, testo):
+        return self._m.sm_correggi(testo)
+
+    def sm_problema(self, testo, percorsi=None):
+        return self._m.sm_problema(testo, percorsi)
+
+    def sm_diario(self, percorsi):
+        return self._m.sm_diario(percorsi)
+
+    def sm_compiti(self):
+        return self._m.sm_compiti()
+
+    def sm_formule(self):
+        return self._m.sm_formule()
+
+    def sm_formule_foto(self, percorsi, dove="libro", pagina="", materia=""):
+        return self._m.sm_formule_foto(percorsi, dove, pagina, materia)
+
+    def sm_formula_togli(self, fid):
+        return self._m.sm_formula_togli(fid)
+
+    def sm_formula_rimetti(self, voce):
+        return self._m.sm_formula_rimetti(voce)
+
+    def sm_compito_modifica(self, vid, campi):
+        return self._m.sm_compito_modifica(vid, campi)
+
+    def sm_pezzi(self, vid, rifai=False):
+        return self._m.sm_pezzi(vid, rifai)
+
+    def sm_pezzo(self, vid, i, fatto):
+        return self._m.sm_pezzo(vid, i, fatto)
+
+    def sm_ricordami(self, vid, quando):
+        return self._m.sm_ricordami(vid, quando)
+
+    def sm_promemoria(self):
+        return self._m.sm_promemoria()
+
+    def sm_voti(self, materia=None):
+        return self._m.sm_voti(materia)
+
+    def sm_voto_nuovo(self, voto):
+        return self._m.sm_voto_nuovo(voto)
+
+    def sm_voto_togli(self, vid, materia=None):
+        return self._m.sm_voto_togli(vid, materia)
+
+    def sm_momenti(self, materia, tipi=None):
+        return self._m.sm_momenti(materia, tipi)
+
+    def sm_verifica(self, voci=None):
+        return self._m.sm_verifica(voci)
+
+    def sm_compito_nuovo(self, voce):
+        return self._m.sm_compito_nuovo(voce)
+
+    def sm_compito(self, vid, fatto=None, togli=False):
+        return self._m.sm_compito(vid, fatto, togli)
+
     def leggimi_pagina(self, i, n):
         return self._m.leggimi_pagina(i, n)
 
@@ -778,14 +846,14 @@ class Api:
                     scala = max(1.0, ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100)
                 except Exception:
                     pass
-            w, h = 300, 252
+            w, h = 300, 252 + (44 if __import__("edizione").SCRIPTA else 0)
             x = max(0, int(sw / scala - w - 30))
             y = max(0, int(sh / scala - h - 80))
             log.info("mini finestra: schermo %sx%s, scala %.2f, posizione %s,%s", sw, sh, scala, x, y)
             self._mini = webview.create_window(
                 __import__("edizione").NOME + " – in registrazione", url=str(PAGINE / "mini.html"), js_api=self,
                 width=w, height=h, x=x, y=y, resizable=False,
-                frameless=True, easy_drag=False, on_top=True, background_color="#0d4275")
+                frameless=True, easy_drag=False, on_top=True, background_color="#0F1F24" if __import__("edizione").SCRIPTA else "#0d4275")
             ok = self._mini.events.shown.wait(10)
             log.info("mini finestra mostrata: %s", ok)
             if ok and sys.platform == "win32":

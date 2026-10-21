@@ -94,8 +94,9 @@ def leggi_config():
     c.setdefault("cartella_pacchetti", str(cartella_documenti() / tr("pacchetti_cartella")))
     c.setdefault("appunti_attivi", False)
     c.setdefault("chiave", "")
-    if ed.SCRIPTA:                  # Scripta Manent: la lettura facilitata (Modalita' DSA) e' sempre accesa
+    if ed.SCRIPTA:                  # Scripta Manent: lettura facilitata sempre accesa, si registrano solo lezioni
         c["lettura_facilitata"] = True
+        c["tipo"] = "lezione"
     return c
 
 
@@ -593,7 +594,7 @@ class Motore:
                 "appunti_on": bool(self.cfg.get("appunti_attivi")) and ha_chiave, "chiave": ha_chiave,
                 "licenza": self.lic.stato(),
                 "nome_classe": self.cfg.get("nome_classe") or "",
-                "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")),
+                "lettura": self._lettura(), "aula_rumorosa": bool(self.cfg.get("aula_rumorosa")), "sm_voce_vel": float(self.cfg.get("sm_voce_vel") or 0.9),
                 "rg_max": int(self.cfg.get("rg_max") or 20), "rg_modo": self.cfg.get("rg_modo") or "carte",
                 "rg_promemoria": bool(self.cfg.get("rg_promemoria", True)), "rg_ora": self.cfg.get("rg_ora") or "18:00",
                 "da_invito": self.cfg.get("da_invito") or "", "invito_nascosto": bool(self.cfg.get("invito_nascosto")),
@@ -655,7 +656,7 @@ class Motore:
                 self.cfg["formato_appunti"] = "cornell"
                 return {"ok": False, "msg": tr("mio_vuoto")}
         elif campo == "tipo":
-            self.cfg["tipo"] = valore if valore in ap.FORMATI_TIPO else "lezione"
+            self.cfg["tipo"] = valore if valore in ap.FORMATI_TIPO and not ed.SCRIPTA else "lezione"
         elif campo == "mio":
             v = valore or {}
             self.cfg["mio"] = {"nome": str(v.get("nome") or "").strip()[:60] or tr("fmt_mio"),
@@ -680,6 +681,11 @@ class Motore:
             self.cfg["rg_ora"] = valore if re.fullmatch(r"\d{2}:\d{2}", str(valore or "")) else "18:00"
         elif campo == "parte_minuti":
             self.cfg["parte_minuti"] = 60 if int(valore) == 60 else 30
+        elif campo == "sm_voce_vel":
+            try:
+                self.cfg["sm_voce_vel"] = max(0.6, min(1.4, float(valore)))
+            except (TypeError, ValueError):
+                return {"ok": False, "msg": "?"}
         elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla", "inizia_fatto"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
@@ -2870,6 +2876,213 @@ class Motore:
         if cur.strip():
             pagine.append(cur.strip())
         return self._lg_nuova("testo", titolo, pagine)
+
+    # ------------------------------------------------------------------ strumenti di Scripta Manent
+    # Correttore gentile, Problema passo passo, Compiti e scadenze (strumenti_sm.py)
+
+    def sm_correggi(self, testo):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            return {"ok": True, **sm.correggi(self.chiave(), testo)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("correttore")
+            return {"ok": False, "msg": tr("sm_corr_err")}
+
+    def sm_problema(self, testo, percorsi=None):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            spesa, testo = 0.0, str(testo or "")
+            for f in [x for x in percorsi or [] if x][:3]:
+                r = ch.leggi_foto(self.chiave(), f, "foglio")
+                spesa += r["spesa"]
+                testo = (testo + "\n" + r["testo"]).strip()
+            if not testo.strip():
+                return {"ok": False, "msg": tr("sm_pb_vuoto")}
+            r = sm.problema(self.chiave(), testo)
+            r["spesa"] += spesa
+            return {"ok": True, **r}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("problema passo passo")
+            return {"ok": False, "msg": tr("sm_pb_err")}
+
+    def sm_diario(self, percorsi):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        nuovi, spesa = 0, 0.0
+        try:
+            for f in [x for x in percorsi or [] if x][:5]:
+                r = sm.diario(self.chiave(), BASE, f)
+                nuovi += r["nuovi"]
+                spesa += r["spesa"]
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("diario")
+            return {"ok": False, "msg": tr("sm_dia_err")}
+        return {"ok": True, "nuovi": nuovi, "spesa": spesa, "compiti": sm.compiti(BASE)}
+
+    def sm_compiti(self):
+        import strumenti_sm as sm
+        self._sm_leggi_lezioni()
+        self._sm_leggi_formule()
+        return {"ok": True, "compiti": sm.compiti(BASE), "ricorda": sm.da_ricordare(BASE),
+                "oggi": datetime.date.today().isoformat(), "lavoro": bool(getattr(self, "_sm_lavoro", False))}
+
+    def _sm_leggi_lezioni(self):
+        """Scripta Manent: il diario si scrive da solo. Le lezioni nuove (pronte) vanno a Claude, una alla volta e una
+        volta sola, per trovare i compiti assegnati e le verifiche annunciate."""
+        import strumenti_sm as sm
+        if not ed.SCRIPTA or not self.chiave() or getattr(self, "_sm_lavoro", False):
+            return
+        da = sm.lezioni_da_leggere(BASE)
+        if not da:
+            return
+        self._sm_lavoro = True
+
+        def lavoro():
+            try:
+                for c in da[:6]:
+                    try:
+                        r = sm.compiti_da_lezione(self.chiave(), BASE, c)
+                        info = el.leggi_json(c / "info.json", {}) or {}
+                        el.aggiorna_info(c, compiti_letti=True,
+                                         spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+                        log.info("compiti dalla lezione %s: %s", c.name, r["nuovi"])
+                    except Exception:
+                        log.exception("compiti dalla lezione %s", c.name)
+                        el.aggiorna_info(c, compiti_letti=True)
+            finally:
+                self._sm_lavoro = False
+        threading.Thread(target=lavoro, daemon=True).start()
+
+    # le formule delle mie lezioni (il formulario che si riempie da solo)
+    def sm_formule(self):
+        import strumenti_sm as sm
+        self._sm_leggi_formule()
+        return {"ok": True, "formule": sm.formule(BASE), "lavoro": bool(getattr(self, "_sm_lavoro_f", False)),
+                "chiave": bool(self.chiave())}
+
+    def _sm_leggi_formule(self):
+        """Le lezioni nuove (pronte) vanno a Claude una volta sola per trovare le formule, in sottofondo."""
+        import strumenti_sm as sm
+        if not ed.SCRIPTA or not self.chiave() or getattr(self, "_sm_lavoro_f", False):
+            return
+        da = sm.lezioni_per_formule(BASE)
+        if not da:
+            return
+        self._sm_lavoro_f = True
+
+        def lavoro():
+            try:
+                for c in da[:6]:
+                    try:
+                        r = sm.formule_da_lezione(self.chiave(), BASE, c)
+                        info = el.leggi_json(c / "info.json", {}) or {}
+                        el.aggiorna_info(c, formule_lette=True,
+                                         spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+                        log.info("formule dalla lezione %s: %s", c.name, r["nuove"])
+                    except Exception:
+                        log.exception("formule dalla lezione %s", c.name)
+                        el.aggiorna_info(c, formule_lette=True)
+            finally:
+                self._sm_lavoro_f = False
+        threading.Thread(target=lavoro, daemon=True).start()
+
+    def sm_formule_foto(self, percorsi, dove="libro", pagina="", materia=""):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        nuove, spesa = 0, 0.0
+        try:
+            for f in [x for x in percorsi or [] if x][:5]:
+                r = sm.formule_da_foto(self.chiave(), BASE, f, dove, pagina, materia)
+                nuove += r["nuove"]
+                spesa += r["spesa"]
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("formule dalla foto")
+            return {"ok": False, "msg": tr("sm_fo_err")}
+        return {"ok": True, "nuove": nuove, "spesa": spesa, "formule": sm.formule(BASE)}
+
+    def sm_formula_togli(self, fid):
+        import strumenti_sm as sm
+        tolta = sm.togli_formula(BASE, fid)
+        return {"ok": bool(tolta), "tolta": tolta, "formule": sm.formule(BASE)}
+
+    def sm_formula_rimetti(self, voce):
+        import strumenti_sm as sm
+        return {"ok": sm.rimetti_formula(BASE, voce), "formule": sm.formule(BASE)}
+
+    def sm_compito_modifica(self, vid, campi):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.modifica(BASE, vid, campi or {})}
+
+    def sm_pezzi(self, vid, rifai=False):
+        import strumenti_sm as sm
+        try:
+            r = sm.pezzi(self.chiave(), BASE, vid, bool(rifai))
+            return {"ok": True, **r, "compiti": sm.compiti(BASE)}
+        except Exception:
+            log.exception("pezzi del compito")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_pezzo(self, vid, i, fatto):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.pezzo(BASE, vid, i, fatto)}
+
+    def sm_ricordami(self, vid, quando):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.ricordami(BASE, vid, quando)}
+
+    def sm_promemoria(self):
+        import strumenti_sm as sm
+        return {"ok": True, "pronti": sm.promemoria_ora(BASE)}
+
+    # Studia: voti della scuola, momenti segnati, cosa posso usare in verifica
+    def sm_voti(self, materia=None):
+        import strumenti_sm as sm
+        return {"ok": True, "voti": sm.voti_scuola(BASE, materia)}
+
+    def sm_voto_nuovo(self, voto):
+        import strumenti_sm as sm
+        v = sm.voto_nuovo(BASE, voto or {})
+        return {"ok": bool(v), "voti": sm.voti_scuola(BASE, (voto or {}).get("materia"))}
+
+    def sm_voto_togli(self, vid, materia=None):
+        import strumenti_sm as sm
+        t = sm.voto_togli(BASE, vid)
+        return {"ok": bool(t), "tolto": t, "voti": sm.voti_scuola(BASE, materia)}
+
+    def sm_momenti(self, materia, tipi=None):
+        import strumenti_sm as sm
+        return {"ok": True, "momenti": sm.momenti(BASE, materia, tuple(tipi) if tipi else ("chiarire",))}
+
+    def sm_verifica(self, voci=None):
+        """Senza argomenti: le voci spuntate. Con una lista: le salva."""
+        import strumenti_sm as sm
+        if voci is not None:
+            self.cfg["sm_verifica"] = [x for x in voci if x in sm.VERIFICA_VOCI]
+            salva_config(self.cfg)
+        return {"ok": True, "voci": sm.in_verifica(self.cfg)}
+
+    def sm_compito_nuovo(self, voce):
+        import strumenti_sm as sm
+        v = sm.aggiungi_voce(voce or {}, BASE)
+        return {"ok": bool(v), "compiti": sm.compiti(BASE)}
+
+    def sm_compito(self, vid, fatto=None, togli=False):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.segna(BASE, vid, fatto, togli)}
 
     def leggimi_foto(self, percorsi):
         if not self.chiave():

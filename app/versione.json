@@ -1,6 +1,8 @@
 {
- "versione": "4.15",
+ "versione": "4.16",
  "librerie": 2,
- "novita": "Sistemazioni interne: lo stesso programma ora può diventare anche Scripta Manent, il gemello pensato per chi ha un DSA. Qui non cambia niente.",
- "novita_en": "Internal changes: the same program can now also become Scripta Manent, its twin for students with dyslexia and other learning difficulties. Nothing changes here."
+ "novita": "Sistemazioni interne per Scripta Manent, il gemello pensato per chi ha un DSA. Qui non cambia niente.",
+ "novita_en": "Internal changes for Scripta Manent, the twin for students with dyslexia and other learning difficulties. Nothing changes here.",
+ "novita_sm": "Scripta Manent tutto nuovo: pagine più chiare e tutto il testo facile da leggere. Compiti con la voce del prof e i pezzi con il tempo, Matematica con frazioni, percentuali e convertitore, le formule delle tue lezioni, la finestrella in miniatura con «Segna questo momento», i voti della scuola e «In verifica posso usare».",
+ "novita_sm_en": "Scripta Manent all new: clearer pages and all text easy to read. Homework with the teacher's voice and timed parts, Maths with fractions, percentages and a converter, the formulas from your lessons, the small window with «Mark this moment», school grades and «In tests I can use»."
 }

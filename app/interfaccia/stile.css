@@ -1407,3 +1407,152 @@ html.scripta .dsaint,html.scripta .asaa,html.scripta .dsabanda,html.scripta .set
 html.scripta.android .side{background:#fff}
 html.scripta.android .nav a{color:#64748b}
 html.scripta.android .nav a.on{color:#0f766e;background:none;box-shadow:none}
+
+/* ===== Scripta Manent: Matematica, Correttore gentile, Compiti e scadenze (strumenti_sm.js) ===== */
+.smseg{margin-bottom:14px;flex-wrap:wrap}
+.smcalc{max-width:420px}
+.smdisp{background:#f1f6fb;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px;text-align:right;margin-bottom:12px;min-height:76px}
+.smespr{font-size:28px;font-weight:700;color:var(--ink);word-break:break-all;font-family:var(--dsa-font)}
+.smris{font-size:18px;color:var(--acc,#0369a1);font-weight:700;min-height:24px}
+.smtasti{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.smt{border:1.5px solid #d5e1ee;background:#fff;border-radius:12px;padding:14px 0;font:700 20px var(--dsa-font);color:var(--ink);cursor:pointer}
+.smt.op{background:#eef3f9;color:var(--navy)}
+.smt.ug{background:var(--acc,#0369a1);border-color:transparent;color:#fff}
+.smt:active{transform:scale(.97)}
+.smvocesw{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink)}
+.smvocesw .sw{cursor:pointer}
+.smtabw{overflow-x:auto}
+.smtab{border-collapse:collapse;margin:0 auto;font-family:var(--dsa-font)}
+.smtab th,.smtab td{width:38px;height:36px;text-align:center;border:1px solid #e2e8f0;font-size:15px}
+.smtab th{background:#eef3f9;color:var(--navy)}
+.smtab td{cursor:pointer;background:#fff}
+.smtab .riga{background:#e3f1ee}
+.smtab td.on{background:var(--acc,#0369a1);color:#fff;font-weight:700}
+.smforme{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.smforma{display:flex;gap:14px;align-items:center;padding:14px}
+.smfig{width:64px;height:64px;flex:none;fill:#e3f1ee;stroke:var(--acc,#0369a1);stroke-width:2}
+.smforma b{display:block;color:var(--ink);margin-bottom:4px;font-size:15px}
+.smf{font:600 15px var(--dsa-font);color:var(--ink);cursor:pointer;padding:3px 0}
+.smf span{display:inline-block;min-width:82px;font:600 12px "Segoe UI",system-ui,sans-serif;color:var(--mut)}
+.smpbtesto{font:15px/1.7 var(--dsa-font);color:var(--ink)}
+.smn{width:34px;height:34px;border-radius:50%;background:var(--acc,#0369a1);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.smpasso b{font-size:16px;color:var(--ink)}
+.smspieg{font:17px/1.8 var(--dsa-font);color:var(--ink);margin:12px 0 6px}
+.smcalcolo{font:700 20px var(--dsa-font);color:var(--ink);background:#f1f6fb;border-radius:10px;padding:10px 14px;margin-top:6px}
+.smpunti{display:flex;gap:6px;margin-top:12px}
+.smpunti i{width:22px;height:5px;border-radius:3px;background:#e2e8f0}
+.smpunti i.f{background:#99d5ca}.smpunti i.on{background:var(--acc,#0369a1)}
+.smcorrt{font-family:var(--dsa-font);font-size:17px;line-height:1.8}
+.smcorrout{font:17px/1.9 var(--dsa-font);color:var(--ink);background:var(--dsa-rbg,#f6f8fb);border-radius:12px;padding:12px 14px;-webkit-user-select:text;user-select:text}
+.smcorrl{display:flex;flex-wrap:wrap;gap:6px}
+.smcorrl s{color:var(--mut)}
+.smgr{margin-bottom:10px}
+.smgr summary .cnt{background:#eef3f9;color:var(--navy);border-radius:999px;font-size:12px;padding:1px 8px}
+.smlista{padding:0 12px 12px}
+.smvoce{display:flex;gap:12px;align-items:flex-start;padding:10px;border-top:1px solid #eef2f6}
+.smvoce:first-child{border-top:0}
+.smvoce b{color:var(--ink)}
+.smvoce div{font:15px/1.6 var(--dsa-font);color:var(--ink)}
+.smvoce.fatto div,.smvoce.fatto b{color:var(--mut);text-decoration:line-through}
+.smck{width:22px;height:22px;border:2px solid #b8c7d6;border-radius:7px;flex:none;cursor:pointer;margin-top:2px}
+.smck.on{background:var(--ok);border-color:var(--ok);box-shadow:inset 0 0 0 3px #fff}
+.smtipo{font-size:11px;padding:1px 8px;color:#9a3412;border-color:#fed7aa;background:#fff7ed}
+.smmano{display:grid;grid-template-columns:1fr 2fr 1fr 1fr;gap:10px}
+html.android .smmano,html.android .smforme{grid-template-columns:1fr}
+@media (max-width:720px){.smmano,.smforme{grid-template-columns:1fr}}
+body.smstampa{padding:20px;background:#fff;overflow:auto}
+body.smstampa .smfig{width:56px;height:56px}
+.smcorrout .ev{background:#cfe9e4;border-radius:4px;padding:0 3px;font-weight:700}
+.smtipo{display:inline-block!important;line-height:1.5!important;padding:0 8px!important;font-size:11px!important;vertical-align:middle;margin:0 0 2px 4px}
+
+/* ===== impaginazione a schede (schede.js) — per ora solo Scripta Manent ===== */
+html.scripta .sk-via{display:none!important}
+html.scripta .sk-tabs{display:flex;flex-wrap:wrap;margin:0 0 14px;width:max-content;max-width:100%}
+html.scripta .grp[data-sk] > .lbl,html.scripta .sdmom[data-sk] > h3,html.scripta .altrihd{display:none!important}
+html.scripta .grp[data-sk]{margin-top:0}
+html.scripta .altri .tile{background:#fff;border-color:#e6edf5;box-shadow:0 1px 2px rgba(15,27,45,.05)}
+html.scripta .altri .tile b{color:var(--ink)}html.scripta .altri .lbl{color:var(--mut)}
+html.scripta .altri .tile .ico.fam-studio{background:var(--f-studio)}html.scripta .altri .tile .ico.fam-ascolto{background:var(--f-ascolto)}html.scripta .altri .tile .ico.fam-mappe{background:var(--f-mappe)}html.scripta .altri .tile .ico.fam-prova{background:var(--f-prova)}html.scripta .altri .tile .ico.fam-scrivi{background:var(--f-scrivi)}
+html.scripta .altri .tile .ico{color:#fff}
+/* riquadri piu' bassi: 4 per riga sul PC */
+html.scripta .tiles{grid-template-columns:repeat(4,1fr);gap:8px}
+html.scripta .tile{padding:9px 10px;gap:10px}
+html.scripta .tile .ico{width:30px;height:30px;border-radius:9px}
+html.scripta .tile small{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html.scripta .tile,html.scripta .tile>span{min-width:0}
+@media (max-width:900px){html.scripta:not(.android) .tiles{grid-template-columns:repeat(3,1fr)}}
+/* Registra in una schermata */
+html.scripta .sk-due{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;align-items:start}
+html.scripta .sk-due .card{margin:0!important;padding:14px}
+html.scripta #tipoBox .aiopt small,html.scripta #doveBox .aiopt small{display:none}
+html.scripta #tipoBox .aiopt,html.scripta #doveBox .aiopt{display:flex;align-items:center;gap:8px;padding:9px 30px 9px 10px!important}
+html.scripta #tipoBox .aiopt b,html.scripta #doveBox .aiopt b{margin:0!important;font-size:13.5px}
+html.scripta #tipoBox .aiopt .ico,html.scripta #doveBox .aiopt .ico{width:28px;height:28px;border-radius:8px}
+html.scripta #tipoBox .aiopt .rd,html.scripta #doveBox .aiopt .rd{top:50%!important;transform:translateY(-50%)}
+html.scripta .sk-mn{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+html.scripta .recwrap{margin:16px 0 6px}
+html.scripta .sk-altro{margin-top:14px}
+html.scripta .sk-altro summary{font-size:14px;padding:12px 14px}
+html.scripta .sk-in{padding:0 14px 14px}
+html.scripta .sk-in .card,html.scripta .sk-in .imp{margin-top:10px!important}
+/* telefono */
+html.scripta.android .sk-due,html.scripta.android .sk-mn{grid-template-columns:1fr}
+html.scripta.android .tiles{grid-template-columns:1fr 1fr}
+html.scripta.android .tile{flex-direction:column;align-items:flex-start;gap:6px;overflow:hidden}
+html.scripta.android .sk-tabs{width:100%;flex-wrap:nowrap;overflow-x:auto}
+html.scripta.android .sk-tabs span{flex:1 0 auto;text-align:center;padding:7px 10px;white-space:nowrap}
+html.scripta.android #tipoBox{grid-template-columns:repeat(3,1fr)!important;gap:6px}
+html.scripta.android #tipoBox .aiopt,html.scripta.android #doveBox .aiopt{flex-direction:column;justify-content:center;text-align:center;gap:5px;padding:9px 6px!important}
+html.scripta.android #tipoBox .aiopt .rd,html.scripta.android #doveBox .aiopt .rd{display:none}
+html.scripta.android #tipoBox .aiopt b,html.scripta.android #doveBox .aiopt b{font-size:12.5px;line-height:1.25}
+/* «I miei strumenti» senza la voce «Altro» (le stesse funzioni restano nella lezione e in Studia) */
+html.scripta #sdAltroB,html.scripta #sdAltri{display:none!important}
+/* Scripta Manent registra solo lezioni; niente da ufficio (riunioni, verbali, collegamenti) */
+html.scripta .card:has(> #tipoBox),html.scripta .nav a[data-p="fare"],html.scripta #cgCard,html.scripta #mioBox,
+html.scripta #fmtBox [data-f="mio"],html.scripta [data-t="im.fmt.tipi"]{display:none!important}
+html.scripta .sk-due{grid-template-columns:1fr}
+/* verifica in arrivo, in cima a «I miei strumenti» */
+.smverbox{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}
+.smver{padding:12px 14px;border-left:4px solid var(--f-prova,#c2410c)}
+.smver b{color:var(--ink)}
+.smgen h3{margin:18px 0 6px;font-size:16px;color:var(--ink)}
+.smgen ul{margin:0;padding-left:20px;line-height:1.7}
+/* Compiti: come arrivano (tre riquadri) e tasti con la scritta */
+.smcome{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.smcm{display:flex;gap:12px;align-items:flex-start;border:1px solid #e6edf5;border-radius:14px;padding:12px;background:#fff}
+.smcm .ico{width:34px;height:34px;border-radius:10px;color:#fff}.smcm .ico svg{width:18px;height:18px}
+.smcm b{display:flex;align-items:center;gap:6px;color:var(--ink);font-size:14px}
+.smcm small{display:block;color:var(--mut);font-size:12.5px;line-height:1.45;margin-top:3px}
+.smnum{width:20px;height:20px;border-radius:50%;background:var(--acc,#0369a1);color:#fff;display:inline-grid;place-items:center;font-size:11px;flex:none}
+.smok{display:inline-block;margin-top:8px;font-size:12px;font-weight:700;color:var(--ok)}
+.smckl{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;flex:none}
+.smckl small{font-size:10.5px;color:var(--mut);font-weight:600}
+.smazioni{display:flex;flex-direction:column;gap:4px;align-items:flex-end;flex:none}
+.smazioni .lnk{display:inline-flex;align-items:center;gap:4px;font-size:12.5px}
+.smazioni .lnk svg{width:15px;height:15px}
+html.android .smcome{grid-template-columns:1fr}
+@media (max-width:820px){.smcome{grid-template-columns:1fr}}
+.smann{display:flex;align-items:center;gap:14px}
+.smann button{border:0;background:none;color:#5eead4;font:700 13.5px inherit;font-family:inherit;cursor:pointer;padding:4px 2px;text-transform:uppercase;letter-spacing:.4px}
+/* Scripta Manent: le formule delle mie lezioni */
+.smfm{margin-bottom:14px;padding:14px 16px}
+.smfmt{display:block;font-size:15px;color:var(--ink);margin-bottom:2px}
+.smfmh{font-size:14px;margin:4px 0 10px;color:var(--ink)}
+.smfmpag{width:78px;padding:6px 8px;font-size:13px}
+.smfmg{margin:14px 0 4px;font:600 12px "Segoe UI",system-ui,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.smfmr{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.smfmn{font-weight:600;color:var(--ink);font-size:13.5px}
+.smfmf{font:700 17px var(--dsa-font);color:var(--ink);margin:2px 0}
+.smfmo{font-size:12px;color:#0f766e;margin-top:3px}
+.smfma{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+html.android .smfmr{flex-direction:column;align-items:stretch}
+html.android .smfma{justify-content:flex-start}
+@media (max-width:720px){.smfmr{flex-direction:column;align-items:stretch}.smfma{justify-content:flex-start}}
+/* Scripta Manent: TUTTO il testo dell'interfaccia e' leggibile per un ragazzo DSA, non solo gli appunti.
+   Il carattere e' quello scelto in «Come leggo meglio» (di serie Atkinson Hyperlegible); piu' spazio tra lettere e parole;
+   niente maiuscolo, corsivo o barrato (le cose fatte restano grigie con la spunta). */
+html.scripta body,html.scripta button,html.scripta input,html.scripta select,html.scripta textarea{font-family:var(--dsa-font)}
+html.scripta body{letter-spacing:.02em;word-spacing:.08em;line-height:1.5}
+html.scripta body *{text-transform:none!important;font-style:normal!important}
+html.scripta body *:not(a):not(.lnk){text-decoration-line:none}
+html.scripta small,html.scripta .hint,html.scripta .sub{font-size:max(13px,.9em)}
