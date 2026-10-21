@@ -24,6 +24,7 @@ import secrets
 import shutil
 import socket
 import subprocess
+import sys
 import threading
 import time
 import urllib.error
@@ -558,7 +559,43 @@ def cerca(messaggio, ultimo_ip=None, attesa=2.5, id_centro=None):
             return da[0], {"id": parti[0], "nome": parti[2] if len(parti) > 2 else ""}
     except (OSError, socket.timeout):
         pass
+    if id_centro and (os.environ.get("VM_IPHONE") or sys.platform == "ios"):
+        # iPhone: il messaggio a tutti non passa; se il PC ha cambiato indirizzo lo cerco uno per uno
+        for ip, i in scansiona():
+            if i == id_centro:
+                return ip, {"id": i, "nome": ""}
     return None, None
+
+
+def _privato(ip):
+    return bool(re.match(r"^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)", ip or ""))
+
+
+def in_rete_locale():
+    """C'e' una rete locale (Wi-Fi, cavo, hotspot)? Col solo 4G/5G no."""
+    return any(_privato(ip) for ip in _io_ip())
+
+
+def scansiona(attesa=0.8):
+    """Cerca i PC con Verba Manent chiedendo uno per uno a tutta la rete di casa (/24).
+    Serve dove il «messaggio a tutti» e' bloccato (iPhone, alcune reti): torna [(ip, id), ...]."""
+    from concurrent.futures import ThreadPoolExecutor
+    mie = [ip for ip in _io_ip() if _privato(ip)]
+    cand = []
+    for ip in mie[:2]:
+        base = ip.rsplit(".", 1)[0]
+        cand += [f"{base}.{i}" for i in range(1, 255) if f"{base}.{i}" != ip]
+
+    def prova(x):
+        try:
+            with urllib.request.urlopen(f"http://{x}:{PORTA}/vm/ping", timeout=attesa) as r:
+                return x, json.loads(r.read()).get("id")
+        except Exception:
+            return None
+    if not cand:
+        return []
+    with ThreadPoolExecutor(max_workers=64) as ex:
+        return [r for r in ex.map(prova, cand) if r]
 
 
 def _chiedi(ip, percorso, token="", dati=None, metodo="POST", tempo=30):
@@ -579,18 +616,24 @@ def abbina(codice, mio_id, mio_nome, ips=()):
             break
         except Exception:
             continue
+    if not ip and not ips and not in_rete_locale():
+        return None, "no_wifi"            # il telefono e' sui dati mobili: il PC non si puo' trovare
     if not ip:
         ip, info = cerca(f"VMIA-CODICE?{codice}", attesa=3)
-    if not ip:
-        return None, "non_trovato"
-    try:
-        r = json.loads(_chiedi(ip, "/vm/abbina", dati=json.dumps({"codice": codice, "id": mio_id, "nome": mio_nome}).encode()))
-        return {"id": r["id"], "nome": r["nome"], "token": r["token"], "ip": ip, "ultimo": "", "ruolo": "centro"}, None
-    except urllib.error.HTTPError:
-        return None, "codice"
-    except Exception:
-        log.exception("sincronizza: abbina")
-        return None, "rete"
+    lista = [ip] if ip else [x for x, _ in scansiona()]       # dove il messaggio a tutti non passa (iPhone)
+    if not lista:
+        return None, ("non_trovato" if in_rete_locale() else "no_wifi")
+    err = "codice"
+    for ip in lista:
+        try:
+            r = json.loads(_chiedi(ip, "/vm/abbina", dati=json.dumps({"codice": codice, "id": mio_id, "nome": mio_nome}).encode()))
+            return {"id": r["id"], "nome": r["nome"], "token": r["token"], "ip": ip, "ultimo": "", "ruolo": "centro"}, None
+        except urllib.error.HTTPError:
+            continue                          # quel PC ha un altro codice
+        except Exception:
+            log.exception("sincronizza: abbina")
+            err = "rete"
+    return None, err
 
 
 def sincronizza(centro, base, pacchetti, cfg, opzioni, avanzamento=lambda f, t: None):

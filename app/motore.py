@@ -4259,7 +4259,7 @@ class Motore:
             self.cfg["sync_id"] = __import__("secrets").token_hex(6)
         d, err = self._sy_mod.abbina(codice, self.cfg["sync_id"], self.nome_dispositivo(), ips)
         if not d:
-            return {"ok": False, "msg": tr({"non_trovato": "sy_err_trova", "codice": "sy_err_codice"}.get(err, "sy_err_rete"))}
+            return {"ok": False, "msg": tr({"non_trovato": "sy_err_trova", "codice": "sy_err_codice", "no_wifi": "sy_err_wifi"}.get(err, "sy_err_rete"))}
         lista = [x for x in self.cfg.get("sync_dispositivi") or [] if x.get("id") != d["id"]]
         lista.append(d)
         self.cfg["sync_dispositivi"] = lista

@@ -1,8 +1,8 @@
 {
- "versione": "4.17",
+ "versione": "4.18",
  "librerie": 2,
- "novita": "Risolto il blocco a fine registrazione: a volte Claude scriveva gli appunti in modo strano, il PDF di una parte non veniva fatto e la pagina si fermava (tempo fermo, «Fine» che non risponde). Ora gli appunti scritti male vengono sistemati da soli.",
- "novita_en": "Fixed the freeze at the end of a recording: sometimes Claude wrote the notes in an odd way, one part's PDF was not made and the page stopped (timer stuck, «Finish» not responding). Badly written notes are now fixed automatically.",
+ "novita": "Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone (lo cerca su tutta la rete di casa); se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
+ "novita_en": "Connect to the PC: with the code the phone now finds the PC on iPhone too (it searches the whole home network); if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
  "novita_sm": "Risolto il blocco a fine registrazione: se gli appunti arrivano scritti male, ora vengono sistemati da soli e la pagina non si ferma più.",
  "novita_sm_en": "Fixed the freeze at the end of a recording: badly written notes are now fixed automatically and the page no longer stops."
 }

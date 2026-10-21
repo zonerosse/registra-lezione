@@ -1,7 +1,7 @@
 {
- "versione": "0.13.27",
+ "versione": "0.13.28",
  "codice": 13,
- "novita": "iPhone come gli altri: accesso con Google Drive (le stesse lezioni del PC), «Collegati al PC» inquadrando il QR, foto alla lavagna. «Studia» senza lezioni spiega come averne una (dal PC, registrando, importando) e cosa troverai.",
- "novita_en": "iPhone like the others: Google Drive sign-in (the same lectures as on the PC), «Connect to the PC» by scanning the QR, photo of the board. «Study» without lectures explains how to get one (from the PC, recording, importing) and what you will find.",
- "contenuto": 103
+ "novita": "Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone (lo cerca su tutta la rete di casa); se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
+ "novita_en": "Connect to the PC: with the code the phone now finds the PC on iPhone too (it searches the whole home network); if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
+ "contenuto": 104
 }
