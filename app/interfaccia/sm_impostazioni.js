@@ -92,7 +92,8 @@ async function smImpDisegna() {
   const pg = $('v-imp'); if (!pg || !pg.dataset.smi) return;
   pg.querySelector('.hd h2').textContent = ti('h');
   const hd = pg.querySelector('.hd');
-  if (!hd.querySelector('.smi-ok')) hd.insertAdjacentHTML('beforeend', `<span class="smi-ok">${smIco('g-ok')} ${esc(ti('salvate'))}</span>`);
+  if (!hd.querySelector('.smi-ok')) hd.insertAdjacentHTML('beforeend', '<span class="smi-ok"></span>');
+  hd.querySelector('.smi-ok').innerHTML = `${smIco('g-ok')} ${esc(ti('salvate'))}`;   // la lingua puo' arrivare dopo
   $('smiNav').innerHTML = SMI_SEZ.map(([k, i]) => `<button class="${k === SMI.sez ? 'on' : ''}" data-s="${k}">${smIco(i)}<span>${esc(ti('s.' + k))}</span></button>`).join('');
   $('smiNav').querySelectorAll('button').forEach(b => b.onclick = () => { SMI.sez = b.dataset.s; smImpDisegna(); });
   pg.querySelectorAll('.smi-sez').forEach(s => s.classList.toggle('hidden', s.dataset.sez !== SMI.sez));
