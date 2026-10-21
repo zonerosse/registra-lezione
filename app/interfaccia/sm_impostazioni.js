@@ -13,7 +13,7 @@ const SMI_T = {
     'rg.n': 'Quante carte al giorno', 'rg.n.s': 'Il ripasso di oggi non supera questo numero', 'rg.prom': 'Ricordamelo', 'rg.prom.s': 'Un avviso sul PC o sul telefono', 'rg.ora': 'A che ora',
     'rg.anki': 'Esporta per Anki', 'rg.anki.s': 'Per chi usa già Anki o AnkiDroid', esporta: 'Esporta',
     'mat.h': 'Le mie materie', 'mat.0': 'Le materie arrivano con le lezioni: quando registri, scegli la materia.', 'mat.lez': '{n} lezioni', orario: 'Orario delle lezioni', 'orario.s': 'Con l\'orario la materia giusta arriva da sola',
-    apri: 'Apri', 'r.dur': 'Durante la registrazione', 'r.audio': 'Audio', 'r.dove': 'Dove salvo', 'aula': 'Aula rumorosa, sempre', 'aula.s': 'Toglie brusio e sedie in tutte le lezioni. Spento: decide il programma',
+    iz: 'Inizia qui', 'iz.s': 'Google, Claude, telefono e web in 3 passi', apri: 'Apri', 'r.dur': 'Durante la registrazione', 'r.audio': 'Audio', 'r.dove': 'Dove salvo', 'aula': 'Aula rumorosa, sempre', 'aula.s': 'Toglie brusio e sedie in tutte le lezioni. Spento: decide il programma',
     'ver.nota': 'Quello che spunti qui decide cosa ti preparo da stampare e portare in verifica, e come ti alleno.',
     'v.mappe': 'Mappe', 'v.formulario': 'Formulario', 'v.calcolatrice': 'Calcolatrice', 'v.tabelline': 'Tabella delle tabelline', 'v.tempo': 'Tempo in più', 'v.orale': 'Interrogazione al posto dello scritto', 'v.lettore': 'Lettura ad alta voce del testo', 'v.meno': 'Meno esercizi',
     'p.pc': 'Le registrazioni restano sul tuo PC', 'p.pc.s': 'Audio, trascrizioni e appunti non vengono mandati a noi', 'p.voce': 'Nessuna impronta della voce', 'p.voce.s': '«Chi parla» distingue le voci solo mentre lavora, poi cancella tutto',
@@ -29,7 +29,7 @@ const SMI_T = {
     'rg.n': 'Cards per day', 'rg.n.s': 'Today\'s review never goes over this', 'rg.prom': 'Remind me', 'rg.prom.s': 'A notice on the PC or phone', 'rg.ora': 'At what time',
     'rg.anki': 'Export to Anki', 'rg.anki.s': 'For Anki or AnkiDroid users', esporta: 'Export',
     'mat.h': 'My subjects', 'mat.0': 'Subjects come with lessons: choose the subject when you record.', 'mat.lez': '{n} lessons', orario: 'Lesson timetable', 'orario.s': 'With the timetable the right subject arrives by itself',
-    apri: 'Open', 'r.dur': 'While recording', 'r.audio': 'Audio', 'r.dove': 'Where I save', 'aula': 'Noisy classroom, always', 'aula.s': 'Removes chatter and chairs in all lessons. Off: the program decides',
+    iz: 'Start here', 'iz.s': 'Google, Claude, phone and web in 3 steps', apri: 'Open', 'r.dur': 'While recording', 'r.audio': 'Audio', 'r.dove': 'Where I save', 'aula': 'Noisy classroom, always', 'aula.s': 'Removes chatter and chairs in all lessons. Off: the program decides',
     'ver.nota': 'What you tick here decides what I prepare for you to print and bring to tests, and how I train you.',
     'v.mappe': 'Maps', 'v.formulario': 'Formulas', 'v.calcolatrice': 'Calculator', 'v.tabelline': 'Times table', 'v.tempo': 'Extra time', 'v.orale': 'Oral instead of written', 'v.lettore': 'Text read aloud', 'v.meno': 'Fewer exercises',
     'p.pc': 'Recordings stay on your PC', 'p.pc.s': 'Audio, transcripts and notes are not sent to us', 'p.voce': 'No voice print', 'p.voce.s': '«Who is speaking» tells voices apart only while working, then deletes everything',
@@ -71,6 +71,8 @@ function smImpPrepara() {
   // Trascrizione, Appunti e Claude, PC e telefono, Inviti, Dati
   sez('tras').append($('dvCard'));
   sez('ap').append(lblCard('im.ai'), lblCard('im.fmt'), card($('pwIn')), $('hoCard'));
+  sez('ap').insertAdjacentHTML('afterbegin', `<div class="card smi-card" style="margin-bottom:14px">${smiRiga(ti('iz'), ti('iz.s'), `<button class="btn b-main b-sm" id="smiIz">${esc(ti('apri'))} ›</button>`)}</div>`);
+  $('smiIz').onclick = () => { if (window.iniziaQui) window.iniziaQui(); };
   sez('sync').append(lblCard('sy.lbl'), $('clCard'));
   sez('inv').append($('invCard')); $('invCard').classList.remove('hidden');
   sez('io').append(lblCard('im.dati'));
