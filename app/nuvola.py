@@ -48,7 +48,7 @@ import zip_aes as za
 
 log = logging.getLogger("registra_lezione")
 
-CARTELLA = "Verba Manent IA"
+CARTELLA = __import__("edizione").NOME
 STUDIO = "_studio"
 INDICE = "indice.json"          # in chiaro: solo verifica della password e versione
 INDICE_Z = "indice.zip"         # cifrato: le lezioni con le loro firme

@@ -26,7 +26,8 @@ import urllib.parse
 from pathlib import Path
 
 QUI = Path(__file__).resolve().parent
-APP = "Verba Manent IA"
+import edizione as ed      # noqa: E402  (Verba Manent IA o Scripta Manent)
+APP = ed.NOME
 SITO_ASSISTENZA = "https://puntowebferrara.com/contatti/"
 
 
@@ -52,8 +53,8 @@ def cartella_documenti():
 
 def _base():
     """Cartella delle registrazioni: "Lezioni registrate" (o "Recorded lectures" su un Windows non italiano)."""
-    it = cartella_documenti() / "Lezioni registrate"
-    en = cartella_documenti() / "Recorded lectures"
+    it = cartella_documenti() / ed.CARTELLA_LEZIONI[0]
+    en = cartella_documenti() / ed.CARTELLA_LEZIONI[1]
     if it.exists() or not en.exists() and _lingua_pc() == "it":
         return it
     return en
@@ -66,7 +67,7 @@ def _lingua_pc():
 
 BASE = _base()
 BASE.mkdir(parents=True, exist_ok=True)
-CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / "RegistraLezione" / "config.json"
+CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / ed.CARTELLA_CONFIG / "config.json"
 
 logging.basicConfig(filename=str(BASE / "registra_lezione.log"), level=logging.INFO,
                     format="%(asctime)s %(levelname)s %(message)s", encoding="utf-8")
@@ -93,6 +94,8 @@ def leggi_config():
     c.setdefault("cartella_pacchetti", str(cartella_documenti() / tr("pacchetti_cartella")))
     c.setdefault("appunti_attivi", False)
     c.setdefault("chiave", "")
+    if ed.SCRIPTA:                  # Scripta Manent: la lettura facilitata (Modalita' DSA) e' sempre accesa
+        c["lettura_facilitata"] = True
     return c
 
 
@@ -272,7 +275,7 @@ def schermo_risoluzione():
 def rinomina_collegamenti():
     """Il programma si chiama ora «Verba Manent IA»: i collegamenti «Registra Lezione» (Desktop e menu Start)
     diventano «Verba Manent IA», con il logo nuovo. Solo su Windows e solo se ci sono quelli vecchi."""
-    if sys.platform != "win32" or not getattr(sys, "frozen", False):
+    if sys.platform != "win32" or not getattr(sys, "frozen", False) or ed.SCRIPTA:
         return
     try:
         cartelle = []
@@ -605,7 +608,7 @@ class Motore:
                 "diretta": bool(self.cfg.get("diretta")), "parole_n": self._parole_n(),
                 "precisa": bool(self.cfg.get("trascrizione_precisa")),
                 "chi_parla": bool(self.cfg.get("chi_parla", True)),
-                "facilitata": bool(self.cfg.get("lettura_facilitata")),
+                "facilitata": bool(self.cfg.get("lettura_facilitata")), "edizione": ed.EDIZIONE, "nome_app": ed.NOME,
                 "dove": self.cfg.get("trascrivi_dove") or "qui", "server_endpoint": (self._server_dati() or {}).get("endpoint", ""),
                 "modello": self.cfg.get("modello") or "generica", "modelli_nome": self.cfg.get("modelli_nome") or {},
                 "modello_mio": self.cfg.get("modello_mio") or None,
@@ -680,7 +683,7 @@ class Motore:
         elif campo in ("aula_rumorosa", "rg_promemoria", "invito_nascosto", "mini_finestra", "promemoria_dnd", "diretta", "trascrizione_precisa", "solo_carica", "chi_parla", "inizia_fatto"):
             self.cfg[campo] = bool(valore)
         elif campo == "lettura_facilitata":
-            self.cfg[campo] = el.FACILITATA = bool(valore)
+            self.cfg[campo] = el.FACILITATA = bool(valore) or ed.SCRIPTA
         elif campo == "quando":
             self.cfg["quando"] = "dopo" if valore == "dopo" else "durante"
         elif campo == "modo":

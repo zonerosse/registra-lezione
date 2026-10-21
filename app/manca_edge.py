@@ -9,7 +9,7 @@ import webbrowser
 from pathlib import Path
 
 LINK = "https://go.microsoft.com/fwlink/p/?LinkId=2124703"      # Evergreen Bootstrapper di Microsoft
-CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / "RegistraLezione" / "config.json"
+CONFIG = Path(os.environ.get("APPDATA") or Path.home() / ".config") / __import__("edizione").CARTELLA_CONFIG / "config.json"
 
 TESTI = {
     "it": {"tit": "Manca un componente di Windows",

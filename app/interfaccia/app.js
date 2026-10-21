@@ -36,6 +36,7 @@ async function avvio() {
   while (true) {
     let r = {};
     try { r = await A.pronto(); } catch (e) { r = {}; }
+    if (r.edizione === 'scripta' && typeof attivaScripta === 'function') attivaScripta();     // Scripta Manent: nome e logo già nello splash
     if (r.errore) { clearInterval(anim); $('splErr').textContent = t('spl.err') + r.errore; $('splErr').classList.remove('hidden'); return; }
     if (r.pronto) break;
     await pausa(150);
@@ -45,10 +46,12 @@ async function avvio() {
   await pausa(Math.max(250, 1100 - (Date.now() - t0)));
   R = await A.riepilogo();
   LINGUA = R.lingua || LINGUA;
+  if (R.edizione === 'scripta' && typeof attivaScripta === 'function') attivaScripta();
   traduciPagina();
   disegnaFacilitata();
   inizializza();
   disegnaHoPronto();
+  if (typeof SCRIPTA !== 'undefined' && SCRIPTA) vai('dsa');          // Scripta Manent si apre su «I miei strumenti»
   $('splash').classList.add('via');
   setTimeout(() => $('splash').remove(), 500);
   if (!R.lingua_scelta) benvenuto();

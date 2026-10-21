@@ -22,3 +22,13 @@ un pacchetto da mandare a Claude.
 ## Scaricare
 Ultima versione, sempre allo stesso link:
 https://github.com/zonerosse/registra-lezione/releases/latest/download/RegistraLezione-Setup.exe
+
+## Scripta Manent (edizione per chi ha un DSA)
+Stesso programma, stesso aggiornamento: l'installazione di Scripta Manent mette accanto all'exe il file
+`edizione.json` (`{"edizione": "scripta"}`), l'exe si chiama «Scripta Manent.exe» con la sua icona
+(`grafica/scripta/icona.ico`, la disegna `tools/logo_scripta.py`). Il codice che cambia con l'edizione
+sta in `app/edizione.py` (Python) e `app/interfaccia/scripta.js` (pagina). Impostazioni, cartella delle
+lezioni e cartella nel cloud sono separate da quelle di Verba Manent IA.
+Per provarla senza installare: `RL_EDIZIONE=scripta`.
+
+https://github.com/zonerosse/registra-lezione/releases/latest/download/ScriptaManent-Setup.exe

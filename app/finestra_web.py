@@ -77,7 +77,7 @@ class Api:
     def pronto(self):
         if self._errore:
             return {"pronto": False, "errore": self._errore.strip().splitlines()[-1]}
-        return {"pronto": self._m is not None}
+        return {"pronto": self._m is not None, "edizione": __import__("edizione").EDIZIONE}
 
     # ------------------------------------------------------------------ stato
     def stato(self):
@@ -783,7 +783,7 @@ class Api:
             y = max(0, int(sh / scala - h - 80))
             log.info("mini finestra: schermo %sx%s, scala %.2f, posizione %s,%s", sw, sh, scala, x, y)
             self._mini = webview.create_window(
-                "Verba Manent IA – in registrazione", url=str(PAGINE / "mini.html"), js_api=self,
+                __import__("edizione").NOME + " – in registrazione", url=str(PAGINE / "mini.html"), js_api=self,
                 width=w, height=h, x=x, y=y, resizable=False,
                 frameless=True, easy_drag=False, on_top=True, background_color="#0d4275")
             ok = self._mini.events.shown.wait(10)
@@ -929,7 +929,7 @@ class Api:
 def main(prova=False):
     api = Api()
     win = webview.create_window(
-        "Verba Manent IA", url=str(PAGINE / "index.html"), js_api=api,
+        __import__("edizione").NOME, url=str(PAGINE / "index.html"), js_api=api,
         width=1060, height=730, min_size=(860, 600), background_color="#061e36", text_select=True)
     api._win = win
     win.events.closing += api._chiusura

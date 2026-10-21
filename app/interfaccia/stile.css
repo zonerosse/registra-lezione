@@ -1392,3 +1392,18 @@ html.android body.cx-aperto .cx-lente{display:none}
 .stv-f .ico{width:28px;height:28px;border-radius:8px}.stv-f .ico svg{width:15px;height:15px}
 .stv-f b{font-size:13px;color:var(--ink);font-weight:600}
 html.android .stv-gr{grid-template-columns:1fr 1fr}
+
+/* ===== Scripta Manent (edizione per chi ha un DSA): stesso programma, verde petrolio, Modalità DSA sempre accesa ===== */
+html.scripta .side{background:linear-gradient(180deg,#0f766e 0%,#0b4f4a 70%,#06302d 100%)}
+html.scripta .side::after{background:radial-gradient(circle,rgba(94,234,212,.22),transparent 70%)}
+html.scripta .logo{background:linear-gradient(135deg,#0f766e,#06302d);box-shadow:0 6px 16px rgba(94,234,212,.25),inset 0 0 0 1px rgba(153,246,228,.35)}
+html.scripta .nav a{color:#d3efea}
+html.scripta .nav a.on,html.scripta .nav a.navdsa.on{background:linear-gradient(90deg,rgba(94,234,212,.22),rgba(94,234,212,.05));box-shadow:inset 0 0 0 1px rgba(94,234,212,.3)}
+html.scripta .nav a.on::before,html.scripta .nav a.navdsa.on::before{background:#5eead4}
+html.scripta .brand small,html.scripta .side .foot{color:#9fd8cf}
+html.scripta .splash{background:linear-gradient(160deg,#0f766e,#06302d)}
+/* la Modalità DSA non si spegne: niente interruttori, niente avvisi «Modalità DSA» */
+html.scripta .dsaint,html.scripta .asaa,html.scripta .dsabanda,html.scripta .set:has([data-t="fa.t"]){display:none!important}
+html.scripta.android .side{background:#fff}
+html.scripta.android .nav a{color:#64748b}
+html.scripta.android .nav a.on{color:#0f766e;background:none;box-shadow:none}

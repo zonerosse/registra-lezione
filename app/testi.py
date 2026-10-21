@@ -6,6 +6,8 @@ LINGUA e' la lingua del programma (la imposta il motore dalle impostazioni).
 I file di una lezione (appunti, PDF, pacchetti) usano invece la lingua salvata nella lezione
 (info.json -> "lingua_appunti"), cosi' le lezioni vecchie restano come erano.
 """
+import edizione as _ed     # Verba Manent IA o Scripta Manent: il nome giusto nei testi
+
 LINGUA = "it"
 
 # lingue in cui puo' parlare il docente (codice per la trascrizione; None = la riconosce da sola)
@@ -624,6 +626,7 @@ def tr(chiave, lingua=None, **kw):
     """Testo nella lingua indicata (o in quella del programma)."""
     lingua = lingua if lingua in T else LINGUA
     s = T[lingua][chiave] if chiave in T[lingua] else T["it"].get(chiave, chiave)
+    s = _ed.nome_giusto(s)
     return s.format(**kw) if kw else s
 
 

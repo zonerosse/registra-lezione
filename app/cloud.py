@@ -10,7 +10,7 @@ import subprocess
 from pathlib import Path
 
 log = logging.getLogger("registra_lezione")
-CARTELLA = "Verba Manent IA"
+CARTELLA = __import__("edizione").NOME
 
 
 def google_drive():

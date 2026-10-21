@@ -123,6 +123,19 @@ jobs:
           & $iscc "/DVersione=$v" installer.iss
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path RegistraLezione-Setup.exe)) { Write-Error "Installazione non creata"; exit 1 }
 
+          # Scripta Manent (edizione per chi ha un DSA): lo stesso pacchetto, con edizione.json accanto all'exe,
+          # l'exe col suo nome e la sua icona. La cartella app e' identica: l'aggiornamento vale per tutte e due.
+          Copy-Item "dist/RegistraLezione" "dist/ScriptaManent" -Recurse
+          Rename-Item "dist/ScriptaManent/Registra Lezione.exe" "Scripta Manent.exe"
+          Set-Content -Path "dist/ScriptaManent/edizione.json" -Value '{"edizione": "scripta"}' -Encoding ascii
+          try {
+            Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile rcedit.exe
+            ./rcedit.exe "dist/ScriptaManent/Scripta Manent.exe" --set-icon grafica/scripta/icona.ico `
+              --set-version-string ProductName "Scripta Manent" --set-version-string FileDescription "Scripta Manent"
+          } catch { Write-Host "::warning title=Icona di Scripta Manent::non messa sull'exe ($_)" }
+          & $iscc "/DVersione=$v" "/DEdizione=scripta" installer.iss
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path ScriptaManent-Setup.exe)) { Write-Error "Installazione di Scripta Manent non creata"; exit 1 }
+
           New-Item -ItemType Directory solo_app | Out-Null
           Copy-Item app/* solo_app -Recurse
           Get-ChildItem solo_app -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
@@ -135,7 +148,7 @@ jobs:
                   "Prima installazione: scarica e apri **[RegistraLezione-Setup.exe]($link)**.`n" +
                   "Chi ha già il programma: tocca **Aggiorna** in fondo alla finestra."
           Set-Content -Path note.md -Value $note -Encoding utf8
-          Get-Item "RegistraLezione-$v.zip", RegistraLezione-Setup.exe, aggiornamento.zip | Select-Object Name, Length
+          Get-Item "RegistraLezione-$v.zip", RegistraLezione-Setup.exe, ScriptaManent-Setup.exe, aggiornamento.zip | Select-Object Name, Length
 
       - name: Pubblica la release
         if: steps.v.outputs.nuova == '1'
@@ -144,6 +157,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $v = "${{ steps.v.outputs.versione }}"
-          gh release create "${{ steps.v.outputs.tag }}" RegistraLezione-Setup.exe "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
+          gh release create "${{ steps.v.outputs.tag }}" RegistraLezione-Setup.exe ScriptaManent-Setup.exe "RegistraLezione-$v.zip" aggiornamento.zip versione.json `
             --title "Verba Manent IA $v" --notes-file note.md --target $env:GITHUB_SHA
           if ($LASTEXITCODE -ne 0) { exit 1 }
