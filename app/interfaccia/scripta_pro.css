@@ -1,0 +1,137 @@
+/* Scripta Manent — stile professionale (vale solo con html.scripta).
+   Palette fredda e sobria: inchiostro #0F1F24, petrolio #0F766E, nebbia #F3F6F7, linea #DCE4E6, ardesia #5B6B70, ambra #B45309.
+   Riquadri bianchi con bordo sottile, niente ombre forti ne' sfumature, pulsanti piatti, testo leggibile DSA ovunque.
+   Regola dei clic: riga con › = apre; cerchio = spunta; pulsante verde pieno = azione principale; riga senza segni = informazione. */
+html.scripta{
+  --sm-ink:#0F1F24;--sm-pet:#0F766E;--sm-pet2:#0B5C56;--sm-pett:#E6F2F1;--sm-neb:#F3F6F7;--sm-carta:#fff;
+  --sm-lin:#DCE4E6;--sm-lin2:#EBF0F1;--sm-ard:#5B6B70;--sm-amb:#B45309;--sm-ambt:#FDF3E7;--sm-ok:#15803D;--sm-okt:#E8F5EC;--sm-ind:#3F4A80;--sm-indt:#ECEEF6;
+  --navy:var(--sm-pet);--navy-d:var(--sm-pet2);--blue:var(--sm-pet);--sky:var(--sm-pet);--teal:var(--sm-pet);
+  --ink:var(--sm-ink);--txt:var(--sm-ink);--mut:var(--sm-ard);--line:var(--sm-lin);--soft:var(--sm-neb);
+  --acc:var(--sm-pet);--accs:var(--sm-pett);--pbg:var(--sm-neb);--r:12px;--ok:var(--sm-ok);--warn:var(--sm-amb)
+}
+html.scripta body,html.scripta .main{background:var(--sm-neb)}
+html.scripta .side{background:linear-gradient(180deg,#0F766E 0%,#0B4F4A 70%,#06302D 100%)}
+html.scripta .nav a{border-radius:9px;color:#D3EFEA;font-size:15px}
+html.scripta .nav a.on{background:rgba(255,255,255,.12);color:#fff;font-weight:600;box-shadow:none}
+html.scripta .nav a.on::before{display:block;left:-12px;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:#5EEAD4}
+html.scripta .nav a.on svg{color:#fff}
+
+/* pagina */
+html.scripta .pg{max-width:1180px;padding:0 0 32px}
+html.scripta .pg > :not(.perc):not(.hd){margin-left:24px;margin-right:24px}
+html.scripta .hd{background:var(--sm-carta);border-bottom:1px solid var(--sm-lin);padding:20px 24px 18px;margin:0 0 22px}
+html.scripta .hd h2{font-size:24px;font-weight:650;letter-spacing:-.2px;color:var(--sm-ink)}
+html.scripta .hd p{color:var(--sm-ard);font-size:15px}
+html.scripta .perc{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:12px;padding:12px 24px;background:var(--sm-carta);border-bottom:1px solid var(--sm-lin);margin:0}
+html.scripta .perc .torna{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:8px;padding:6px 11px;font-size:15px;font-weight:600;color:var(--sm-ink);white-space:nowrap;flex:none}
+html.scripta .perc .briciole{font-size:15px;color:var(--sm-ard);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+html.scripta .perc .briciole a{color:var(--sm-ard);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+html.scripta .perc .briciole b{color:var(--sm-ink);font-weight:600}
+html.scripta .perc + .hd{margin-top:0}
+
+/* riquadri, pulsanti, campi */
+html.scripta .card{background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:12px;box-shadow:none}
+html.scripta .btn{border-radius:8px;box-shadow:none;font-weight:600;padding:10px 16px;font-size:15px}
+html.scripta .b-sm{padding:7px 12px;font-size:15px;border-radius:8px}
+html.scripta .b-main{background:var(--sm-pet)}html.scripta .b-main:hover:not(:disabled){background:var(--sm-pet2);filter:none}
+html.scripta .b-ghost{background:var(--sm-carta);color:var(--sm-ink);border:1px solid var(--sm-lin);box-shadow:none}
+html.scripta .b-ghost:hover:not(:disabled){background:var(--sm-neb);filter:none}
+html.scripta .b-rec{background:var(--sm-pet)}
+html.scripta .b-end{background:var(--sm-ink)}
+html.scripta .b-pz{background:var(--sm-amb)}html.scripta .b-ri{background:var(--sm-ok)}
+html.scripta .in{border:1px solid var(--sm-lin);border-radius:8px;background:var(--sm-carta);font-size:16px}
+html.scripta .in:focus{border-color:var(--sm-pet);box-shadow:0 0 0 3px var(--sm-pett)}
+html.scripta .lbl{color:var(--sm-ard);letter-spacing:0;font-size:15px;font-weight:650}
+html.scripta .hint{color:var(--sm-ard);font-size:15px}
+html.scripta .lnk{color:var(--sm-pet);font-size:15px;text-decoration:underline;text-underline-offset:2px}
+html.scripta .seg{background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:9px;padding:0;gap:0;overflow:hidden}
+html.scripta .seg span{border-radius:0;font-size:15px;padding:8px 13px;border-left:1px solid var(--sm-lin)}
+html.scripta .seg span:first-child{border-left:0}
+html.scripta .seg span.on{background:var(--sm-pet);color:#fff;box-shadow:none}
+html.scripta .sw{background:#C9D4D7;box-shadow:none}html.scripta .sw.on{background:var(--sm-pet)}
+html.scripta .bar i{background:var(--sm-pet)}
+html.scripta .spin{border-color:rgba(15,118,110,.2);border-top-color:var(--sm-pet)}
+html.scripta .toast{background:var(--sm-ink);border-radius:10px;font-size:15px}
+html.scripta .ico,html.scripta .ico.i-blue,html.scripta .ico.i-teal,html.scripta .ico.i-vio,html.scripta .ico.i-green,html.scripta .ico.i-org{background:var(--sm-pett);color:var(--sm-pet);border-radius:8px}
+html.scripta .tile{border:1px solid var(--sm-lin);border-radius:12px;box-shadow:none}
+html.scripta .tile:hover{border-color:#A9C9C5;box-shadow:none}
+html.scripta .tile b{font-size:15px;color:var(--sm-ink)}
+
+/* solo titoli: le spiegazioni piccole diventano una (i) che si legge e si ascolta */
+html.scripta .st-nasc{display:none!important}
+html.scripta .info-i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1.5px solid #9FB4B9;color:var(--sm-pet);font-size:13px!important;font-weight:700;margin-left:8px;vertical-align:1px;cursor:pointer;flex:none;background:#fff;line-height:1;font-family:"Atkinson Hyperlegible",Verdana,sans-serif!important;letter-spacing:0!important}
+html.scripta .info-i:hover{border-color:var(--sm-pet);background:var(--sm-pett)}
+html.scripta .side .info-i{background:transparent;border-color:rgba(255,255,255,.45);color:#fff;width:20px;height:20px}
+.info-pop{position:fixed;z-index:99;max-width:320px;background:#0F1F24;color:#fff;border-radius:10px;padding:11px 13px;font-size:15px;line-height:1.5;box-shadow:0 12px 30px -8px rgba(0,0,0,.45)}
+.info-pop b{display:block;color:#99F6E4;font-size:14px;margin-bottom:3px}
+
+/* elementi comuni delle pagine nuove */
+html.scripta .smx-h3{font-size:15px;font-weight:650;color:var(--sm-ink);margin:22px 0 10px;display:flex;align-items:baseline;gap:4px 8px;flex-wrap:wrap}
+html.scripta .smx-h3:first-child{margin-top:0}
+html.scripta .smx-lista{background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:12px;overflow:hidden}
+html.scripta .smx-f{display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;border-top:1px solid var(--sm-lin2);background:var(--sm-carta);width:100%;text-align:left;color:var(--sm-ink);font-family:inherit;cursor:pointer}
+html.scripta .smx-f:first-child{border-top:0}
+html.scripta .smx-f:hover{background:#F7FAFA}
+html.scripta .smx-f.no{opacity:.55}
+html.scripta .smx-fi{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;flex:none;background:var(--sm-pett);color:var(--sm-pet)}
+html.scripta .smx-fi svg{width:17px;height:17px}
+html.scripta .smx-fi.ind{background:var(--sm-indt);color:var(--sm-ind)}html.scripta .smx-fi.amb{background:var(--sm-ambt);color:var(--sm-amb)}
+html.scripta .smx-ft{flex:1;min-width:0}
+html.scripta .smx-ft b{display:flex;align-items:center;font-weight:600;font-size:15px}
+html.scripta .smx-ft small{display:block;color:var(--sm-ard);font-size:15px}
+html.scripta .smx-val{font-size:15px;color:var(--sm-ard);white-space:nowrap}
+html.scripta .smx-chev{color:#A9B8BC;font-size:20px;flex:none}
+html.scripta .smx-chip{display:inline-flex;align-items:center;font-size:14px;font-weight:600;border-radius:6px;padding:1px 8px;white-space:nowrap}
+html.scripta .smx-chip.amb{background:var(--sm-ambt);color:var(--sm-amb)}html.scripta .smx-chip.pet{background:var(--sm-pett);color:var(--sm-pet)}
+html.scripta .smx-chip.ok{background:var(--sm-okt);color:var(--sm-ok)}html.scripta .smx-chip.gri{background:var(--sm-neb);color:var(--sm-ard);border:1px solid var(--sm-lin)}
+html.scripta .smx-chip.ind{background:var(--sm-indt);color:var(--sm-ind)}
+html.scripta .smx-tabs{display:flex;gap:24px;border-bottom:1px solid var(--sm-lin);margin:0 0 16px;overflow-x:auto;scrollbar-width:none}
+html.scripta .smx-tabs::-webkit-scrollbar{display:none}
+html.scripta .smx-tabs button{border:0;background:none;padding:10px 0 11px;font-size:15px;color:var(--sm-ard);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;font-family:inherit}
+html.scripta .smx-tabs button.on{color:var(--sm-ink);border-bottom-color:var(--sm-pet)}
+html.scripta .smx-tabs .c{font-size:14px;color:var(--sm-ard);margin-left:5px;font-weight:600}
+html.scripta .smx-cer{width:22px;height:22px;border-radius:50%;border:2px solid #A9B8BC;flex:none;background:#fff;display:grid;place-items:center;color:#fff;font-size:13px;cursor:pointer;padding:0}
+html.scripta .smx-cer.si{background:var(--sm-ok);border-color:var(--sm-ok)}
+html.scripta .smx-num{width:28px;height:28px;border-radius:50%;border:1.5px solid #A9B8BC;display:grid;place-items:center;font-size:14px;font-weight:700;color:var(--sm-ard);flex:none}
+
+/* telefono */
+html.scripta.android .pg > :not(.perc):not(.hd){margin-left:14px;margin-right:14px}
+html.scripta.android .hd{padding:14px}
+html.scripta.android .perc{padding:10px 14px}
+html.scripta.android .smx-tabs{gap:18px}
+
+/* ===== I miei strumenti (la casa) ===== */
+html.scripta #v-dsa.smcasa > .card:not(#sdBox){display:none}
+html.scripta #v-dsa.smcasa #sdBox{background:none;border:0;padding:0;margin-top:0}
+html.scripta #v-dsa.smcasa .hd{margin-bottom:18px}
+html.scripta .smc-data{font-size:15px;color:var(--sm-ard)}
+html.scripta .smc-oggi{margin:4px 0 16px;font-size:26px;font-weight:650;color:var(--sm-ink);letter-spacing:-.2px}
+html.scripta .smc-pann{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:14px;align-items:stretch}
+html.scripta .smc-p{background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:12px;padding:16px;display:flex;flex-direction:column;min-width:0}
+html.scripta .smc-p h2{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:15px;font-weight:650;color:var(--sm-ink)}
+html.scripta .smc-link{margin-left:auto;border:0;background:none;color:var(--sm-pet);font-weight:600;font-size:15px;padding:0;font-family:inherit;cursor:pointer}
+html.scripta .smc-r{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--sm-lin2)}
+html.scripta .smc-r:first-child{border-top:0}
+html.scripta .smc-rt{flex:1;min-width:0;border:0;background:none;text-align:left;padding:0;font-family:inherit;color:var(--sm-ink);cursor:pointer}
+html.scripta .smc-rt b{display:block;font-weight:600;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.scripta .smc-rt small{display:block;color:var(--sm-ard);font-size:15px}
+html.scripta .smc-vai{margin-top:auto;align-self:flex-start}
+html.scripta .smc-righe{margin-bottom:12px}
+html.scripta .smc-mat{color:var(--sm-ard);font-size:15px}
+html.scripta .smc-gg{margin:8px 0 4px;font-size:15px;color:var(--sm-ard)}
+html.scripta .smc-gg b{font-size:30px;color:var(--sm-amb);font-weight:700;margin-right:2px}
+html.scripta .smc-cosa,html.scripta .smc-lez{font-size:16px;color:var(--sm-ink);margin:4px 0 12px}
+html.scripta .smc-az{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+html.scripta .smc-amb{background:var(--sm-amb);color:#fff}
+html.scripta .smc-rapide{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}
+html.scripta .smc-rapide .btn{justify-content:flex-start}
+html.scripta .smc-str{margin-top:26px}
+html.scripta .smc-strt{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+html.scripta .smc-strt h2{margin:0;font-size:17px;font-weight:650;color:var(--sm-ink);flex:1}
+html.scripta .smc-per{display:flex;align-items:center;gap:8px;color:var(--sm-ard);font-size:15px}
+html.scripta .smc-per select{border:1px solid var(--sm-lin);border-radius:8px;padding:7px 10px;font-size:15px;background:var(--sm-carta);color:var(--sm-ink);max-width:340px;font-family:inherit}
+html.scripta .smc-griglia{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+html.scripta.android .smc-pann{grid-template-columns:1fr}
+html.scripta.android .smc-griglia{grid-template-columns:1fr}
+html.scripta.android .smc-oggi{font-size:22px}
+@media (max-width:980px){html.scripta .smc-pann{grid-template-columns:1fr 1fr}html.scripta .smc-pann .smc-p:first-child{grid-column:1/-1}}
