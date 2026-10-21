@@ -30,6 +30,17 @@ const SMK_T = {
     salva: 'Salva', annulla: 'Annulla', materia: 'Materia', cosa: 'Cosa devo fare', perq: 'Per quando', tipo: 'Che cos\'è', compito: 'Compito',
     'ric.giorno': 'Giorno', 'ric.ora': 'Ora', 'ric.togli': 'Togli il promemoria', 'promemoria': 'Promemoria: {c}',
     'vuota.h': 'Scegli un compito', 'vuota.s': 'Tocca un compito a sinistra per vedere la sua scheda.',
+    ctrl: 'Controlla il risultato', 'ctrl.s': 'Fotografa il tuo svolgimento: ti dico se è giusto e dove guardare', 'ctrl.foto': 'Fotografa lo svolgimento', 'ctrl.scegli': 'Scegli le foto',
+    'ctrl.n': '{n} foto pronte', 'ctrl.testo': 'Il testo dell\'esercizio (se non si vede nella foto)', 'ctrl.vai': 'Controlla', 'ctrl.lav': 'Guardo il tuo svolgimento…',
+    'ctrl.giusto': 'Giusto!', 'ctrl.giusto.s': 'Risultato e passaggi sono corretti.', 'ctrl.quasi': 'Quasi giusto', 'ctrl.quasi.s': 'C\'è un errore piccolo: guarda il passaggio segnato.',
+    'ctrl.rivedere': 'Da rivedere', 'ctrl.rivedere.s': 'Il metodo non torna: rileggi i passaggi segnati.', 'ctrl.tuo': 'Il tuo risultato: {r}', 'ctrl.passi': 'I tuoi passaggi',
+    'ctrl.sol': 'Mostrami come si fa', 'ctrl.sol.h': 'Come si fa', 'ctrl.rifai': 'Controlla di nuovo', 'ctrl.ultimo': 'Ultimo controllo: {q}',
+    scal: 'Scaletta', 'scal.s': 'I punti in ordine prima di scrivere', 'scal.cosa': 'Cosa devi scrivere', 'scal.idee': 'Le tue idee, come vengono (puoi anche dettarle)',
+    'scal.vai': 'Fammi la scaletta', 'scal.lav': 'Metto in ordine i punti…', 'scal.dom': 'Per scriverlo rispondi a:', 'scal.tue': 'Le tue idee qui', 'scal.su': 'Sposta su', 'scal.giu': 'Sposta giù',
+    'scal.detta': 'Scrivi parlando', 'scal.stampa': 'Stampa', 'scal.rifai': 'Rifalla', 'scal.copia': 'Copiata: incollala dove scrivi',
+    tim: 'Timer concentrazione', 'tim.s': '{m} minuti di lavoro, poi {p} di pausa', 'tim.lav': 'Lavoro', 'tim.pausa': 'Pausa', 'tim.via': 'Inizia', 'tim.ferma': 'Ferma', 'tim.sosta': 'Metti in pausa', 'tim.riprendi': 'Riprendi',
+    'tim.giri': 'Giri fatti oggi: {n}', 'tim.min': 'Minuti di lavoro', 'tim.adesso': 'Adesso: {p}', 'tim.fine.lav': 'Bravo! Ora {p} minuti di pausa: alzati, bevi, muoviti.',
+    'tim.fine.pausa': 'Pausa finita: si riparte.', 'tim.chip': 'Timer {t}', torna: 'Torna',
   },
   en: {
     h: 'Homework', sett: 'This week {f} of {n} done', foto: 'Photo of the planner', scegli: 'Choose a photo', mano: 'Write it', agg: 'Add',
@@ -55,6 +66,17 @@ const SMK_T = {
     salva: 'Save', annulla: 'Cancel', materia: 'Subject', cosa: 'What to do', perq: 'For when', tipo: 'What is it', compito: 'Homework',
     'ric.giorno': 'Day', 'ric.ora': 'Time', 'ric.togli': 'Remove the reminder', 'promemoria': 'Reminder: {c}',
     'vuota.h': 'Choose a task', 'vuota.s': 'Tap a task on the left to see its card.',
+    ctrl: 'Check the result', 'ctrl.s': 'Take a photo of your working: I tell you if it is right and where to look', 'ctrl.foto': 'Photo of your working', 'ctrl.scegli': 'Choose photos',
+    'ctrl.n': '{n} photos ready', 'ctrl.testo': 'The exercise text (if it is not in the photo)', 'ctrl.vai': 'Check', 'ctrl.lav': 'Looking at your working…',
+    'ctrl.giusto': 'Correct!', 'ctrl.giusto.s': 'Result and steps are right.', 'ctrl.quasi': 'Almost right', 'ctrl.quasi.s': 'There is a small mistake: look at the marked step.',
+    'ctrl.rivedere': 'Check again', 'ctrl.rivedere.s': 'The method does not work: reread the marked steps.', 'ctrl.tuo': 'Your result: {r}', 'ctrl.passi': 'Your steps',
+    'ctrl.sol': 'Show me how', 'ctrl.sol.h': 'How to do it', 'ctrl.rifai': 'Check again', 'ctrl.ultimo': 'Last check: {q}',
+    scal: 'Outline', 'scal.s': 'The points in order before you write', 'scal.cosa': 'What you have to write', 'scal.idee': 'Your ideas, as they come (you can also dictate them)',
+    'scal.vai': 'Make my outline', 'scal.lav': 'Putting the points in order…', 'scal.dom': 'To write it, answer:', 'scal.tue': 'Your ideas here', 'scal.su': 'Move up', 'scal.giu': 'Move down',
+    'scal.detta': 'Write by speaking', 'scal.stampa': 'Print', 'scal.rifai': 'Redo it', 'scal.copia': 'Copied: paste it where you write',
+    tim: 'Focus timer', 'tim.s': '{m} minutes of work, then {p} of break', 'tim.lav': 'Work', 'tim.pausa': 'Break', 'tim.via': 'Start', 'tim.ferma': 'Stop', 'tim.sosta': 'Pause', 'tim.riprendi': 'Resume',
+    'tim.giri': 'Rounds done today: {n}', 'tim.min': 'Minutes of work', 'tim.adesso': 'Now: {p}', 'tim.fine.lav': 'Well done! Now {p} minutes of break: stand up, drink, move.',
+    'tim.fine.pausa': 'Break over: back to work.', 'tim.chip': 'Timer {t}', torna: 'Back',
   },
 };
 function tk(k, p) {
@@ -262,16 +284,16 @@ function smkCorpo(v, k) {
   else if (k === 'capire') h = nota + `<div class="smk-col2"><div>${smkG(tk('g.lez'), lez)}</div><div>${smkG(tk('g.chiedi'), lu ? [smkF('l:chiedi', 'i-chat', t('tl.chiedi'), t('tl.chiedi.s')),
       smkF('l:infografica', 'g-img', t('tl.ig'), t('tl.ig.s')), lu.n_foto ? smkF('l:foto', 'g-foto', t('tl.fo'), '') : ''] : [])}
       ${m ? smkG(tk('g.libro'), [smkF('m:libro', 'g-libro', tk('porta.libro', {m: m.m}), tk('porta.libro.s')), smkF('m:glos', 'g-libro', t('tl.gl'), t('tl.dsa.gl.s'))]) : ''}</div></div>`;
-  else if (k === 'farlo') h = `<div class="smk-col2"><div>${smkG(tk('g.mate'), [smkF('s:pb', 'g-foto', ts('mate.pb'), ts('sd.mate.s'), 'ind'), smkF('s:calc', 'g-calc', ts('mate.calc'), '', 'ind'),
+  else if (k === 'farlo') h = `<div class="smk-col2"><div>${smkG(tk('g.mate'), [smkF('s:pb', 'g-foto', ts('mate.pb'), ts('sd.mate.s'), 'ind'), smkF('ctrl', 'g-test', tk('ctrl'), v.controllo ? tk('ctrl.ultimo', {q: tk('ctrl.' + v.controllo.esito)}) : tk('ctrl.s'), 'ind'), smkF('s:calc', 'g-calc', ts('mate.calc'), '', 'ind'),
       smkF('s:tab', 'g-calc', ts('mate.tab'), '', 'ind'), smkF('s:form', 'g-note', ts('mate.form'), '', 'ind')])}</div>
-      <div>${smkG(tk('g.scrivi'), [smkF('dp', 'i-mic', t('sd.detta'), t('sd.detta.s')), smkF('smcorr', 'g-penna', ts('corr.h'), ts('sd.corr.s'))])}
+      <div>${smkG(tk('g.scrivi'), [smkF('scal', 'g-lista', tk('scal'), tk('scal.s')), smkF('dp', 'i-mic', t('sd.detta'), t('sd.detta.s')), smkF('smcorr', 'g-penna', ts('corr.h'), ts('sd.corr.s'))])}
       ${smkG(tk('g.studia'), lu ? [smkF('l:mappa', 'i-map', t('sd.mappa'), t('sd.mappa.s')), smkF('l:ripassa', 'i-cards', t('tl.flash'), t('tl.flash.s'))] : [])}</div></div>`;
   else if (k === 'org') h = `<div class="smk-guida" id="smkGuida"></div><div id="smkPezzi"><div class="hint row" style="gap:8px"><span class="spin"></span>${esc(tk('pz.lav'))}</div></div>`
-      + smkG(tk('g.tempo'), [smkF('ric', 'g-orologio', tk('ric'), v.ricorda ? tk('ric.on', {q: smkDataBreve(v.ricorda.slice(0, 10)) + ' ' + v.ricorda.slice(11, 16)}) : tk('ric.s')),
+      + smkG(tk('g.tempo'), [smkF('timer', 'g-orologio', tk('tim'), tk('tim.s', {m: smkTimMin(), p: smkTimPausa()})), smkF('ric', 'g-cal', tk('ric'), v.ricorda ? tk('ric.on', {q: smkDataBreve(v.ricorda.slice(0, 10)) + ' ' + v.ricorda.slice(11, 16)}) : tk('ric.s')),
         smkF('pzrifai', 'g-ripeti', tk('pz.rifai'), tk('pz.rifai.s')), m && smkF('m:tutor', 'g-tutor', tk('tutor'), tk('tutor.s'))]);
   else if (k === 'verifica') h = smkProf(v, l) + `<h3 class="smx-h3">${esc(tk('porta.h'))}</h3><div class="smx-lista">${lm.slice(0, 6).map(x => `<button class="smx-f" data-lez="${esc(x.cartella)}"><span class="smx-fi">${smIco('g-lezioni')}</span><span class="smx-ft"><b>${esc(x.nome)}</b><small class="dato">${esc([x.quando, x.durata].filter(Boolean).join(' · '))}</small></span><span class="smx-chev">›</span></button>`).join('')}
       ${m ? smkF('m:libro', 'g-libro', tk('porta.libro', {m: m.m}), tk('porta.libro.s')) : ''}</div>${lm.length ? '' : `<div class="hint" style="margin-top:8px">${esc(tk('nolez0'))}</div>`}` + gest;
-  else if (k === 'piano') h = smkG(tk('t.piano'), m ? [smkF('m:piano', 'g-cal', tk('piano.apri'), tk('piano.apri.s')), smkF('m:tutor', 'g-tutor', tk('tutor'), tk('tutor.s')), smkF('ric', 'g-orologio', tk('ric'), tk('ric.s'))] : [smkF('ric', 'g-orologio', tk('ric'), tk('ric.s'))])
+  else if (k === 'piano') h = smkG(tk('t.piano'), m ? [smkF('m:piano', 'g-cal', tk('piano.apri'), tk('piano.apri.s')), smkF('m:tutor', 'g-tutor', tk('tutor'), tk('tutor.s')), smkF('timer', 'g-orologio', tk('tim'), tk('tim.s', {m: smkTimMin(), p: smkTimPausa()})), smkF('ric', 'g-cal', tk('ric'), tk('ric.s'))] : [smkF('timer', 'g-orologio', tk('tim'), tk('tim.s', {m: smkTimMin(), p: smkTimPausa()})), smkF('ric', 'g-cal', tk('ric'), tk('ric.s'))])
       + (m ? '' : `<div class="hint" style="margin-top:8px">${esc(t('sd.no.mat'))}</div>`);
   else if (k === 'vrip') h = m ? `<div class="smk-col2"><div>${smkG(tk('g.asc'), [smkF('m:ascm', 'g-voce', t('tl.asc'), ''), smkF('m:mappe', 'i-map', t('st.mappe.t', {m: m.m}), ''), smkF('m:libro', 'g-libro', tk('porta.libro', {m: m.m}), '')])}</div>
       <div>${smkG(tk('g.mem'), [smkF('m:fcorso', 'i-cards', t('tl.flash'), t('tl.flash.s')), smkF('rg', 'i-cards', t('sd.rg'), t('sd.rg.s')), smkF('m:glos', 'g-libro', t('tl.gl'), t('tl.dsa.gl.s')), smkF('m:prob', 'g-stella', t('tl.prob'), t('tl.prob.s'))])}</div></div>`
@@ -298,6 +320,9 @@ async function smkAzione(v, f, lu, m) {
   if (f === 'dp') return vai('dp');
   if (f === 'smcorr') return vai('smcorr');
   if (f === 'rg') return apriRipassoGiorno();
+  if (f === 'ctrl') return smkControlla(v);
+  if (f === 'scal') return smkScaletta(v);
+  if (f === 'timer') return smkTimer(v);
   if (f === 'strumenti') return strumentiDsa();
   if (f === 'mod') return smkModulo(v);
   if (f === 'sposta') return smkModulo(v, true);
@@ -362,4 +387,156 @@ async function smkPezziFiniti() {
     const ok = await dialogo({titolo: tk('pz.h'), testo: tk('pz.finito'), bottoni: [{t: esc(tk('annulla')), v: false}, {t: esc(tk('fatto')), cls: 'b-main', v: true}]});
     if (ok) smkFatto(v.id);
   }
+}
+
+
+/* ------------------------------------------------------------------ pannello dentro la scheda (Controlla, Scaletta, Timer) */
+function smkPannello(v, titolo, html) {
+  const el = $('smkCorpo'); if (!el) return null;
+  el.innerHTML = `<div class="smk-pan"><button class="smk-pan-torna" data-torna="1">‹ ${esc(tk('torna'))}</button><h3 class="smx-h3 smk-pan-h">${esc(titolo)}</h3><div class="smk-pan-c">${html}</div></div>`;
+  el.querySelector('[data-torna]').onclick = () => smkScheda();
+  return el.querySelector('.smk-pan-c');
+}
+const smkParla = testo => { const p = SMS.voce; SMS.voce = true; parlaSm(testo); SMS.voce = p; };
+
+/* Controlla il risultato */
+const SMKC = {foto: [], sol: false};
+function smkControlla(v, nuovo) {
+  const c = v.controllo;
+  if (c && !nuovo) {
+    const es = c.esito || 'rivedere';
+    const box = smkPannello(v, tk('ctrl'), `
+      <div class="smk-esito ${es}"><span class="smk-esito-i">${smIco(es === 'giusto' ? 'g-ok' : 'g-avviso')}</span>
+        <div><b>${esc(tk('ctrl.' + es))}</b><span>${esc(tk('ctrl.' + es + '.s'))}</span>${c.risultato ? `<span class="smk-esito-r">${esc(tk('ctrl.tuo', {r: c.risultato}))}</span>` : ''}</div>
+        <button class="btn b-ghost b-sm" data-c="senti">${smIco('g-voce')} ${esc(ts('ascolta'))}</button></div>
+      ${c.passi && c.passi.length ? `<h3 class="smx-h3">${esc(tk('ctrl.passi'))}</h3><ol class="smk-passi">${c.passi.map(p => `<li class="${p.ok ? 'ok' : 'no'}"><span class="smk-pi">${p.ok ? '✓' : '!'}</span><div><div class="smk-pt">${esc(p.testo)}</div>${!p.ok && p.nota ? `<div class="smk-pn">${esc(p.nota)}</div>` : ''}</div></li>`).join('')}</ol>` : ''}
+      ${c.consiglio ? `<div class="smk-cons">${esc(c.consiglio)}</div>` : ''}
+      ${SMKC.sol && c.soluzione && c.soluzione.length ? `<h3 class="smx-h3">${esc(tk('ctrl.sol.h'))}</h3><ol class="smk-sol">${c.soluzione.map(x => `<li>${esc(x)}</li>`).join('')}</ol>` : ''}
+      <div class="row mt" style="gap:8px;flex-wrap:wrap">${es !== 'giusto' && c.soluzione && c.soluzione.length && !SMKC.sol ? `<button class="btn b-ghost b-sm" data-c="sol">${esc(tk('ctrl.sol'))}</button>` : ''}
+        <span class="sp"></span><button class="btn b-main b-sm" data-c="rifai">${smIco('g-foto')} ${esc(tk('ctrl.rifai'))}</button></div>`);
+    if (!box) return;
+    const parla = () => smkParla([tk('ctrl.' + es), tk('ctrl.' + es + '.s'), ...(c.passi || []).filter(p => !p.ok).map(p => p.nota), c.consiglio].filter(Boolean).join('. '));
+    box.querySelector('[data-c="senti"]').onclick = parla;
+    if (box.querySelector('[data-c="sol"]')) box.querySelector('[data-c="sol"]').onclick = () => { SMKC.sol = true; smkControlla(v); smkParla((c.soluzione || []).join('. ')); };
+    box.querySelector('[data-c="rifai"]').onclick = () => { SMKC.foto = []; SMKC.sol = false; smkControlla(v, true); };
+    smInfoGiro(box);
+    return;
+  }
+  const box = smkPannello(v, tk('ctrl'), `<div class="card"><div class="smk-cfoto">
+      <button class="btn b-main" data-c="scatta">${smIco('g-foto')} ${esc(tk('ctrl.foto'))}</button>
+      <button class="btn b-ghost" data-c="scegli">${esc(tk('ctrl.scegli'))}</button><b class="smk-cn" id="smkCn">${SMKC.foto.length ? esc(tk('ctrl.n', {n: SMKC.foto.length})) : ''}</b></div>
+      <label class="smk-campo" style="margin-top:12px"><span>${esc(tk('ctrl.testo'))}</span><textarea class="in" id="smkCt" rows="2">${esc(v.cosa || '')}</textarea></label>
+      <div class="row mt"><span class="sp"></span><button class="btn b-main" id="smkCvai"${SMKC.foto.length ? '' : ' disabled'}>${esc(tk('ctrl.vai'))}</button></div></div>`);
+  if (!box) return;
+  const prendi = async scatta => {
+    const s = scatta ? await A.scatta_foglio() : await A.scegli_immagini();
+    if (s && s.ok && s.percorsi && s.percorsi.length) { SMKC.foto = [...SMKC.foto, ...s.percorsi].slice(0, 4); $('smkCn').textContent = tk('ctrl.n', {n: SMKC.foto.length}); $('smkCvai').disabled = false; }
+  };
+  box.querySelector('[data-c="scatta"]').onclick = () => prendi(true);
+  box.querySelector('[data-c="scegli"]').onclick = () => prendi(false);
+  $('smkCvai').onclick = async () => {
+    const b = $('smkCvai'); b.disabled = true; b.innerHTML = `<span class="spin"></span> ${esc(tk('ctrl.lav'))}`;
+    const r = await A.sm_controlla(v.id, SMKC.foto, $('smkCt').value);
+    if (!r || !r.ok) { b.disabled = false; b.textContent = tk('ctrl.vai'); return toast((r && r.msg) || ''); }
+    SMS.comp = r.compiti; SMKC.foto = []; SMKC.sol = false;
+    const nv = smkVoce() || v; smkControlla(nv);
+    const c = r.controllo; smkParla([tk('ctrl.' + c.esito), tk('ctrl.' + c.esito + '.s')].join('. '));
+  };
+}
+
+/* Scaletta */
+function smkScaletta(v, nuova) {
+  const sc = v.scaletta;
+  if (sc && !nuova) {
+    const box = smkPannello(v, tk('scal') + (sc.tipo ? ' · ' + sc.tipo : ''), `
+      <ol class="smk-scal">${sc.punti.map((p, i) => `<li><span class="smk-sn">${i + 1}</span><div class="smk-sb"><b>${esc(p.titolo)}</b>
+          <div class="smk-sd"><span>${esc(tk('scal.dom'))}</span> ${esc(p.domanda)}</div>
+          ${p.parole && p.parole.length ? `<div class="smk-sp">${p.parole.map(x => `<span class="smx-chip pet">${esc(x)}</span>`).join('')}</div>` : ''}
+          ${p.sue && p.sue.length ? `<div class="smk-ss"><span>${esc(tk('scal.tue'))}</span>${p.sue.map(x => `<div>• ${esc(x)}</div>`).join('')}</div>` : ''}</div>
+        <div class="smk-sm"><button class="smk-mv" data-su="${i}" aria-label="${esc(tk('scal.su'))}"${i ? '' : ' disabled'}>↑</button><button class="smk-mv" data-giu="${i}" aria-label="${esc(tk('scal.giu'))}"${i < sc.punti.length - 1 ? '' : ' disabled'}>↓</button></div></li>`).join('')}</ol>
+      ${sc.consiglio ? `<div class="smk-cons">${esc(sc.consiglio)}</div>` : ''}
+      <div class="row mt" style="gap:8px;flex-wrap:wrap"><button class="btn b-ghost b-sm" data-s="senti">${smIco('g-voce')} ${esc(ts('ascolta'))}</button>
+        <button class="btn b-ghost b-sm" data-s="stampa">${smIco('g-stampa')} ${esc(tk('scal.stampa'))}</button>
+        <button class="btn b-ghost b-sm" data-s="rifai">${smIco('g-ripeti')} ${esc(tk('scal.rifai'))}</button><span class="sp"></span>
+        <button class="btn b-main b-sm" data-s="detta">${smIco('i-mic')} ${esc(tk('scal.detta'))}</button></div>`);
+    if (!box) return;
+    const testo = () => sc.punti.map((p, i) => `${i + 1}. ${p.titolo} — ${p.domanda}`).join('\n');
+    const sposta = async (i, d) => { const o = sc.punti.map((_, k) => k); [o[i], o[i + d]] = [o[i + d], o[i]]; const r = await A.sm_scaletta_ordine(v.id, o); SMS.comp = r.compiti; smkScaletta(smkVoce() || v); };
+    box.querySelectorAll('[data-su]').forEach(b => b.onclick = () => sposta(+b.dataset.su, -1));
+    box.querySelectorAll('[data-giu]').forEach(b => b.onclick = () => sposta(+b.dataset.giu, 1));
+    box.querySelector('[data-s="senti"]').onclick = () => smkParla(sc.punti.map((p, i) => `${i + 1}. ${p.titolo}. ${p.domanda}`).join(' '));
+    box.querySelector('[data-s="stampa"]').onclick = () => smStampa(`<p><b>${esc(v.materia || '')}</b></p><p style="font-size:20px">${esc(v.cosa)}</p><ol>${sc.punti.map(p => `<li style="margin-bottom:14px"><b>${esc(p.titolo)}</b><br>${esc(p.domanda)}<br><br>____________________________________________</li>`).join('')}</ol>`, tk('scal'));
+    box.querySelector('[data-s="rifai"]').onclick = () => smkScaletta(v, true);
+    box.querySelector('[data-s="detta"]').onclick = async () => {
+      try { await navigator.clipboard.writeText(testo()); toast(tk('scal.copia')); } catch (e) {}
+      vai('dp');
+    };
+    smInfoGiro(box);
+    return;
+  }
+  const box = smkPannello(v, tk('scal'), `<div class="card">
+      <label class="smk-campo"><span>${esc(tk('scal.cosa'))}</span><textarea class="in" id="smkSc" rows="2">${esc(v.cosa || '')}</textarea></label>
+      <label class="smk-campo" style="margin-top:12px"><span>${esc(tk('scal.idee'))}</span><textarea class="in" id="smkSi" rows="4">${esc((sc && sc.idee) || '')}</textarea></label>
+      <div class="row mt"><span class="sp"></span><button class="btn b-main" id="smkSvai">${esc(tk('scal.vai'))}</button></div></div>`);
+  if (!box) return;
+  $('smkSvai').onclick = async () => {
+    const b = $('smkSvai'); b.disabled = true; b.innerHTML = `<span class="spin"></span> ${esc(tk('scal.lav'))}`;
+    const r = await A.sm_scaletta(v.id, $('smkSc').value, $('smkSi').value);
+    if (!r || !r.ok) { b.disabled = false; b.textContent = tk('scal.vai'); return toast((r && r.msg) || ''); }
+    SMS.comp = r.compiti; smkScaletta(smkVoce() || v);
+  };
+}
+
+/* Timer concentrazione: continua anche se cambi pagina; alla fine lo dice a voce */
+const SMKT = {fase: 'lav', resta: 0, giro: null, voce: null, giri: 0, giorno: ''};
+function smkTimMin() { return Math.max(5, Math.min(45, +(R && R.sm_timer) || 15)); }
+function smkTimPausa() { return Math.max(5, Math.round(smkTimMin() / 3)); }
+function smkTimTesto(sec) { return `${String(Math.floor(sec / 60)).padStart(2, '0')}:${String(sec % 60).padStart(2, '0')}`; }
+function smkTimer(v) {
+  if (v) SMKT.voce = v.id;
+  const oggi = new Date().toISOString().slice(0, 10); if (SMKT.giorno !== oggi) { SMKT.giorno = oggi; SMKT.giri = 0; }
+  const vv = SMKT.voce && SMS.comp ? SMS.comp.find(x => x.id === SMKT.voce) : v;
+  const pz = vv && vv.pezzi ? vv.pezzi.find(p => !p.f) : null;
+  const tot = (SMKT.fase === 'lav' ? smkTimMin() : smkTimPausa()) * 60, resta = SMKT.giro || SMKT.resta ? SMKT.resta : tot;
+  const box = smkPannello(vv || v, tk('tim'), `<div class="card smk-tim ${SMKT.fase}">
+      <div class="smk-tim-f">${esc(tk(SMKT.fase === 'lav' ? 'tim.lav' : 'tim.pausa'))}</div>
+      <div class="smk-anello" style="--p:${(1 - resta / tot) * 100}"><span id="smkTt">${smkTimTesto(resta)}</span></div>
+      ${pz && SMKT.fase === 'lav' ? `<div class="smk-tim-p">${esc(tk('tim.adesso', {p: pz.t}))}</div>` : ''}
+      <div class="row" style="gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">
+        ${SMKT.giro ? `<button class="btn b-ghost" data-t="sosta">${esc(tk('tim.sosta'))}</button>` : `<button class="btn b-main" data-t="via">▶ ${esc(SMKT.resta ? tk('tim.riprendi') : tk('tim.via'))}</button>`}
+        ${SMKT.giro || SMKT.resta ? `<button class="btn b-ghost" data-t="ferma">${esc(tk('tim.ferma'))}</button>` : ''}</div>
+      <div class="smk-tim-g">${esc(tk('tim.giri', {n: SMKT.giri}))}</div>
+      ${!SMKT.giro && !SMKT.resta ? `<div class="smk-tim-min"><span>${esc(tk('tim.min'))}</span><div class="smx-seg">${[10, 15, 20, 25].map(m => `<button data-m="${m}" class="${m === smkTimMin() ? 'on' : ''}">${m}</button>`).join('')}</div></div>` : ''}</div>`);
+  if (!box) return;
+  box.querySelectorAll('[data-m]').forEach(b => b.onclick = async () => { await A.imposta('sm_timer', +b.dataset.m); R.sm_timer = +b.dataset.m; smkTimer(); });
+  const via = box.querySelector('[data-t="via"]'); if (via) via.onclick = () => { if (!SMKT.resta) SMKT.resta = tot; smkTimVai(); smkTimer(); };
+  const so = box.querySelector('[data-t="sosta"]'); if (so) so.onclick = () => { clearInterval(SMKT.giro); SMKT.giro = null; smkTimChip(); smkTimer(); };
+  const fe = box.querySelector('[data-t="ferma"]'); if (fe) fe.onclick = () => { clearInterval(SMKT.giro); SMKT.giro = null; SMKT.resta = 0; SMKT.fase = 'lav'; smkTimChip(); smkTimer(); };
+}
+function smkTimVai() {
+  clearInterval(SMKT.giro);
+  SMKT.giro = setInterval(() => {
+    SMKT.resta = Math.max(0, SMKT.resta - 1);
+    const t = $('smkTt'); if (t) { t.textContent = smkTimTesto(SMKT.resta); const tot = (SMKT.fase === 'lav' ? smkTimMin() : smkTimPausa()) * 60; const a = t.parentElement; if (a) a.style.setProperty('--p', (1 - SMKT.resta / tot) * 100); }
+    smkTimChip();
+    if (SMKT.resta > 0) return;
+    if (SMKT.fase === 'lav') { SMKT.giri += 1; SMKT.fase = 'pausa'; SMKT.resta = smkTimPausa() * 60; const m = tk('tim.fine.lav', {p: smkTimPausa()}); toast(m); smkParla(m); }
+    else { SMKT.fase = 'lav'; SMKT.resta = 0; clearInterval(SMKT.giro); SMKT.giro = null; const m = tk('tim.fine.pausa'); toast(m); smkParla(m); }
+    smkTimChip();
+    if ($('smkTt')) smkTimer();
+  }, 1000);
+  smkTimChip();
+}
+// in alto, in ogni pagina, finche' il timer va: tocchi e torni al compito
+function smkTimChip() {
+  let c = document.getElementById('smkTimChip');
+  const tt = $('smkTt');
+  if (!SMKT.giro || (tt && tt.offsetParent !== null)) { if (c) c.remove(); return; }      // sulla pagina del timer non serve
+  if (!c) {
+    c = document.createElement('button'); c.id = 'smkTimChip'; c.className = 'smk-timchip';
+    c.onclick = () => { if (SMKT.voce) SMK.sel = SMKT.voce; vai('smcomp'); setTimeout(() => smkTimer(), 400); };
+    document.body.appendChild(c);
+  }
+  c.className = 'smk-timchip ' + SMKT.fase;
+  c.textContent = tk('tim.chip', {t: smkTimTesto(SMKT.resta)});
 }

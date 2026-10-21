@@ -598,3 +598,113 @@ def in_verifica(cfg):
     """Cosa il piano della scuola permette in verifica (Impostazioni): le voci spuntate."""
     v = cfg.get("sm_verifica")
     return [x for x in v if x in VERIFICA_VOCI] if isinstance(v, list) else ["mappe", "formulario", "calcolatrice", "tempo"]
+
+
+# ------------------------------------------------------------------ Controlla il risultato (foto dello svolgimento)
+
+def _voce(base, vid):
+    lista = el.leggi_json(_file(base), []) or []
+    return lista, next((v for v in lista if isinstance(v, dict) and v.get("id") == vid), None)
+
+
+def controlla(chiave, base, vid, foto, testo=""):
+    """Le foto dello svolgimento di un esercizio: Claude dice se il risultato e' giusto e, passo per passo, dove
+    c'e' l'errore (con gentilezza, senza rifarlo al posto dello studente). Si salva nel compito. {"controllo", "spesa"}."""
+    import base64
+    lista, v = _voce(base, vid)
+    consegna = str(testo or (v or {}).get("cosa") or "").strip()[:1500]
+    contenuto = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg",
+                                              "data": base64.b64encode(ch.jpeg_ridotto(f)).decode()}} for f in foto[:4]]
+    contenuto.append({"type": "text", "text": ("Il compito: " + consegna if consegna else "Il compito e' nella foto.")
+                      + "\nEcco il mio svolgimento."})
+    corpo = {"model": ch.MODELLO, "max_tokens": 3000,
+             "system": ("Sei un tutor gentile per uno studente con dislessia o discalculia. Ti mando le foto del suo svolgimento "
+                        "di un esercizio (matematica, fisica, geometria...) e, se c'e', il testo del compito. Controlla: "
+                        "«esito» = giusto (risultato e passaggi corretti), quasi (un errore piccolo: un segno, un conto, l'unita' "
+                        "di misura) o rivedere (errore di metodo). In «passi» riporta i suoi passaggi in ordine, ciascuno in "
+                        "breve come l'ha scritto lui, con ok vero o falso; dove e' falso, «nota» spiega in una o due frasi corte "
+                        "e gentili cosa non va e come accorgersene, SENZA dare il risultato giusto. «consiglio»: una frase per "
+                        "rifarlo bene. «soluzione»: i passaggi giusti, brevi (li vede solo se li chiede). Se nella foto non si "
+                        "legge, dillo nel consiglio e lascia i passi vuoti. "
+                        f"Scrivi in {_lingua()}, frasi corte. Rispondi con lo strumento «controllo»."),
+             "tools": [{"name": "controllo", "description": "Il controllo dello svolgimento.",
+                        "input_schema": {"type": "object", "properties": {
+                            "esito": {"type": "string", "enum": ["giusto", "quasi", "rivedere"]},
+                            "risultato": {"type": "string", "description": "il risultato scritto dallo studente"},
+                            "passi": {"type": "array", "items": {"type": "object", "properties": {
+                                "testo": {"type": "string"}, "ok": {"type": "boolean"}, "nota": {"type": "string"}},
+                                "required": ["testo", "ok"]}},
+                            "consiglio": {"type": "string"},
+                            "soluzione": {"type": "array", "items": {"type": "string"}}},
+                            "required": ["esito", "passi", "consiglio"]}}],
+             "messages": [{"role": "user", "content": contenuto}]}
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "controllo"})
+    r = ch._chiama(chiave, corpo)
+    d = ch.input_di(r, corpo)
+    esito = d.get("esito") if d.get("esito") in ("giusto", "quasi", "rivedere") else "rivedere"
+    out = {"esito": esito, "risultato": str(d.get("risultato") or "")[:200],
+           "passi": [{"testo": str(p.get("testo") or "")[:300], "ok": str(p.get("ok")).strip().lower() not in ("false", "no", "0", "none"), "nota": str(p.get("nota") or "")[:400]}
+                     for p in d.get("passi") or [] if isinstance(p, dict) and str(p.get("testo") or "").strip()][:15],
+           "consiglio": str(d.get("consiglio") or "")[:400],
+           "soluzione": [str(x)[:300] for x in d.get("soluzione") or [] if str(x).strip()][:12],
+           "quando": datetime.datetime.now().isoformat(timespec="minutes")}
+    if v is not None:
+        v["controllo"] = out
+        _salva(base, lista)
+    return {"controllo": out, "spesa": ch._costo(r.get("usage") or {})}
+
+
+# ------------------------------------------------------------------ Scaletta (i punti in ordine prima di scrivere)
+
+def scaletta(chiave, base, vid, consegna="", idee=""):
+    """La scaletta di un tema, riassunto, relazione o risposta aperta: i punti in ordine, ciascuno con una domanda
+    che aiuta a scriverlo e 2-3 parole chiave. Le idee dello studente vanno messe al posto giusto. Si salva nel compito."""
+    lista, v = _voce(base, vid)
+    consegna = str(consegna or (v or {}).get("cosa") or "").strip()[:1500]
+    idee = str(idee or "").strip()[:4000]
+    materia = str((v or {}).get("materia") or "")
+    corpo = {"model": ch.MODELLO, "max_tokens": 2500,
+             "system": ("Sei un tutor per uno studente con dislessia che deve scrivere un testo (tema, riassunto, relazione, "
+                        "risposta aperta, lettera...). Prepara la SCALETTA: da 4 a 7 punti in ordine (inizio, parte centrale, "
+                        "fine). Per ogni punto: «titolo» di 2-5 parole, «domanda» = una domanda semplice a cui rispondere per "
+                        "scrivere quel pezzo, «parole» = 2-3 parole chiave. Se lo studente ha scritto delle idee, mettile nel "
+                        "punto giusto («sue» = le sue idee per quel punto, con le sue parole). Non scrivere il testo al suo "
+                        "posto. «tipo» = che testo e' (es. tema argomentativo), «consiglio» = una frase su quanto scrivere. "
+                        f"Scrivi in {_lingua()}, frasi corte. Rispondi con lo strumento «scaletta»."),
+             "tools": [{"name": "scaletta", "description": "La scaletta.",
+                        "input_schema": {"type": "object", "properties": {
+                            "tipo": {"type": "string"},
+                            "punti": {"type": "array", "items": {"type": "object", "properties": {
+                                "titolo": {"type": "string"}, "domanda": {"type": "string"},
+                                "parole": {"type": "array", "items": {"type": "string"}},
+                                "sue": {"type": "array", "items": {"type": "string"}}},
+                                "required": ["titolo", "domanda"]}},
+                            "consiglio": {"type": "string"}},
+                            "required": ["punti"]}}],
+             "messages": [{"role": "user", "content": (f"Materia: {materia}\n" if materia else "") + f"Cosa devo scrivere: {consegna}"
+                           + (f"\nLe mie idee: {idee}" if idee else "")}]}
+    dati, uso = ch.strumento(chiave, corpo, "punti", "sm_pb_err")
+    out = {"tipo": str(dati.get("tipo") or "")[:80], "consiglio": str(dati.get("consiglio") or "")[:300],
+           "punti": [{"titolo": str(p.get("titolo") or "")[:80], "domanda": str(p.get("domanda") or "")[:300],
+                      "parole": [str(x)[:40] for x in p.get("parole") or []][:4], "sue": [str(x)[:300] for x in p.get("sue") or []][:5]}
+                     for p in dati.get("punti") or [] if isinstance(p, dict) and str(p.get("titolo") or "").strip()][:9],
+           "idee": idee, "quando": datetime.datetime.now().isoformat(timespec="minutes")}
+    if v is not None:
+        v["scaletta"] = out
+        _salva(base, lista)
+    return {"scaletta": out, "spesa": ch._costo(uso)}
+
+
+def scaletta_ordine(base, vid, ordine):
+    """Lo studente sposta i punti: si salva il nuovo ordine (indici della scaletta di prima)."""
+    lista, v = _voce(base, vid)
+    if v and isinstance(v.get("scaletta"), dict):
+        p = v["scaletta"].get("punti") or []
+        try:
+            nuovi = [p[int(i)] for i in ordine if 0 <= int(i) < len(p)]
+        except (TypeError, ValueError):
+            nuovi = p
+        if len(nuovi) == len(p):
+            v["scaletta"]["punti"] = nuovi
+            _salva(base, lista)
+    return compiti(base)

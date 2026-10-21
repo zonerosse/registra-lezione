@@ -663,6 +663,15 @@ class Api:
     def sm_pezzi(self, vid, rifai=False):
         return self._m.sm_pezzi(vid, rifai)
 
+    def sm_controlla(self, vid, percorsi, testo=""):
+        return self._m.sm_controlla(vid, percorsi, testo)
+
+    def sm_scaletta(self, vid, consegna="", idee=""):
+        return self._m.sm_scaletta(vid, consegna, idee)
+
+    def sm_scaletta_ordine(self, vid, ordine):
+        return self._m.sm_scaletta_ordine(vid, ordine)
+
     def sm_pezzo(self, vid, i, fatto):
         return self._m.sm_pezzo(vid, i, fatto)
 

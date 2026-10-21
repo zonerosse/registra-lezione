@@ -501,3 +501,57 @@ html.scripta.android #v-pronto.smr #doveBox .aiopt{text-align:left!important}htm
 html.scripta .pv-i,html.scripta .pv-i.no,html.scripta .pv-i.az{background:var(--sm-neb);border:1px solid var(--sm-lin)}
 html.scripta .pv-i b{font-size:16px}
 html.scripta .pv-i span{font-size:15px;color:var(--sm-ink)}
+
+/* Compiti: pannelli Controlla il risultato, Scaletta, Timer concentrazione */
+html.scripta .smk-pan-torna{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:8px;padding:6px 12px;font-size:15px;font-weight:600;color:var(--sm-ink);cursor:pointer;font-family:inherit}
+html.scripta .smk-pan-h{margin-top:14px}
+html.scripta .smk-cfoto{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+html.scripta .smk-cn{color:var(--sm-ok);font-size:16px}
+html.scripta .smk-esito{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--sm-lin);border-radius:12px;padding:14px 16px;background:var(--sm-carta)}
+html.scripta .smk-esito>div{flex:1;min-width:0}
+html.scripta .smk-esito b{display:block;font-size:20px;margin-bottom:2px}
+html.scripta .smk-esito span{display:block;font-size:16px;color:var(--sm-ink)}
+html.scripta .smk-esito .smk-esito-r{margin-top:6px;font-weight:600}
+html.scripta .smk-esito-i{flex:none;width:40px;height:40px;border-radius:10px;display:grid;place-items:center;color:#fff}
+html.scripta .smk-esito-i svg{width:22px;height:22px}
+html.scripta .smk-esito.giusto{border-color:#A7D7B8;background:var(--sm-okt)}html.scripta .smk-esito.giusto .smk-esito-i{background:var(--sm-ok)}
+html.scripta .smk-esito.quasi,html.scripta .smk-esito.rivedere{border-color:#EBCB9F;background:var(--sm-ambt)}
+html.scripta .smk-esito.quasi .smk-esito-i,html.scripta .smk-esito.rivedere .smk-esito-i{background:var(--sm-amb)}
+html.scripta .smk-passi,html.scripta .smk-sol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+html.scripta .smk-passi li{display:flex;gap:12px;align-items:flex-start;background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:10px;padding:10px 12px}
+html.scripta .smk-passi li.no{border-color:#EBCB9F}
+html.scripta .smk-pi{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--sm-ok)}
+html.scripta .smk-passi li.no .smk-pi{background:var(--sm-amb)}
+html.scripta .smk-pt{font-size:17px}
+html.scripta .smk-pn{font-size:16px;color:var(--sm-amb);margin-top:4px}
+html.scripta .smk-sol{counter-reset:s}html.scripta .smk-sol li{counter-increment:s;background:var(--sm-pett);border-radius:10px;padding:10px 12px 10px 44px;position:relative;font-size:17px}
+html.scripta .smk-sol li::before{content:counter(s);position:absolute;left:12px;top:9px;width:22px;height:22px;border-radius:50%;background:var(--sm-pet);color:#fff;font-weight:800;display:grid;place-items:center;font-size:14px}
+html.scripta .smk-cons{margin-top:12px;padding:12px 14px;border-left:3px solid var(--sm-pet);background:var(--sm-pett);border-radius:0 10px 10px 0;font-size:16px}
+html.scripta .smk-scal{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+html.scripta .smk-scal li{display:flex;gap:12px;align-items:flex-start;background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:12px;padding:12px 14px}
+html.scripta .smk-sn{flex:none;width:32px;height:32px;border-radius:9px;background:var(--sm-pet);color:#fff;font-weight:800;display:grid;place-items:center;font-size:16px}
+html.scripta .smk-sb{flex:1;min-width:0}html.scripta .smk-sb b{font-size:18px}
+html.scripta .smk-sd{font-size:16px;margin-top:4px}html.scripta .smk-sd span{color:var(--sm-ard);font-weight:600}
+html.scripta .smk-sp{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+html.scripta .smk-ss{margin-top:8px;font-size:16px;background:var(--sm-neb);border-radius:8px;padding:8px 10px}html.scripta .smk-ss span{display:block;font-weight:700;color:var(--sm-ard)}
+html.scripta .smk-sm{display:flex;flex-direction:column;gap:6px}
+html.scripta .smk-mv{width:36px;height:36px;border-radius:8px;border:1px solid var(--sm-lin);background:var(--sm-carta);font-size:17px;cursor:pointer;color:var(--sm-ink)}
+html.scripta .smk-mv:disabled{opacity:.35;cursor:default}
+html.scripta .smk-tim{text-align:center;padding:22px 16px}
+html.scripta .smk-tim-f{font-size:18px;font-weight:800;color:var(--sm-pet);text-transform:uppercase;letter-spacing:.06em}
+html.scripta .smk-tim.pausa .smk-tim-f{color:var(--sm-amb)}
+html.scripta .smk-anello{--p:0;width:200px;height:200px;margin:14px auto 0;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--sm-pet) calc(var(--p)*1%),var(--sm-lin2) 0)}
+html.scripta .smk-tim.pausa .smk-anello{background:conic-gradient(var(--sm-amb) calc(var(--p)*1%),var(--sm-lin2) 0)}
+html.scripta .smk-anello span{width:164px;height:164px;border-radius:50%;background:var(--sm-carta);display:grid;place-items:center;font-size:44px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--sm-ink)}
+html.scripta .smk-tim-p{margin-top:12px;font-size:17px;font-weight:600}
+html.scripta .smk-tim-g{margin-top:14px;font-size:16px;color:var(--sm-ard)}
+html.scripta .smk-tim-min{margin-top:16px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:16px;font-weight:600}
+html.scripta .smx-seg{display:inline-flex;background:var(--sm-carta);border:1px solid var(--sm-lin);border-radius:999px;padding:3px}
+html.scripta .smx-seg button{border:0;background:none;border-radius:999px;padding:6px 16px;font-size:16px;font-weight:700;color:var(--sm-ard);cursor:pointer;font-family:inherit}
+html.scripta .smx-seg button.on{background:var(--sm-pet);color:#fff}
+html.scripta .smk-timchip{position:fixed;right:18px;top:12px;z-index:60;border:0;border-radius:999px;padding:8px 16px;font-size:16px;font-weight:800;color:#fff;background:var(--sm-pet);box-shadow:0 6px 18px -8px rgba(15,31,36,.5);cursor:pointer;font-variant-numeric:tabular-nums;font-family:inherit}
+html.scripta .smk-timchip.pausa{background:var(--sm-amb)}
+@media (max-width:700px){html.scripta .smk-timchip{top:auto;bottom:78px;right:12px}html.scripta .smk-anello{width:170px;height:170px}html.scripta .smk-anello span{width:138px;height:138px;font-size:38px}}
+html.scripta .smk-esito-i svg{color:#fff;stroke:#fff;fill:none}
+html.scripta .smk-esito .smk-esito-i{display:grid;color:#fff}
+@media (max-width:700px){html.scripta .smk-esito{flex-wrap:wrap}html.scripta .smk-esito>div{flex:1 1 calc(100% - 60px)}html.scripta .smk-esito>button{margin-left:54px}}

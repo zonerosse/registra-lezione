@@ -108,7 +108,8 @@ function smCasaPrepara() {
   disegnaSpazioDsa = smCasa;           // al posto dello Spazio DSA di Verba Manent (e dei riquadri verifica sopra)
   const sec = $('v-dsa');
   if (sec) sec.classList.add('smcasa');
-  smInfoGiro(document.querySelector('.side')); smTestoGrande(document.querySelector('.side'));
+  smInfoGiro(document.querySelector('.side'));
+  if (!(typeof ANDROID !== 'undefined' && ANDROID)) smTestoGrande(document.querySelector('.side'));   // sul telefono la barra in basso resta com'è
   // le pagine si ridisegnano da sole (dati che arrivano, finestre): ogni volta si ricontrolla, con calma
   let attesa = null;
   new MutationObserver(() => {
