@@ -1332,17 +1332,33 @@ async function disegnaCloud(c) {
   $('clBox').classList.toggle('hidden', c.dove === 'no');
   const trovato = c.dove === 'gdrive' ? c.gdrive : c.dove === 'onedrive' ? c.onedrive : c.cartella;
   const k = c.dove === 'gdrive' ? 'cl.gd' : c.dove === 'onedrive' ? 'cl.od' : 'cl.al';
-  $('clTrov').className = 'cltrov' + (trovato ? '' : ' no');
-  $('clTrov').textContent = t(k + (trovato || c.dove === 'altro' ? '.ok' : '.no'));
-  $('clPath').textContent = c.radice || '';
-  $('clPath').parentElement.classList.toggle('hidden', !c.radice);
+  // Google Drive senza il programma di Google: si collega l'account e si copia direttamente nel Drive
+  const api = c.dove === 'gdrive' && !c.gdrive, acc = c.gapi_acc || '';
+  $('clTrov').className = 'cltrov' + (trovato || (api && c.gapi) ? '' : api ? ' info' : ' no');
+  $('clTrov').textContent = api ? (c.gapi ? t('cl.g.ok', {e: c.gapi === '?' ? 'Google' : c.gapi}) : t('cl.g.no'))
+    : t(k + (trovato || c.dove === 'altro' ? '.ok' : '.no'));
+  $('clG').classList.toggle('hidden', !api || !c.gapi_disp);
+  if (api) {
+    $('clGs').textContent = acc === 'in_corso' ? t('cl.g.att') : acc.startsWith('errore:') ? t('cl.g.err', {m: acc.slice(7)}) : t('cl.g.perm');
+    $('clGbtn').classList.toggle('hidden', !!c.gapi);
+    $('clGbtn').disabled = acc === 'in_corso';
+    $('clGbtn').innerHTML = acc === 'in_corso' ? `<span class="spin"></span> ${esc(t('cl.g.btn'))}` : esc(t('cl.g.btn'));
+    $('clGbtn').onclick = async () => disegnaCloud(await A.cloud_google_collega());
+    $('clGvia').classList.toggle('hidden', !c.gapi); $('clGvia').textContent = t('cl.g.via');
+    $('clGvia').onclick = async () => disegnaCloud(await A.cloud_google_scollega());
+    clearTimeout(disegnaCloud.giro);
+    if (acc === 'in_corso') disegnaCloud.giro = setTimeout(() => { if ($('clG') && !$('clG').classList.contains('hidden')) disegnaCloud(); }, 2000);
+  }
+  $('clPath').textContent = c.gapi_usa ? t('cl.g.dove', {c: c.gapi_cartella}) : c.radice || '';
+  $('clPath').parentElement.classList.toggle('hidden', !c.radice && !c.gapi_usa);
+  $('clQui').classList.toggle('hidden', !c.radice && !c.gapi_usa);
   $('clApri').onclick = () => A.apri_cloud();
   const ck = {clAp: 'appunti', clTr: 'tras', clAu: 'audio'};
   Object.keys(ck).forEach(id => { $(id).checked = !!c.cosa[ck[id]]; $(id).onchange = async () => disegnaCloud(await A.cloud_imposta(null, null, {[ck[id]]: $(id).checked})); });
   $('clTutte').textContent = t('cl.tutte', {n: c.da_copiare});
-  $('clTutte').classList.toggle('hidden', !c.radice || !c.da_copiare);
-  $('clTutteS').classList.toggle('hidden', !c.radice || !c.da_copiare);
-  $('clTel').textContent = c.radice ? t(c.dove === 'gdrive' ? 'cl.tel.gd' : c.dove === 'onedrive' ? 'cl.tel.od' : 'cl.tel.al') : '';
+  $('clTutte').classList.toggle('hidden', (!c.radice && !c.gapi_usa) || !c.da_copiare);
+  $('clTutteS').classList.toggle('hidden', (!c.radice && !c.gapi_usa) || !c.da_copiare);
+  $('clTel').textContent = c.gapi_usa ? t('cl.tel.api', {c: c.gapi_cartella}) : c.radice ? t(c.dove === 'gdrive' ? 'cl.tel.gd' : c.dove === 'onedrive' ? 'cl.tel.od' : 'cl.tel.al') : '';
   $('clRiprova').classList.toggle('hidden', c.dove === 'no');
   $('clTutte').onclick = async () => { const r = await A.cloud_tutte(); $('clStato').className = 'dvstato'; $('clStato').textContent = t('cl.tutte.ok', {n: r.n}); };
   $('clStato').className = 'dvstato';

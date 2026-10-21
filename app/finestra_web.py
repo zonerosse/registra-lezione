@@ -763,6 +763,12 @@ class Api:
     def cloud_imposta(self, dove=None, cartella=None, cosa=None):
         return self._m.cloud_imposta(dove, cartella, cosa)
 
+    def cloud_google_collega(self):
+        return self._m.cloud_google_collega()
+
+    def cloud_google_scollega(self):
+        return self._m.cloud_google_scollega()
+
     def cloud_tutte(self):
         return self._m.cloud_tutte()
 
@@ -780,6 +786,8 @@ class Api:
 
     def apri_cloud(self):
         import cloud
+        if cloud.usa_api(self._m.cfg):
+            return self.apri("https://drive.google.com/drive/search?q=" + urllib.parse.quote(cloud.cartella_api()))
         r = cloud.radice(self._m.cfg)
         if r:
             r.mkdir(parents=True, exist_ok=True)

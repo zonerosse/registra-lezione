@@ -756,7 +756,10 @@ class Motore:
             import cloud
             try:
                 with self._blocco_cloud:
+                    g0 = ((self.cfg.get("cloud") or {}).get("google") or {}).get("refresh")
                     n = cloud.copia(cart, self.cfg)
+                    if ((self.cfg.get("cloud") or {}).get("google") or {}).get("refresh") != g0:
+                        salva_config(self.cfg)
                 if n:
                     log.info("cloud: %s file di %s", n, Path(cart).name)
             except Exception as e:
@@ -806,8 +809,13 @@ class Motore:
                     ultima = {"nome": i.get("nome", p.name), "quando": q.get("quando", "")}
             else:
                 n += 1
+        import nuvola as nv
+        g = c.get("google") or {}
+        api = c.get("dove") == "gdrive" and not gd and bool(g.get("refresh"))
         return {"dove": c.get("dove") or "no", "cartella": c.get("cartella") or "", "gdrive": str(gd) if gd else "",
                 "onedrive": str(od) if od else "", "radice": str(rad) if rad else "",
+                "gapi": g.get("email") or ("?" if g.get("refresh") else ""), "gapi_usa": api, "gapi_cartella": cloud.cartella_api(),
+                "gapi_acc": getattr(self, "_cl_acc", ""), "gapi_disp": bool(nv.credenziali()["google"]),
                 "cosa": {"appunti": True, "tras": True, "audio": True, **(c.get("cosa") or {})},
                 "ultima": ultima, "da_copiare": n}
 
@@ -821,6 +829,46 @@ class Motore:
             c["cosa"] = {**(c.get("cosa") or {}), **{k: bool(v) for k, v in cosa.items() if k in ("appunti", "tras", "audio")}}
         self.cfg["cloud"] = c
         salva_config(self.cfg)
+        return self.cloud_stato()
+
+    def cloud_google_collega(self):
+        """«Collega il mio account Google»: copie direttamente nel Drive, senza «Google Drive per desktop».
+        Se «Sincronizza anche fuori casa» usa gia' Google, si riusa quell'accesso (stesso permesso)."""
+        import nuvola as nv
+        if not nv.credenziali()["google"]:
+            return {"ok": False, "msg": tr("nv_err_nondisp")}
+        n = self.cfg.get("nuvola") or {}
+        if n.get("provider") == "google" and n.get("refresh"):
+            c = dict(self.cfg.get("cloud") or {})
+            c.update(dove="gdrive", google={"refresh": n["refresh"], "email": n.get("email") or ""})
+            self.cfg["cloud"] = c
+            salva_config(self.cfg)
+            return {"ok": True, **self.cloud_stato()}
+        if getattr(self, "_cl_acc", "") == "in_corso":
+            return {"ok": True, **self.cloud_stato()}
+        self._cl_acc = "in_corso"
+
+        def lavora():
+            try:
+                testi_ = {k: tr("nv_pag_" + k) for k in ("ok_t", "ok_s", "no_t", "no_s")}
+                r = nv.accedi("google", apri, testi_)
+                c = dict(self.cfg.get("cloud") or {})
+                c.update(dove="gdrive", google={"refresh": r["refresh"], "email": r["email"]})
+                self.cfg["cloud"] = c
+                salva_config(self.cfg)
+                self._cl_acc = ""
+            except Exception as e:
+                log.exception("cloud: accesso a Google")
+                self._cl_acc = "errore:" + (str(e) if str(e) in ("annullato", "tempo") else nv.motivo(e))
+        threading.Thread(target=lavora, daemon=True).start()
+        return {"ok": True, **self.cloud_stato()}
+
+    def cloud_google_scollega(self):
+        c = dict(self.cfg.get("cloud") or {})
+        c.pop("google", None)
+        self.cfg["cloud"] = c
+        salva_config(self.cfg)
+        self._cl_acc = ""
         return self.cloud_stato()
 
     def cloud_tutte(self):

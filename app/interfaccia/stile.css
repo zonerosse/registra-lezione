@@ -772,7 +772,7 @@ html.android .cfpassi{grid-template-columns:1fr}
 .clbox{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:12px 14px}
 .clpath{display:flex;align-items:center;gap:8px;font-family:Consolas,monospace;font-size:12.5px;color:var(--ink);background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:6px 9px;margin:6px 0 10px}
 .clpath span{flex:1;word-break:break-all}
-.cltrov{color:#059669;font-weight:600;font-size:13.5px}.cltrov.no{color:#c2410c}
+.cltrov{color:#059669;font-weight:600;font-size:13.5px}.cltrov.no{color:#c2410c}.cltrov.info{color:#334155}
 .clpath .btn{font-family:"Segoe UI",Roboto,system-ui,sans-serif}
 
 .dvlista .dvok{margin-left:auto;color:#059669;font-weight:800;font-size:18px;visibility:hidden}.dvlista>div.attivo .dvok{visibility:visible}
