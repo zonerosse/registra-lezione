@@ -9,6 +9,10 @@ const SMT = {
     'calc.voce': 'Voce', 'calc.rileggi': 'Rileggi', 'calc.fa': 'fa', 'calc.err': 'Il calcolo non è completo',
     'tab.s': 'Tocca un numero: ti dico la moltiplicazione.', 'tab.per': 'per', 'stampa': 'Stampa',
     'form.s': 'Le formule delle figure, da portare in verifica se il tuo piano lo prevede.', 'form.per': 'Perimetro', 'form.area': 'Area',
+    'fm.h': 'Le formule delle mie lezioni', 'fm.s': 'Arrivano da sole dalle lezioni registrate (anche dalle foto della lavagna e delle slide). Puoi aggiungere quelle del libro con una foto.',
+    'fm.libro': 'Fotografa il libro', 'fm.lav': 'Fotografa lavagna o slide', 'fm.pag': 'pagina', 'fm.lettura': 'Leggo le formule…', 'fm.cerco': 'Sto cercando le formule nelle lezioni nuove…',
+    'fm.vuoto': 'Ancora nessuna formula. Quando registri una lezione in cui il prof spiega una formula, la trovi qui.', 'fm.nuove': 'Formule nuove: {n}', 'fm.nessuna': 'In questa foto non ho trovato formule.',
+    'fm.prof': 'Senti il prof', 'fm.togli': 'Togli', 'fm.tolta': 'Formula tolta', 'fm.lez': 'Lezione del {d}', 'fm.lib': 'Libro', 'fm.lavf': 'Foto della lavagna', 'fm.qua': 'Quaderno', 'fm.base': 'Le formule di base', 'fm.altro': 'Altre',
     'pb.s': 'Scrivi il problema o fotografalo: te lo divido in passi piccoli e te li leggo.',
     'pb.ph': 'Es. Un rettangolo è lungo 12 cm e largo 5 cm. Quanto misura il perimetro?',
     'pb.foto': 'Fotografa il problema', 'pb.vai': 'Spiegamelo', 'pb.lav': 'Divido il problema in passi…',
@@ -48,6 +52,10 @@ const SMT = {
     'calc.voce': 'Voice', 'calc.rileggi': 'Read again', 'calc.fa': 'equals', 'calc.err': 'The calculation is not complete',
     'tab.s': 'Tap a number: I will tell you the multiplication.', 'tab.per': 'times', 'stampa': 'Print',
     'form.s': 'The formulas of the shapes, to bring to tests if your plan allows it.', 'form.per': 'Perimeter', 'form.area': 'Area',
+    'fm.h': 'The formulas from my lessons', 'fm.s': 'They arrive by themselves from your recorded lessons (also from photos of the board and slides). Add the ones in your book with a photo.',
+    'fm.libro': 'Photo of the book', 'fm.lav': 'Photo of board or slide', 'fm.pag': 'page', 'fm.lettura': 'Reading the formulas…', 'fm.cerco': 'Looking for formulas in the new lessons…',
+    'fm.vuoto': 'No formulas yet. When you record a lesson where the teacher explains a formula, you will find it here.', 'fm.nuove': 'New formulas: {n}', 'fm.nessuna': 'I found no formulas in this photo.',
+    'fm.prof': 'Hear the teacher', 'fm.togli': 'Remove', 'fm.tolta': 'Formula removed', 'fm.lez': 'Lesson of {d}', 'fm.lib': 'Book', 'fm.lavf': 'Photo of the board', 'fm.qua': 'Notebook', 'fm.base': 'Basic formulas', 'fm.altro': 'Other',
     'pb.s': 'Type the problem or take a photo: I split it into small steps and read them to you.',
     'pb.ph': 'E.g. A rectangle is 12 cm long and 5 cm wide. What is its perimeter?',
     'pb.foto': 'Take a photo of the problem', 'pb.vai': 'Explain it', 'pb.lav': 'Splitting the problem into steps…',
@@ -112,6 +120,7 @@ function smPrepara() {
   const vaiPrima = vai;
   vai = function (p, tornando = false) {
     SM_PAGINE.forEach(x => { const s = $('v-' + x); if (s) s.classList.add('hidden'); });
+    const nc = document.querySelector('#nav a[data-p="smcomp"] span'); if (nc) nc.textContent = ts('nav.comp');   // la lingua puo' arrivare dopo
     if (p !== 'smmate' && p !== 'smcorr' && p !== 'smcomp') voceFermaSm();
     if (SM_PAGINE.includes(p)) smTitolo(p, ts({smmate: 'mate.h', smcorr: 'corr.h', smcomp: 'comp.h'}[p]), '');   // il titolo serve gia' al percorso
     const da = pagina;
@@ -227,13 +236,67 @@ function formulaParlata(f) {
 }
 function smForm(el) {
   const L = LINGUA === 'en' ? 'en' : 'it';
-  el.innerHTML = `<div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px"><div class="hint">${esc(ts('form.s'))}</div>
+  el.innerHTML = `<div id="smFm"></div><h3 class="smfmh">${esc(ts('fm.base'))}</h3><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:10px"><div class="hint">${esc(ts('form.s'))}</div>
     <button class="btn b-ghost b-sm" id="smFoSt">${icoSm('g-stampa')} ${esc(ts('stampa'))}</button></div>
     <div class="smforme">${FORME.map((f, i) => `<div class="card smforma"><svg viewBox="0 0 80 80" class="smfig">${f.svg}</svg>
       <div class="sp"><b>${esc(f.n[L])}</b><div class="smf" data-i="${i}" data-q="p"><span>${esc(ts('form.per'))}</span> ${esc(f.p)}</div>
       <div class="smf" data-i="${i}" data-q="a"><span>${esc(ts('form.area'))}</span> ${esc(f.a)}</div></div></div>`).join('')}</div>`;
   el.querySelectorAll('.smf').forEach(d => d.onclick = () => { const f = FORME[+d.dataset.i]; parlaSm(f.n[L] + '. ' + formulaParlata(d.dataset.q === 'p' ? f.p : f.a)); });
   $('smFoSt').onclick = () => smStampa(el.querySelector('.smforme').innerHTML, ts('mate.form'));
+  smFormule(true);
+}
+
+/* le formule delle mie lezioni: dalle registrazioni, dalla lavagna, dal libro */
+function minSec(x) { x = Math.max(0, Math.round(+x || 0)); const h = Math.floor(x / 3600), m = Math.floor(x / 60) % 60, z = String(x % 60).padStart(2, '0'); return h ? `${h}:${String(m).padStart(2, '0')}:${z}` : `${m}:${z}`; }
+function dataBreve(iso) { const d = String(iso || '').split('-'); return d.length === 3 ? `${d[2]}/${d[1]}` : ''; }
+function fonteFormula(f) {
+  const o = f.fonte || {};
+  if (o.tipo === 'lezione') return ts('fm.lez', {d: dataBreve(o.data)}) + (o.nome ? ' · ' + o.nome : '');
+  if (o.tipo === 'lavagna') return ts('fm.lavf') + (o.data ? ' · ' + dataBreve(o.data) : '');
+  if (o.tipo === 'quaderno') return ts('fm.qua');
+  return ts('fm.lib') + (o.pagina ? `, ${ts('fm.pag')} ${o.pagina}` : '');
+}
+async function smFormule(carica) {
+  const box = $('smFm'); if (!box) return;
+  if (carica || !SMS.fm) { const r = await A.sm_formule(); if (!$('smFm')) return; SMS.fm = r || {formule: []}; }
+  const F = SMS.fm.formule || [];
+  const gruppi = {};
+  F.forEach(f => { const g = f.materia || f.argomento || ts('fm.altro'); (gruppi[g] = gruppi[g] || []).push(f); });
+  box.innerHTML = `<div class="card smfm"><div class="row" style="gap:8px;flex-wrap:wrap;align-items:flex-start">
+      <div class="sp" style="min-width:220px"><b class="smfmt">${esc(ts('fm.h'))}</b><div class="hint">${esc(ts('fm.s'))}</div></div>
+      <div class="row" style="gap:6px;flex-wrap:wrap"><input class="in smfmpag" id="smFmPag" placeholder="${esc(ts('fm.pag'))}" maxlength="6">
+      <button class="btn b-ghost b-sm" id="smFmLib">${icoSm('g-foto')} ${esc(ts('fm.libro'))}</button>
+      <button class="btn b-ghost b-sm" id="smFmLav">${icoSm('g-foto')} ${esc(ts('fm.lav'))}</button></div></div>
+    ${SMS.fm.lavoro ? `<div class="hint mt row" style="gap:8px"><span class="spin"></span>${esc(ts('fm.cerco'))}</div>` : ''}
+    ${F.length ? Object.keys(gruppi).sort().map(g => `<div class="smfmg">${esc(g)}</div>${gruppi[g].map(f => `<div class="smfmr" data-id="${esc(f.id)}">
+        <div class="sp"><div class="smfmn">${esc(f.nome || '')}</div><div class="smfmf">${esc(f.formula)}</div>
+        ${f.simboli ? `<div class="hint">${esc(f.simboli)}</div>` : ''}<div class="smfmo">${esc(fonteFormula(f))}</div></div>
+        <div class="smfma"><button class="btn b-ghost b-sm" data-a="leggi">${icoSm('g-voce')} ${esc(ts('ascolta'))}</button>
+        ${f.fonte && f.fonte.tipo === 'lezione' && f.fonte.sec != null && f.fonte.cartella ? `<button class="btn b-ghost b-sm" data-a="prof">${esc(ts('fm.prof'))} · ${minSec(f.fonte.sec)} ›</button>` : ''}
+        <button class="lnk" data-a="togli">${esc(ts('fm.togli'))}</button></div></div>`).join('')}`).join('')
+      : `<div class="hint mt">${esc(ts('fm.vuoto'))}</div>`}</div>`;
+  box.querySelectorAll('.smfmr [data-a]').forEach(b => b.onclick = async () => {
+    const f = F.find(x => x.id === b.closest('.smfmr').dataset.id); if (!f) return;
+    if (b.dataset.a === 'leggi') { const v = SMS.voce; SMS.voce = true; parlaSm(`${f.nome || ''}. ${f.lettura || f.formula}`); SMS.voce = v; }
+    else if (b.dataset.a === 'prof') { voceFermaSm(); mostraMomento(f.fonte.cartella, f.fonte.sec, null, f.fonte.nome); }
+    else {
+      const r = await A.sm_formula_togli(f.id); if (!r) return;
+      SMS.fm.formule = r.formule; smFormule();
+      smAnnulla(ts('fm.tolta'), async () => { const q = await A.sm_formula_rimetti(r.tolta); if (q) { SMS.fm.formule = q.formule; smFormule(); } });
+    }
+  });
+  const foto = async (dove, btn) => {
+    const s = await A.scatta_foglio(); if (!s || !s.percorsi || !s.percorsi.length) return;
+    const testo = btn.innerHTML; btn.disabled = true; btn.textContent = ts('fm.lettura');
+    const r = await A.sm_formule_foto(s.percorsi, dove, ($('smFmPag') || {}).value || '', '');
+    btn.disabled = false; btn.innerHTML = testo;
+    if (!r || !r.ok) return toast((r && r.msg) || '');
+    SMS.fm.formule = r.formule; smFormule();
+    toast(r.nuove ? ts('fm.nuove', {n: r.nuove}) : ts('fm.nessuna'));
+  };
+  $('smFmLib').onclick = () => foto('libro', $('smFmLib'));
+  $('smFmLav').onclick = () => foto('lavagna', $('smFmLav'));
+  if (SMS.fm.lavoro) setTimeout(() => { if ($('smFm')) smFormule(true); }, 8000);
 }
 function smStampa(html, titolo) {
   const w = window.open('', '_blank');

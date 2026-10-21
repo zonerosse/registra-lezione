@@ -1534,3 +1534,17 @@ html.android .smcome{grid-template-columns:1fr}
 @media (max-width:820px){.smcome{grid-template-columns:1fr}}
 .smann{display:flex;align-items:center;gap:14px}
 .smann button{border:0;background:none;color:#5eead4;font:700 13.5px inherit;font-family:inherit;cursor:pointer;padding:4px 2px;text-transform:uppercase;letter-spacing:.4px}
+/* Scripta Manent: le formule delle mie lezioni */
+.smfm{margin-bottom:14px;padding:14px 16px}
+.smfmt{display:block;font-size:15px;color:var(--ink);margin-bottom:2px}
+.smfmh{font-size:14px;margin:4px 0 10px;color:var(--ink)}
+.smfmpag{width:78px;padding:6px 8px;font-size:13px}
+.smfmg{margin:14px 0 4px;font:600 12px "Segoe UI",system-ui,sans-serif;color:var(--mut);text-transform:uppercase;letter-spacing:.4px}
+.smfmr{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.smfmn{font-weight:600;color:var(--ink);font-size:13.5px}
+.smfmf{font:700 17px var(--dsa-font);color:var(--ink);margin:2px 0}
+.smfmo{font-size:12px;color:#0f766e;margin-top:3px}
+.smfma{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+html.android .smfmr{flex-direction:column;align-items:stretch}
+html.android .smfma{justify-content:flex-start}
+@media (max-width:720px){.smfmr{flex-direction:column;align-items:stretch}.smfma{justify-content:flex-start}}

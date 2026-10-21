@@ -638,6 +638,18 @@ class Api:
     def sm_compiti(self):
         return self._m.sm_compiti()
 
+    def sm_formule(self):
+        return self._m.sm_formule()
+
+    def sm_formule_foto(self, percorsi, dove="libro", pagina="", materia=""):
+        return self._m.sm_formule_foto(percorsi, dove, pagina, materia)
+
+    def sm_formula_togli(self, fid):
+        return self._m.sm_formula_togli(fid)
+
+    def sm_formula_rimetti(self, voce):
+        return self._m.sm_formula_rimetti(voce)
+
     def sm_compito_nuovo(self, voce):
         return self._m.sm_compito_nuovo(voce)
 

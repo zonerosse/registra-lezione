@@ -2928,6 +2928,7 @@ class Motore:
     def sm_compiti(self):
         import strumenti_sm as sm
         self._sm_leggi_lezioni()
+        self._sm_leggi_formule()
         return {"ok": True, "compiti": sm.compiti(BASE), "ricorda": sm.da_ricordare(BASE),
                 "oggi": datetime.date.today().isoformat(), "lavoro": bool(getattr(self, "_sm_lavoro", False))}
 
@@ -2957,6 +2958,65 @@ class Motore:
             finally:
                 self._sm_lavoro = False
         threading.Thread(target=lavoro, daemon=True).start()
+
+    # le formule delle mie lezioni (il formulario che si riempie da solo)
+    def sm_formule(self):
+        import strumenti_sm as sm
+        self._sm_leggi_formule()
+        return {"ok": True, "formule": sm.formule(BASE), "lavoro": bool(getattr(self, "_sm_lavoro_f", False)),
+                "chiave": bool(self.chiave())}
+
+    def _sm_leggi_formule(self):
+        """Le lezioni nuove (pronte) vanno a Claude una volta sola per trovare le formule, in sottofondo."""
+        import strumenti_sm as sm
+        if not ed.SCRIPTA or not self.chiave() or getattr(self, "_sm_lavoro_f", False):
+            return
+        da = sm.lezioni_per_formule(BASE)
+        if not da:
+            return
+        self._sm_lavoro_f = True
+
+        def lavoro():
+            try:
+                for c in da[:6]:
+                    try:
+                        r = sm.formule_da_lezione(self.chiave(), BASE, c)
+                        info = el.leggi_json(c / "info.json", {}) or {}
+                        el.aggiorna_info(c, formule_lette=True,
+                                         spesa_appunti=round(float(info.get("spesa_appunti") or 0) + r["spesa"], 4))
+                        log.info("formule dalla lezione %s: %s", c.name, r["nuove"])
+                    except Exception:
+                        log.exception("formule dalla lezione %s", c.name)
+                        el.aggiorna_info(c, formule_lette=True)
+            finally:
+                self._sm_lavoro_f = False
+        threading.Thread(target=lavoro, daemon=True).start()
+
+    def sm_formule_foto(self, percorsi, dove="libro", pagina="", materia=""):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        nuove, spesa = 0, 0.0
+        try:
+            for f in [x for x in percorsi or [] if x][:5]:
+                r = sm.formule_da_foto(self.chiave(), BASE, f, dove, pagina, materia)
+                nuove += r["nuove"]
+                spesa += r["spesa"]
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("formule dalla foto")
+            return {"ok": False, "msg": tr("sm_fo_err")}
+        return {"ok": True, "nuove": nuove, "spesa": spesa, "formule": sm.formule(BASE)}
+
+    def sm_formula_togli(self, fid):
+        import strumenti_sm as sm
+        tolta = sm.togli_formula(BASE, fid)
+        return {"ok": bool(tolta), "tolta": tolta, "formule": sm.formule(BASE)}
+
+    def sm_formula_rimetti(self, voce):
+        import strumenti_sm as sm
+        return {"ok": sm.rimetti_formula(BASE, voce), "formule": sm.formule(BASE)}
 
     def sm_compito_nuovo(self, voce):
         import strumenti_sm as sm

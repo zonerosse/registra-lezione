@@ -255,3 +255,177 @@ def lezioni_da_leggere(base, giorni=21):
         if any(c.glob("trascrizione_*.json")):
             out.append(c)
     return out
+
+
+# ------------------------------------------------------------------ le formule delle mie lezioni
+# Il formulario si riempie da solo: le formule dette o scritte dal prof nelle lezioni registrate (anche quelle nelle foto
+# della lavagna e delle slide fatte in aula), e quelle delle foto del libro o del quaderno. Ognuna ricorda da dove arriva.
+
+_STRUMENTO_FORMULE = {
+    "name": "formule", "description": "Le formule trovate.",
+    "input_schema": {"type": "object", "properties": {
+        "formule": {"type": "array", "items": {"type": "object", "properties": {
+            "nome": {"type": "string", "description": "a cosa si riferisce, 2-5 parole (es. «Area del trapezio», «Legge di Ohm»)"},
+            "formula": {"type": "string", "description": "la formula scritta leggibile, con × ÷ π ² √ (es. «A = (B + b) × h ÷ 2»)"},
+            "lettura": {"type": "string", "description": "come si legge ad alta voce, per intero (es. «area uguale base maggiore piu' base minore, per altezza, diviso 2»)"},
+            "simboli": {"type": "string", "description": "cosa vuol dire ogni lettera, breve (es. «B = base maggiore, b = base minore, h = altezza»)"},
+            "argomento": {"type": "string", "description": "il gruppo: geometria, algebra, fisica, chimica, unita' di misura..."},
+            "ora": {"type": "string", "description": "solo per le lezioni: l'orario [hh:mm:ss] della riga in cui il docente la dice o la scrive"}},
+            "required": ["nome", "formula", "lettura"]}}},
+        "required": ["formule"]}}
+
+_REGOLE_FORMULE = ("Prendi SOLO formule vere (matematica, geometria, fisica, chimica, conversioni di unita' di misura), non le "
+                   "frasi normali e non i singoli calcoli con i numeri di un esercizio (es. «12 × 5 = 60» NO, «A = b × h» SI'). "
+                   "Se una formula compare piu' volte mettila una volta sola. Se non ce ne sono, la lista e' vuota: non inventare. "
+                   "Scrivi le formule in modo leggibile per uno studente con dislessia o discalculia (× invece di *, ÷ invece di /, "
+                   "² e √ veri). Scrivi in {lingua}. Rispondi con lo strumento «formule».")
+
+
+def _file_formule(base):
+    return Path(base) / "formule.json"
+
+
+def formule(base):
+    """Le formule salvate, raggruppabili per materia/argomento (le piu' nuove prima dentro ogni gruppo)."""
+    lista = el.leggi_json(_file_formule(base), []) or []
+    lista = [f for f in lista if isinstance(f, dict) and f.get("id") and f.get("formula")]
+    return sorted(lista, key=lambda f: (f.get("materia") or "~", f.get("argomento") or "~", f.get("quando") or ""), reverse=False)
+
+
+def _chiave_formula(s):
+    return "".join(ch_ for ch_ in str(s).lower() if ch_.isalnum() or ch_ in "×÷+-=²√π()")
+
+
+def _sec(ora):
+    try:
+        p = [int(x) for x in str(ora).strip("[] ").split(":")]
+        return p[0] * 3600 + p[1] * 60 + p[2] if len(p) == 3 else p[0] * 60 + p[1] if len(p) == 2 else None
+    except (ValueError, IndexError):
+        return None
+
+
+def _aggiungi_formule(base, trovate, fonte):
+    """Aggiunge le formule nuove (le doppie no). Torna quante sono entrate."""
+    lista = el.leggi_json(_file_formule(base), []) or []
+    gia = {_chiave_formula(f.get("formula")) for f in lista if isinstance(f, dict)}
+    n = 0
+    for f in trovate if isinstance(trovate, list) else []:
+        if not isinstance(f, dict):
+            continue
+        formula = str(f.get("formula") or "").strip()[:200]
+        k = _chiave_formula(formula)
+        if len(k) < 3 or ("=" not in formula and "→" not in formula) or k in gia:
+            continue
+        gia.add(k)
+        voce = {"id": uuid.uuid4().hex[:10], "nome": str(f.get("nome") or "").strip()[:80], "formula": formula,
+                "lettura": str(f.get("lettura") or formula).strip()[:400], "simboli": str(f.get("simboli") or "").strip()[:300],
+                "argomento": str(f.get("argomento") or "").strip()[:40], "materia": fonte.get("materia", "")[:60],
+                "fonte": dict(fonte), "quando": datetime.datetime.now().isoformat(timespec="seconds")}
+        s = _sec(f.get("ora")) if fonte.get("tipo") == "lezione" else None
+        if s is not None:
+            voce["fonte"]["sec"] = s
+        lista.append(voce)
+        n += 1
+    el.scrivi_json(_file_formule(base), lista)
+    return n
+
+
+def _chiedi_formule(chiave, corpo):
+    # una lezione o una pagina senza formule e' normale: lista vuota accettata (niente strumento(), che riproverebbe)
+    r = ch._chiama(chiave, dict(corpo, tools=[_STRUMENTO_FORMULE], tool_choice={"type": "tool", "name": "formule"}))
+    blocco = next((b for b in r.get("content", []) if b.get("type") == "tool_use"), None)
+    dati = (blocco or {}).get("input") or {}
+    if isinstance(dati, str):
+        try:
+            dati = json.loads(dati)
+        except ValueError:
+            dati = {}
+    trovate = dati.get("formule") if isinstance(dati, dict) else None
+    if isinstance(trovate, str):
+        try:
+            trovate = json.loads(trovate)
+        except ValueError:
+            trovate = []
+    return trovate or [], ch._costo(r.get("usage", {}))
+
+
+def formule_da_lezione(chiave, base, cartella):
+    """Le formule di UNA lezione registrata (trascrizione + foto della lavagna/slide fatte in aula). {"nuove", "spesa"}."""
+    cart = Path(cartella)
+    info = el.leggi_json(cart / "info.json", {}) or {}
+    testo = ch.testo_lezione(cart)
+    if len(testo.strip()) < 40:
+        return {"nuove": 0, "spesa": 0.0}
+    testo = testo[:200000]
+    corpo = {"model": ch.MODELLO, "max_tokens": 4000,
+             "system": ("Ti mando la trascrizione di una lezione registrata da uno studente (con gli orari), e in fondo cosa c'e' "
+                        "scritto nelle foto della lavagna e delle slide. Trova le formule che il docente spiega, detta o scrive. "
+                        "La trascrizione e' automatica: una formula detta a voce («l'area e' base per altezza diviso due») va "
+                        "riscritta come formula. Per ognuna metti l'orario della riga in cui la dice o la scrive. "
+                        + _REGOLE_FORMULE.format(lingua=_lingua())),
+             "messages": [{"role": "user", "content": testo}]}
+    trovate, spesa = _chiedi_formule(chiave, corpo)
+    try:
+        giorno = datetime.datetime.fromisoformat(str(info.get("inizio") or "")).date().isoformat()
+    except ValueError:
+        giorno = ""
+    fonte = {"tipo": "lezione", "nome": str(info.get("nome") or cart.name)[:120], "cartella": str(cart), "data": giorno,
+             "materia": str(info.get("materia") or "")}
+    return {"nuove": _aggiungi_formule(base, trovate, fonte), "spesa": spesa}
+
+
+def formule_da_foto(chiave, base, foto, dove="libro", pagina="", materia=""):
+    """Le formule di una foto: dove = "libro" (pagina del libro), "lavagna" (lavagna o slide), "quaderno". {"nuove", "spesa"}."""
+    import base64
+    dati_foto = ch.jpeg_ridotto(foto)
+    cosa = {"lavagna": "di una lavagna o di una slide proiettata", "quaderno": "di una pagina del quaderno"}.get(dove, "di una pagina del libro")
+    corpo = {"model": ch.MODELLO, "max_tokens": 3000,
+             "system": f"Ti mando la foto {cosa} di uno studente. Trova le formule che ci sono. " + _REGOLE_FORMULE.format(lingua=_lingua()),
+             "messages": [{"role": "user", "content": [
+                 {"type": "image", "source": {"type": "base64", "media_type": "image/jpeg", "data": base64.b64encode(dati_foto).decode()}},
+                 {"type": "text", "text": "Ecco la foto."}]}]}
+    trovate, spesa = _chiedi_formule(chiave, corpo)
+    fonte = {"tipo": dove if dove in ("lavagna", "quaderno") else "libro", "pagina": str(pagina or "").strip()[:12],
+             "data": datetime.date.today().isoformat(), "materia": str(materia or "").strip()}
+    return {"nuove": _aggiungi_formule(base, trovate, fonte), "spesa": spesa}
+
+
+def togli_formula(base, fid):
+    """Toglie una formula e la restituisce (per «Annulla»)."""
+    lista = el.leggi_json(_file_formule(base), []) or []
+    tolta = next((f for f in lista if isinstance(f, dict) and f.get("id") == fid), None)
+    el.scrivi_json(_file_formule(base), [f for f in lista if not (isinstance(f, dict) and f.get("id") == fid)])
+    return tolta
+
+
+def rimetti_formula(base, voce):
+    """«Annulla» dopo «Togli»: la formula torna com'era, con la sua provenienza."""
+    if not isinstance(voce, dict) or not voce.get("id") or not voce.get("formula"):
+        return False
+    lista = el.leggi_json(_file_formule(base), []) or []
+    if not any(isinstance(f, dict) and f.get("id") == voce["id"] for f in lista):
+        lista.append(voce)
+        el.scrivi_json(_file_formule(base), lista)
+    return True
+
+
+def lezioni_per_formule(base, giorni=60):
+    """Le lezioni pronte e trascritte degli ultimi giorni non ancora lette per le formule."""
+    limite = datetime.date.today() - datetime.timedelta(days=giorni)
+    out = []
+    try:
+        cartelle = [p for p in Path(base).iterdir() if p.is_dir() and (p / "info.json").exists()]
+    except OSError:
+        return out
+    for c in cartelle:
+        info = el.leggi_json(c / "info.json", {}) or {}
+        if info.get("stato") != "pronta" or info.get("formule_lette") or info.get("tipo", "lezione") != "lezione":
+            continue
+        try:
+            if datetime.datetime.fromisoformat(str(info.get("inizio") or "")).date() < limite:
+                continue
+        except ValueError:
+            continue
+        if any(c.glob("trascrizione_*.json")):
+            out.append(c)
+    return out
