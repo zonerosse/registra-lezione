@@ -1,8 +1,8 @@
 {
- "versione": "4.19",
+ "versione": "4.20",
  "librerie": 2,
- "novita": "Appunti più sicuri: se Claude li manda scritti male o tagliati (lezione, esame, riunione, webinar, il mio formato), il programma li sistema da solo o li richiede, e la pagina non si blocca più a fine registrazione. Controllati anche esame, glossario, mappe, podcast, test e le altre funzioni con Claude. Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone; se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
- "novita_en": "Safer notes: if Claude sends them badly written or cut off (lesson, exam, meeting, webinar, my format), the program fixes them by itself or asks again, and the page no longer freezes at the end of a recording. Exam, glossary, maps, podcast, tests and the other Claude features checked too. Connect to the PC: with the code the phone now finds the PC on iPhone too; if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
- "novita_sm": "Appunti più sicuri: se Claude li manda scritti male o tagliati, il programma li sistema da solo o li richiede, e la pagina non si blocca più. Controllati anche compiti, formule, diario e le altre funzioni con Claude. Il telefono ora trova il PC col codice anche sull'iPhone.",
- "novita_sm_en": "Safer notes: if Claude sends them badly written or cut off, the program fixes them by itself or asks again, and the page no longer freezes. Homework, formulas, diary and the other Claude features checked too. With the code the phone now finds the PC on iPhone too."
+ "novita": "Piccola correzione: in «Andamento», se la pagina non si carica, ora compare un messaggio chiaro.",
+ "novita_en": "Small fix: in «Progress», if the page does not load, a clear message now appears.",
+ "novita_sm": "Compiti: «Controlla il risultato» (fotografi il tuo svolgimento e ti dico se è giusto e dove guardare), «Scaletta» prima di scrivere un tema o un riassunto, e il «Timer concentrazione» con la pausa a voce. Sistemati anche alcuni tasti che non rispondevano e le scritte rimaste piccole.",
+ "novita_sm_en": "Homework: «Check the result» (take a photo of your working and I tell you if it is right and where to look), «Outline» before writing an essay or summary, and the «Focus timer» with a spoken break. Also fixed a few buttons that did not respond and text that was still small."
 }
