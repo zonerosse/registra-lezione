@@ -128,8 +128,8 @@ html.scripta .smc-rapide .btn{justify-content:flex-start}
 html.scripta .smc-str{margin-top:26px}
 html.scripta .smc-strt{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 html.scripta .smc-strt h2{margin:0;font-size:17px;font-weight:650;color:var(--sm-ink);flex:1}
-html.scripta .smc-per{display:flex;align-items:center;gap:8px;color:var(--sm-ard);font-size:15px}
-html.scripta .smc-per select{border:1px solid var(--sm-lin);border-radius:8px;padding:7px 10px;font-size:15px;background:var(--sm-carta);color:var(--sm-ink);max-width:340px;font-family:inherit}
+html.scripta .smc-per{display:flex;align-items:center;gap:8px;color:var(--sm-ard);font-size:15px;min-width:0;max-width:100%}html.scripta .smc-per>*{min-width:0}
+html.scripta .smc-per select{border:1px solid var(--sm-lin);border-radius:8px;padding:7px 10px;font-size:15px;background:var(--sm-carta);color:var(--sm-ink);max-width:min(340px,100%);flex:1 1 auto;min-width:0;text-overflow:ellipsis;font-family:inherit}
 html.scripta .smc-griglia{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
 html.scripta.android .smc-pann{grid-template-columns:1fr}
 html.scripta.android .smc-griglia{grid-template-columns:1fr}
