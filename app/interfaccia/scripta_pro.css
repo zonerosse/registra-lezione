@@ -487,8 +487,8 @@ html.scripta .smi-sp.on{border-color:#BFDDD9}
 html.scripta .smi-sez .lmgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 html.scripta .smi-sez .card .lbl{font-size:15px;color:var(--sm-ink);text-transform:none;letter-spacing:0}
 html.scripta.android .smi-w{grid-template-columns:minmax(0,1fr)}
-html.scripta.android .smi-nav{position:static;flex-direction:row;overflow-x:auto;gap:6px}
-html.scripta.android .smi-nav button{white-space:nowrap;border:1px solid var(--sm-lin);background:var(--sm-carta)}
+html.scripta.android .smi-nav{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,100%),1fr));overflow:visible;gap:6px}
+html.scripta.android .smi-nav button{white-space:normal;justify-content:center;text-align:center;line-height:1.25;min-width:0;border:1px solid var(--sm-lin);background:var(--sm-carta)}html.scripta.android .smi-nav button.on{background:var(--sm-pett);border-color:var(--sm-pet);color:var(--sm-pet);box-shadow:none}
 html.scripta.android .smi-nav button svg{display:none}
 html.scripta.android .smi-spunte,html.scripta.android .smi-sez .lmgrid{grid-template-columns:1fr}
 html.scripta.android .smi-card .set,html.scripta.android .smi-r{flex-wrap:wrap}
