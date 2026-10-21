@@ -426,15 +426,56 @@ def crea_docx(doc, dest):
     return dest
 
 
+_NOMI_DRIVE = ("My Drive", "Il mio Drive", "Mi unidad", "Mon Drive", "Meine Ablage", "Meu Drive", "Mijn Drive")
+
+
+def _drive_registro():
+    """Dove Google Drive per desktop monta il disco, letto dal registro di Windows (DefaultMountPoint e le
+    preferenze dell'account). Lista di percorsi, anche vuota."""
+    out = []
+    try:
+        import winreg, json as _js
+    except ImportError:
+        return out
+    for radice, chiave in ((winreg.HKEY_LOCAL_MACHINE, r"Software\Policies\Google\DriveFS"),
+                           (winreg.HKEY_CURRENT_USER, r"Software\Google\DriveFS"),
+                           (winreg.HKEY_LOCAL_MACHINE, r"Software\Google\DriveFS")):
+        try:
+            with winreg.OpenKey(radice, chiave) as k:
+                for nome in ("DefaultMountPoint", "MountPoint"):
+                    try:
+                        v = winreg.QueryValueEx(k, nome)[0]
+                        if v:
+                            out.append(str(v))
+                    except OSError:
+                        pass
+                try:
+                    pref = _js.loads(winreg.QueryValueEx(k, "PerAccountPreferences")[0])
+                    for a in (pref.get("per_account_preferences") or []):
+                        mp = ((a or {}).get("value") or {}).get("mount_point_path")
+                        if mp:
+                            out.append(str(mp))
+                except (OSError, ValueError, AttributeError, TypeError):
+                    pass
+        except OSError:
+            continue
+    return [x if len(x) > 2 or not x[:1].isalpha() else x[0] + ":/" for x in out]
+
+
 def cartella_google_drive():
-    """La cartella di Google Drive sul PC (programma «Google Drive»), o None."""
+    """La cartella di Google Drive sul PC (programma «Google Drive per desktop»), o None.
+    Cerca: dove dice il registro, poi i dischi D:..Z: con «Il mio Drive»/«My Drive», poi la cartella in modalita'
+    «copia» (mirror) nella cartella dell'utente."""
     candidati = []
     if sys.platform == "win32":
+        for mp in _drive_registro():
+            candidati += [Path(mp) / n for n in _NOMI_DRIVE]
         for lettera in string.ascii_uppercase[3:]:
-            for nome in ("My Drive", "Il mio Drive", "Mi unidad", "Mon Drive", "Meine Ablage"):
+            for nome in _NOMI_DRIVE:
                 candidati.append(Path(f"{lettera}:/") / nome)
     casa = Path.home()
-    candidati += [casa / "Google Drive" / "My Drive", casa / "Google Drive" / "Il mio Drive", casa / "Google Drive"]
+    candidati += [casa / n for n in _NOMI_DRIVE]
+    candidati += [casa / "Google Drive" / n for n in _NOMI_DRIVE] + [casa / "Google Drive"]
     for c in candidati:
         try:
             if c.is_dir():

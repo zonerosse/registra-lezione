@@ -1,8 +1,8 @@
 {
- "versione": "4.20",
+ "versione": "4.21",
  "librerie": 2,
- "novita": "Piccola correzione: in «Andamento», se la pagina non si carica, ora compare un messaggio chiaro.",
- "novita_en": "Small fix: in «Progress», if the page does not load, a clear message now appears.",
- "novita_sm": "Compiti: «Controlla il risultato» (fotografi il tuo svolgimento e ti dico se è giusto e dove guardare), «Scaletta» prima di scrivere un tema o un riassunto, e il «Timer concentrazione» con la pausa a voce. Sistemati anche alcuni tasti che non rispondevano e le scritte rimaste piccole.",
- "novita_sm_en": "Homework: «Check the result» (take a photo of your working and I tell you if it is right and where to look), «Outline» before writing an essay or summary, and the «Focus timer» with a spoken break. Also fixed a few buttons that did not respond and text that was still small."
+ "novita": "«Copia nel cloud»: Google Drive per desktop ora si trova anche quando è in un'altra cartella o su un altro disco, e il link per scaricarlo funziona.",
+ "novita_en": "«Copy to the cloud»: Google Drive for desktop is now found even in another folder or drive, and the download link works.",
+ "novita_sm": "«Copia nel cloud»: Google Drive per desktop ora si trova anche quando è in un'altra cartella o su un altro disco, e il link per scaricarlo funziona.",
+ "novita_sm_en": "«Copy to the cloud»: Google Drive for desktop is now found even in another folder or drive, and the download link works."
 }
