@@ -625,6 +625,25 @@ class Api:
     def leggimi_foto(self, percorsi):
         return self._m.leggimi_foto(percorsi)
 
+    # strumenti di Scripta Manent
+    def sm_correggi(self, testo):
+        return self._m.sm_correggi(testo)
+
+    def sm_problema(self, testo, percorsi=None):
+        return self._m.sm_problema(testo, percorsi)
+
+    def sm_diario(self, percorsi):
+        return self._m.sm_diario(percorsi)
+
+    def sm_compiti(self):
+        return self._m.sm_compiti()
+
+    def sm_compito_nuovo(self, voce):
+        return self._m.sm_compito_nuovo(voce)
+
+    def sm_compito(self, vid, fatto=None, togli=False):
+        return self._m.sm_compito(vid, fatto, togli)
+
     def leggimi_pagina(self, i, n):
         return self._m.leggimi_pagina(i, n)
 

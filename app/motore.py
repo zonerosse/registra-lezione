@@ -2871,6 +2871,73 @@ class Motore:
             pagine.append(cur.strip())
         return self._lg_nuova("testo", titolo, pagine)
 
+    # ------------------------------------------------------------------ strumenti di Scripta Manent
+    # Correttore gentile, Problema passo passo, Compiti e scadenze (strumenti_sm.py)
+
+    def sm_correggi(self, testo):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            return {"ok": True, **sm.correggi(self.chiave(), testo)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("correttore")
+            return {"ok": False, "msg": tr("sm_corr_err")}
+
+    def sm_problema(self, testo, percorsi=None):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        try:
+            spesa, testo = 0.0, str(testo or "")
+            for f in [x for x in percorsi or [] if x][:3]:
+                r = ch.leggi_foto(self.chiave(), f, "foglio")
+                spesa += r["spesa"]
+                testo = (testo + "\n" + r["testo"]).strip()
+            if not testo.strip():
+                return {"ok": False, "msg": tr("sm_pb_vuoto")}
+            r = sm.problema(self.chiave(), testo)
+            r["spesa"] += spesa
+            return {"ok": True, **r}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("problema passo passo")
+            return {"ok": False, "msg": tr("sm_pb_err")}
+
+    def sm_diario(self, percorsi):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        nuovi, spesa = 0, 0.0
+        try:
+            for f in [x for x in percorsi or [] if x][:5]:
+                r = sm.diario(self.chiave(), BASE, f)
+                nuovi += r["nuovi"]
+                spesa += r["spesa"]
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("diario")
+            return {"ok": False, "msg": tr("sm_dia_err")}
+        return {"ok": True, "nuovi": nuovi, "spesa": spesa, "compiti": sm.compiti(BASE)}
+
+    def sm_compiti(self):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.compiti(BASE), "ricorda": sm.da_ricordare(BASE),
+                "oggi": datetime.date.today().isoformat()}
+
+    def sm_compito_nuovo(self, voce):
+        import strumenti_sm as sm
+        v = sm.aggiungi_voce(voce or {}, BASE)
+        return {"ok": bool(v), "compiti": sm.compiti(BASE)}
+
+    def sm_compito(self, vid, fatto=None, togli=False):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.segna(BASE, vid, fatto, togli)}
+
     def leggimi_foto(self, percorsi):
         if not self.chiave():
             return {"ok": False, "msg": tr("manca_chiave")}

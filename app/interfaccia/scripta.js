@@ -27,6 +27,8 @@ function attivaScripta() {
     },
   };
   for (const l in nuovi) if (TESTI[l]) Object.assign(TESTI[l], nuovi[l]);
+  // sul telefono la barra in basso è stretta
+  if (typeof ANDROID !== 'undefined' && ANDROID) { TESTI.it['nav.dsa'] = 'Strumenti'; TESTI.en['nav.dsa'] = 'Tools'; }
   // il nome del programma in tutti i testi
   for (const l in TESTI) for (const k in TESTI[l]) {
     const v = TESTI[l][k];
@@ -41,6 +43,7 @@ function attivaScripta() {
       '<g stroke="#5eead4" stroke-width="3.5" stroke-linecap="round"><path d="M66 50L80 32M66 50L82 52M66 50L76 70"/></g>' +
       '<g fill="#5eead4"><circle cx="66" cy="50" r="7"/><circle cx="80" cy="32" r="5"/><circle cx="82" cy="52" r="5"/><circle cx="76" cy="70" r="5"/></g>';
   }
+  if (typeof smPrepara === 'function') { smPrepara(); setTimeout(smRicorda, 6000); }
   // i nomi scritti nella pagina (splash, menu)
   const giro = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   const da = [];

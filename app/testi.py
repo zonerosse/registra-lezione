@@ -651,3 +651,18 @@ def lingua_windows():
         return "it" if (locale.getlocale()[0] or "").lower().startswith("it") else "en"
     except Exception:
         return "it"
+
+
+# strumenti di Scripta Manent (strumenti_sm.py)
+T["it"].update({
+    "sm_corr_err": "Non sono riuscito a correggere il testo. Riprova tra poco.",
+    "sm_pb_err": "Non sono riuscito a dividere il problema in passi. Controlla il testo e riprova.",
+    "sm_pb_vuoto": "Scrivi il problema o fotografalo.",
+    "sm_dia_err": "Non sono riuscito a leggere il diario. Rifai la foto dritta, con buona luce e tutta la pagina dentro.",
+})
+T["en"].update({
+    "sm_corr_err": "I could not correct the text. Try again in a moment.",
+    "sm_pb_err": "I could not split the problem into steps. Check the text and try again.",
+    "sm_pb_vuoto": "Type the problem or take a photo of it.",
+    "sm_dia_err": "I could not read the planner. Take the photo again: straight, with good light and the whole page in it.",
+})
