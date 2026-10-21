@@ -43,7 +43,7 @@ const SMC = {tab: 'aula', comp: null, rg: null};
 /* ------------------------------------------------------------------ solo titoli: le spiegazioni piccole diventano (i) */
 // Le righe di spiegazione sotto i titoli si nascondono; accanto al titolo compare (i): al tocco si legge e si ascolta.
 // Restano le informazioni brevi con i numeri (date, minuti, carte): sono dati, non spiegazioni.
-const SM_SPIEGA = '.side .brand small, .tile small, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
+const SM_SPIEGA = '.side .brand small, .tile small, .sml-gc small.sp, .smx-ft small.sp, .smx-ft small:not(.dato), .pg .hd p, .smfm .sp > .hint';
 function smInfoGiro(radice) {
   if (typeof SCRIPTA === 'undefined' || !SCRIPTA) return;
   (radice || document).querySelectorAll(SM_SPIEGA).forEach(el => {
@@ -79,6 +79,8 @@ function smCasaPrepara() {
   const sec = $('v-dsa');
   if (sec) sec.classList.add('smcasa');
   smInfoGiro(document.querySelector('.side'));
+  if (typeof smLezioniPrepara === 'function') smLezioniPrepara();
+  if (typeof LZ !== 'undefined' && LZ) { smlCaricaExtra().then(() => { try { disegnaLezioni(); } catch (e) {} }); }
   // ogni pagina che si apre: le spiegazioni diventano (i) (anche quelle che arrivano dopo, con i dati)
   const vaiPrima = vai;
   vai = function (p, tornando) {

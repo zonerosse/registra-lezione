@@ -264,3 +264,79 @@ html.scripta .smfmf{font-size:18px}
 html.scripta .smfmo{font-size:14px;color:var(--sm-pet)}
 html.scripta .smfmg{text-transform:none;font-size:15px;letter-spacing:0;color:var(--sm-ink)}
 html.scripta .smfmh{display:none}
+
+/* ===== Le mie lezioni ===== */
+html.scripta #v-arch.sml{max-width:1240px}
+html.scripta #v-arch.sml .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+html.scripta #v-arch.sml .toolbar .search{flex:1;min-width:220px}
+html.scripta #v-arch.sml .disk,html.scripta #v-arch.sml #aCart{display:none}
+html.scripta .sml-azioni{display:flex;gap:8px}
+html.scripta .sml-filtri{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+html.scripta .sml-filtri button{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:999px;padding:6px 13px;font-size:15px;font-weight:600;color:var(--sm-ard);cursor:pointer;font-family:inherit}
+html.scripta .sml-filtri button.on{background:var(--sm-ink);color:#fff;border-color:var(--sm-ink)}
+html.scripta .sml-w{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start}
+html.scripta .sml-sett{font-size:15px;font-weight:650;color:var(--sm-ard);margin:18px 0 8px}
+html.scripta .sml-sett:first-child{margin-top:0}
+html.scripta .sml-r{display:grid;grid-template-columns:46px 1fr auto 18px;gap:14px;align-items:center;padding:12px 16px;border-top:1px solid var(--sm-lin2);background:var(--sm-carta)}
+html.scripta .sml-r:first-child{border-top:0}
+html.scripta .sml-r.apri{cursor:pointer}html.scripta .sml-r.apri:hover{background:#F7FAFA}
+html.scripta .sml-d{text-align:center;line-height:1.1}.sml-d b{display:block;font-size:19px;color:var(--sm-ink)}.sml-d small{font-size:14px;color:var(--sm-ard);font-weight:600}
+html.scripta .sml-c{min-width:0;display:flex;flex-direction:column;gap:4px}
+html.scripta .sml-t{font-weight:650;font-size:16px;color:var(--sm-ink)}
+html.scripta .sml-m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:15px;color:var(--sm-ard)}
+html.scripta .sml-ver{color:var(--sm-amb)}
+html.scripta .sml-s{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+html.scripta .sml-barretta{width:120px;height:5px;background:var(--sm-lin2);border-radius:3px;overflow:hidden}html.scripta .sml-barretta i{display:block;height:100%;background:var(--sm-pet)}
+html.scripta .sml-lato .card{margin-bottom:14px;padding:14px 16px}
+html.scripta .sml-lato h4{margin:0 0 8px;font-size:15px;color:var(--sm-ink)}
+html.scripta .sml-mat{display:flex;align-items:center;gap:10px;width:100%;padding:9px 0;border:0;border-top:1px solid var(--sm-lin2);background:none;text-align:left;font-family:inherit;color:var(--sm-ink);font-size:15px;cursor:pointer}
+html.scripta .sml-mat:first-of-type{border-top:0}
+html.scripta .sml-mat i{width:10px;height:10px;border-radius:3px;flex:none}
+html.scripta .sml-mat span:nth-child(2){flex:1;font-weight:600}
+html.scripta .sml-mat small{color:var(--sm-ard);font-size:15px}
+html.scripta.android .sml-w{grid-template-columns:1fr}
+html.scripta.android .sml-r{grid-template-columns:40px 1fr 16px}
+html.scripta.android .sml-s{grid-column:2;grid-row:2;align-items:flex-start;flex-direction:row;flex-wrap:wrap}
+html.scripta.android .sml-r .smx-chev{grid-column:3;grid-row:1/3}
+html.scripta.android .sml-azioni span{display:none}
+
+/* ===== pagina della lezione ===== */
+html.scripta #v-lezione.sml-lez{max-width:1240px}
+html.scripta #v-lezione.sml-lez > .hint{display:none}
+html.scripta #v-lezione.sml-lez #lzBox{background:none;border:0;padding:0}
+html.scripta #v-lezione.sml-lez .hd .dsaint{display:none}
+html.scripta #lzSub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:6px}
+html.scripta #lzSub .lnk{margin-left:4px}
+html.scripta .sml-player{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;background:var(--sm-carta);border:1px solid var(--sm-lin);margin-bottom:6px}
+html.scripta .sml-play{width:40px;height:40px;border-radius:50%;border:0;background:var(--sm-pet);color:#fff;display:grid;place-items:center;flex:none;cursor:pointer}
+html.scripta .sml-tr{flex:1;min-width:0}
+html.scripta .sml-bar{position:relative;height:6px;background:var(--sm-lin);border-radius:3px;cursor:pointer}
+html.scripta .sml-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--sm-pet)}
+html.scripta .sml-bar u{position:absolute;top:-3px;width:2px;height:12px;background:var(--sm-ink);opacity:.35}
+html.scripta .sml-tempi{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--sm-ard);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.scripta .sml-vel{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:7px;padding:5px 9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--sm-ink)}
+html.scripta .sml-tabs{margin:10px 0 18px}
+html.scripta .sml-pw{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+html.scripta .sml-nota{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:10px;background:var(--sm-ambt);color:#7C3A06;font-size:15px;margin-bottom:14px}
+html.scripta .sml-cap{display:grid;grid-template-columns:30px 1fr auto;gap:12px;padding:14px 16px;border-top:1px solid var(--sm-lin2);align-items:start}
+html.scripta .sml-cap:first-child{border-top:0}
+html.scripta .sml-cap.on{background:var(--sm-pett)}
+html.scripta .sml-cap.on .smx-num{background:var(--sm-pet);border-color:var(--sm-pet);color:#fff}
+html.scripta .sml-cap.fatto .smx-num{background:var(--sm-ok);border-color:var(--sm-ok);color:#fff}
+html.scripta .sml-cap b{font-size:16px;display:block;color:var(--sm-ink)}
+html.scripta .sml-cap ul{margin:6px 0 0;padding-left:20px;font-size:16px;line-height:1.65;color:var(--sm-ink)}
+html.scripta .sml-breve{font-size:16px;line-height:1.6}
+html.scripta .sml-griglia{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+html.scripta .sml-gc{padding:14px;display:flex;flex-direction:column;gap:8px;text-align:left;border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:12px;cursor:pointer;font-family:inherit;color:var(--sm-ink)}
+html.scripta .sml-gc:hover{border-color:#A9C9C5}
+html.scripta .sml-gc b{font-size:15px;display:flex;align-items:center}
+html.scripta .sml-gp{display:flex;justify-content:space-between;align-items:center;margin-top:auto;font-size:15px;color:var(--sm-ard)}
+html.scripta .sml-gp em{font-style:normal;color:var(--sm-pet);font-weight:600}
+html.scripta .sml-sugg{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+html.scripta .sml-sugg button{border:1px solid var(--sm-lin);background:var(--sm-carta);border-radius:999px;padding:6px 12px;font-size:15px;color:var(--sm-ink);cursor:pointer;font-family:inherit}
+html.scripta .sml-on{background:var(--sm-pett)}
+html.scripta.android .sml-pw{grid-template-columns:1fr}
+html.scripta.android .sml-griglia{grid-template-columns:1fr 1fr}
+html.scripta.android .sml-cap{grid-template-columns:28px 1fr}html.scripta.android .sml-cap .btn{grid-column:2;justify-self:start}
+@media (max-width:1100px){html.scripta .sml-griglia{grid-template-columns:1fr 1fr}html.scripta .sml-pw{grid-template-columns:1fr}}
+html.scripta #v-arch.sml #ripBanda,html.scripta #v-arch #ripBanda{display:none}
