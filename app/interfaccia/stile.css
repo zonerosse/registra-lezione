@@ -1532,3 +1532,5 @@ html.scripta .sk-due{grid-template-columns:1fr}
 .smazioni .lnk svg{width:15px;height:15px}
 html.android .smcome{grid-template-columns:1fr}
 @media (max-width:820px){.smcome{grid-template-columns:1fr}}
+.smann{display:flex;align-items:center;gap:14px}
+.smann button{border:0;background:none;color:#5eead4;font:700 13.5px inherit;font-family:inherit;cursor:pointer;padding:4px 2px;text-transform:uppercase;letter-spacing:.4px}

@@ -154,6 +154,8 @@ def aggiungi_voce(v, base=None, salva=True):
     voce = {"id": uuid.uuid4().hex[:10], "materia": str(v.get("materia") or "").strip()[:60], "cosa": cosa, "per": per,
             "tipo": v.get("tipo") if v.get("tipo") in ("compito", "verifica", "interrogazione") else "compito",
             "fatto": False, "quando": datetime.datetime.now().isoformat(timespec="seconds")}
+    if v.get("fonte"):                    # «Annulla» dopo «Togli»: torna com'era, anche da quale lezione arrivava
+        voce["fonte"] = str(v["fonte"])[:120]
     if salva and base is not None:
         lista = el.leggi_json(_file(base), []) or []
         lista.append(voce)

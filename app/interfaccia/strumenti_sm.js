@@ -33,6 +33,7 @@ const SMT = {
     'come.1.s': 'Registri la lezione: quando il prof dà i compiti o annuncia una verifica, li trovo e li metto qui con la data.',
     'come.1.b': 'Sempre acceso', 'come.2.t': 'Dalla foto del diario', 'come.2.s': 'Fotografa la pagina del diario: leggo i compiti e le date.',
     'come.3.t': 'Scritti da te', 'come.3.s': 'Scrivi tu cosa devi fare e per quando.', 'come.3.b': 'Aggiungi',
+    'annulla': 'Annulla', 'ann.fatto': 'Segnato come fatto', 'ann.nonfatto': 'Rimesso tra le cose da fare', 'ann.tolto': 'Tolto dall\'elenco',
     'lista.h': 'I tuoi compiti', 'v.fatto': 'Fatto', 'v.ascolta': 'Ascolta', 'v.togli': 'Togli',
     'nav.comp': 'Compiti', 'comp.da.lez': 'dalla lezione «{l}»', 'comp.lav.lez': 'Sto cercando i compiti nelle lezioni nuove…',
     'ver.arriva': '{t} di {m}', 'ver.quando0': 'oggi', 'ver.quando1': 'domani', 'ver.quando': '{d}', 'ver.ripassa': 'Ripassa adesso',
@@ -71,6 +72,7 @@ const SMT = {
     'come.1.s': 'Record the lecture: when the teacher gives homework or announces a test, I find it and add it here with the date.',
     'come.1.b': 'Always on', 'come.2.t': 'From a planner photo', 'come.2.s': 'Take a photo of the planner page: I read the homework and the dates.',
     'come.3.t': 'Written by you', 'come.3.s': 'Write what you have to do and when.', 'come.3.b': 'Add',
+    'annulla': 'Undo', 'ann.fatto': 'Marked as done', 'ann.nonfatto': 'Back to the to-do list', 'ann.tolto': 'Removed from the list',
     'lista.h': 'Your homework', 'v.fatto': 'Done', 'v.ascolta': 'Listen', 'v.togli': 'Remove',
     'nav.comp': 'Homework', 'comp.da.lez': 'from the lecture «{l}»', 'comp.lav.lez': 'Looking for homework in the new lectures…',
     'ver.arriva': '{t} in {m}', 'ver.quando0': 'today', 'ver.quando1': 'tomorrow', 'ver.quando': '{d}', 'ver.ripassa': 'Revise now',
@@ -385,10 +387,20 @@ function smCompDisegna() {
   smCompMano();
   box.querySelectorAll('.smvoce').forEach(d => {
     const id = d.dataset.id, v = SMS.comp.find(x => x.id === id);
-    d.querySelector('[data-f]').onclick = async () => { const r = await A.sm_compito(id, !v.fatto, false); SMS.comp = r.compiti; smCompDisegna(); };
+    d.querySelector('[data-f]').onclick = async () => {
+      const prima = v.fatto, r = await A.sm_compito(id, !prima, false); SMS.comp = r.compiti; smCompDisegna();
+      smAnnulla(ts(prima ? 'ann.nonfatto' : 'ann.fatto'), async () => { const r2 = await A.sm_compito(id, prima, false); SMS.comp = r2.compiti; smCompDisegna(); });
+    };
     d.querySelector('[data-a]').onclick = () => { const p = SMS.voce; SMS.voce = true; parlaSm([v.materia, v.tipo !== 'compito' ? ts('comp.' + v.tipo) : '', v.cosa, v.per ? smData(v.per) : ''].filter(Boolean).join('. ')); SMS.voce = p; };
     if (d.querySelector('[data-r]')) d.querySelector('[data-r]').onclick = () => smRipassa(v.materia, 'fcorso');
-    d.querySelector('[data-x]').onclick = async () => { const r = await A.sm_compito(id, null, true); SMS.comp = r.compiti; smCompDisegna(); };
+    d.querySelector('[data-x]').onclick = async () => {
+      const copia = {...v}, r = await A.sm_compito(id, null, true); SMS.comp = r.compiti; smCompDisegna();
+      smAnnulla(ts('ann.tolto'), async () => {
+        let r2 = await A.sm_compito_nuovo(copia);
+        if (copia.fatto) { const nuova = (r2.compiti || []).find(x => x.cosa === copia.cosa && x.per === copia.per && !x.fatto); if (nuova) r2 = await A.sm_compito(nuova.id, true, false); }
+        SMS.comp = r2.compiti; smCompDisegna();
+      });
+    };
   });
 }
 function smCompMano() {
@@ -487,4 +499,14 @@ function smPercorso(p) {
   sec.insertBefore(b, sec.firstChild);
   b.querySelector('.torna').onclick = () => { const prima = SMS.storia.pop() || 'dsa'; vai(prima, true); };
   b.querySelector('[data-casa]').onclick = () => { SMS.storia = []; vai('dsa', true); };
+}
+
+// avviso in basso con «Annulla» (8 secondi): un tocco sbagliato su Fatto o Togli si rimedia subito
+function smAnnulla(testo, fn) {
+  document.querySelectorAll('.smann').forEach(x => x.remove());
+  const e = document.createElement('div'); e.className = 'toast smann';
+  e.innerHTML = `<span>${esc(testo)}</span><button>${esc(ts('annulla'))}</button>`;
+  document.body.appendChild(e);
+  const via = setTimeout(() => e.remove(), 8000);
+  e.querySelector('button').onclick = async () => { clearTimeout(via); e.remove(); await fn(); };
 }
