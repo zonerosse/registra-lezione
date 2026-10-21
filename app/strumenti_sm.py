@@ -448,6 +448,8 @@ def modifica(base, vid, campi):
             v["per"] = per
         if campi.get("tipo") in ("compito", "verifica", "interrogazione"):
             v["tipo"] = campi["tipo"]
+        if "voto" in campi:          # il voto preso (dalla scheda della verifica)
+            v["voto"] = str(campi["voto"] or "").strip()[:12]
     _salva(base, lista)
     return compiti(base)
 
@@ -528,12 +530,13 @@ def promemoria_ora(base):
     """Le voci con «Ricordamelo» arrivato (e non ancora fatte): il programma le mostra e toglie il promemoria."""
     adesso = datetime.datetime.now().isoformat(timespec="minutes")
     lista = el.leggi_json(_file(base), []) or []
-    pronti = [v for v in lista if v.get("ricorda") and v["ricorda"] <= adesso and not v.get("fatto")]
-    if pronti:
-        for v in pronti:
-            v.pop("ricorda", None)
+    pronti = [v for v in lista if isinstance(v, dict) and v.get("ricorda") and v["ricorda"] <= adesso and not v.get("fatto")]
+    for v in pronti:
+        v.pop("ricorda", None)
+    ogni = _ogni_pronti(lista, datetime.datetime.now())      # «Ricordamelo ogni giorno» delle verifiche
+    if pronti or ogni:
         _salva(base, lista)
-    return pronti
+    return pronti + [v for v in ogni if v not in pronti]
 
 
 # ------------------------------------------------------------------ Studia: voti della scuola, momenti segnati, cosa posso usare in verifica
@@ -708,3 +711,205 @@ def scaletta_ordine(base, vid, ordine):
             v["scaletta"]["punti"] = nuovi
             _salva(base, lista)
     return compiti(base)
+
+
+# ------------------------------------------------------------------ Verifica: cosa porta, il piano, ricordamelo ogni giorno, correggi gli errori
+
+def porta(base, vid, lez=None, pagine="", altro=""):
+    """«Cambia cosa porta»: le lezioni scelte (cartelle), le pagine del libro e altro, scritti dallo studente."""
+    lista, v = _voce(base, vid)
+    if v is not None:
+        lz = [str(x)[:400] for x in (lez or []) if str(x).strip()][:30]
+        v["porta"] = {"lez": lz, "pagine": str(pagine or "").strip()[:120], "altro": str(altro or "").strip()[:300]}
+        _salva(base, lista)
+    return compiti(base)
+
+
+# i pezzi del piano: f = l'azione che apre la scheda (come nei riquadri), m = minuti
+_PZ_IT = {"ap": "Ascolta gli appunti: {n}", "mappa": "Guarda la mappa: {n}", "flash": "Flashcard", "test": "Test a crocette",
+          "sbag": "Le domande che sbagli", "orale": "Interrogazione a voce", "mverif": "Ripasso veloce con la mappa per la verifica",
+          "rg": "Ripasso del giorno"}
+_PZ_EN = {"ap": "Listen to the notes: {n}", "mappa": "Look at the map: {n}", "flash": "Flashcards", "test": "Multiple-choice test",
+          "sbag": "The questions you get wrong", "orale": "Oral test", "mverif": "Quick review with the test map", "rg": "Daily review"}
+
+
+def piano_verifica(base, vid, minuti=30, giorni=None, lezioni=None, oggi=None):
+    """«Rifai il piano»: da oggi al giorno prima della verifica, nei giorni scelti (0 = lunedi'), con i minuti al giorno.
+    Senza Claude: ogni lezione (ascolta + mappa), poi flashcard, test e domande sbagliate; l'ultimo giorno ripasso veloce
+    e interrogazione. Se non ci sta, i minuti crescono (si dice di quanto). Si salva nella voce."""
+    lista, v = _voce(base, vid)
+    if v is None:
+        return compiti(base)
+    T = _PZ_EN if testi.LINGUA == "en" else _PZ_IT
+    oggi = oggi or datetime.date.today()
+    try:
+        minuti = max(10, min(120, int(minuti)))
+    except (TypeError, ValueError):
+        minuti = 30
+    gs = {int(g) for g in (giorni if giorni is not None else range(6)) if str(g).strip().lstrip("-").isdigit() and 0 <= int(g) <= 6} or set(range(7))
+    try:
+        fine = datetime.date.fromisoformat(v.get("per") or "")
+    except ValueError:
+        fine = oggi + datetime.timedelta(days=7)
+    giorni_ok = [oggi + datetime.timedelta(days=i) for i in range(max(1, (fine - oggi).days))]
+    giorni_ok = [g for g in giorni_ok if g.weekday() in gs] or [oggi]
+    lez = [x for x in (lezioni or []) if isinstance(x, dict) and x.get("c")][:12]
+    coda = []
+    for x in lez:
+        nome = str(x.get("nome") or "")[:80]
+        coda.append({"f": "l:appunti_dsa", "c": x["c"], "t": T["ap"].format(n=nome), "m": 15})
+        coda.append({"f": "l:mappa", "c": x["c"], "t": T["mappa"].format(n=nome), "m": 10})
+    coda += [{"f": "m:fcorso", "t": T["flash"], "m": 15}, {"f": "m:test", "t": T["test"], "m": 15}, {"f": "sbag", "t": T["sbag"], "m": 10}]
+    ultimo = [{"f": "m:mverif", "t": T["mverif"], "m": 10}, {"f": "m:orale", "t": T["orale"], "m": 15}]
+    # poco tempo: si tengono le cose che servono di piu' (prima le mappe al posto degli appunti, poi via test e flashcard)
+    posto = len(giorni_ok) * minuti * 1.25
+    tolto = False
+    for via in ("l:appunti_dsa", "m:test", "m:fcorso"):
+        if sum(p["m"] for p in coda + ultimo) <= posto:
+            break
+        coda = [p for p in coda if p["f"] != via]
+        tolto = True
+    studio = giorni_ok[:-1] if len(giorni_ok) > 1 else giorni_ok
+    # i due pezzi della stessa lezione (ascolta + mappa) restano nello stesso giorno
+    gruppi = []
+    for p in coda:
+        if gruppi and p.get("c") and gruppi[-1][0].get("c") == p["c"]:
+            gruppi[-1].append(p)
+        else:
+            gruppi.append([p])
+    coda = gruppi
+
+    def riempi(budget):
+        out, i = [], 0
+        for g in studio:
+            cose, m = [], 0
+            while i < len(coda) and (m + sum(x["m"] for x in coda[i]) <= budget or not cose):
+                cose += [dict(x) for x in coda[i]]; m += sum(x["m"] for x in coda[i]); i += 1
+            out.append({"g": g.isoformat(), "cose": cose or [{"f": "rg", "t": T["rg"], "m": min(10, minuti)}]})
+        return out, i
+    budget = minuti if len(giorni_ok) > 1 else 999
+    giorni_out, i = riempi(budget)
+    while i < len(coda) and budget < 240:       # non ci sta: qualche minuto in piu' al giorno, l'ordine resta quello
+        budget += 5
+        giorni_out, i = riempi(budget)
+    for gr in coda[i:]:
+        giorni_out[-1]["cose"] += [dict(x) for x in gr]
+    if len(giorni_ok) > 1:
+        giorni_out.append({"g": giorni_ok[-1].isoformat(), "cose": [dict(p) for p in ultimo]})
+    else:
+        giorni_out[0]["cose"] += [dict(p) for p in ultimo]
+    for d in giorni_out:
+        d["min"] = sum(p["m"] for p in d["cose"])
+    v["piano"] = {"minuti": minuti, "giorni": sorted(gs), "di_piu": max(0, max(d["min"] for d in giorni_out) - minuti), "ridotto": tolto,
+                  "fatto": datetime.datetime.now().isoformat(timespec="minutes"), "lista": giorni_out}
+    _salva(base, lista)
+    return compiti(base)
+
+
+def piano_spunta(base, vid, g, i, fatto):
+    """Spunta (o toglie la spunta a) un pezzo del piano: giorno g (AAAA-MM-GG), pezzo i."""
+    lista, v = _voce(base, vid)
+    p = (v or {}).get("piano") or {}
+    for d in p.get("lista") or []:
+        if d.get("g") == g and isinstance(i, int) and 0 <= i < len(d.get("cose") or []):
+            d["cose"][i]["ok"] = bool(fatto)
+            _salva(base, lista)
+    return compiti(base)
+
+
+def ogni_giorno(base, vid, ora):
+    """«Ricordamelo ogni giorno» all'ora scelta (HH:MM) fino alla verifica; vuoto = togli."""
+    lista, v = _voce(base, vid)
+    o = str(ora or "").strip()[:5]
+    try:
+        datetime.time.fromisoformat(o)
+    except ValueError:
+        o = ""
+    if v is not None:
+        if o:
+            v["ogni"] = o
+        else:
+            v.pop("ogni", None)
+        _salva(base, lista)
+    return compiti(base)
+
+
+def _ogni_pronti(lista, adesso):
+    """Le verifiche con «ogni giorno» arrivato oggi (una volta al giorno, fino al giorno della verifica compreso).
+    Se c'e' un piano, solo nei giorni del piano."""
+    oggi, ora = adesso.date().isoformat(), adesso.strftime("%H:%M")
+    out = []
+    for v in lista:
+        if not isinstance(v, dict) or not v.get("ogni") or v.get("fatto") or v.get("ogni_ultimo") == oggi:
+            continue
+        if v.get("per") and oggi > v["per"]:
+            continue
+        piano = [d.get("g") for d in ((v.get("piano") or {}).get("lista") or [])]
+        if piano and oggi not in piano:
+            continue
+        if ora >= v["ogni"]:
+            v["ogni_ultimo"] = oggi
+            out.append(v)
+    return out
+
+
+def correggi_verifica(chiave, base, vid, foto):
+    """«Correggi gli errori»: le foto della verifica corretta dal prof. Claude trova il voto (se c'e'), cosa e' andato
+    bene e ogni errore con la risposta giusta e il perche', in parole semplici. Si salva nella voce."""
+    import base64
+    lista, v = _voce(base, vid)
+    materia = str((v or {}).get("materia") or "")
+    contenuto = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg",
+                                              "data": base64.b64encode(ch.jpeg_ridotto(f)).decode()}} for f in foto[:6]]
+    contenuto.append({"type": "text", "text": (f"Materia: {materia}. " if materia else "") + "Ecco la mia verifica corretta dal prof."})
+    corpo = {"model": ch.MODELLO, "max_tokens": 4000,
+             "system": ("Sei un tutor gentile per uno studente con dislessia. Ti mando le foto di una verifica gia' corretta dal "
+                        "professore (segni rossi, crocette, voto). Leggi: «voto» = il voto scritto dal prof, com'e' scritto "
+                        "(es. 6½, 7-, 8); vuoto se non c'e'. «bene» = in una frase cosa ha fatto bene. «errori» = ogni domanda o "
+                        "esercizio segnato come sbagliato o incompleto: «domanda» breve, «tua» = cosa aveva scritto lui (breve), "
+                        "«giusta» = la risposta giusta in parole semplici, «perche» = una o due frasi corte che spiegano l'errore "
+                        "senza rimproverare. «consiglio» = una frase per la prossima verifica. Se non si legge, dillo nel consiglio. "
+                        f"Scrivi in {_lingua()}, frasi corte. Rispondi con lo strumento «correzione»."),
+             "tools": [{"name": "correzione", "description": "La verifica corretta, spiegata.",
+                        "input_schema": {"type": "object", "properties": {
+                            "voto": {"type": "string"}, "bene": {"type": "string"},
+                            "errori": {"type": "array", "items": {"type": "object", "properties": {
+                                "domanda": {"type": "string"}, "tua": {"type": "string"}, "giusta": {"type": "string"},
+                                "perche": {"type": "string"}}, "required": ["domanda", "giusta"]}},
+                            "consiglio": {"type": "string"}},
+                            "required": ["errori"]}}],
+             "messages": [{"role": "user", "content": contenuto}]}
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "correzione"})
+    r = ch._chiama(chiave, corpo)
+    d = ch.input_di(r, corpo)
+    out = {"voto": str(d.get("voto") or "").strip()[:12], "bene": str(d.get("bene") or "")[:300],
+           "errori": [{"domanda": str(e.get("domanda") or "")[:300], "tua": str(e.get("tua") or "")[:300],
+                       "giusta": str(e.get("giusta") or "")[:500], "perche": str(e.get("perche") or "")[:500], "ok": False}
+                      for e in d.get("errori") or [] if isinstance(e, dict) and str(e.get("domanda") or "").strip()][:25],
+           "consiglio": str(d.get("consiglio") or "")[:400], "quando": datetime.datetime.now().isoformat(timespec="minutes")}
+    if v is not None:
+        v["correzione"] = out
+        _salva(base, lista)
+    return {"correzione": out, "spesa": ch._costo(r.get("usage") or {})}
+
+
+def errore_ok(base, vid, i, si):
+    """«Ora la so» su un errore della verifica corretta."""
+    lista, v = _voce(base, vid)
+    e = ((v or {}).get("correzione") or {}).get("errori") or []
+    if isinstance(i, int) and 0 <= i < len(e):
+        e[i]["ok"] = bool(si)
+        _salva(base, lista)
+    return compiti(base)
+
+
+def errori_materia(base, materia):
+    """Gli errori delle verifiche corrette di una materia, non ancora segnati «Ora la so» (per «Le domande che sbagli»)."""
+    out = []
+    for v in compiti(base):
+        if str(v.get("materia") or "").lower() != str(materia or "").lower():
+            continue
+        for i, e in enumerate(((v.get("correzione") or {}).get("errori")) or []):
+            if isinstance(e, dict) and not e.get("ok"):
+                out.append({"vid": v["id"], "i": i, "cosa": v.get("cosa", ""), **e})
+    return out

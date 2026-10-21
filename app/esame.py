@@ -270,15 +270,34 @@ def _mescola(q):
     return q
 
 
+def sbagliate_tutte(base, materia):
+    """Le domande dei test a crocette di una materia la cui ULTIMA risposta e' sbagliata (o vuota), dalla piu' recente.
+    Se poi una domanda e' stata azzeccata, esce dall'elenco."""
+    ultima = {}
+    for t in leggi(base, materia).get("test") or []:
+        if not isinstance(t, dict) or not t.get("risposte"):
+            continue
+        for q, r in zip(t.get("domande") or [], t["risposte"]):
+            if isinstance(q, dict) and q.get("domanda") and "giusta" in q:
+                k = str(q["domanda"]).strip().lower()
+                ultima.pop(k, None)
+                ultima[k] = (dict(q), r == q["giusta"])
+    return [q for q, ok in reversed(list(ultima.values())) if not ok]
+
+
 def test_nuovo(base, materia, cartelle, chiave, L="it", solo_sbagliate=False, n=10, difficolta="media", esame_vero=False):
     """Un test a crocette sulla materia (10 domande, 4 risposte). Con solo_sbagliate: di nuovo le domande sbagliate
     dell'ultimo test, con le risposte rimescolate (non costa niente). Torna (test, spesa)."""
     d = leggi(base, materia)
     if solo_sbagliate:
         ult = (d.get("test") or [None])[-1]
-        if not ult or not ult.get("risposte"):
-            raise ap.ErroreAppunti(tr("es_err"))
-        sbagliate = [dict(q) for q, r in zip(ult["domande"], ult["risposte"]) if r != q["giusta"]]
+        if solo_sbagliate == "tutte":          # «Le domande che sbagli»: da tutti i test, quelle ancora sbagliate
+            sbagliate = sbagliate_tutte(base, materia)[:max(5, int(n or 10))]
+            ult = ult or {}
+        else:
+            if not ult or not ult.get("risposte"):
+                raise ap.ErroreAppunti(tr("es_err"))
+            sbagliate = [dict(q) for q, r in zip(ult["domande"], ult["risposte"]) if r != q["giusta"]]
         if not sbagliate:
             raise ap.ErroreAppunti(tr("tc_nessuna"))
         test = {"quando": datetime.datetime.now().isoformat(timespec="seconds"), "lezioni": ult.get("lezioni") or [],
