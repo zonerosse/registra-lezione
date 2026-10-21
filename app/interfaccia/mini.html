@@ -25,6 +25,22 @@
   .conf{position:fixed;inset:0;background:rgba(6,30,54,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center}
   .conf b{font-size:16px}
   .conf .bt{width:100%;padding:0}
+  /* Scripta Manent: inchiostro e petrolio, i tre «Segna» al posto della stellina */
+  html.scripta body{background:#0F1F24;font-family:"Atkinson Hyperlegible",Verdana,sans-serif}
+  html.scripta body.pz{background:#3A2F12}
+  html.scripta .h .tag{background:transparent;box-shadow:none;color:#99F6E4;padding:0}
+  html.scripta .h .tag i{background:#5EEAD4}
+  html.scripta .wave i{background:#5EEAD4}
+  html.scripta .stella{display:none}
+  .seg3{display:none;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 12px 0}
+  html.scripta .seg3{display:grid}
+  .seg3 button{border:1px solid #2C454B;background:#14292E;color:#E6F2F1;border-radius:9px;padding:6px 3px;font-size:11.5px;font-weight:700;cursor:pointer;font-family:inherit}
+  .seg3 button.ok{background:#0F766E;border-color:#0F766E}
+  html.scripta .bt .btn{border-radius:9px;box-shadow:none;font-size:13px}
+  html.scripta .b-pz,html.scripta .b-ri{background:transparent;border:1px solid #3A5258;color:#fff}
+  html.scripta .b-end{background:#fff;color:#0F1F24}
+  html.scripta .conf{background:rgba(15,31,36,.96)}
+  html.scripta #si{background:#fff!important;color:#0F1F24}
 </style>
 </head>
 <body>
@@ -33,6 +49,7 @@
   <div class="nm pywebview-drag-region" id="nm"></div>
   <div class="wave pywebview-drag-region" id="wv"></div>
   <div class="av hidden" id="av"></div>
+  <div class="seg3" id="seg3"><button data-n="importante">Importante</button><button data-n="chiarire">Non ho capito</button><button data-n="fare">Compito</button></div>
   <div class="bt"><button class="btn b-pz" id="bp"><svg><use href="#i-pause"/></svg><span data-t="mn.pausa">Pausa</span></button><button class="btn b-end" id="bf"><svg><use href="#i-stop"/></svg><span data-t="mn.fine">Fine</span></button></div>
   <button class="lnk2" id="big" data-t="mn.grande">Apri la finestra grande ↗</button>
   <div class="conf hidden" id="conf"><b data-t="fine.t">Fermo la registrazione?</b><div class="bt"><button class="btn b-ghost" id="no" data-t="continua">Continua</button><button class="btn b-end" id="si" style="background:#e11d48" data-t="fine.si">Sì, ferma</button></div></div>
@@ -50,7 +67,8 @@ const due = n => String(n).padStart(2, '0');
 let A = null;
 for (let i = 0; i < 40; i++) $('wv').appendChild(document.createElement('i'));
 async function via() {
-  try { const r = await A.riepilogo(); LINGUA = r.lingua || 'it'; } catch (e) {}
+  try { const r = await A.riepilogo(); LINGUA = r.lingua || 'it'; if (r.edizione === 'scripta') { document.documentElement.classList.add('scripta'); document.title = 'Scripta Manent – in registrazione'; if (LINGUA === 'en') { const b = document.querySelectorAll('#seg3 button'); ['Important', 'Not clear', 'Homework'].forEach((x, i) => b[i].textContent = x); } } } catch (e) {}
+  document.querySelectorAll('#seg3 button').forEach(b => b.onclick = async () => { const r = await A.nota('', b.dataset.n); if (r && r.ok) { b.classList.add('ok'); setTimeout(() => b.classList.remove('ok'), 900); } });
   traduciPagina();
   $('bp').onclick = () => A.pausa().then(giro);
   $('bf').onclick = () => $('conf').classList.remove('hidden');

@@ -168,6 +168,13 @@ class Api:
     def nota(self, testo, tipo=""):
         return self._m.nota(testo, tipo)
 
+    def apri_mini(self):
+        """«Tieni in miniatura»: durante la registrazione, la finestrella sempre davanti (e la grande si riduce)."""
+        if getattr(self._m, "reg", None) is None or self._mini is not None:
+            return {"ok": False}
+        threading.Thread(target=self._apri_mini, daemon=True).start()
+        return {"ok": True}
+
     def note(self, cartella=None):
         return self._m.note(cartella)
 
@@ -824,14 +831,14 @@ class Api:
                     scala = max(1.0, ctypes.windll.shcore.GetScaleFactorForDevice(0) / 100)
                 except Exception:
                     pass
-            w, h = 300, 252
+            w, h = 300, 252 + (44 if __import__("edizione").SCRIPTA else 0)
             x = max(0, int(sw / scala - w - 30))
             y = max(0, int(sh / scala - h - 80))
             log.info("mini finestra: schermo %sx%s, scala %.2f, posizione %s,%s", sw, sh, scala, x, y)
             self._mini = webview.create_window(
                 __import__("edizione").NOME + " – in registrazione", url=str(PAGINE / "mini.html"), js_api=self,
                 width=w, height=h, x=x, y=y, resizable=False,
-                frameless=True, easy_drag=False, on_top=True, background_color="#0d4275")
+                frameless=True, easy_drag=False, on_top=True, background_color="#0F1F24" if __import__("edizione").SCRIPTA else "#0d4275")
             ok = self._mini.events.shown.wait(10)
             log.info("mini finestra mostrata: %s", ok)
             if ok and sys.platform == "win32":
