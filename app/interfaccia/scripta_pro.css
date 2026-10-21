@@ -495,3 +495,4 @@ html.scripta.android .smi-card .set,html.scripta.android .smi-r{flex-wrap:wrap}
 html.scripta #v-imp.smi > :not(.perc):not(.hd):not(.smi-w){display:none!important}
 html.scripta .smi-card .set .t > b{display:inline}html.scripta .smi-card .set .t > b + .info-i{vertical-align:2px}html.scripta .aiopt > b + .info-i{display:inline-grid}
 html.scripta .smi-card .set .t > span.info-i{display:inline-grid;color:var(--sm-pet);font-size:13px!important;width:22px;height:22px;margin-left:8px}html.scripta .smi-sez .aiopt > b{display:inline-block}html.scripta .smi-sez .aiopt > b + .info-i{margin-left:8px}
+html.scripta.android #v-pronto.smr #doveBox .aiopt{text-align:left!important}html.scripta.android #v-pronto.smr #doveBox .aiopt .rd{display:block!important}html.scripta .pg .hd h2 + .info-i,html.scripta .pg .hd h2 > .info-i{vertical-align:4px}
