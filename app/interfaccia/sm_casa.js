@@ -232,7 +232,7 @@ function smCasaStrumenti() {
       R('chiedi', 'i-chat', t('tl.chiedi'), t('tl.chiedi.s'), tr), R('capitoli', 'g-cap', t('tl.cap'), t('tl.cap.s'), cap), R('infografica', 'g-img', t('tl.ig'), t('tl.ig.s'), tr),
       R('glos', 'g-libro', t('tl.gl'), t('tl.dsa.gl.s'), mt), R('leggimi', 'g-voce', t('lg.nome'), t('sd.lg.s')), R('arch', 'g-lezioni', t('sd.tutte'), t('sd.tutte.s'))]],
     ['casa', tc('t.casa'), [R('smcomp', 'g-cal', ts('comp.h'), ts('sd.comp.s'), '', 'amb'), R('smmate', 'g-calc', ts('mate.h'), ts('sd.mate.s'), '', 'ind'),
-      R('smcorr', 'g-penna', ts('corr.h'), ts('sd.corr.s'), '', 'ind'), R('giorno', 'i-cards', t('sd.rg'), t('sd.rg.s'))]],
+      R('smcorr', 'g-penna', ts('corr.h'), ts('sd.corr.s'), '', 'ind'), R('smlingue', 'g-mondo', ts('ling.h'), ts('sd.ling.s'), '', 'ind'), R('giorno', 'i-cards', t('sd.rg'), t('sd.rg.s'))]],
     ['ver', tc('t.ver'), [R('tutor', 'g-tutor', t('tl.tu'), t('tl.tu.s'), mt), R('piano', 'g-cal', t('st.piano').replace(/^📅\s*/, ''), t('sd.piano.s'), mt), R('mverif', 'i-map', t('tl.mv'), t('sd.mv.s'), mt),
       R('orale', 'i-mic', t('tl.orale'), t('sd.orale.s'), mt), R('test', 'g-test', t('tl.dsa.test'), t('sd.test.s'), mt), R('scritto', 'g-penna', t('tl.dsa.scr'), t('sd.scr.s'), mt),
       R('prob', 'g-stella', t('tl.prob'), t('tl.prob.s'), mt)]],

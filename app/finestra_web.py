@@ -696,6 +696,27 @@ class Api:
     def sm_sbagliate(self, materia):
         return self._m.sm_sbagliate(materia)
 
+    def sm_lingue(self):
+        return self._m.sm_lingue()
+
+    def sm_lingue_traduci(self, testo="", percorsi=None, lingua=""):
+        return self._m.sm_lingue_traduci(testo, percorsi, lingua)
+
+    def sm_lingue_dici(self, frase, lingua="en"):
+        return self._m.sm_lingue_dici(frase, lingua)
+
+    def sm_parola(self, p):
+        return self._m.sm_parola(p)
+
+    def sm_parola_esito(self, pid, so):
+        return self._m.sm_parola_esito(pid, so)
+
+    def sm_parola_togli(self, pid):
+        return self._m.sm_parola_togli(pid)
+
+    def sm_testo_togli(self, tid):
+        return self._m.sm_testo_togli(tid)
+
     def sm_ricordami(self, vid, quando):
         return self._m.sm_ricordami(vid, quando)
 

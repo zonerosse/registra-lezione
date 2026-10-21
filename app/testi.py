@@ -659,6 +659,7 @@ def lingua_windows():
 T["it"].update({
     "sm_corr_err": "Non sono riuscito a correggere il testo. Riprova tra poco.",
     "sm_pb_err": "Non sono riuscito a dividere il problema in passi. Controlla il testo e riprova.",
+    "sm_ling_err": "Non sono riuscito a tradurre il testo: riprova fra poco.",
     "sm_pb_vuoto": "Scrivi il problema o fotografalo.",
     "sm_dia_err": "Non sono riuscito a leggere il diario. Rifai la foto dritta, con buona luce e tutta la pagina dentro.",
     "sm_fo_err": "Non sono riuscito a leggere le formule. Rifai la foto dritta, con buona luce e tutta la pagina dentro.",
@@ -666,6 +667,7 @@ T["it"].update({
 T["en"].update({
     "sm_corr_err": "I could not correct the text. Try again in a moment.",
     "sm_pb_err": "I could not split the problem into steps. Check the text and try again.",
+    "sm_ling_err": "I could not translate the text: try again in a moment.",
     "sm_pb_vuoto": "Type the problem or take a photo of it.",
     "sm_dia_err": "I could not read the planner. Take the photo again: straight, with good light and the whole page in it.",
     "sm_fo_err": "I could not read the formulas. Take the photo again: straight, with good light and the whole page in it.",

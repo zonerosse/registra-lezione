@@ -11,6 +11,7 @@ import json
 import uuid
 from pathlib import Path
 
+import appunti as ap
 import chiedi as ch
 import elaborazione as el
 import testi
@@ -913,3 +914,141 @@ def errori_materia(base, materia):
             if isinstance(e, dict) and not e.get("ok"):
                 out.append({"vid": v["id"], "i": i, "cosa": v.get("cosa", ""), **e})
     return out
+
+
+# ------------------------------------------------------------------ Lingue facili: leggi e traduci, come si dice, le mie parole
+
+LINGUE = {"en": "inglese", "fr": "francese", "es": "spagnolo", "de": "tedesco"}
+
+
+def _ling_file(base):
+    return Path(base) / "lingue.json"
+
+
+def lingue_dati(base):
+    d = el.leggi_json(_ling_file(base), {}) or {}
+    if not isinstance(d, dict):
+        d = {}
+    d["parole"] = [p for p in d.get("parole") or [] if isinstance(p, dict) and p.get("id") and p.get("w")]
+    d["testi"] = [x for x in d.get("testi") or [] if isinstance(x, dict) and x.get("frasi")][-10:]
+    return d
+
+
+def _ling_salva(base, d):
+    el.scrivi_json(_ling_file(base), d)
+
+
+_SCH_PAROLA = {"type": "object", "properties": {
+    "w": {"type": "string", "description": "la parola o espressione nella lingua straniera"},
+    "it": {"type": "string", "description": "il significato in italiano"},
+    "pron": {"type": "string", "description": "come si legge, scritto come lo leggerebbe un italiano (es. «thìnk» -> «sink»)"}},
+    "required": ["w", "it"]}
+
+
+def lingue_traduci(chiave, base, testo="", foto=None, lingua=""):
+    """«Leggi e traduci»: un testo in lingua straniera (scritto o fotografato), frase per frase, con la traduzione
+    italiana e le parole difficili (significato e come si legge). Si tengono gli ultimi 10. {"testo", "spesa"}."""
+    import base64
+    contenuto = [{"type": "image", "source": {"type": "base64", "media_type": "image/jpeg",
+                                              "data": base64.b64encode(ch.jpeg_ridotto(f)).decode()}} for f in (foto or [])[:4]]
+    testo = str(testo or "").strip()[:6000]
+    contenuto.append({"type": "text", "text": testo or "Il testo e' nella foto."})
+    corpo = {"model": ch.MODELLO, "max_tokens": 6000,
+             "system": ("Aiuti uno studente con dislessia a leggere un testo in lingua straniera (inglese, francese, spagnolo o "
+                        "tedesco). Ricopia il testo diviso in frasi brevi, nell'ordine, senza cambiare le parole («orig»). Per "
+                        "ogni frase: «it» = la traduzione italiana semplice e naturale; «parole» = da 0 a 3 parole o espressioni "
+                        "difficili di quella frase, con il significato e come si legge scritto all'italiana. «lingua» = codice "
+                        "della lingua del testo (en, fr, es, de). «titolo» = 2-5 parole in italiano su cosa parla. "
+                        "Rispondi con lo strumento «testo»."),
+             "tools": [{"name": "testo", "description": "Il testo diviso in frasi, tradotto.",
+                        "input_schema": {"type": "object", "properties": {
+                            "lingua": {"type": "string", "enum": list(LINGUE)}, "titolo": {"type": "string"},
+                            "frasi": {"type": "array", "items": {"type": "object", "properties": {
+                                "orig": {"type": "string"}, "it": {"type": "string"},
+                                "parole": {"type": "array", "items": _SCH_PAROLA}}, "required": ["orig", "it"]}}},
+                            "required": ["lingua", "frasi"]}}],
+             "messages": [{"role": "user", "content": contenuto}]}
+    if lingua in LINGUE:
+        corpo["system"] += f" Il testo e' in {LINGUE[lingua]}."
+    dati, uso = ch.strumento(chiave, corpo, "frasi", "sm_ling_err")
+    lg = dati.get("lingua") if dati.get("lingua") in LINGUE else (lingua if lingua in LINGUE else "en")
+    frasi = []
+    for f in dati.get("frasi") or []:
+        if isinstance(f, dict) and str(f.get("orig") or "").strip():
+            frasi.append({"orig": str(f["orig"])[:600], "it": str(f.get("it") or "")[:600],
+                          "parole": [{"w": str(p.get("w") or "")[:80], "it": str(p.get("it") or "")[:160], "pron": str(p.get("pron") or "")[:80]}
+                                     for p in f.get("parole") or [] if isinstance(p, dict) and str(p.get("w") or "").strip()][:4]})
+    out = {"id": uuid.uuid4().hex[:10], "lingua": lg, "titolo": str(dati.get("titolo") or "")[:80], "frasi": frasi[:80],
+           "quando": datetime.datetime.now().isoformat(timespec="minutes")}
+    d = lingue_dati(base)
+    d["testi"] = (d["testi"] + [out])[-10:]
+    _ling_salva(base, d)
+    return {"testo": out, "spesa": ch._costo(uso)}
+
+
+def lingue_dici(chiave, base, frase, lingua="en"):
+    """«Come si dice»: una frase in italiano -> nella lingua scelta, con come si legge e 2 modi diversi di dirla."""
+    lingua = lingua if lingua in LINGUE else "en"
+    corpo = {"model": ch.MODELLO, "max_tokens": 1500,
+             "system": (f"Uno studente italiano con dislessia vuole dire una cosa in {LINGUE[lingua]}. «frase» = come si dice, "
+                        "semplice e naturale; «pron» = come si legge scritto all'italiana; «altre» = 1 o 2 altri modi di dirla "
+                        "(ciascuno con «frase», «pron» e «quando» = in che situazione si usa, in italiano); «nota» = un consiglio "
+                        "breve in italiano se serve (es. una parola che si scrive diversa da come si legge). "
+                        "Rispondi con lo strumento «dici»."),
+             "tools": [{"name": "dici", "description": "Come si dice.",
+                        "input_schema": {"type": "object", "properties": {
+                            "frase": {"type": "string"}, "pron": {"type": "string"}, "nota": {"type": "string"},
+                            "altre": {"type": "array", "items": {"type": "object", "properties": {
+                                "frase": {"type": "string"}, "pron": {"type": "string"}, "quando": {"type": "string"}}, "required": ["frase"]}}},
+                            "required": ["frase"]}}],
+             "messages": [{"role": "user", "content": str(frase or "").strip()[:500]}]}
+    corpo = dict(corpo, tool_choice={"type": "tool", "name": "dici"})
+    r = ch._chiama(chiave, corpo)
+    dati, uso = ch.input_di(r, corpo), r.get("usage") or {}
+    if not str(dati.get("frase") or "").strip():
+        raise ap.ErroreAppunti(testi.tr("sm_ling_err"))
+    out = {"it": str(frase or "").strip()[:500], "lingua": lingua, "frase": str(dati.get("frase") or "")[:500],
+           "pron": str(dati.get("pron") or "")[:500], "nota": str(dati.get("nota") or "")[:300],
+           "altre": [{"frase": str(a.get("frase") or "")[:500], "pron": str(a.get("pron") or "")[:500], "quando": str(a.get("quando") or "")[:160]}
+                     for a in dati.get("altre") or [] if isinstance(a, dict) and str(a.get("frase") or "").strip()][:2]}
+    return {"dici": out, "spesa": ch._costo(uso)}
+
+
+def parola_nuova(base, p):
+    """«Aggiungi a Le mie parole»: w (straniera), it, pron, lingua, esempio. Senza doppioni (stessa parola e lingua)."""
+    w = str((p or {}).get("w") or "").strip()[:80]
+    if not w:
+        return lingue_dati(base)["parole"]
+    d = lingue_dati(base)
+    lg = p.get("lingua") if p.get("lingua") in LINGUE else "en"
+    if not any(x["w"].lower() == w.lower() and x.get("lingua") == lg for x in d["parole"]):
+        d["parole"].append({"id": uuid.uuid4().hex[:10], "w": w, "it": str(p.get("it") or "").strip()[:160],
+                            "pron": str(p.get("pron") or "").strip()[:80], "lingua": lg, "es": str(p.get("es") or "").strip()[:300],
+                            "so": 0, "quando": datetime.date.today().isoformat()})
+        _ling_salva(base, d)
+    return d["parole"]
+
+
+def parola_esito(base, pid, so):
+    """Ripasso delle parole: «La so» (+1, fino a 3 = imparata) o «Ancora» (torna a 0)."""
+    d = lingue_dati(base)
+    for x in d["parole"]:
+        if x["id"] == pid:
+            x["so"] = min(3, int(x.get("so") or 0) + 1) if so else 0
+    _ling_salva(base, d)
+    return d["parole"]
+
+
+def parola_togli(base, pid):
+    d = lingue_dati(base)
+    tolta = next((x for x in d["parole"] if x["id"] == pid), None)
+    d["parole"] = [x for x in d["parole"] if x["id"] != pid]
+    _ling_salva(base, d)
+    return d["parole"], tolta
+
+
+def testo_togli(base, tid):
+    d = lingue_dati(base)
+    d["testi"] = [x for x in d["testi"] if x.get("id") != tid]
+    _ling_salva(base, d)
+    return d["testi"]

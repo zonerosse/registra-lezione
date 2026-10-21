@@ -3425,7 +3425,7 @@ async function disegnaSpazioDsa() {
 async function azioneDsa(a) {
   const l = SD.l, m = SD.mat;
   if (a === 'reg') return vai('reg');
-  if (a === 'smmate' || a === 'smcorr' || a === 'smcomp') return vai(a);
+  if (a === 'smmate' || a === 'smcorr' || a === 'smcomp' || a === 'smlingue') return vai(a);
   if (a === 'smgen') return smGenitori();
   if (a === 'detta') return vai('dp');
   if (a === 'leggimi') return vai('lg');

@@ -3191,6 +3191,57 @@ class Motore:
         import strumenti_sm as sm, esame as es
         return {"ok": True, "crocette": len(es.sbagliate_tutte(BASE, materia)), "errori": sm.errori_materia(BASE, materia)}
 
+    # Lingue facili
+    def sm_lingue(self):
+        import strumenti_sm as sm
+        return {"ok": True, **sm.lingue_dati(BASE)}
+
+    def sm_lingue_traduci(self, testo="", percorsi=None, lingua=""):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        foto = [x for x in percorsi or [] if x][:4]
+        if not foto and not str(testo or "").strip():
+            return {"ok": False, "msg": tr("sm_pb_vuoto")}
+        try:
+            return {"ok": True, **sm.lingue_traduci(self.chiave(), BASE, testo, foto, lingua), **sm.lingue_dati(BASE)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("lingue: traduci")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_lingue_dici(self, frase, lingua="en"):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        if not str(frase or "").strip():
+            return {"ok": False, "msg": tr("sm_pb_vuoto")}
+        try:
+            return {"ok": True, **sm.lingue_dici(self.chiave(), BASE, frase, lingua)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("lingue: come si dice")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_parola(self, p):
+        import strumenti_sm as sm
+        return {"ok": True, "parole": sm.parola_nuova(BASE, p or {})}
+
+    def sm_parola_esito(self, pid, so):
+        import strumenti_sm as sm
+        return {"ok": True, "parole": sm.parola_esito(BASE, pid, bool(so))}
+
+    def sm_parola_togli(self, pid):
+        import strumenti_sm as sm
+        parole, tolta = sm.parola_togli(BASE, pid)
+        return {"ok": True, "parole": parole, "tolta": tolta}
+
+    def sm_testo_togli(self, tid):
+        import strumenti_sm as sm
+        return {"ok": True, "testi": sm.testo_togli(BASE, tid)}
+
     def sm_promemoria(self):
         import strumenti_sm as sm
         return {"ok": True, "pronti": sm.promemoria_ora(BASE)}
