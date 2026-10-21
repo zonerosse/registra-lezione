@@ -18,6 +18,13 @@ jobs:
         with:
           python-version: '3.12'
 
+      # gli identificativi del programma presso Google (accesso a Google Drive): nella cassaforte di GitHub
+      - name: Identificativi del cloud
+        env:
+          NUVOLA_APP: ${{ secrets.NUVOLA_APP }}
+        run: |
+          if [ -n "$NUVOLA_APP" ]; then printf '%s' "$NUVOLA_APP" > app/nuvola_app.json; fi
+
       - name: Il programma dentro l'app
         run: |
           bash tools/prova_android/prepara_rl.sh ios/src/verbamanent/rl
@@ -155,6 +162,10 @@ jobs:
           js 12-guida "$(vai guida)"
           js 13-guida-meta "$(giu 0.5)"
           js 14-guida-fondo "$(giu 1)"
+          js 15-studia-vuota "$(vai studia)"
+          js 16-collegati-pc "document.querySelector('[data-stv=sy]').click()" 6
+          # per ultimo: «Accedi con Google» apre la pagina di Google dentro l'app (resta aperta: per questo e' l'ultima)
+          js 17-google "$su document.querySelector('#nav a[data-p=imp]').click(); setTimeout(function(){ window.iniziaQui(); setTimeout(function(){ var g=document.querySelector('#iqG'); if (g) g.click(); }, 2500); }, 800);" 14
           ls -lR "$DATI" | grep -v "^total" > esito/documenti.txt 2>&1 || true
 
       - name: Pubblica l'esito

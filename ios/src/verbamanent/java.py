@@ -69,7 +69,7 @@ class _Ponte:
             return "0.1"
 
     def codice(self):
-        return 10            # come l'app Android 0.10: tutte le funzioni nuove
+        return 13            # come l'app Android 0.13: anche fotocamera e lettore del QR
 
     def getScaricati(self):
         return self.scaricati
@@ -126,13 +126,80 @@ class _Ponte:
         return True
 
     def apriLink(self, url):
+        """Le pagine di accesso (Google, Microsoft) si aprono DENTRO l'app (Safari dell'app): cosi' l'app resta
+        aperta e riceve la risposta; gli altri link nel Safari normale."""
+        u_ = str(url)
+        accesso = u_.startswith(("https://accounts.google.com/", "https://login.microsoftonline.com/"))
+
         def fai():
             try:
-                u = _objc("NSURL").URLWithString_(str(url))
+                u = _objc("NSURL").URLWithString_(u_)
+                if accesso:
+                    from rubicon.objc.runtime import load_library
+                    load_library("SafariServices")
+                    v = _objc("SFSafariViewController").alloc().initWithURL_(u)
+                    _TIENI["accesso"] = v
+                    _in_cima().presentViewController_animated_completion_(v, True, None)
+                    return
                 _objc("UIApplication").sharedApplication.openURL_options_completionHandler_(u, {}, None)
             except Exception:
                 log.exception("iphone: link")
         _sul_principale(fai)
+
+    def chiudiBrowser(self):
+        """Finito l'accesso (Google, Microsoft): si chiude la pagina dentro l'app."""
+        def fai():
+            v = _TIENI.pop("accesso", None)
+            try:
+                if v is not None:
+                    v.dismissViewControllerAnimated_completion_(True, None)
+            except Exception:
+                log.exception("iphone: chiudi accesso")
+        _sul_principale(fai)
+
+    def leggiQr(self):
+        """La fotocamera inquadra il QR (Impostazioni › Sincronizza del PC). Ritorna il testo del QR,
+        "" se la persona annulla, "!" se la fotocamera non c'e' o non e' permessa."""
+        fatto = threading.Event()
+        esito = {"t": ""}
+
+        def fai():
+            try:
+                _qr_apri(esito, fatto)
+            except Exception:
+                log.exception("iphone: lettore QR")
+                esito["t"] = "!"
+                fatto.set()
+        _sul_principale(fai)
+        fatto.wait(10 * 60)
+        _sul_principale(_qr_chiudi)
+        return esito["t"]
+
+    def scatta(self):
+        """Foto con la fotocamera (es. la lavagna durante la lezione). Ritorna il percorso del JPEG o ""."""
+        fatto = threading.Event()
+        esito = {"f": ""}
+
+        def fai():
+            try:
+                P = _objc("UIImagePickerController")
+                if not P.isSourceTypeAvailable_(1):            # 1 = fotocamera
+                    fatto.set()
+                    return
+                p = P.alloc().init()
+                p.sourceType = 1
+                d = _delegati()["foto"].alloc().init()
+                p.delegate = d
+                _TIENI["foto"] = (p, d)
+                _TIENI["foto_esito"] = (esito, fatto)
+                _in_cima().presentViewController_animated_completion_(p, True, None)
+            except Exception:
+                log.exception("iphone: fotocamera")
+                fatto.set()
+        _sul_principale(fai)
+        fatto.wait(10 * 60)
+        _TIENI.pop("foto", None)
+        return esito["f"]
 
     def scegliFile(self, tipo):
         """tipo: "video" (video o audio), "pdf" o "testo" (PDF, Word, .txt). Ritorna il percorso di una copia
@@ -621,8 +688,150 @@ def _delegati():
         def userNotificationCenter_willPresentNotification_withCompletionHandler_(self, c, n, fatto: objc_block) -> None:
             ObjCBlock(fatto, None, NSUInteger)(16 | 8 | 2)      # anche con l'app aperta: striscia, elenco, suono
 
-    _DEL.update(anteprima=VMAnteprima, scelta=VMScelta, posta=VMPosta, evento=VMEvento, notifiche=VMNotifiche)
+    class VMQr(NSObject):
+        @objc_method
+        def captureOutput_didOutputMetadataObjects_fromConnection_(self, out, oggetti, conn) -> None:
+            esito, fatto = _TIENI.get("qr_esito", ({}, None))
+            if fatto is None or fatto.is_set():
+                return
+            try:
+                for i in range(int(oggetti.count)):
+                    v = oggetti.objectAtIndex_(i).stringValue
+                    if v is not None and str(v):
+                        esito["t"] = str(v)
+                        fatto.set()
+                        return
+            except Exception:
+                log.exception("iphone: QR letto")
+
+        @objc_method
+        def annulla_(self, b) -> None:
+            esito, fatto = _TIENI.get("qr_esito", ({}, None))
+            if fatto is not None:
+                esito["t"] = ""
+                fatto.set()
+
+    class VMFoto(NSObject):
+        @objc_method
+        def imagePickerController_didFinishPickingMediaWithInfo_(self, p, info) -> None:
+            esito, fatto = _TIENI.pop("foto_esito", ({}, threading.Event()))
+            try:
+                img = info.objectForKey_("UIImagePickerControllerOriginalImage")
+                if img is not None:
+                    import ctypes
+                    from rubicon.objc import ObjCInstance
+                    uikit = ctypes.CDLL("/System/Library/Frameworks/UIKit.framework/UIKit")
+                    uikit.UIImageJPEGRepresentation.restype = ctypes.c_void_p
+                    uikit.UIImageJPEGRepresentation.argtypes = [ctypes.c_void_p, ctypes.c_double]
+                    dati = ObjCInstance(ctypes.c_void_p(uikit.UIImageJPEGRepresentation(img.ptr, 0.85)))
+                    dest = CACHE / "foto" / f"foto_{int(time.time() * 1000)}.jpg"
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    if dati.writeToFile_atomically_(str(dest), True):
+                        esito["f"] = str(dest)
+            except Exception:
+                log.exception("iphone: foto")
+            finally:
+                p.dismissViewControllerAnimated_completion_(True, None)
+                fatto.set()
+
+        @objc_method
+        def imagePickerControllerDidCancel_(self, p) -> None:
+            esito, fatto = _TIENI.pop("foto_esito", ({}, threading.Event()))
+            p.dismissViewControllerAnimated_completion_(True, None)
+            fatto.set()
+
+    _DEL.update(anteprima=VMAnteprima, scelta=VMScelta, posta=VMPosta, evento=VMEvento, notifiche=VMNotifiche, qr=VMQr, foto=VMFoto)
     return _DEL
+
+
+def _coda_principale():
+    """La coda principale di iOS (dispatch_get_main_queue), per le risposte della fotocamera."""
+    import ctypes
+    from rubicon.objc import ObjCInstance
+    lib = ctypes.CDLL(None)
+    return ObjCInstance(ctypes.c_void_p(ctypes.addressof(ctypes.c_char.in_dll(lib, "_dispatch_main_q"))))
+
+
+def _qr_apri(esito, fatto):
+    from rubicon.objc import SEL
+    from rubicon.objc.runtime import load_library
+    load_library("AVFoundation")
+    AV = _objc("AVCaptureDevice")
+    cam = AV.defaultDeviceWithMediaType_("vide")                 # AVMediaTypeVideo
+    if cam is None:
+        esito["t"] = "!"
+        fatto.set()
+        return
+    ingresso = _objc("AVCaptureDeviceInput").deviceInputWithDevice_error_(cam, None)
+    if ingresso is None:                                        # permesso negato
+        esito["t"] = "!"
+        fatto.set()
+        return
+    sess = _objc("AVCaptureSession").alloc().init()
+    sess.addInput_(ingresso)
+    uscita = _objc("AVCaptureMetadataOutput").alloc().init()
+    sess.addOutput_(uscita)
+    d = _delegati()["qr"].alloc().init()
+    uscita.setMetadataObjectsDelegate_queue_(d, _coda_principale())
+    uscita.metadataObjectTypes = ["org.iso.QRCode"]             # AVMetadataObjectTypeQRCode
+    vc = _objc("UIViewController").alloc().init()
+    vista = vc.view
+    vista.backgroundColor = _objc("UIColor").blackColor
+    strato = _objc("AVCaptureVideoPreviewLayer").layerWithSession_(sess)
+    strato.videoGravity = "AVLayerVideoGravityResizeAspectFill"
+    strato.frame = vista.bounds
+    vista.layer.addSublayer_(strato)
+    b = _objc("UIButton").buttonWithType_(1)
+    b.setTitle_forState_("Annulla" if _lingua_it() else "Cancel", 0)
+    b.setTitleColor_forState_(_objc("UIColor").whiteColor, 0)
+    b.backgroundColor = _objc("UIColor").colorWithWhite_alpha_(0.0, 0.55)
+    b.layer.cornerRadius = 12
+    b.translatesAutoresizingMaskIntoConstraints = False
+    b.addTarget_action_forControlEvents_(d, SEL("annulla:"), 1 << 6)       # tocco
+    vista.addSubview_(b)
+    b.centerXAnchor.constraintEqualToAnchor_(vista.centerXAnchor).active = True
+    b.bottomAnchor.constraintEqualToAnchor_constant_(vista.safeAreaLayoutGuide.bottomAnchor, -24).active = True
+    b.widthAnchor.constraintEqualToConstant_(160).active = True
+    b.heightAnchor.constraintEqualToConstant_(48).active = True
+    t = _objc("UILabel").alloc().init()
+    t.text = ("Inquadra il QR che il PC mostra in Impostazioni › Sincronizza" if _lingua_it()
+              else "Point at the QR the PC shows in Settings › Sync")
+    t.textColor = _objc("UIColor").whiteColor
+    t.numberOfLines = 0
+    t.textAlignment = 1
+    t.translatesAutoresizingMaskIntoConstraints = False
+    vista.addSubview_(t)
+    t.leadingAnchor.constraintEqualToAnchor_constant_(vista.leadingAnchor, 24).active = True
+    t.trailingAnchor.constraintEqualToAnchor_constant_(vista.trailingAnchor, -24).active = True
+    t.topAnchor.constraintEqualToAnchor_constant_(vista.safeAreaLayoutGuide.topAnchor, 24).active = True
+    vc.modalPresentationStyle = 0                               # a tutto schermo
+    _TIENI["qr"] = (vc, sess, uscita, d, strato)
+    _TIENI["qr_esito"] = (esito, fatto)
+    _in_cima().presentViewController_animated_completion_(vc, True, None)
+    threading.Thread(target=sess.startRunning, daemon=True).start()
+
+
+def _qr_chiudi():
+    x = _TIENI.pop("qr", None)
+    _TIENI.pop("qr_esito", None)
+    if not x:
+        return
+    vc, sess = x[0], x[1]
+    try:
+        sess.stopRunning()
+    except Exception:
+        pass
+    try:
+        vc.dismissViewControllerAnimated_completion_(True, None)
+    except Exception:
+        log.exception("iphone: chiudi QR")
+
+
+def _lingua_it():
+    try:
+        return str(_objc("NSLocale").preferredLanguages.objectAtIndex(0))[:2] != "en"
+    except Exception:
+        return True
 
 
 def _url(percorso):

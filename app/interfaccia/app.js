@@ -2347,6 +2347,29 @@ async function apriStudia(materia) {
 }
 // lezioni con gli appunti ma senza materia: in Studia non comparirebbero; qui si mette la materia con un tocco
 function senzaMateria() { return (LZ ? LZ.lezioni : []).filter(l => l.n_appunti && l.stato === 'pronta' && !l.materia && (l.tipo || 'lezione') === 'lezione'); }
+// Studia senza nessuna lezione: come averne una (dal PC o dal telefono, registrando, importando) e cosa ci sarà qui
+function studiaVuota() {
+  const via = (k, ico, fam, tit, s, bt, main) => `<div class="stv-via${k === 'reg' || k === 'imp' ? ' web-no' : ''}"><span class="ico ${fam}"><svg><use href="#${ico}"/></svg></span><div class="sp"><b>${esc(tit)}</b><small>${esc(s)}</small></div>${bt ? `<button class="btn ${main ? 'b-main' : 'b-ghost'} b-sm" data-stv="${k}">${esc(bt)}</button>` : ''}</div>`;
+  const web = document.documentElement.classList.contains('web');
+  const prima = web ? via('', 'g-nuvola', 'fam-studio', t('stv.web.t'), t('stv.web.s'), '', false)
+    : ANDROID ? via('sy', 'g-pc', 'fam-studio', t('stv.pc.t'), t('stv.pc.s'), t('stv.pc.b'), true)
+    : via('sy', 'g-tel', 'fam-studio', t('stv.tel.t'), t('stv.tel.s'), t('stv.tel.b'), false);
+  const f = [['g-test', 'fam-prova', 'tl.test'], ['i-mic', 'fam-prova', 'tl.orale'], ['i-cards', 'fam-ascolto', 'tl.rg'], ['i-cards', 'fam-ascolto', 'tl.fcorso'],
+    ['g-tutor', 'fam-studio', 'tl.tu'], ['g-libro', 'fam-studio', 'tl.lb'], ['g-libro', 'fam-ascolto', 'tl.gl'], ['g-cal', 'fam-prova', 'stv.date']];
+  return `<div class="card stv"><div class="lbl">${esc(t('stv.h1'))}</div>${prima}
+      ${via('reg', 'g-reg', 'fam-scrivi', t('stv.reg.t'), t('stv.reg.s'), t('nav.reg'), web ? false : !ANDROID)}
+      ${via('imp', 'g-cartella', 'fam-mappe', t('stv.imp.t'), t('stv.imp.s'), t('stv.imp.b'), false)}</div>
+    <div class="card stv mt"><div class="lbl">${esc(t('stv.h2'))}</div><div class="stv-gr">${f.map(([i, fam, k]) => `<div class="stv-f"><span class="ico ${fam}"><svg><use href="#${i}"/></svg></span><b>${esc(t(k))}</b></div>`).join('')}</div>
+    <div class="hint mt">${esc(t('stv.nota'))}</div></div>`;
+}
+function collegaStudiaVuota() {
+  document.querySelectorAll('[data-stv]').forEach(b => b.onclick = () => {
+    const k = b.dataset.stv;
+    if (k === 'reg') return vai('reg');
+    if (k === 'imp') { vai('reg'); setTimeout(() => { const e = $('btnImporta'); if (e) e.scrollIntoView({block: 'center', behavior: 'smooth'}); }, 150); return; }
+    if (k === 'sy') { vai('sy'); setTimeout(() => { const x = $(ANDROID ? 'syColl' : 'syCodice'); if (x) x.click(); }, 400); }
+  });
+}
 function cardSenzaMateria() {
   const S = senzaMateria();
   if (!S.length) return '';
@@ -2361,8 +2384,9 @@ async function disegnaStudia() {
   const M = materieStudia();
   if (!M.length) {
     $('stMat').innerHTML = '';
-    $('stBox2').innerHTML = cardSenzaMateria() || `<div class="card"><div class="hint">${esc(t('st.vuoto'))}</div></div>`;
+    $('stBox2').innerHTML = cardSenzaMateria() || studiaVuota();
     collegaSenzaMateria();
+    collegaStudiaVuota();
     return;
   }
   const m = M.find(x => STU.m && x.m.toLowerCase() === STU.m.toLowerCase()) || M[0];

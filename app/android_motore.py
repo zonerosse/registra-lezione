@@ -649,6 +649,19 @@ def _prepara(cartella_app, lingua_tel):
     _leggi = ap.leggi_chiave
     ap.leggi_chiave = lambda s: str(Ponte.decifra(s.split(":", 1)[1])) if (s or "").startswith("android:") else _leggi(s)
 
+    import nuvola as nv
+    _accedi = nv.accedi
+
+    def accedi(*a, **k):
+        try:
+            return _accedi(*a, **k)
+        finally:
+            try:
+                Ponte.chiudiBrowser()          # solo sull'iPhone: chiude la pagina di accesso aperta dentro l'app
+            except Exception:
+                pass
+    nv.accedi = accedi
+
     import aggiorna as agg
     agg.versione_locale = _versione_locale
     agg.cerca = cerca_aggiornamento

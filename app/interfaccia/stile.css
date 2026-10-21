@@ -1381,3 +1381,14 @@ html.android a.url{padding:7px 0}
 html.android .cx-ris{left:8px;right:8px;top:8px;width:auto;max-width:none;max-height:calc(100dvh - 96px)}
 html.android .hd{padding-right:54px}
 html.android body.cx-aperto .cx-lente{display:none}
+
+/* Studia senza lezioni (studiaVuota) */
+.stv-via{display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #f1f5f9}
+.stv .lbl+.stv-via{border-top:0}
+.stv-via b{display:block;color:var(--ink);font-size:14px}.stv-via small{display:block;color:var(--mut);font-size:12.5px;line-height:1.4}
+.stv-via .btn{white-space:nowrap}
+.stv-gr{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.stv-f{display:flex;gap:9px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px;opacity:.6}
+.stv-f .ico{width:28px;height:28px;border-radius:8px}.stv-f .ico svg{width:15px;height:15px}
+.stv-f b{font-size:13px;color:var(--ink);font-weight:600}
+html.android .stv-gr{grid-template-columns:1fr 1fr}

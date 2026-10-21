@@ -33,6 +33,13 @@ jobs:
           sudo xcode-select -s "$X/Contents/Developer"
           xcodebuild -version
 
+      # gli identificativi del programma presso Google (accesso a Google Drive): nella cassaforte di GitHub
+      - name: Identificativi del cloud
+        env:
+          NUVOLA_APP: ${{ secrets.NUVOLA_APP }}
+        run: |
+          if [ -n "$NUVOLA_APP" ]; then printf '%s' "$NUVOLA_APP" > app/nuvola_app.json; fi
+
       - name: Il programma dentro l'app
         run: |
           bash tools/prova_android/prepara_rl.sh ios/src/verbamanent/rl
