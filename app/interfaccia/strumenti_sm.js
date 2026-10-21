@@ -29,6 +29,11 @@ const SMT = {
     'sd.m.casa': 'A casa', 'sd.m.casa.s': 'compiti, scritti e calcoli',
     'sd.mate.s': 'Calcolatrice che parla, tabelline, formule, problemi', 'sd.corr.s': 'Corregge l\'ortografia, le parole restano tue',
     'sd.comp.s': 'Foto del diario: compiti e verifiche in ordine',
+    'come.h': 'Come arrivano qui i compiti', 'come.1.t': 'Dalle lezioni, da soli',
+    'come.1.s': 'Registri la lezione: quando il prof dà i compiti o annuncia una verifica, li trovo e li metto qui con la data.',
+    'come.1.b': 'Sempre acceso', 'come.2.t': 'Dalla foto del diario', 'come.2.s': 'Fotografa la pagina del diario: leggo i compiti e le date.',
+    'come.3.t': 'Scritti da te', 'come.3.s': 'Scrivi tu cosa devi fare e per quando.', 'come.3.b': 'Aggiungi',
+    'lista.h': 'I tuoi compiti', 'v.fatto': 'Fatto', 'v.ascolta': 'Ascolta', 'v.togli': 'Togli',
     'nav.comp': 'Compiti', 'comp.da.lez': 'dalla lezione «{l}»', 'comp.lav.lez': 'Sto cercando i compiti nelle lezioni nuove…',
     'ver.arriva': '{t} di {m}', 'ver.quando0': 'oggi', 'ver.quando1': 'domani', 'ver.quando': '{d}', 'ver.ripassa': 'Ripassa adesso',
     'ver.flash': 'Flashcard', 'ver.mappa': 'Mappa per la verifica', 'ver.orale': 'Interrogazione a voce', 'ver.studia': 'Apri Studia',
@@ -62,6 +67,11 @@ const SMT = {
     'sd.m.casa': 'At home', 'sd.m.casa.s': 'homework, writing and maths',
     'sd.mate.s': 'Talking calculator, tables, formulas, problems', 'sd.corr.s': 'Fixes spelling, the words stay yours',
     'sd.comp.s': 'Planner photo: homework and tests in order',
+    'come.h': 'How homework gets here', 'come.1.t': 'From lectures, by itself',
+    'come.1.s': 'Record the lecture: when the teacher gives homework or announces a test, I find it and add it here with the date.',
+    'come.1.b': 'Always on', 'come.2.t': 'From a planner photo', 'come.2.s': 'Take a photo of the planner page: I read the homework and the dates.',
+    'come.3.t': 'Written by you', 'come.3.s': 'Write what you have to do and when.', 'come.3.b': 'Add',
+    'lista.h': 'Your homework', 'v.fatto': 'Done', 'v.ascolta': 'Listen', 'v.togli': 'Remove',
     'nav.comp': 'Homework', 'comp.da.lez': 'from the lecture «{l}»', 'comp.lav.lez': 'Looking for homework in the new lectures…',
     'ver.arriva': '{t} in {m}', 'ver.quando0': 'today', 'ver.quando1': 'tomorrow', 'ver.quando': '{d}', 'ver.ripassa': 'Revise now',
     'ver.flash': 'Flashcards', 'ver.mappa': 'Map for the test', 'ver.orale': 'Spoken oral test', 'ver.studia': 'Open Study',
@@ -76,7 +86,7 @@ function ts(k, p) {
   return s;
 }
 const SM_PAGINE = ['smmate', 'smcorr', 'smcomp'];
-const SMS = {mate: 'calc', calc: '', voce: true, pb: null, pbi: 0, pbris: false, pbfoto: [], corr: null, comp: [], mano: false, ricordato: false};
+const SMS = {storia: [], mate: 'calc', calc: '', voce: true, pb: null, pbi: 0, pbris: false, pbfoto: [], corr: null, comp: [], mano: false, ricordato: false};
 
 /* ------------------------------------------------------------------ pagine e collegamento con il resto */
 function smPrepara() {
@@ -102,7 +112,11 @@ function smPrepara() {
     SM_PAGINE.forEach(x => { const s = $('v-' + x); if (s) s.classList.add('hidden'); });
     if (p !== 'smmate' && p !== 'smcorr' && p !== 'smcomp') voceFermaSm();
     if (SM_PAGINE.includes(p)) smTitolo(p, ts({smmate: 'mate.h', smcorr: 'corr.h', smcomp: 'comp.h'}[p]), '');   // il titolo serve gia' al percorso
+    const da = pagina;
     vaiPrima(p, tornando);
+    if (!tornando && da && da !== p) { SMS.storia.push(da); if (SMS.storia.length > 15) SMS.storia.shift(); }
+    if (p === 'dsa') SMS.storia = [];
+    smPercorso(p);
     if (p === 'smmate') smMate();
     if (p === 'smcorr') smCorr();
     if (p === 'smcomp') smComp();
@@ -338,20 +352,25 @@ function smCompDisegna() {
     (g <= 0 ? gruppi.oggi : g === 1 ? gruppi.domani : g <= 7 ? gruppi.sett : gruppi.poi).push(v);
   });
   const voce = v => `<div class="smvoce${v.fatto ? ' fatto' : ''}" data-id="${esc(v.id)}">
-      <span class="smck${v.fatto ? ' on' : ''}" data-f="1"></span>
+      <label class="smckl" data-f="1"><span class="smck${v.fatto ? ' on' : ''}"></span><small>${esc(ts('v.fatto'))}</small></label>
       <div class="sp"><b>${esc(v.materia || '')}</b>${v.tipo !== 'compito' ? ` <span class="chip smtipo">${esc(ts('comp.' + v.tipo))}</span>` : ''}
         <div>${esc(v.cosa)}</div>${v.per ? `<small class="mutt">${esc(smData(v.per))}</small>` : ''}${v.fonte ? `<small class="mutt"> · ${esc(ts('comp.da.lez', {l: v.fonte}))}</small>` : ''}
         ${v.tipo !== 'compito' && !v.fatto ? `<div class="mt"><button class="btn b-ghost b-sm" data-r="1">${icoSm('g-ripeti')} ${esc(ts('ver.ripassa'))}</button></div>` : ''}</div>
-      <button class="lnk" data-a="1" title="${esc(ts('ascolta'))}">${icoSm('g-voce')}</button>
-      <button class="lnk" data-x="1" title="${esc(ts('comp.togli'))}">✕</button></div>`;
+      <div class="smazioni"><button class="lnk" data-a="1">${icoSm('g-voce')} ${esc(ts('v.ascolta'))}</button>
+      <button class="lnk" data-x="1">${icoSm('g-cestino')} ${esc(ts('v.togli'))}</button></div></div>`;
   const sez = (k, aperta = true) => gruppi[k].length ? `<details class="cap smgr"${aperta ? ' open' : ''}><summary>${esc(ts('comp.' + k))} <span class="cnt">${gruppi[k].length}</span><span class="fr">›</span></summary>
       <div class="smlista">${gruppi[k].map(voce).join('')}</div></details>` : '';
-  box.innerHTML = `<div class="card"><div class="row" style="gap:8px;flex-wrap:wrap">
-      <button class="btn b-main b-sm" id="smCpF">${icoSm('g-foto')} ${esc(ts('comp.foto'))}</button>
-      <button class="btn b-ghost b-sm" id="smCpS">${esc(ts('comp.scegli'))}</button><span class="sp"></span>
-      <button class="btn b-ghost b-sm" id="smCpM">${icoSm('g-piu')} ${esc(ts('comp.mano'))}</button></div>
-      <div id="smCpMano"></div></div>
-    <div class="mt">${SMS.comp.length ? sez('oggi') + sez('domani') + sez('sett') + sez('poi') + sez('senza') + sez('fatti', false) : `<div class="hint">${esc(ts('comp.vuoto'))}</div>`}</div>`;
+  box.innerHTML = `<div class="card"><div class="lbl">${esc(ts('come.h'))}</div><div class="smcome">
+      <div class="smcm"><span class="ico fam-studio ico-l"><svg><use href="#g-reg"/></svg></span><div class="sp"><b><span class="smnum">1</span>${esc(ts('come.1.t'))}</b>
+        <small>${esc(ts('come.1.s'))}</small><span class="smok">✓ ${esc(ts('come.1.b'))}</span></div></div>
+      <div class="smcm"><span class="ico fam-scrivi ico-l"><svg><use href="#g-foto"/></svg></span><div class="sp"><b><span class="smnum">2</span>${esc(ts('come.2.t'))}</b>
+        <small>${esc(ts('come.2.s'))}</small><div class="row" style="gap:6px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn b-main b-sm" id="smCpF">${esc(ts('comp.foto'))}</button><button class="btn b-ghost b-sm" id="smCpS">${esc(ts('comp.scegli'))}</button></div></div></div>
+      <div class="smcm"><span class="ico fam-prova ico-l"><svg><use href="#i-edit"/></svg></span><div class="sp"><b><span class="smnum">3</span>${esc(ts('come.3.t'))}</b>
+        <small>${esc(ts('come.3.s'))}</small><div style="margin-top:8px"><button class="btn b-ghost b-sm" id="smCpM">${icoSm('g-piu')} ${esc(ts('come.3.b'))}</button></div></div></div>
+      </div><div id="smCpMano"></div></div>
+    <div class="lbl" style="margin:18px 0 8px">${esc(ts('lista.h'))}</div>
+    <div>${SMS.comp.length ? sez('oggi') + sez('domani') + sez('sett') + sez('poi') + sez('senza') + sez('fatti', false) : `<div class="hint">${esc(ts('comp.vuoto'))}</div>`}</div>`;
   const foto = async scatta => {
     const s = scatta ? await A.scatta_foglio() : await A.scegli_immagini();
     if (!s || !s.ok || !s.percorsi || !s.percorsi.length) return;
@@ -453,4 +472,19 @@ async function smGenitori() {
     <h3>${esc(ts('gen.dafare'))}</h3>${li(dafare, v => `<li><b>${esc(v.materia || '')}</b> ${esc(v.cosa)} <span class="hint">${v.per ? esc(smData(v.per)) : ''}</span></li>`)}
     <h3>${esc(ts('gen.fatti'))}</h3>${li(fatti, v => `<li><b>${esc(v.materia || '')}</b> ${esc(v.cosa)}</li>`)}`;
   smStampa(`<div class="smgen">${html}</div>`, ts('gen.h'));
+}
+
+/* ------------------------------------------------------------------ Indietro e percorso su ogni pagina */
+// «I miei strumenti» è la casa: tutte le altre pagine hanno in alto «← Indietro» e «I miei strumenti › pagina».
+// Le pagine che hanno già il loro percorso (quelle interne del programma) restano come sono.
+function smPercorso(p) {
+  if (p === 'dsa') return;
+  const sec = document.querySelector('#main > section.pg:not(.hidden)');
+  if (!sec || sec.querySelector(':scope > .perc')) return;
+  const b = document.createElement('div'); b.className = 'perc';
+  const casa = t('nav.dsa'), qui = nomePagina(p) || titoloPagina(p);
+  b.innerHTML = `<button class="torna">← ${esc(t('indietro'))}</button><div class="briciole"><a data-casa="1">${esc(casa)}</a><span class="sep">›</span><b>${esc(qui)}</b></div>`;
+  sec.insertBefore(b, sec.firstChild);
+  b.querySelector('.torna').onclick = () => { const prima = SMS.storia.pop() || 'dsa'; vai(prima, true); };
+  b.querySelector('[data-casa]').onclick = () => { SMS.storia = []; vai('dsa', true); };
 }
