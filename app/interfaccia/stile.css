@@ -1548,3 +1548,11 @@ html.android .smcome{grid-template-columns:1fr}
 html.android .smfmr{flex-direction:column;align-items:stretch}
 html.android .smfma{justify-content:flex-start}
 @media (max-width:720px){.smfmr{flex-direction:column;align-items:stretch}.smfma{justify-content:flex-start}}
+/* Scripta Manent: TUTTO il testo dell'interfaccia e' leggibile per un ragazzo DSA, non solo gli appunti.
+   Il carattere e' quello scelto in «Come leggo meglio» (di serie Atkinson Hyperlegible); piu' spazio tra lettere e parole;
+   niente maiuscolo, corsivo o barrato (le cose fatte restano grigie con la spunta). */
+html.scripta body,html.scripta button,html.scripta input,html.scripta select,html.scripta textarea{font-family:var(--dsa-font)}
+html.scripta body{letter-spacing:.02em;word-spacing:.08em;line-height:1.5}
+html.scripta body *{text-transform:none!important;font-style:normal!important}
+html.scripta body *:not(a):not(.lnk){text-decoration-line:none}
+html.scripta small,html.scripta .hint,html.scripta .sub{font-size:max(13px,1em*.9)}
