@@ -2144,7 +2144,8 @@ class Motore:
         if not solo_sbagliate and not self.chiave():
             return {"ok": False, "msg": tr("manca_chiave")}
         try:
-            test, spesa = es.test_nuovo(BASE, materia, cartelle or [], self.chiave(), testi.LINGUA, bool(solo_sbagliate),
+            test, spesa = es.test_nuovo(BASE, materia, cartelle or [], self.chiave(), testi.LINGUA,
+                                        "tutte" if solo_sbagliate == "tutte" else bool(solo_sbagliate),
                                         n, difficolta, bool(esame_vero))
             return {"ok": True, "test": test, "spesa": spesa}
         except ap.ErroreAppunti as e:
@@ -3095,6 +3096,52 @@ class Motore:
     def sm_ricordami(self, vid, quando):
         import strumenti_sm as sm
         return {"ok": True, "compiti": sm.ricordami(BASE, vid, quando)}
+
+    # Verifica: cosa porta, piano, ogni giorno, correggi gli errori
+    def sm_porta(self, vid, lez=None, pagine="", altro=""):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.porta(BASE, vid, lez, pagine, altro)}
+
+    def sm_piano(self, vid, minuti=30, giorni=None, lezioni=None):
+        import strumenti_sm as sm
+        try:
+            return {"ok": True, "compiti": sm.piano_verifica(BASE, vid, minuti, giorni, lezioni)}
+        except Exception:
+            log.exception("piano della verifica")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_piano_spunta(self, vid, g, i, fatto):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.piano_spunta(BASE, vid, g, i, fatto)}
+
+    def sm_ogni(self, vid, ora):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.ogni_giorno(BASE, vid, ora)}
+
+    def sm_correggi_verifica(self, vid, percorsi):
+        import strumenti_sm as sm
+        if not self.chiave():
+            return {"ok": False, "msg": tr("manca_chiave")}
+        foto = [x for x in percorsi or [] if x][:6]
+        if not foto:
+            return {"ok": False, "msg": tr("sm_pb_vuoto")}
+        try:
+            r = sm.correggi_verifica(self.chiave(), BASE, vid, foto)
+            return {"ok": True, **r, "compiti": sm.compiti(BASE)}
+        except ap.ErroreAppunti as e:
+            return {"ok": False, "msg": str(e)}
+        except Exception:
+            log.exception("correggi gli errori")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_errore_ok(self, vid, i, si):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.errore_ok(BASE, vid, i, si)}
+
+    def sm_sbagliate(self, materia):
+        """Le domande che sbagli: quante crocette sbagliate (da rifare) e gli errori delle verifiche corrette."""
+        import strumenti_sm as sm, esame as es
+        return {"ok": True, "crocette": len(es.sbagliate_tutte(BASE, materia)), "errori": sm.errori_materia(BASE, materia)}
 
     def sm_promemoria(self):
         import strumenti_sm as sm

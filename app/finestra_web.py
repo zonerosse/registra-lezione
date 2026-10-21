@@ -675,6 +675,27 @@ class Api:
     def sm_pezzo(self, vid, i, fatto):
         return self._m.sm_pezzo(vid, i, fatto)
 
+    def sm_porta(self, vid, lez=None, pagine="", altro=""):
+        return self._m.sm_porta(vid, lez, pagine, altro)
+
+    def sm_piano(self, vid, minuti=30, giorni=None, lezioni=None):
+        return self._m.sm_piano(vid, minuti, giorni, lezioni)
+
+    def sm_piano_spunta(self, vid, g, i, fatto):
+        return self._m.sm_piano_spunta(vid, g, i, fatto)
+
+    def sm_ogni(self, vid, ora):
+        return self._m.sm_ogni(vid, ora)
+
+    def sm_correggi_verifica(self, vid, percorsi):
+        return self._m.sm_correggi_verifica(vid, percorsi)
+
+    def sm_errore_ok(self, vid, i, si):
+        return self._m.sm_errore_ok(vid, i, si)
+
+    def sm_sbagliate(self, materia):
+        return self._m.sm_sbagliate(materia)
+
     def sm_ricordami(self, vid, quando):
         return self._m.sm_ricordami(vid, quando)
 
