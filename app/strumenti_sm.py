@@ -156,6 +156,9 @@ def aggiungi_voce(v, base=None, salva=True):
             "fatto": False, "quando": datetime.datetime.now().isoformat(timespec="seconds")}
     if v.get("fonte"):                    # «Annulla» dopo «Togli»: torna com'era, anche da quale lezione arrivava
         voce["fonte"] = str(v["fonte"])[:120]
+    for k in ("cartella", "frase", "sec", "pezzi", "ricorda"):
+        if v.get(k) not in (None, ""):
+            voce[k] = v[k]
     if salva and base is not None:
         lista = el.leggi_json(_file(base), []) or []
         lista.append(voce)
@@ -206,12 +209,15 @@ def compiti_da_lezione(chiave, base, cartella):
                         f"giorno per cui sono. La lezione e' di {GIORNI_IT[giorno.weekday()]} {giorno.isoformat()}: scrivi le date come "
                         "AAAA-MM-GG («per giovedi'» = il primo giovedi' dopo la lezione; «per la prossima volta» senza giorno = data "
                         "vuota). Non inventare: se il docente non assegna niente, la lista e' vuota. «cosa» breve e chiaro. "
+                        f"In «frase» copia la frase del docente cosi' com'e' nella trascrizione e in «ora» l'orario di quella riga. "
                         f"Materia della lezione: {materia or 'non indicata'}. Scrivi in {_lingua()}. Rispondi con lo strumento «compiti»."),
              "tools": [{"name": "compiti", "description": "Compiti assegnati e verifiche annunciate nella lezione.",
                         "input_schema": {"type": "object", "properties": {
                             "voci": {"type": "array", "items": {"type": "object", "properties": {
                                 "cosa": {"type": "string"}, "per": {"type": "string", "description": "AAAA-MM-GG o vuoto"},
-                                "tipo": {"type": "string", "enum": ["compito", "verifica", "interrogazione"]}},
+                                "tipo": {"type": "string", "enum": ["compito", "verifica", "interrogazione"]},
+                                "frase": {"type": "string", "description": "la frase del docente, parola per parola come nella trascrizione"},
+                                "ora": {"type": "string", "description": "l'orario [hh:mm:ss] della riga in cui lo dice"}},
                                 "required": ["cosa", "tipo"]}}},
                             "required": ["voci"]}}],
              "messages": [{"role": "user", "content": testo}]}
@@ -229,6 +235,12 @@ def compiti_da_lezione(chiave, base, cartella):
         if not voce or (voce["materia"].lower(), voce["cosa"].lower(), voce["per"]) in gia:
             continue
         voce["fonte"] = str(info.get("nome") or cart.name)[:120]
+        voce["cartella"] = str(cart)
+        if v.get("frase"):
+            voce["frase"] = str(v["frase"]).strip()[:400]
+        sec = _sec(v.get("ora"))
+        if sec is not None:
+            voce["sec"] = sec
         lista.append(voce)
         n += 1
     _salva(base, lista)
@@ -429,3 +441,112 @@ def lezioni_per_formule(base, giorni=60):
         if any(c.glob("trascrizione_*.json")):
             out.append(c)
     return out
+
+
+# ------------------------------------------------------------------ la scheda del compito: modifica, pezzi, promemoria
+
+def modifica(base, vid, campi):
+    """Cambia testo, materia, data o tipo di una voce."""
+    lista = el.leggi_json(_file(base), []) or []
+    for v in lista:
+        if v.get("id") != vid:
+            continue
+        if "cosa" in campi and str(campi["cosa"]).strip():
+            v["cosa"] = str(campi["cosa"]).strip()[:300]
+        if "materia" in campi:
+            v["materia"] = str(campi["materia"] or "").strip()[:60]
+        if "per" in campi:
+            per = str(campi["per"] or "").strip()[:10]
+            try:
+                datetime.date.fromisoformat(per)
+            except ValueError:
+                per = ""
+            v["per"] = per
+        if campi.get("tipo") in ("compito", "verifica", "interrogazione"):
+            v["tipo"] = campi["tipo"]
+    _salva(base, lista)
+    return compiti(base)
+
+
+def _pezzi_semplici(cosa):
+    """Senza Claude: esercizi elencati diventano un pezzo ciascuno, con una pausa a meta'."""
+    import re
+    numeri = re.findall(r"\b\d+\b", cosa.split(" pag")[0]) if re.search(r"eserciz", cosa, re.I) else []
+    if len(numeri) >= 2:
+        pz = [{"t": f"Esercizio {n}", "m": 10} for n in numeri[:8]]
+        if len(pz) >= 3:
+            pz.insert(len(pz) // 2, {"t": "Pausa", "m": 5, "pausa": True})
+        return pz
+    return [{"t": "Leggi bene cosa devi fare", "m": 5}, {"t": cosa[:120], "m": 25}, {"t": "Ricontrolla", "m": 5}]
+
+
+def pezzi(chiave, base, vid, rifai=False):
+    """Il compito diviso in pezzi brevi con i minuti. Si salva nella voce (Claude una volta sola)."""
+    lista = el.leggi_json(_file(base), []) or []
+    v = next((x for x in lista if x.get("id") == vid), None)
+    if not v:
+        return {"pezzi": [], "spesa": 0.0}
+    if v.get("pezzi") and not rifai:
+        return {"pezzi": v["pezzi"], "spesa": 0.0}
+    spesa = 0.0
+    pz = None
+    if chiave:
+        corpo = {"model": ch.MODELLO, "max_tokens": 1200,
+                 "system": ("Uno studente con dislessia o discalculia deve fare questo compito a casa. Dividilo in pezzi brevi (da 2 a 6), "
+                            "in ordine, ognuno con i minuti che servono (da 5 a 20). Se e' lungo metti una pausa di 5 minuti a meta' "
+                            "(titolo «Pausa», pausa: true). Titoli brevissimi e concreti (es. «Esercizio 3», «Rileggi l'esempio»). "
+                            f"Scrivi in {_lingua()}. Rispondi con lo strumento «pezzi»."),
+                 "tools": [{"name": "pezzi", "description": "Il compito diviso in pezzi.",
+                            "input_schema": {"type": "object", "properties": {"pezzi": {"type": "array", "items": {"type": "object", "properties": {
+                                "t": {"type": "string"}, "m": {"type": "integer"}, "pausa": {"type": "boolean"}}, "required": ["t", "m"]}}},
+                                "required": ["pezzi"]}}],
+                 "messages": [{"role": "user", "content": f"Materia: {v.get('materia') or '-'}\nCompito: {v.get('cosa')}"}]}
+        try:
+            dati, uso = ch.strumento(chiave, corpo, "pezzi", "sm_pb_err")
+            spesa = ch._costo(uso)
+            pz = [{"t": str(x.get("t") or "")[:120], "m": max(2, min(60, int(x.get("m") or 10))), **({"pausa": True} if x.get("pausa") else {})}
+                  for x in dati.get("pezzi") or [] if x.get("t")][:8]
+        except Exception:
+            pz = None
+    v["pezzi"] = pz or _pezzi_semplici(str(v.get("cosa") or ""))
+    _salva(base, lista)
+    return {"pezzi": v["pezzi"], "spesa": spesa}
+
+
+def pezzo(base, vid, i, fatto):
+    lista = el.leggi_json(_file(base), []) or []
+    for v in lista:
+        if v.get("id") == vid and 0 <= int(i) < len(v.get("pezzi") or []):
+            v["pezzi"][int(i)]["f"] = bool(fatto)
+    _salva(base, lista)
+    return compiti(base)
+
+
+def ricordami(base, vid, quando):
+    """«Ricordamelo»: AAAA-MM-GGTHH:MM (vuoto = togli il promemoria)."""
+    lista = el.leggi_json(_file(base), []) or []
+    q = str(quando or "").strip()[:16]
+    try:
+        datetime.datetime.fromisoformat(q)
+    except ValueError:
+        q = ""
+    for v in lista:
+        if v.get("id") == vid:
+            if q:
+                v["ricorda"] = q
+            else:
+                v.pop("ricorda", None)
+    _salva(base, lista)
+    return compiti(base)
+
+
+def promemoria_ora(base):
+    """Le voci con «Ricordamelo» arrivato (e non ancora fatte): il programma le mostra e toglie il promemoria."""
+    adesso = datetime.datetime.now().isoformat(timespec="minutes")
+    lista = el.leggi_json(_file(base), []) or []
+    pronti = [v for v in lista if v.get("ricorda") and v["ricorda"] <= adesso and not v.get("fatto")]
+    if pronti:
+        for v in pronti:
+            v.pop("ricorda", None)
+        _salva(base, lista)
+    return pronti

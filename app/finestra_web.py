@@ -650,6 +650,21 @@ class Api:
     def sm_formula_rimetti(self, voce):
         return self._m.sm_formula_rimetti(voce)
 
+    def sm_compito_modifica(self, vid, campi):
+        return self._m.sm_compito_modifica(vid, campi)
+
+    def sm_pezzi(self, vid, rifai=False):
+        return self._m.sm_pezzi(vid, rifai)
+
+    def sm_pezzo(self, vid, i, fatto):
+        return self._m.sm_pezzo(vid, i, fatto)
+
+    def sm_ricordami(self, vid, quando):
+        return self._m.sm_ricordami(vid, quando)
+
+    def sm_promemoria(self):
+        return self._m.sm_promemoria()
+
     def sm_compito_nuovo(self, voce):
         return self._m.sm_compito_nuovo(voce)
 

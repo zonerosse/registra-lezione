@@ -3018,6 +3018,31 @@ class Motore:
         import strumenti_sm as sm
         return {"ok": sm.rimetti_formula(BASE, voce), "formule": sm.formule(BASE)}
 
+    def sm_compito_modifica(self, vid, campi):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.modifica(BASE, vid, campi or {})}
+
+    def sm_pezzi(self, vid, rifai=False):
+        import strumenti_sm as sm
+        try:
+            r = sm.pezzi(self.chiave(), BASE, vid, bool(rifai))
+            return {"ok": True, **r, "compiti": sm.compiti(BASE)}
+        except Exception:
+            log.exception("pezzi del compito")
+            return {"ok": False, "msg": tr("ap_imprevisto")}
+
+    def sm_pezzo(self, vid, i, fatto):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.pezzo(BASE, vid, i, fatto)}
+
+    def sm_ricordami(self, vid, quando):
+        import strumenti_sm as sm
+        return {"ok": True, "compiti": sm.ricordami(BASE, vid, quando)}
+
+    def sm_promemoria(self):
+        import strumenti_sm as sm
+        return {"ok": True, "pronti": sm.promemoria_ora(BASE)}
+
     def sm_compito_nuovo(self, voce):
         import strumenti_sm as sm
         v = sm.aggiungi_voce(voce or {}, BASE)
