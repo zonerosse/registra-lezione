@@ -11,7 +11,7 @@ done
 cp app/nuvola_app.json $R/ 2>/dev/null || true       # identificativi del programma presso Google (cloud)
 rm -f $R/interfaccia/mini.html
 # sul telefono servono solo i video della guida del telefono (tel-*)
-find $R/interfaccia/video -name '*.webm' ! -name 'tel-*' -delete 2>/dev/null || true
+find $R/interfaccia/video -name '*.webm' ! -name 'tel-*' ! -name 'sm-tel-*' -delete 2>/dev/null || true
 cp -R android/risorse/font $R/font
 cp android/versione.json $R/versione_android.json
 cp app/LICENZE.txt $R/
