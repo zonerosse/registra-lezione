@@ -548,10 +548,11 @@ def cerca_aggiornamento():
         if num(remota.get("versione")) > num(Ponte.versione()):
             return {**base, "completo": True, "iphone": True, "pagina": "itms-beta://"}
         return None
+    import edizione         # ogni edizione si aggiorna solo quando c'e' qualcosa per lei (vedi aggiorna.py)
     if int(remota.get("codice") or 0) > loc["codice"]:
-        import edizione
         return {**base, "completo": True, "pagina": (remota.get("apk_sm") if edizione.SCRIPTA else None) or remota.get("apk")}
-    if int(remota.get("contenuto") or 0) > int(loc["contenuto"]) and remota.get("zip"):
+    meta = remota.get("contenuto_sm" if edizione.SCRIPTA else "contenuto_vm") or remota.get("contenuto") or 0
+    if int(meta) > int(loc["contenuto"]) and remota.get("zip"):
         return {**base, "completo": False, "url_zip": remota["zip"], "contenuto": int(remota["contenuto"])}
     return None
 

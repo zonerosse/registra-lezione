@@ -4,6 +4,12 @@ name: Aggiornamento leggero Android
 # Prova l'app senza emulatore e pubblica solo i file (contenuto.zip): Lorenzo li prende con «Aggiorna l'app».
 on:
   workflow_dispatch:
+    inputs:
+      edizione:
+        description: "Per chi è l'aggiornamento (solo quella app lo riceve)"
+        type: choice
+        options: [entrambe, verba, scripta]
+        default: entrambe
 
 permissions:
   contents: write
@@ -49,6 +55,13 @@ jobs:
               sys.exit("Alza «contenuto» in android/versione.json")
           pub.update(versione=nuova["versione"], contenuto=nuova["contenuto"], novita=nuova["novita"], novita_en=nuova["novita_en"],
                      zip="https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip")
+          # solo l'app scelta vede l'aggiornamento: l'altra resta com'e' (prendera' tutto con il suo prossimo)
+          ed = "${{ inputs.edizione }}" or "entrambe"
+          if ed in ("entrambe", "verba"):
+              pub["contenuto_vm"] = nuova["contenuto"]
+          if ed in ("entrambe", "scripta"):
+              pub["contenuto_sm"] = nuova["contenuto"]
+              pub.update(novita_sm=nuova.get("novita_sm") or nuova["novita"], novita_sm_en=nuova.get("novita_sm_en") or nuova["novita_en"])
           json.dump(pub, open("/tmp/pub/versione-android.json", "w"), ensure_ascii=False, indent=1)
           PY
           cp contenuto.zip /tmp/pub/contenuto.zip

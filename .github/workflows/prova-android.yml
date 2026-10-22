@@ -87,6 +87,8 @@ jobs:
           v["apk"] = "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk"
           v["apk_sm"] = "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk"
           v["zip"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
+          v["contenuto_vm"] = v["contenuto_sm"] = v["contenuto"]      # app nuova: per tutte e due
+          v.setdefault("novita_sm", v["novita"]); v.setdefault("novita_sm_en", v["novita_en"])
           json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
           PY
           git checkout -q --orphan android-app

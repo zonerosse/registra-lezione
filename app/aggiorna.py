@@ -80,7 +80,11 @@ def cerca():
         return None
     with _apri(asset["versione.json"]["browser_download_url"]) as r:
         remota = json.loads(r.read().decode("utf-8"))
-    if _num(remota.get("versione")) <= _num(versione_locale().get("versione", "0")):
+    # ogni edizione si aggiorna solo quando c'e' qualcosa per lei: «ultima_sm» / «ultima_vm» = l'ultima versione
+    # che ha cambiato Scripta Manent / Verba Manent IA (se mancano, vale «versione»: si aggiornano tutte e due)
+    import edizione
+    meta = remota.get("ultima_sm" if edizione.SCRIPTA else "ultima_vm") or remota.get("versione")
+    if _num(meta) <= _num(versione_locale().get("versione", "0")):
         return None
     return {
         "versione": remota.get("versione"),
