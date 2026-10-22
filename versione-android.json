@@ -1,0 +1,14 @@
+{
+ "versione": "0.14.0",
+ "codice": 14,
+ "novita": "Nasce Scripta Manent anche sul telefono: è un'app a parte, si installa accanto a Verba Manent IA. In Verba Manent IA niente cambia.",
+ "novita_en": "Scripta Manent arrives on the phone too: it is a separate app, installed next to Verba Manent IA. Nothing changes in Verba Manent IA.",
+ "contenuto": 105,
+ "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
+ "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
+ "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
+ "contenuto_vm": 105,
+ "contenuto_sm": 105,
+ "novita_sm": "Nasce Scripta Manent anche sul telefono: è un'app a parte, si installa accanto a Verba Manent IA. In Verba Manent IA niente cambia.",
+ "novita_sm_en": "Scripta Manent arrives on the phone too: it is a separate app, installed next to Verba Manent IA. Nothing changes in Verba Manent IA."
+}
