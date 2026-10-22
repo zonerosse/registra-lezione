@@ -94,7 +94,24 @@ const TQ = {
     pc_b: 'Connect to the PC', pc_h: 'PC and phone on the same Wi-Fi. You can also do it later from Settings › Sync.', pc_no: 'I do not have the PC now',
   },
 };
-const tq = (k, p) => { let s = (TQ[LINGUA] || TQ.it)[k] || TQ.it[k] || k; for (const [a, b] of Object.entries(p || {})) s = s.split('{' + a + '}').join(b); return s; };
+// Scripta Manent: il suo nome al posto di Verba Manent, e niente «web» (verbamanent.app/studia e' solo di Verba Manent)
+const TQ_SM = {
+  it: {p3: 'Telefono', t_t: 'Telefono', g_1t: 'Le stesse lezioni su PC e telefono', g_ok_s: 'Google Drive pronto per PC e telefono',
+    t_web: '<b>La password degli zip</b>: tienila da parte.', t_foglio: 'Scrivila anche su un foglio: serve se perdi PC e telefono insieme.',
+    t_nogoogle: 'Senza Google, PC e telefono si sincronizzano solo quando sono sullo stesso Wi-Fi: lo puoi fare dopo da Impostazioni › Inizia qui.',
+    imp_s: 'Google, Claude e telefono in 3 passi.'},
+  en: {p3: 'Phone', t_t: 'Phone', g_1t: 'The same lectures on PC and phone', g_ok_s: 'Google Drive ready for PC and phone',
+    t_web: '<b>The zip password</b>: keep it safe.', t_foglio: 'Also write it on paper: you need it if you lose PC and phone together.',
+    t_nogoogle: 'Without Google, PC and phone sync only when they are on the same Wi-Fi: you can do it later from Settings › Start here.',
+    imp_s: 'Google, Claude and phone in 3 steps.'},
+};
+const tq = (k, p) => {
+  const sm = typeof SCRIPTA !== 'undefined' && SCRIPTA;
+  let s = (sm && ((TQ_SM[LINGUA] || TQ_SM.it)[k])) || (TQ[LINGUA] || TQ.it)[k] || TQ.it[k] || k;
+  if (sm) s = s.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent');
+  for (const [a, b] of Object.entries(p || {})) s = s.split('{' + a + '}').join(b);
+  return s;
+};
 const sq = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
 const L_CHIAVI = 'https://console.anthropic.com/settings/keys', L_FATT = 'https://console.anthropic.com/settings/billing';
 const G_SVG = '<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
