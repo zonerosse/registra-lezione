@@ -16,7 +16,7 @@ description = "Registra lezioni e riunioni e prepara gli appunti."
 long_description = "Registra lezioni e riunioni, le trascrive sul telefono e prepara appunti, flashcard e verbali."
 sources = ["src/verbamanent"]
 icon = "icons/verbamanent"
-requires = ["numpy", "pillow", "fpdf2==2.8.9"]
+requires = ["numpy", "pillow", "fpdf2==2.8.9", "certifi"]
 permission.microphone = "Serve per registrare la lezione o la riunione."
 permission.camera = "Serve per fotografare la lavagna e per inquadrare il QR del PC."
 

@@ -51,6 +51,14 @@ class VerbaManent(toga.App):
     def _avvia(self):
         try:
             os.environ["VM_IPHONE"] = "1"                 # niente aggiornamenti scaricati dall'app: li da' l'App Store
+            # su iPhone Python non vede i certificati di sistema: senza questo ogni collegamento https (Google, Claude,
+            # Drive) fallisce con CERTIFICATE_VERIFY_FAILED. Si usano quelli di certifi.
+            try:
+                import certifi
+                os.environ["SSL_CERT_FILE"] = certifi.where()
+                os.environ.setdefault("SSL_CERT_DIR", str(Path(certifi.where()).parent))
+            except Exception:
+                traceback.print_exc()
             sys.path.insert(0, str(QUI))                  # java.py (il ponte) e avvio_android.py
             cartella = _prepara_cartella()
             import avvio_android
