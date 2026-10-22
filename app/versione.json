@@ -1,10 +1,10 @@
 {
- "versione": "4.25",
+ "versione": "4.26",
  "librerie": 2,
- "novita": "«Copia nel cloud» con Google Drive anche senza installare niente: tocchi «Collega il mio account Google» e le lezioni vanno direttamente nel tuo Drive, cartella «Verba Manent IA – Lezioni».",
- "novita_en": "«Copy to the cloud» with Google Drive without installing anything: tap «Connect my Google account» and lectures go straight into your Drive, folder «Verba Manent IA – Lezioni».",
- "novita_sm": "Per la famiglia: «La settimana per i genitori» (da copiare su WhatsApp, con il promemoria del venerdì) e «Detrazione del 19%» (le spese per gli strumenti DSA e il foglio per il CAF). Sul telefono i menu a schede ora sono tutti visibili.",
- "novita_sm_en": "For the family: «The week for parents» (to copy on WhatsApp, with a Friday reminder) and «19% tax deduction» (expenses for DSA tools and the sheet for the tax office). On the phone, tab menus are now all visible.",
- "ultima_vm": "4.23",
- "ultima_sm": "4.25"
+ "novita": "Da adesso Verba Manent IA si aggiorna solo quando c'è qualcosa di nuovo per lei. Sistemato il link per scaricare l'app Android negli inviti.",
+ "novita_en": "From now on Verba Manent IA updates only when there is something new for it. Fixed the Android download link in invitations.",
+ "novita_sm": "Scripta Manent arriva anche sul telefono Android, come app a parte. Da adesso si aggiorna solo quando c'è qualcosa di nuovo per lei, e gli inviti portano ai programmi di Scripta Manent.",
+ "novita_sm_en": "Scripta Manent comes to Android phones too, as a separate app. From now on it updates only when there is something new for it, and invitations link to Scripta Manent downloads.",
+ "ultima_vm": "4.26",
+ "ultima_sm": "4.26"
 }
