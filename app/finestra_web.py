@@ -77,7 +77,10 @@ class Api:
     def pronto(self):
         if self._errore:
             return {"pronto": False, "errore": self._errore.strip().splitlines()[-1]}
-        return {"pronto": self._m is not None, "edizione": __import__("edizione").EDIZIONE}
+        r = {"pronto": self._m is not None, "edizione": __import__("edizione").EDIZIONE}
+        if self._m is not None and self._m.cfg.get("lingua"):
+            r["lingua"] = self._m.cfg["lingua"]          # la lingua scelta: le pagine di Scripta Manent si preparano gia' nella lingua giusta
+        return r
 
     # ------------------------------------------------------------------ stato
     def stato(self):

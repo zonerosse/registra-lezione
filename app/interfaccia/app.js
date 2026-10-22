@@ -36,6 +36,7 @@ async function avvio() {
   while (true) {
     let r = {};
     try { r = await A.pronto(); } catch (e) { r = {}; }
+    if (r.lingua) LINGUA = r.lingua;
     if (r.edizione === 'scripta' && typeof attivaScripta === 'function') attivaScripta();     // Scripta Manent: nome e logo già nello splash
     if (r.errore) { clearInterval(anim); $('splErr').textContent = t('spl.err') + r.errore; $('splErr').classList.remove('hidden'); return; }
     if (r.pronto) break;
@@ -4019,7 +4020,7 @@ function cercaParole() {
 }
 function disegnaParole2(r, q) {
   const R2 = r.risultati || [], box = $('paroleRis');
-  const chips = [['', 'cp.tutte'], ['riunione', 'cp.riu'], ['lezione', 'cp.lez'], ['webinar', 'cp.web']].map(([k, n]) => `<span class="chip${CP.tipo === k ? ' on' : ''}" data-tipo="${k}">${esc(t(n))}</span>`).join('');
+  const chips = (typeof SCRIPTA !== 'undefined' && SCRIPTA) ? '' : [['', 'cp.tutte'], ['riunione', 'cp.riu'], ['lezione', 'cp.lez'], ['webinar', 'cp.web']].map(([k, n]) => `<span class="chip${CP.tipo === k ? ' on' : ''}" data-tipo="${k}">${esc(t(n))}</span>`).join('');
   const testa = `<div class="row" style="gap:6px;flex-wrap:wrap;margin-bottom:6px"><b style="color:var(--ink)">${esc(R2.length === 1 ? t('cp.detto1') : R2.length ? t('cp.detto', {n: R2.length}) : t('cp.nessuna', {q}))}</b>${R2.length ? `<span class="hint">· ${esc(t('cp.volte', {n: r.volte}))}</span>` : ''}<span class="sp"></span>${chips}</div>`;
   box.innerHTML = `<div class="card">${testa}${R2.map((x, i) => `<div class="lbl" style="margin-top:10px">${esc(x.nome)} · ${esc(x.quando)}</div>
     ${x.frasi.map((f, j) => `<div class="pris" data-i="${i}" data-j="${j}"><span class="t">${esc(f.ora)}</span><div>${f.chi ? `<b>${esc(f.chi)}:</b> ` : ''}${evidenzia(f.testo, r.parole)}</div></div>`).join('')}

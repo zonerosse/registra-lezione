@@ -21,7 +21,7 @@ function attivaScripta(vm) {
       'im.mini': 'Tieni in miniatura sullo schermo', 'im.mini.s': 'Quando parte la registrazione resta solo una finestrella sempre davanti, con Pausa, Fine e i tre «Segna».', 'nt.chi': 'Non ho capito', 'nt.fare': 'Compito o verifica', 'nt.h': 'Segna questo momento', 'nt.s': 'Lo ritrovi negli appunti, al minuto giusto', 'pr.h': 'Registra una lezione', 'pr.p': 'Tre scelte e premi Registra. Il resto lo faccio io: trascrizione, appunti, compiti e formule.',
     },
     en: {
-      'nav.dsa': 'My tools', 'sd.h': 'My tools', 'nav.arch': 'My lectures',
+      'nav.dsa': 'My tools', 'sd.h': 'My tools', 'nav.arch': 'My lessons',
       'sd.reg.s': 'Notes that are already easy to read',
       'pc.dsa': 'The podcast starts slower, the narrator uses short, simple sentences and the word you hear lights up. A 2-second pause after each part of the lecturer.',
       'dsa.banda': '', 'g.dsa': 'For you', 'tc.vero.dsa': '30% more time.',
@@ -58,11 +58,26 @@ function attivaScripta(vm) {
   }
   if (typeof smPrepara === 'function') { smPrepara(); if (typeof smCasaPrepara === 'function') smCasaPrepara(); setTimeout(smRicorda, 6000); }
   if (vm) { vmAppVoce(); return; }
+  smGuida();
   // i nomi scritti nella pagina (splash, menu)
   const giro = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   const da = [];
   while (giro.nextNode()) if (giro.currentNode.nodeValue.includes('Verba Manent')) da.push(giro.currentNode);
   da.forEach(n => { n.nodeValue = n.nodeValue.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent'); });
+}
+
+// la guida di Scripta Manent (guida_sm.js) al posto di quella di Verba Manent; video sm-<v> (PC) e sm-tel-<v> (telefono)
+function smGuida() {
+  if (typeof GUIDA_SM === 'undefined') return;
+  const tel = typeof ANDROID !== 'undefined' && ANDROID;
+  for (const l in GUIDA_SM) {
+    const g = JSON.parse(JSON.stringify(GUIDA_SM[l]));
+    g.capitoli.forEach(c => { if (c.v) { c.k = c.v; c.v = (tel ? 'sm-tel-' : 'sm-') + c.v; } });
+    if (g.capitoli[0] && g.capitoli[0].guida) g.capitoli[0].guida.mom.forEach(m => m.r.forEach(r => { r.v = (tel ? 'sm-tel-' : 'sm-') + r.v; }));
+    GUIDA[l] = g;
+  }
+  const prima = disegnaGuida;
+  disegnaGuida = function () { const r = prima.apply(this, arguments); const c = $('gCap'); if (c) c.querySelectorAll('use').forEach(u => { const h = u.getAttribute('href') || ''; if (h.startsWith('#i-g-')) u.setAttribute('href', '#g-' + h.slice(5)); }); return r; };
 }
 
 /* Verba Manent IA: lo Spazio DSA e' un'app dentro l'app (scelta di Paolo, 22/10/2026).

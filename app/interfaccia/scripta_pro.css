@@ -123,8 +123,8 @@ html.scripta .smc-gg b{font-size:30px;color:var(--sm-amb);font-weight:700;margin
 html.scripta .smc-cosa,html.scripta .smc-lez{font-size:16px;color:var(--sm-ink);margin:4px 0 12px}
 html.scripta .smc-az{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
 html.scripta .smc-amb{background:var(--sm-amb);color:#fff}
-html.scripta .smc-rapide{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}
-html.scripta .smc-rapide .btn{justify-content:flex-start}
+html.scripta .smc-rapide{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(112px,100%),1fr));gap:6px;margin-top:auto}
+html.scripta .smc-rapide .btn{justify-content:flex-start;min-width:0}
 html.scripta .smc-str{margin-top:26px}
 html.scripta .smc-strt{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:6px}
 html.scripta .smc-strt h2{margin:0;font-size:17px;font-weight:650;color:var(--sm-ink);flex:1}
@@ -636,3 +636,5 @@ html.scripta.vmdsa .brand small,html.scripta.vmdsa .side .foot{color:#a9c4e2}
 html.scripta.vmdsa .side::after{background:radial-gradient(circle,rgba(125,211,252,.18),transparent 70%)}
 html.scripta.vmdsa .logo{background:linear-gradient(135deg,#0d4275,#061e36);box-shadow:0 6px 16px rgba(13,66,117,.3)}
 html.scripta.vmdsa.android .side{background:#fff}
+html.scripta .gpr .e{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--sm-pett);color:var(--sm-pet);font-size:0}
+html.scripta .gpr .e svg{width:19px;height:19px;fill:none;stroke:currentColor}
