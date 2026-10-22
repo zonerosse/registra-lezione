@@ -1,13 +1,13 @@
 {
  "versione": "0.14.0",
  "codice": 14,
- "novita": "Lo Spazio DSA ha la stessa grafica di Scripta Manent, con tutti i suoi strumenti: Compiti e verifiche, Matematica, Correttore gentile, Lingue facili, la settimana per i genitori e la detrazione del 19%.",
- "novita_en": "The DSA Space now has the same look as Scripta Manent, with all its tools: Homework and tests, Maths, Gentle spell-checker, Easy languages, the week for parents and the 19% tax deduction.",
- "contenuto": 106,
+ "novita": "Lo Spazio DSA è un'app dentro l'app: toccando «Spazio DSA» tutto il programma diventa come Scripta Manent (strumenti, Registra, Le mie lezioni, Compiti, Studia, Impostazioni). «Torna a Verba Manent» lo riporta com'era.",
+ "novita_en": "The DSA Space is now an app inside the app: tapping «DSA Space» turns the whole program into Scripta Manent (tools, Record, My lectures, Homework, Study, Settings). «Back to Verba Manent» brings it back as it was.",
+ "contenuto": 107,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
- "contenuto_vm": 106,
+ "contenuto_vm": 107,
  "contenuto_sm": 105,
  "novita_sm": "Nasce Scripta Manent anche sul telefono: è un'app a parte, si installa accanto a Verba Manent IA. In Verba Manent IA niente cambia.",
  "novita_sm_en": "Scripta Manent arrives on the phone too: it is a separate app, installed next to Verba Manent IA. Nothing changes in Verba Manent IA."
