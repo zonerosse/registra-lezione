@@ -638,3 +638,13 @@ html.scripta.vmdsa .logo{background:linear-gradient(135deg,#0d4275,#061e36);box-
 html.scripta.vmdsa.android .side{background:#fff}
 html.scripta .gpr .e{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;min-width:34px;border-radius:9px;background:var(--sm-pett);color:var(--sm-pet);font-size:0}
 html.scripta .gpr .e svg{width:19px;height:19px;fill:none;stroke:currentColor}
+
+/* Scripta Manent sul telefono: 5 voci + «Altro» (22/10/2026) */
+html.sm-barra .nav a[data-p="imp"],html.sm-barra .nav a[data-p="guida"],html.sm-barra .nav a[data-p="info"]{display:none!important}
+html.sm-barra .nav a span:not(.cnt):not(.recdot){font-size:11.5px!important;overflow:visible!important;text-overflow:clip!important}
+html.sm-barra #ndAltro svg{width:22px;height:22px}
+#ndMenu{position:fixed;right:10px;bottom:calc(76px + env(safe-area-inset-bottom,0px));background:#fff;border:1px solid var(--sm-lin,#dce4e6);border-radius:14px;box-shadow:0 10px 30px rgba(15,31,36,.18);padding:6px;z-index:9999;min-width:220px;display:flex;flex-direction:column}
+#ndMenu button{display:flex;gap:12px;align-items:center;padding:13px 14px;font:600 16px Lexend,system-ui,sans-serif;color:var(--sm-ink,#0f1f24);background:none;border:0;border-radius:10px;text-align:left}
+#ndMenu button+button{border-top:1px solid #eef2f3}
+#ndMenu button:active{background:var(--sm-pett,#e6f2f1)}
+#ndMenu svg{width:20px;height:20px;color:var(--sm-pet,#0f766e);fill:none;stroke:currentColor}

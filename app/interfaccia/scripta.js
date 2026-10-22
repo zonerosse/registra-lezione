@@ -41,7 +41,7 @@ function attivaScripta(vm) {
   };
   for (const l in studenti) if (TESTI[l]) Object.assign(TESTI[l], studenti[l]);
   // sul telefono la barra in basso è stretta
-  if (typeof ANDROID !== 'undefined' && ANDROID) { TESTI.it['nav.dsa'] = 'Strumenti'; TESTI.en['nav.dsa'] = 'Tools'; }
+  if (typeof ANDROID !== 'undefined' && ANDROID) { TESTI.it['nav.dsa'] = 'Strumenti'; TESTI.en['nav.dsa'] = 'Tools'; TESTI.it['nav.arch'] = 'Lezioni'; TESTI.en['nav.arch'] = 'Lessons'; }
   // il nome del programma in tutti i testi (nell'app DSA di Verba Manent il nome resta Verba Manent IA)
   if (!vm) for (const l in TESTI) for (const k in TESTI[l]) {
     const v = TESTI[l][k];
@@ -57,6 +57,7 @@ function attivaScripta(vm) {
       '<g fill="#5eead4"><circle cx="66" cy="50" r="7"/><circle cx="80" cy="32" r="5"/><circle cx="82" cy="52" r="5"/><circle cx="76" cy="70" r="5"/></g>';
   }
   if (typeof smPrepara === 'function') { smPrepara(); if (typeof smCasaPrepara === 'function') smCasaPrepara(); setTimeout(smRicorda, 6000); }
+  smBarraTel();
   if (vm) { vmAppVoce(); return; }
   smGuida();
   // i nomi scritti nella pagina (splash, menu)
@@ -64,6 +65,36 @@ function attivaScripta(vm) {
   const da = [];
   while (giro.nextNode()) if (giro.currentNode.nodeValue.includes('Verba Manent')) da.push(giro.currentNode);
   da.forEach(n => { n.nodeValue = n.nodeValue.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent'); });
+}
+
+// sul telefono la barra in basso ha 5 voci + «Altro» (Impostazioni, Guida, Informazioni): scelta A di Paolo, 22/10/2026
+function smBarraTel() {
+  if (!(typeof ANDROID !== 'undefined' && ANDROID)) return;
+  const nav = $('nav'); if (!nav || $('ndAltro')) return;
+  document.documentElement.classList.add('sm-barra');
+  const it = () => LINGUA !== 'en';
+  const a = document.createElement('a'); a.id = 'ndAltro'; a.dataset.p = 'altro';
+  const etich = () => { a.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/></svg><span>${it() ? 'Altro' : 'More'}</span>`; };
+  etich(); nav.appendChild(a);
+  const chiudi = () => { const m = $('ndMenu'); if (m) m.remove(); };
+  const apri = () => {
+    if ($('ndMenu')) { chiudi(); return; }
+    etich();
+    const m = document.createElement('div'); m.id = 'ndMenu';
+    const voci = [['imp', 'i-set', 'nav.imp'], ['guida', 'i-guida', 'nav.guida'], ['info', 'i-info', 'nav.info']];
+    m.innerHTML = voci.map(([p, i, k]) => `<button data-p="${p}"><svg><use href="#${i}"/></svg>${esc(t(k))}</button>`).join('');
+    m.querySelectorAll('button').forEach(b => b.onclick = ev => { ev.stopPropagation(); chiudi(); vai(b.dataset.p); });
+    setTimeout(() => document.body.appendChild(m), 0);     // dopo il clic che l'ha aperto (che chiuderebbe il menu)
+  };
+  document.addEventListener('click', chiudi);
+  const vaiPrima = vai;
+  vai = function (p) {
+    if (p === 'altro') { apri(); return; }                 // il clic sulla barra passa da vai() (app.js lega tutti i #nav a)
+    chiudi();
+    const r = vaiPrima.apply(this, arguments);
+    a.classList.toggle('on', ['imp', 'guida', 'info', 'lic'].includes(p));
+    return r;
+  };
 }
 
 // la guida di Scripta Manent (guida_sm.js) al posto di quella di Verba Manent; video sm-<v> (PC) e sm-tel-<v> (telefono)
