@@ -28,6 +28,8 @@ requires = ["toga-iOS"]
 UIBackgroundModes = ["audio"]
 UIFileSharingEnabled = true
 LSSupportsOpeningDocumentsInPlace = true
+# audio e video mandati da altre app (Memo vocali, File, WhatsApp...): «Condividi › Verba Manent IA»
+CFBundleDocumentTypes = [{CFBundleTypeName = "Audio e video", CFBundleTypeRole = "Viewer", LSHandlerRank = "Alternate", LSItemContentTypes = ["public.audio", "public.movie", "com.apple.m4a-audio", "public.mpeg-4-audio", "com.apple.quicktime-movie", "public.mpeg-4"]}]
 NSCalendarsWriteOnlyAccessUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."
 NSCalendarsUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."
 NSLocalNetworkUsageDescription = "Serve per prendere le lezioni dal tuo PC sulla rete Wi-Fi di casa."

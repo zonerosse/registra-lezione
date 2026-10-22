@@ -853,6 +853,22 @@ def _api_android(api, mt):
     api.scegli_testo = scegli_testo
     api.scegli_pdf = scegli_pdf
     api.scegli_video = scegli_video
+
+    def condiviso():
+        """iPhone: un audio o video mandato da un'altra app con «Condividi» (lo scrive app.py dell'iPhone)."""
+        f = Path.home() / "Library" / "Caches" / "VerbaManent" / "condiviso.txt"
+        try:
+            if not f.exists():
+                return {"ok": False}
+            percorso = f.read_text(encoding="utf-8").strip()
+            f.unlink()
+            if not percorso or not Path(percorso).exists():
+                return {"ok": False}
+            return {"ok": True, **api._m.info_video(percorso)}
+        except Exception:
+            log.exception("file condiviso")
+            return {"ok": False}
+    api.condiviso = condiviso
     api.scegli_cartella = lambda: {"ok": False}
     api.apri_pacchetti = lambda: False
     api.assistenza = lambda: Ponte.apriLink(mt.SITO_ASSISTENZA)

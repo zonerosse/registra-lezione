@@ -933,6 +933,20 @@ async function scegliVideo() {
   vai('reg');
   setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
 }
+// iPhone: un audio o video mandato da un'altra app («Condividi › Verba Manent IA», es. dai Memo vocali)
+async function controllaCondiviso() {
+  if (typeof IPHONE === 'undefined' || !IPHONE || !A || !R || (S && (S.registro || S.occupato))) return;
+  let r; try { r = await A.condiviso(); } catch (e) { return; }
+  if (!r || !r.ok) return;
+  IV = {...r, slide: !!r.ha_video, lingua: R.lingua_lezione || LINGUA, nome: ''};
+  $('ivNome').value = r.nome_proposto || '';
+  disegnaImporta();
+  controllaNome('ivNome', 'ivNomeMsg', 'ivVai');
+  vai('reg');
+  setTimeout(() => { $('ivNome').focus(); $('ivNome').select(); }, 50);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState !== 'hidden') setTimeout(controllaCondiviso, 600); });
+setInterval(() => { if (document.visibilityState !== 'hidden') controllaCondiviso(); }, 3000);
 async function scegliLink() {
   const ok = await dialogo({titolo: t('il.link.t'), html: `<input class="in" placeholder="https://…"><div class="hint" style="margin-top:8px">${esc(t('il.siti'))}</div>`,
     bottoni: [{t: t('annulla'), v: false}, {t: t('il.vai'), cls: 'b-main', v: true}]});

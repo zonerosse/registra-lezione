@@ -39,6 +39,72 @@ def _prepara_cartella():
     return dest
 
 
+# ------------------------------------------------------------------ file mandati da altre app (Condividi)
+CONDIVISO = Path.home() / "Library" / "Caches" / "VerbaManent" / "condiviso.txt"
+
+
+def _ricevi(url):
+    """Un file arrivato da un'altra app (es. Memo vocali): se ne fa una copia e si lascia il percorso alla pagina."""
+    try:
+        acc = bool(url.startAccessingSecurityScopedResource())
+    except Exception:
+        acc = False
+    try:
+        src = Path(str(url.path))
+        dest = Path.home() / "Library" / "Caches" / "VerbaManent" / "condivisi" / src.name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(src, dest)
+        CONDIVISO.write_text(str(dest), encoding="utf-8")
+        print("file condiviso:", dest, flush=True)
+    except Exception:
+        traceback.print_exc()
+    finally:
+        if acc:
+            try:
+                url.stopAccessingSecurityScopedResource()
+            except Exception:
+                pass
+
+
+def _scena_condivisi():
+    """La scena di Toga, piu' i file aperti con «Condividi»: all'avvio (options.URLContexts) e con l'app gia' aperta."""
+    try:
+        import toga_iOS.app as ta
+        from rubicon.objc import objc_method
+
+        base = ta.PythonSceneDelegate
+
+        class ScenaVM(base):
+            @objc_method
+            def scene_willConnectToSession_options_(self, scene, session, options) -> None:
+                window = ta.App.app.interface.current_window._impl.native
+                window.windowScene = scene
+                self.window = window
+                window.makeKeyAndVisible()
+                try:
+                    ctx = options.URLContexts
+                    if ctx is not None:
+                        for c in ctx.allObjects():
+                            _ricevi(c.URL)
+                except Exception:
+                    traceback.print_exc()
+
+            @objc_method
+            def scene_openURLContexts_(self, scene, contexts) -> None:
+                try:
+                    for c in contexts.allObjects():
+                        _ricevi(c.URL)
+                except Exception:
+                    traceback.print_exc()
+
+        ta.PythonSceneDelegate = ScenaVM
+    except Exception:
+        traceback.print_exc()
+
+
+_scena_condivisi()
+
+
 class VerbaManent(toga.App):
     def startup(self):
         self.web = toga.WebView(style=Pack(flex=1))
