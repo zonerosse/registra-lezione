@@ -56,7 +56,7 @@ object Ponte {
     }
 
     // ------------------------------------------------------------------ file
-    private fun uri(f: File): Uri = FileProvider.getUriForFile(app, "it.puntowebferrara.registralezione.file", f)
+    private fun uri(f: File): Uri = FileProvider.getUriForFile(app, app.packageName + ".file", f)
     private fun tipo(f: File) = MimeTypeMap.getSingleton().getMimeTypeFromExtension(f.extension.lowercase()) ?: "*/*"
 
     /** Apre un file (PDF, video...) con l'app giusta del telefono. Una cartella: non si puo', si condivide. */
@@ -156,7 +156,7 @@ object Ponte {
         val a = attivita.get() ?: return ""
         val dir = File(app.cacheDir, "foto").apply { mkdirs() }
         val f = File(dir, "foto_${System.currentTimeMillis()}.jpg")
-        val uri = androidx.core.content.FileProvider.getUriForFile(app, "it.puntowebferrara.registralezione.file", f)
+        val uri = androidx.core.content.FileProvider.getUriForFile(app, app.packageName + ".file", f)
         val l = CountDownLatch(1)
         scatto = l
         scattoOk = false

@@ -913,6 +913,9 @@ class Motore:
             return {"ok": False, "msg": tr("inv_niente")}
         codice = base64.urlsafe_b64encode(self._mescola(zlib.compress(json.dumps(dati).encode("utf-8")))).decode("ascii").rstrip("=")
         msg = tr("inv_msg", n=per or "", c="VMIA-INVITO-1:" + codice).replace("  ", " ")
+        import edizione
+        if edizione.SCRIPTA:            # in Scripta Manent i link portano ai programmi di Scripta Manent
+            msg = msg.replace("RegistraLezione-Setup.exe", "ScriptaManent-Setup.exe").replace("RegistraLezione.apk", "ScriptaManent.apk")
         return {"ok": True, "messaggio": msg, "claude": "claude" in dati, "server": "srv" in dati}
 
     def _leggi_invito(self, testo):

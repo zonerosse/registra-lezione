@@ -549,7 +549,8 @@ def cerca_aggiornamento():
             return {**base, "completo": True, "iphone": True, "pagina": "itms-beta://"}
         return None
     if int(remota.get("codice") or 0) > loc["codice"]:
-        return {**base, "completo": True, "pagina": remota.get("apk")}
+        import edizione
+        return {**base, "completo": True, "pagina": (remota.get("apk_sm") if edizione.SCRIPTA else None) or remota.get("apk")}
     if int(remota.get("contenuto") or 0) > int(loc["contenuto"]) and remota.get("zip"):
         return {**base, "completo": False, "url_zip": remota["zip"], "contenuto": int(remota["contenuto"])}
     return None

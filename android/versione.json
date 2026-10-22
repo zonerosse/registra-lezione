@@ -1,7 +1,7 @@
 {
- "versione": "0.13.28",
- "codice": 13,
- "novita": "Collegati al PC: col codice il telefono ora trova il PC anche sull'iPhone (lo cerca su tutta la rete di casa); se il telefono è sui dati mobili lo dice chiaramente e propone «Accedi con Google».",
- "novita_en": "Connect to the PC: with the code the phone now finds the PC on iPhone too (it searches the whole home network); if the phone is on mobile data it says so clearly and suggests «Sign in with Google».",
- "contenuto": 104
+ "versione": "0.14.0",
+ "codice": 14,
+ "novita": "Nasce Scripta Manent anche sul telefono: è un'app a parte, si installa accanto a Verba Manent IA. In Verba Manent IA niente cambia.",
+ "novita_en": "Scripta Manent arrives on the phone too: it is a separate app, installed next to Verba Manent IA. Nothing changes in Verba Manent IA.",
+ "contenuto": 105
 }

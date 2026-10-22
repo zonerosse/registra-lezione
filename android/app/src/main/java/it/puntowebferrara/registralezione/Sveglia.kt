@@ -22,7 +22,7 @@ class Sveglia : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val testo = intent.getStringExtra("testo") ?: ""
         val n = android.app.Notification.Builder(ctx, "calendario")
-            .setContentTitle(intent.getStringExtra("titolo") ?: "Verba Manent IA")
+            .setContentTitle(intent.getStringExtra("titolo") ?: ctx.getString(R.string.nome_app))
             .setContentText(testo).setStyle(android.app.Notification.BigTextStyle().bigText(testo))
             .setSmallIcon(android.R.drawable.ic_btn_speak_now).setContentIntent(apri).setAutoCancel(true)
             .setCategory(android.app.Notification.CATEGORY_EVENT).build()

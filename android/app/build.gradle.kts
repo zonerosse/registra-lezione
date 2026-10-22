@@ -21,6 +21,22 @@ android {
         ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
         externalNativeBuild { cmake { arguments += listOf("-DCMAKE_BUILD_TYPE=Release") } }
     }
+    buildFeatures { buildConfig = true }
+    // due edizioni dallo stesso codice: Verba Manent IA e Scripta Manent (per chi ha un DSA), installabili insieme
+    flavorDimensions += "edizione"
+    productFlavors {
+        create("verba") {
+            dimension = "edizione"
+            resValue("string", "nome_app", "Verba Manent IA")
+            buildConfigField("String", "EDIZIONE", "\"verba\"")
+        }
+        create("scripta") {
+            dimension = "edizione"
+            applicationId = "it.puntowebferrara.scriptamanent"
+            resValue("string", "nome_app", "Scripta Manent")
+            buildConfigField("String", "EDIZIONE", "\"scripta\"")
+        }
+    }
     // chiave per le versioni di prova (sempre la stessa, cosi' si aggiornano sopra le precedenti)
     signingConfigs {
         create("prova") {

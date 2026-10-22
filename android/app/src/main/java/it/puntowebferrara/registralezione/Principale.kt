@@ -36,7 +36,7 @@ class Principale : Activity() {
         window.statusBarColor = blu
         window.navigationBarColor = Color.WHITE
         val attesa = TextView(this).apply {
-            text = "Verba Manent IA\n\n" + (if (Locale.getDefault().language == "it") "Avvio…" else "Starting…")
+            text = getString(R.string.nome_app) + "\n\n" + (if (Locale.getDefault().language == "it") "Avvio…" else "Starting…")
             setTextColor(Color.WHITE); textSize = 20f; gravity = Gravity.CENTER; setBackgroundColor(blu)
         }
         setContentView(attesa)
@@ -45,12 +45,14 @@ class Principale : Activity() {
         thread {
             val porta = try {
                 copiaProgramma()
+                // l'edizione (Verba Manent IA o Scripta Manent) la legge il motore in Python (edizione.py)
+                android.system.Os.setenv("RL_EDIZIONE", BuildConfig.EDIZIONE, true)
                 if (!Python.isStarted()) Python.start(AndroidPlatform(this))
                 Python.getInstance().getModule("avvio_android")
                     .callAttr("avvia", File(filesDir, "rl").absolutePath, Locale.getDefault().language).toInt()
             } catch (e: Throwable) {
                 android.util.Log.e("RegistraLezione", "avvio", e)
-                runOnUiThread { attesa.text = "Verba Manent IA\n\n⚠ " + e.toString().take(600) }
+                runOnUiThread { attesa.text = getString(R.string.nome_app) + "\n\n⚠ " + e.toString().take(600) }
                 return@thread
             }
             runOnUiThread { mostra(porta) }

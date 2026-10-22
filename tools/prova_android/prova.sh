@@ -33,6 +33,20 @@ timeout 120 adb pull "$DIR/Documents" $OUT/documenti
 grep -iE "registralezione|whisper|python|AndroidRuntime|chaquopy|lowmemory|killing|crash|FATAL" $OUT/logcat_tutto.txt | tail -600 > $OUT/logcat.txt
 tail -300 $OUT/logcat_tutto.txt > $OUT/logcat_ultime.txt
 pkill -f "adb logcat" || true
+# Scripta Manent (la seconda edizione, stessa app con un altro nome): si installa accanto e deve partire come SM
+SM=it.puntowebferrara.scriptamanent
+SMDIR=/sdcard/Android/data/$SM/files
+if [ -f android/app/build/outputs/apk/debug/app-scripta-debug.apk ]; then
+  timeout 300 adb install -r -g android/app/build/outputs/apk/debug/app-scripta-debug.apk > $OUT/scripta.txt 2>&1
+  adb shell am start -n $SM/it.puntowebferrara.registralezione.Principale >> $OUT/scripta.txt 2>&1
+  for i in $(seq 1 40); do SP=$(adb shell cat $SMDIR/porta.txt 2>/dev/null | tr -d '\r'); [ -n "$SP" ] && break; sleep 3; done
+  echo "porta di Scripta Manent: $SP" >> $OUT/scripta.txt
+  if [ -n "$SP" ]; then
+    adb forward tcp:$SP tcp:$SP
+    curl -s -X POST -d '[]' http://127.0.0.1:$SP/api/pronto >> $OUT/scripta.txt 2>&1
+  fi
+  sleep 8; timeout 30 adb exec-out screencap -p > $OUT/schermo_scripta.png
+fi
 cat $OUT/esito_app.json
 [ -f $OUT/esito_app.json ] || exit 3
 grep -q "il motore risponde" $OUT/esito_app.json || exit 3

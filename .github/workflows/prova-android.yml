@@ -53,7 +53,10 @@ jobs:
       - name: Costruisci l'app
         working-directory: android
         run: |
-          gradle assembleDebug --no-daemon -q
+          gradle assembleVerbaDebug assembleScriptaDebug --no-daemon -q
+          mkdir -p app/build/outputs/apk/debug
+          cp app/build/outputs/apk/verba/debug/app-verba-debug.apk app/build/outputs/apk/debug/app-debug.apk
+          cp app/build/outputs/apk/scripta/debug/app-scripta-debug.apk app/build/outputs/apk/debug/app-scripta-debug.apk
           ls -la app/build/outputs/apk/debug/
           echo "APK: $(du -m app/build/outputs/apk/debug/app-debug.apk | cut -f1) MB"
       - name: Prova dell'app senza emulatore (motore e pagine veri, telefono finto)
@@ -75,12 +78,14 @@ jobs:
           cp android/app/build/outputs/apk/debug/app-debug.apk /tmp/apk/RegistraLezione.apk
           gh release view app-android > /dev/null 2>&1 || gh release create app-android --prerelease --latest=false \
             --title "App Android (Verba Manent IA)" --notes "L'app per il telefono: si scarica da «Aggiorna l'app»."
-          gh release upload app-android /tmp/apk/RegistraLezione.apk --clobber
+          cp android/app/build/outputs/apk/debug/app-scripta-debug.apk /tmp/apk/ScriptaManent.apk
+          gh release upload app-android /tmp/apk/RegistraLezione.apk /tmp/apk/ScriptaManent.apk --clobber
           cp contenuto.zip /tmp/agg/contenuto.zip
           python3 - <<'PY'
           import json
           v = json.load(open("android/versione.json"))
           v["apk"] = "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk"
+          v["apk_sm"] = "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk"
           v["zip"] = "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip"
           json.dump(v, open("/tmp/agg/versione-android.json", "w"), ensure_ascii=False, indent=1)
           PY

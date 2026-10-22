@@ -18,7 +18,7 @@
         </intent>
     </queries>
     <application
-        android:label="Verba Manent IA"
+        android:label="@string/nome_app"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false"
@@ -39,7 +39,7 @@
             android:foregroundServiceType="microphone" />
         <receiver android:name=".Sveglia" android:exported="false" />
         <provider android:name="androidx.core.content.FileProvider"
-            android:authorities="it.puntowebferrara.registralezione.file"
+            android:authorities="${applicationId}.file"
             android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file" />
         </provider>
