@@ -58,8 +58,10 @@ function smSpiegazioniPiccole(radice) {
   });
   return out;
 }
+// Scripta Manent, oppure lo Spazio DSA di Verba Manent (che ha la stessa grafica)
+function smAttivo() { return (typeof SCRIPTA !== 'undefined' && SCRIPTA) || document.documentElement.classList.contains('vmdsa'); }
 function smInfoGiro(radice) {
-  if (typeof SCRIPTA === 'undefined' || !SCRIPTA) return;
+  if (!smAttivo()) return;
   const tutti = [...(radice || document).querySelectorAll(SM_SPIEGA)];
   try { tutti.push(...smSpiegazioniPiccole(radice)); } catch (e) {}
   tutti.forEach(el => {
@@ -88,7 +90,7 @@ function smInfoGiro(radice) {
 }
 // nessuna scritta sotto i 15 px (regola di Scripta Manent): quello che resta piccolo si ingrandisce
 function smTestoGrande(radice) {
-  if (typeof SCRIPTA === 'undefined' || !SCRIPTA || !radice) return;
+  if (!smAttivo() || !radice) return;
   const w = document.createTreeWalker(radice, NodeFilter.SHOW_TEXT);
   const visti = new Set(); let n;
   while ((n = w.nextNode())) {

@@ -47,6 +47,7 @@ async function avvio() {
   R = await A.riepilogo();
   LINGUA = R.lingua || LINGUA;
   if (R.edizione === 'scripta' && typeof attivaScripta === 'function') attivaScripta();
+  else if (typeof attivaDsaVm === 'function') attivaDsaVm();            // Verba Manent: lo Spazio DSA come Scripta Manent
   traduciPagina();
   disegnaFacilitata();
   inizializza();

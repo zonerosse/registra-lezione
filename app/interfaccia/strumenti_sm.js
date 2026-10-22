@@ -110,7 +110,7 @@ function smPrepara() {
     if (p !== 'smcomp' && !INTERNE.includes(p)) INTERNE.push(p);
   });
   const nav = $('nav'), arch = nav && nav.querySelector('a[data-p="arch"]');
-  if (arch && !nav.querySelector('a[data-p="smcomp"]')) {
+  if (arch && !nav.querySelector('a[data-p="smcomp"]') && typeof SCRIPTA !== 'undefined' && SCRIPTA) {   // in Verba Manent i compiti stanno nello Spazio DSA
     const a = document.createElement('a'); a.dataset.p = 'smcomp';
     a.innerHTML = `<svg><use href="#g-cal"/></svg><span>${esc(ts('nav.comp'))}</span><span class="cnt hidden" id="navComp"></span>`;
     arch.after(a);
@@ -128,7 +128,7 @@ function smPrepara() {
     vaiPrima(p, tornando);
     if (!tornando && da && da !== p) { SMS.storia.push(da); if (SMS.storia.length > 15) SMS.storia.shift(); }
     if (p === 'dsa') SMS.storia = [];
-    smPercorso(p);
+    if (SCRIPTA || VMDSA_PAGINE.includes(p)) smPercorso(p);   // in Verba Manent solo nelle pagine dello Spazio DSA
     if (p === 'smmate') smMate();
     if (p === 'smcorr') smCorr();
     if (p === 'smcomp') smComp();

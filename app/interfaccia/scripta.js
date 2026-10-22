@@ -62,3 +62,25 @@ function attivaScripta() {
   while (giro.nextNode()) if (giro.currentNode.nodeValue.includes('Verba Manent')) da.push(giro.currentNode);
   da.forEach(n => { n.nodeValue = n.nodeValue.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent'); });
 }
+
+/* Verba Manent IA: lo Spazio DSA ha la grafica e gli strumenti di Scripta Manent («I miei strumenti», Compiti,
+   Matematica, Correttore, Lingue facili, Settimana per i genitori, Detrazione), nei colori blu di Verba Manent.
+   Solo lì: mentre si e' in quelle pagine la pagina porta le classi «scripta vmdsa»; uscendo tornano via. */
+let VMDSA = false;
+const VMDSA_PAGINE = ['dsa', 'smcomp', 'smmate', 'smcorr', 'smlingue', 'smsett', 'smdet'];
+function attivaDsaVm() {
+  if (SCRIPTA || VMDSA || typeof smPrepara !== 'function' || typeof smCasa !== 'function') return;
+  VMDSA = true;
+  smPrepara();
+  disegnaSpazioDsa = smCasa;
+  const sec = $('v-dsa'); if (sec) sec.classList.add('smcasa');
+  const vaiPrima = vai;
+  vai = function (p, tornando) {
+    const on = VMDSA_PAGINE.includes(p);
+    document.documentElement.classList.toggle('scripta', on);
+    document.documentElement.classList.toggle('vmdsa', on);
+    const r = vaiPrima.apply(this, arguments);
+    if (on) { const giro = () => { const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) { smInfoGiro(s); smTestoGrande(s); } }; setTimeout(giro, 0); setTimeout(giro, 700); setTimeout(giro, 2000); }
+    return r;
+  };
+}

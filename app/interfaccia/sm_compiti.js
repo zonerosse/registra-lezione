@@ -227,7 +227,7 @@ function smkRicordami(v) {
 async function smkPromemoria() {
   try { const r = await A.sm_promemoria(); (r && r.pronti || []).forEach(v => toast(tk('promemoria', {c: (v.materia ? v.materia + ': ' : '') + v.cosa}))); } catch (e) {}
 }
-if (typeof SCRIPTA !== 'undefined') { setInterval(() => { if (SCRIPTA) smkPromemoria(); }, 60000); setTimeout(() => { if (SCRIPTA) smkPromemoria(); }, 8000); }
+if (typeof SCRIPTA !== 'undefined') { const on = () => SCRIPTA || (typeof VMDSA !== 'undefined' && VMDSA); setInterval(() => { if (on()) smkPromemoria(); }, 60000); setTimeout(() => { if (on()) smkPromemoria(); }, 8000); }
 
 /* ------------------------------------------------------------------ la scheda */
 const smkF = (a, ico, tit, sub, cl = '', val = '') => `<button class="smx-f" data-f="${a}"><span class="smx-fi ${cl}">${smIco(ico)}</span><span class="smx-ft"><b>${esc(tit)}</b>${sub ? `<small class="sp">${esc(sub)}</small>` : ''}</span>${val ? `<span class="smx-val">${esc(val)}</span>` : ''}<span class="smx-chev">›</span></button>`;
