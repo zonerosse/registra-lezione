@@ -5,11 +5,12 @@
    Si accende solo nell'edizione «scripta» (file edizione.json accanto all'exe). In Verba Manent non fa niente. */
 'use strict';
 let SCRIPTA = false;
-function attivaScripta() {
+function attivaScripta(vm) {
   if (SCRIPTA) return;
   SCRIPTA = true;
   document.documentElement.classList.add('scripta');
-  document.title = 'Scripta Manent';
+  if (vm) { VMAPP = true; document.documentElement.classList.add('vmdsa', 'vmapp'); }
+  else document.title = 'Scripta Manent';
   const nuovi = {
     it: {
       'nav.dsa': 'I miei strumenti', 'sd.h': 'I miei strumenti', 'nav.arch': 'Le mie lezioni',
@@ -41,13 +42,13 @@ function attivaScripta() {
   for (const l in studenti) if (TESTI[l]) Object.assign(TESTI[l], studenti[l]);
   // sul telefono la barra in basso è stretta
   if (typeof ANDROID !== 'undefined' && ANDROID) { TESTI.it['nav.dsa'] = 'Strumenti'; TESTI.en['nav.dsa'] = 'Tools'; }
-  // il nome del programma in tutti i testi
-  for (const l in TESTI) for (const k in TESTI[l]) {
+  // il nome del programma in tutti i testi (nell'app DSA di Verba Manent il nome resta Verba Manent IA)
+  if (!vm) for (const l in TESTI) for (const k in TESTI[l]) {
     const v = TESTI[l][k];
     if (typeof v === 'string' && v.includes('Verba Manent')) TESTI[l][k] = v.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent');
   }
   // il logo: le righe di testo che diventano una piccola mappa
-  const logo = document.getElementById('i-logo');
+  const logo = vm ? null : document.getElementById('i-logo');
   if (logo) {
     logo.setAttribute('viewBox', '8 12 80 76');
     logo.innerHTML = '<g fill="#fff"><rect x="14" y="33" width="28" height="5" rx="2.5"/><rect x="14" y="43" width="22" height="5" rx="2.5"/>' +
@@ -56,6 +57,7 @@ function attivaScripta() {
       '<g fill="#5eead4"><circle cx="66" cy="50" r="7"/><circle cx="80" cy="32" r="5"/><circle cx="82" cy="52" r="5"/><circle cx="76" cy="70" r="5"/></g>';
   }
   if (typeof smPrepara === 'function') { smPrepara(); if (typeof smCasaPrepara === 'function') smCasaPrepara(); setTimeout(smRicorda, 6000); }
+  if (vm) { vmAppVoce(); return; }
   // i nomi scritti nella pagina (splash, menu)
   const giro = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
   const da = [];
@@ -63,24 +65,34 @@ function attivaScripta() {
   da.forEach(n => { n.nodeValue = n.nodeValue.split('Verba Manent IA').join('Scripta Manent').split('Verba Manent').join('Scripta Manent'); });
 }
 
-/* Verba Manent IA: lo Spazio DSA ha la grafica e gli strumenti di Scripta Manent («I miei strumenti», Compiti,
-   Matematica, Correttore, Lingue facili, Settimana per i genitori, Detrazione), nei colori blu di Verba Manent.
-   Solo lì: mentre si e' in quelle pagine la pagina porta le classi «scripta vmdsa»; uscendo tornano via. */
+/* Verba Manent IA: lo Spazio DSA e' un'app dentro l'app (scelta di Paolo, 22/10/2026).
+   Toccando «Spazio DSA» la pagina si ricarica e tutta l'app diventa Scripta Manent (menu, Registra, Lezioni, Compiti,
+   Studia, Impostazioni), con nome e colori blu di Verba Manent. «Torna a Verba Manent» la riporta com'era.
+   Si ricorda la scelta (vm_dsa_app): riaprendo il programma si riparte da dove si era. */
+let VMAPP = false;
 let VMDSA = false;
 const VMDSA_PAGINE = ['dsa', 'smcomp', 'smmate', 'smcorr', 'smlingue', 'smsett', 'smdet'];
-function attivaDsaVm() {
-  if (SCRIPTA || VMDSA || typeof smPrepara !== 'function' || typeof smCasa !== 'function') return;
-  VMDSA = true;
-  smPrepara();
-  disegnaSpazioDsa = smCasa;
-  const sec = $('v-dsa'); if (sec) sec.classList.add('smcasa');
+function vmLs(k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; }
+function vmAppEntra(pag) { vmLs('vm_dsa_app', '1'); vmLs('vm_dsa_pag', pag || 'dsa'); location.reload(); }
+function vmAppEsci() { vmLs('vm_dsa_app', null); vmLs('vm_dsa_pag', null); location.reload(); }
+function vmAppVoce() {                  // «Torna a Verba Manent»: ultima voce del menu (sul telefono sta in Impostazioni)
+  const nav = $('nav'); if (!nav || nav.querySelector('a[data-p="vmesci"]')) return;
+  const a = document.createElement('a'); a.dataset.p = 'vmesci'; a.className = 'solo-pc vmesci';
+  a.innerHTML = `<svg><use href="#g-fuori"/></svg><span>${esc(LINGUA === 'en' ? 'Back to Verba Manent' : 'Torna a Verba Manent')}</span>`;
+  nav.appendChild(a);
   const vaiPrima = vai;
-  vai = function (p, tornando) {
-    const on = VMDSA_PAGINE.includes(p);
-    document.documentElement.classList.toggle('scripta', on);
-    document.documentElement.classList.toggle('vmdsa', on);
-    const r = vaiPrima.apply(this, arguments);
-    if (on) { const giro = () => { const s = document.querySelector('#main > section.pg:not(.hidden)'); if (s) { smInfoGiro(s); smTestoGrande(s); } }; setTimeout(giro, 0); setTimeout(giro, 700); setTimeout(giro, 2000); }
-    return r;
+  vai = function (p) { if (p === 'vmesci') { vmAppEsci(); return; } return vaiPrima.apply(this, arguments); };
+}
+function attivaDsaVm() {
+  if (SCRIPTA || VMDSA) return;
+  VMDSA = true;
+  if (vmLs('vm_dsa_app') === '1') {
+    if (R && R.facilitata && typeof smPrepara === 'function') { attivaScripta(true); return; }
+    vmLs('vm_dsa_app', null);           // Modalita' DSA spenta: si torna a Verba Manent normale
+  }
+  const vaiPrima = vai;
+  vai = function (p) {
+    if (VMDSA_PAGINE.includes(p)) { vmAppEntra(p); return; }     // ogni strumento di Scripta Manent apre l'app DSA
+    return vaiPrima.apply(this, arguments);
   };
 }

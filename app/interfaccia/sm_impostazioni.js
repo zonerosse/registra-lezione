@@ -128,7 +128,7 @@ function smiRipasso(s) {
   $('smiRgN').querySelectorAll('span').forEach(x => x.onclick = async () => { R.rg_max = +x.dataset.v; await A.imposta('rg_max', R.rg_max); smiRipasso(s); });
   $('smiRgP').onclick = async () => { R.rg_promemoria = !R.rg_promemoria; await A.imposta('rg_promemoria', R.rg_promemoria); smiRipasso(s); };
   if ($('smiRgO')) $('smiRgO').onchange = async () => { R.rg_ora = $('smiRgO').value || '18:00'; await A.imposta('rg_ora', R.rg_ora); };
-  $('smiAnki').onclick = () => { const M = materieStudia(); esportaAnki(M.flatMap(m => m.cartelle), 'Scripta Manent', 'prima'); };
+  $('smiAnki').onclick = () => { const M = materieStudia(); esportaAnki(M.flatMap(m => m.cartelle), VMAPP ? 'Verba Manent IA' : 'Scripta Manent', 'prima'); };
 }
 function smiMaterie() {
   const el = $('smiMat'); if (!el) return;
@@ -157,11 +157,13 @@ function smiPrivacy(s) {
   $('smiPerm').onclick = () => dialogo({titolo: t('pv.r.t').replace(/^\S+\s/, ''), testo: t('pv.r')});
 }
 function smiInfo(s) {
-  s.innerHTML = `<div class="card smi-card">${smiRiga(ti('lingua'), '', smiSeg('smiLin', [['it', 'Italiano'], ['en', 'English']], LINGUA))}
-    ${smiRiga(ti('versione'), R.versione ? 'Scripta Manent ' + R.versione : '', `<button class="btn b-ghost b-sm" id="smiVer">${esc(ti('apri'))} ›</button>`)}
+  const vmEsci = VMAPP ? smiRiga(LINGUA === 'en' ? 'Back to Verba Manent' : 'Torna a Verba Manent', LINGUA === 'en' ? 'Leave the DSA Space: the app goes back to how it was' : 'Esci dallo Spazio DSA: l\'app torna com\'era', `<button class="btn b-ghost b-sm" id="smiVmEsci">${esc(LINGUA === 'en' ? 'Back' : 'Torna')} ›</button>`) : '';
+  s.innerHTML = `<div class="card smi-card">${vmEsci}${smiRiga(ti('lingua'), '', smiSeg('smiLin', [['it', 'Italiano'], ['en', 'English']], LINGUA))}
+    ${smiRiga(ti('versione'), R.versione ? (VMAPP ? 'Verba Manent IA ' : 'Scripta Manent ') + R.versione : '', `<button class="btn b-ghost b-sm" id="smiVer">${esc(ti('apri'))} ›</button>`)}
     ${smiRiga(ti('guida'), ti('guida.s'), `<button class="btn b-ghost b-sm" id="smiGuida">${esc(ti('apri'))} ›</button>`)}</div>`;
   $('smiLin').querySelectorAll('span').forEach(x => x.onclick = () => { const b = document.querySelector(`#segLingua [data-l="${x.dataset.v}"]`); if (b) b.click(); setTimeout(smImpDisegna, 600); });
   $('smiVer').onclick = () => vai('info');
+  if ($('smiVmEsci')) $('smiVmEsci').onclick = vmAppEsci;
   $('smiGuida').onclick = () => vai('guida');
 }
 function smImpAttiva() {

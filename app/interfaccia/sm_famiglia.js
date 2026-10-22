@@ -56,7 +56,7 @@ const SMF_T = {
 function tf(k, p) {
   let s = (SMF_T[LINGUA] && SMF_T[LINGUA][k]) ?? SMF_T.it[k] ?? k;
   if (p) for (const x in p) s = s.split('{' + x + '}').join(p[x]);
-  if (!(typeof SCRIPTA !== 'undefined' && SCRIPTA)) s = s.split('Scripta Manent').join('Verba Manent IA');   // nello Spazio DSA di Verba Manent
+  if (!(typeof SCRIPTA !== 'undefined' && SCRIPTA) || VMAPP) s = s.split('Scripta Manent').join('Verba Manent IA');   // nello Spazio DSA di Verba Manent
   return s;
 }
 const SMF = {sett: 0, det: null, anno: new Date().getFullYear()};
