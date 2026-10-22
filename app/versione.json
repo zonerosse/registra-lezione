@@ -1,10 +1,10 @@
 {
- "versione": "4.28",
+ "versione": "4.29",
  "librerie": 2,
  "novita": "Da adesso Verba Manent IA si aggiorna solo quando c'è qualcosa di nuovo per lei. Sistemato il link per scaricare l'app Android negli inviti.",
  "novita_en": "From now on Verba Manent IA updates only when there is something new for it. Fixed the Android download link in invitations.",
- "novita_sm": "«Inizia qui»: ora parla di Scripta Manent e del telefono, senza il web che per Scripta Manent non c'è ancora.",
- "novita_sm_en": "«Start here» now talks about Scripta Manent and the phone, without the web, which Scripta Manent does not have yet.",
+ "novita_sm": "«Inizia qui» è la prima voce delle Impostazioni. «I miei dati e famiglia» apre la nuova «Settimana per i genitori».",
+ "novita_sm_en": "«Start here» is now the first item in Settings. «My data and family» opens the new «Week for parents».",
  "ultima_vm": "4.26",
- "ultima_sm": "4.28"
+ "ultima_sm": "4.29"
 }
