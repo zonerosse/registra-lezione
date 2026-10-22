@@ -1,0 +1,3 @@
+adb: device offline
+adb: device offline
+porta di Scripta Manent: 

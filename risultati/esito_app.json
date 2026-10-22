@@ -1,0 +1,35 @@
+{
+ "passi": [
+  {
+   "n": "il motore risponde",
+   "ok": true,
+   "d": "versione 0.14.0, lingua en",
+   "ora": "07:20:20"
+  },
+  {
+   "n": "registrazione partita",
+   "ok": true,
+   "d": "{'ok': True, 'mini': True}",
+   "ora": "07:20:23"
+  },
+  {
+   "n": "registra (servizio Android)",
+   "ok": true,
+   "d": "secondi 20, batteria 100, avviso ''",
+   "ora": "07:20:44"
+  },
+  {
+   "n": "«Durante»: lezione pronta",
+   "ok": true,
+   "d": "292 s; parti [{'stato': 'ok', 'orario': '00:00 – 00:00', 'perc': 1.0, 'file': '/storage/emulated/0/Android/data/it.puntowebferrara.registralezione/files/Documents/Pacchetti per Claude/Prova – Durante – 22-10 ore 07.20 – parte 1 (00h-00h).zip', 'k': 1}]",
+   "ora": "07:26:00"
+  },
+  {
+   "n": "errore nella prova",
+   "ok": false,
+   "d": "RemoteDisconnected('Remote end closed connection without response')",
+   "ora": "07:26:42"
+  }
+ ],
+ "errori": []
+}

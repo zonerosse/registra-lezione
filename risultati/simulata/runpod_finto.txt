@@ -1,0 +1,2 @@
+RUNPOD FINTO pronto
+LAVORO 101226 byte 10.0 s large-v3 it None

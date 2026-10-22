@@ -1,0 +1,60 @@
+--- 07:20:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          687932 kB
+MemAvailable:    2428704 kB
+ 07:20:47 up 2 min,  0 users,  load average: 1.16, 0.78, 0.31
+--- 07:21:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          249968 kB
+MemAvailable:    1992672 kB
+ 07:21:47 up 3 min,  0 users,  load average: 3.28, 1.44, 0.57
+--- 07:22:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          197568 kB
+MemAvailable:    1867824 kB
+ 07:22:47 up 4 min,  0 users,  load average: 5.03, 2.30, 0.92
+--- 07:23:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          192672 kB
+MemAvailable:    1851456 kB
+ 07:23:47 up 5 min,  0 users,  load average: 5.57, 2.97, 1.24
+--- 07:24:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          190048 kB
+MemAvailable:    1847932 kB
+ 07:24:47 up 6 min,  0 users,  load average: 5.26, 3.38, 1.49
+--- 07:25:48
+List of devices attached
+emulator-5554	device
+
+MemTotal:        4008524 kB
+MemFree:          190944 kB
+MemAvailable:    1781436 kB
+ 07:25:47 up 7 min,  0 users,  load average: 5.11, 3.68, 1.72
+--- 07:26:48
+List of devices attached
+
+adb: device 'emulator-5554' not found
+--- 07:27:48
+List of devices attached
+
+adb: device 'emulator-5554' not found
+--- 07:28:48
+List of devices attached
+
+adb: device 'emulator-5554' not found

@@ -1,0 +1,94 @@
+2026-10-22 07:10:12,613 INFO Android: pagine su 127.0.0.1:41323
+2026-10-22 07:10:27,295 INFO inizio registrazione: /tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0710 - Analisi 1 – Derivate
+2026-10-22 07:10:31,117 INFO whisper: 6 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:10:31,117 INFO parte 1 in corso: trascritta fino a 6 s (6 s di audio in 2 s)
+2026-10-22 07:10:33,623 INFO whisper: 11 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:10:33,623 INFO parte 1 in corso: trascritta fino a 11 s (5 s di audio in 2 s)
+2026-10-22 07:10:35,128 INFO whisper: 15 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:10:35,129 INFO trascrizione parte 1: 20 s di audio (11 gia' fatti mentre registravo) in 2 s (2 thread)
+2026-10-22 07:10:36,702 INFO chi parla, parte 1: 1 voci
+2026-10-22 07:10:39,392 INFO controllo appunti parte 1 (cornell): 2 avvisi
+2026-10-22 07:10:39,393 INFO whisper: 26 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:10:39,404 INFO trascrizione parte 2: 20 s di audio (0 gia' fatti mentre registravo) in 2 s (2 thread)
+2026-10-22 07:10:39,642 INFO appunti parte 1: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Analisi 1 – Derivate – 22-10 ore 07.10 – parte 1 (00h-00h).pdf (0.050 $)
+2026-10-22 07:10:40,330 INFO chi parla, parte 2: 2 voci
+2026-10-22 07:10:40,434 INFO fine: richiesta dalla pagina
+2026-10-22 07:10:40,459 INFO fine: risposta alla pagina
+2026-10-22 07:10:42,157 INFO whisper: 17 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:10:42,158 INFO trascrizione parte 3: 11 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:10:42,532 INFO chi parla, parte 3: 2 voci
+2026-10-22 07:10:42,665 INFO controllo appunti parte 2 (cornell): 2 avvisi
+2026-10-22 07:10:42,838 INFO appunti parte 2: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Analisi 1 – Derivate – 22-10 ore 07.10 – parte 2 (00h-00h).pdf (0.050 $)
+2026-10-22 07:10:44,911 INFO controllo appunti parte 3 (cornell): 2 avvisi
+2026-10-22 07:10:45,093 INFO appunti parte 3: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Analisi 1 – Derivate – 22-10 ore 07.10 – parte 3 (00h-00h).pdf (0.050 $)
+2026-10-22 07:10:46,641 INFO inizio registrazione: /tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0710 - Fisica 1 – Cinematica
+2026-10-22 07:10:52,925 INFO fine: richiesta dalla pagina
+2026-10-22 07:10:52,925 INFO fine: risposta alla pagina
+2026-10-22 07:10:58,230 INFO whisper: 20 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:10:58,230 INFO trascrizione parte 1: 20 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:10:58,821 INFO chi parla, parte 1: 1 voci
+2026-10-22 07:11:00,444 INFO whisper: 11 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:11:00,444 INFO trascrizione parte 2: 5 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:11:00,670 INFO chi parla, parte 2: 1 voci
+2026-10-22 07:11:06,561 INFO controllo appunti parte 1 (cornell): 2 avvisi
+2026-10-22 07:11:06,749 INFO appunti parte 1: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Fisica 1 – Cinematica – 22-10 ore 07.10 – parte 1 (00h-00h).pdf (0.050 $)
+2026-10-22 07:11:08,753 INFO controllo appunti parte 2 (cornell): 2 avvisi
+2026-10-22 07:11:08,910 INFO appunti parte 2: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Fisica 1 – Cinematica – 22-10 ore 07.10 – parte 2 (00h-00h).pdf (0.050 $)
+2026-10-22 07:11:15,531 INFO testo importato: /home/runner/work/registra-lezione/registra-lezione/tools/prova_android/simula/trascrizione_prova.pdf -> /tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0711 - Fisiologia – muscolo (366 parole)
+2026-10-22 07:11:17,534 INFO controllo appunti parte 1 (cornell): 2 avvisi
+2026-10-22 07:11:17,692 INFO appunti parte 1: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Fisiologia – muscolo – 22-10 ore 07.11 – parte 1 (00h-00h02).pdf (0.050 $)
+2026-10-22 07:11:23,058 INFO importazione: /home/runner/work/registra-lezione/registra-lezione/tools/prova_android/simula/../lezione_it.wav -> /tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0705 - Chimica – audio
+2026-10-22 07:11:24,735 INFO whisper: 20 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:11:24,736 INFO trascrizione parte 1: 20 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:11:25,322 INFO chi parla, parte 1: 1 voci
+2026-10-22 07:11:26,969 INFO whisper: 26 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:11:26,970 INFO trascrizione parte 2: 20 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:11:27,492 INFO controllo appunti parte 1 (cornell): 2 avvisi
+2026-10-22 07:11:27,748 INFO chi parla, parte 2: 2 voci
+2026-10-22 07:11:27,955 INFO appunti parte 1: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Appunti – Chimica – audio – 22-10 ore 07.05 – parte 1 (00h-00h).pdf (0.050 $)
+2026-10-22 07:11:29,997 INFO controllo appunti parte 2 (cornell): 0 avvisi
+2026-10-22 07:11:29,997 ERROR appunti parte 2
+Traceback (most recent call last):
+  File "/tmp/tmp.CDwlfRPGcN/rl/motore.py", line 4888, in _lavoratore_appunti
+    dest, spesa = ap.crea_appunti(cart, k, self.chiave(), self.cfg["cartella_pacchetti"], formato)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/tmp.CDwlfRPGcN/rl/appunti.py", line 2103, in crea_appunti
+    el.scrivi_json(file_json(cartella, k, formato), dati)
+  File "/tmp/tmp.CDwlfRPGcN/rl/elaborazione.py", line 118, in scrivi_json
+    tmp.write_text(testo, encoding="utf-8")
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0705 - Chimica – audio/appunti_002.json.4680.140445212468928.0.tmp'
+2026-10-22 07:11:36,496 INFO inizio registrazione: /tmp/tmp.CDwlfRPGcN/dati/Documents/Lezioni registrate/2026-10-22 0711 - Riunione commerciale – listino 2027
+2026-10-22 07:11:40,811 INFO whisper: 6 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:11:40,812 INFO parte 1 in corso: trascritta fino a 6 s (6 s di audio in 2 s)
+2026-10-22 07:11:43,316 INFO whisper: 11 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:11:43,316 INFO parte 1 in corso: trascritta fino a 11 s (5 s di audio in 2 s)
+2026-10-22 07:11:44,820 INFO whisper: 15 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:11:44,821 INFO trascrizione parte 1: 20 s di audio (11 gia' fatti mentre registravo) in 2 s (2 thread)
+2026-10-22 07:11:45,745 INFO chi parla, parte 1: 1 voci
+2026-10-22 07:11:48,029 INFO controllo appunti parte 1 (verbale): 0 avvisi
+2026-10-22 07:11:48,196 INFO appunti parte 1: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Verbale – Riunione commerciale – listino 2027 – 22-10 ore 07.11 – parte 1 (00h-00h).pdf (0.040 $)
+2026-10-22 07:11:48,239 INFO fine: richiesta dalla pagina
+2026-10-22 07:11:48,240 INFO fine: risposta alla pagina
+2026-10-22 07:11:48,388 INFO whisper: 12 s di audio in 2 s (2 thread, beam 1)
+2026-10-22 07:11:48,389 INFO parte 2 in corso: trascritta fino a 6 s (6 s di audio in 2 s)
+2026-10-22 07:11:49,892 INFO whisper: 20 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:11:49,893 INFO trascrizione parte 2: 20 s di audio (6 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:11:50,582 INFO chi parla, parte 2: 2 voci
+2026-10-22 07:11:51,784 INFO nomi delle voci: 0 su 1, spesa 0.0004 $
+2026-10-22 07:11:53,410 INFO whisper: 12 s di audio in 2 s (3 thread, beam 1)
+2026-10-22 07:11:53,411 INFO trascrizione parte 3: 6 s di audio (0 gia' fatti mentre registravo) in 2 s (3 thread)
+2026-10-22 07:11:53,590 INFO chi parla, parte 3: 2 voci
+2026-10-22 07:11:54,037 INFO controllo appunti parte 2 (verbale): 0 avvisi
+2026-10-22 07:11:54,191 INFO appunti parte 2: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Verbale – Riunione commerciale – listino 2027 – 22-10 ore 07.11 – parte 2 (00h-00h).pdf (0.040 $)
+2026-10-22 07:11:54,791 INFO nomi delle voci: 0 su 1, spesa 0.0004 $
+2026-10-22 07:11:57,042 INFO controllo appunti parte 3 (verbale): 0 avvisi
+2026-10-22 07:11:57,218 INFO appunti parte 3: /tmp/tmp.CDwlfRPGcN/dati/Documents/Pacchetti per Claude/Verbale – Riunione commerciale – listino 2027 – 22-10 ore 07.11 – parte 3 (00h-00h).pdf (0.040 $)
+2026-10-22 07:13:19,592 INFO server di trascrizione collegato: prova123 (prova in 3 s)
+2026-10-22 07:13:22,185 INFO invito attivato (claude, server)
+2026-10-22 07:13:32,472 INFO aggiornamento leggero pronto: contenuto 99
