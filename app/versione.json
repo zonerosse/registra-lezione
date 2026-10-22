@@ -1,10 +1,10 @@
 {
- "versione": "4.31",
+ "versione": "4.32",
  "librerie": 2,
  "novita": "Lo Spazio DSA è un'app dentro l'app: toccando «Spazio DSA» tutto il programma diventa come Scripta Manent (strumenti, Registra, Le mie lezioni, Compiti, Studia, Impostazioni). «Torna a Verba Manent» lo riporta com'era.",
  "novita_en": "The DSA Space is now an app inside the app: tapping «DSA Space» turns the whole program into Scripta Manent (tools, Record, My lectures, Homework, Study, Settings). «Back to Verba Manent» brings it back as it was.",
- "novita_sm": "«Inizia qui» è la prima voce delle Impostazioni. «I miei dati e famiglia» apre la nuova «Settimana per i genitori».",
- "novita_sm_en": "«Start here» is now the first item in Settings. «My data and family» opens the new «Week for parents».",
+ "novita_sm": "Guida nuova: divisa come «I miei strumenti», con un video per ogni capitolo, sul PC e sul telefono, in italiano e in inglese.",
+ "novita_sm_en": "New guide: grouped like «My tools», with a video for each chapter, on PC and phone, in Italian and English.",
  "ultima_vm": "4.31",
- "ultima_sm": "4.29"
+ "ultima_sm": "4.32"
 }
