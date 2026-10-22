@@ -139,7 +139,25 @@ jobs:
             Invoke-WebRequest "https://github.com/electron/rcedit/releases/download/v2.0.0/rcedit-x64.exe" -OutFile rcedit.exe
             ./rcedit.exe "dist/ScriptaManent/Scripta Manent.exe" --set-icon grafica/scripta/icona.ico `
               --set-version-string ProductName "Scripta Manent" --set-version-string FileDescription "Scripta Manent"
-          } catch { Write-Host "::warning title=Icona di Scripta Manent::non messa sull'exe ($_)" }
+            # rcedit riscrive l'exe e perde l'archivio di PyInstaller attaccato in fondo («Could not load PyInstaller's
+            # embedded PKG archive»): lo riattacco preso dall'exe originale
+            python tools/riattacca_pkg.py "dist/RegistraLezione/Registra Lezione.exe" "dist/ScriptaManent/Scripta Manent.exe"
+            if ($LASTEXITCODE -ne 0) { throw "archivio non riattaccato" }
+          } catch {
+            Write-Host "::warning title=Icona di Scripta Manent::non messa sull'exe ($_)"
+            Copy-Item "dist/RegistraLezione/Registra Lezione.exe" "dist/ScriptaManent/Scripta Manent.exe" -Force
+          }
+          # prova: Scripta Manent deve partire come la versione normale
+          $p2 = Start-Process -FilePath "dist/ScriptaManent/Scripta Manent.exe" -ArgumentList "--prova" -Wait -PassThru
+          $es2 = if (Test-Path "dist/ScriptaManent/prova_avvio.txt") { Get-Content "dist/ScriptaManent/prova_avvio.txt" -Raw -Encoding utf8 } else { "" }
+          if (Test-Path "dist/ScriptaManent/errore_avvio.txt") { $es2 += Get-Content "dist/ScriptaManent/errore_avvio.txt" -Raw -Encoding utf8 }
+          Write-Host "Scripta Manent: $es2"
+          if ($p2.ExitCode -ne 0 -or $es2 -notmatch "TUTTO A POSTO") {
+            Write-Host "::error title=Prova di Scripta Manent fallita::codice $($p2.ExitCode) $($es2 -replace "`r", '' -replace "`n", '%0A')"
+            exit 1
+          }
+          Remove-Item "dist/ScriptaManent/prova_avvio.txt" -ErrorAction SilentlyContinue
+          Get-ChildItem "dist/ScriptaManent/app" -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
           & $iscc "/DVersione=$v" "/DEdizione=scripta" installer.iss
           if ($LASTEXITCODE -ne 0 -or -not (Test-Path ScriptaManent-Setup.exe)) { Write-Error "Installazione di Scripta Manent non creata"; exit 1 }
 

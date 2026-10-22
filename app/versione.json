@@ -1,10 +1,10 @@
 {
- "versione": "4.26",
+ "versione": "4.27",
  "librerie": 2,
  "novita": "Da adesso Verba Manent IA si aggiorna solo quando c'è qualcosa di nuovo per lei. Sistemato il link per scaricare l'app Android negli inviti.",
  "novita_en": "From now on Verba Manent IA updates only when there is something new for it. Fixed the Android download link in invitations.",
- "novita_sm": "Scripta Manent arriva anche sul telefono Android, come app a parte. Da adesso si aggiorna solo quando c'è qualcosa di nuovo per lei, e gli inviti portano ai programmi di Scripta Manent.",
- "novita_sm_en": "Scripta Manent comes to Android phones too, as a separate app. From now on it updates only when there is something new for it, and invitations link to Scripta Manent downloads.",
+ "novita_sm": "Corretto il programma di installazione di Scripta Manent per Windows: ora il programma parte.",
+ "novita_sm_en": "Fixed the Scripta Manent installer for Windows: the program now starts.",
  "ultima_vm": "4.26",
- "ultima_sm": "4.26"
+ "ultima_sm": "4.27"
 }
