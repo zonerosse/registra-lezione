@@ -248,5 +248,5 @@ class VerbaManent(toga.App):
         self.main_window.content = self.web
 
 
-def main():
-    return VerbaManent("Verba Manent IA", "it.puntowebferrara.verbamanent")
+def main(nome="Verba Manent IA", app_id="it.puntowebferrara.verbamanent"):
+    return VerbaManent(nome, app_id)
