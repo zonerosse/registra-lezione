@@ -26,6 +26,15 @@ def _lingua():
         return "it"
 
 
+def _ipad():
+    """Sull'iPad le pagine usano l'impaginazione del PC (menu a sinistra), con le funzioni del telefono."""
+    try:
+        from rubicon.objc import ObjCClass
+        return int(ObjCClass("UIDevice").currentDevice.userInterfaceIdiom) == 1      # 1 = iPad
+    except Exception:
+        return False
+
+
 def _prepara_cartella():
     """Le pagine e il motore vanno copiati in una cartella scrivibile (solo se e' una versione nuova)."""
     dati = Path.home() / "Library" / "Application Support" / "VerbaManent"
@@ -129,7 +138,7 @@ class VerbaManent(toga.App):
             cartella = _prepara_cartella()
             import avvio_android
             porta = avvio_android.avvia(str(cartella), _lingua())
-            url = f"http://127.0.0.1:{porta}/index.html?android=1&iphone=1"
+            url = f"http://127.0.0.1:{porta}/index.html?android=1&iphone=1" + ("&tablet=1" if _ipad() else "")
             self.loop.call_soon_threadsafe(self._mostra, url)
             self._prova_comando()
             if (Path.home() / "prova_js_attiva").exists():

@@ -3,8 +3,10 @@
 'use strict';
 const ANDROID = /[?&]android=1/.test(location.search);
 const IPHONE = /[?&]iphone=1/.test(location.search);       // sull'iPhone gli aggiornamenti arrivano dall'App Store
+// iPad (o tablet): le funzioni del telefono, ma l'impaginazione del PC (menu a sinistra, piu' colonne)
+const TABLET = /[?&]tablet=1/.test(location.search);
 if (ANDROID) {
-  document.documentElement.classList.add('android');
+  document.documentElement.classList.add(TABLET ? 'tablet' : 'android');
   const AND = {
     it: {
       'pv.1.t': 'Le registrazioni restano sul tuo telefono', 'im.pv.s': 'Cosa resta sul tuo telefono, cosa esce e verso chi', 'rq.si': "Il punto del programma in cui è successo l'errore, la versione e il tipo di telefono.",

@@ -76,6 +76,9 @@ jobs:
           briefcase create iOS -a "$APP" --no-input 2>&1 | tail -30
           # Apple non accetta librerie statiche (.a) dentro l'app: quelle di numpy non servono a niente
           find "build/$APP" -path "*app_packages*" -name "*.a" -print -delete
+          # anche per iPad (1 = iPhone, 2 = iPad)
+          find "build/$APP" -name project.pbxproj -exec sed -i '' -E 's/TARGETED_DEVICE_FAMILY = [^;]*;/TARGETED_DEVICE_FAMILY = "1,2";/' {} \;
+          grep -h "TARGETED_DEVICE_FAMILY" $(find "build/$APP" -name project.pbxproj) | sort -u
           # numero di costruzione sempre nuovo (Apple non accetta due invii con lo stesso numero)
           # il file Info.plist dell'app (non quelli delle librerie dentro app_packages)
           PL=$(find "build/$APP" -name "*-Info.plist" -path "*xcode*" -not -path "*app_packages*" -not -path "*Support*" | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-)

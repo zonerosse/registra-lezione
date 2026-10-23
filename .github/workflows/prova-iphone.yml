@@ -4,6 +4,12 @@ name: Prova iPhone
 # Foto dello schermo e registro finiscono nel ramo «iphone-prove».
 on:
   workflow_dispatch:
+    inputs:
+      dispositivo:
+        description: "Su quale dispositivo simulato"
+        type: choice
+        options: [iphone, ipad]
+        default: iphone
 
 permissions:
   contents: write
@@ -55,6 +61,8 @@ jobs:
           python -m pip install -q --upgrade pip "$B" 2>&1 | tail -5 | tee -a ../esito/costruzione.txt
           briefcase --version | tee -a ../esito/costruzione.txt
           briefcase create iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
+          find build -name project.pbxproj -exec sed -i '' -E 's/TARGETED_DEVICE_FAMILY = [^;]*;/TARGETED_DEVICE_FAMILY = "1,2";/' {} \;
+          grep -h "TARGETED_DEVICE_FAMILY" $(find build -name project.pbxproj) | sort -u | tee -a ../esito/costruzione.txt
           briefcase build iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
 
       - name: Prova sull'iPhone simulato
@@ -64,7 +72,11 @@ jobs:
           APP=$(find ios/build -name "*.app" -path "*iphonesimulator*" | head -1)
           echo "app: $APP" | tee esito/app.txt
           ID=it.puntowebferrara.verbamanent
-          DEV=$(xcrun simctl list devices available | grep -m1 -E "iPhone 1[5-7]( |$)" | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/')
+          if [ "${{ inputs.dispositivo }}" = "ipad" ]; then
+            DEV=$(xcrun simctl list devices available | grep -m1 -E "iPad (Air|Pro)" | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/')
+          else
+            DEV=$(xcrun simctl list devices available | grep -m1 -E "iPhone 1[5-7]( |$)" | sed -E 's/.*\(([0-9A-F-]+)\).*/\1/')
+          fi
           echo "simulatore: $DEV" | tee -a esito/app.txt
           xcrun simctl boot "$DEV"
           xcrun simctl bootstatus "$DEV" -b
