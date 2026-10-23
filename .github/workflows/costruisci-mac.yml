@@ -90,7 +90,9 @@ jobs:
           mkdir -p esito-mac
           for A in "Verba Manent IA" "Scripta Manent"; do
             E=$(ls "dist/$A.app/Contents/MacOS/" | grep -v -E '\.(json|txt)$' | head -1)
-            timeout 600 "dist/$A.app/Contents/MacOS/$E" --prova > "esito-mac/uscita-$E.txt" 2>&1 || echo "codice $?" >> "esito-mac/uscita-$E.txt"
+            # sul Mac non c'e' «timeout»: la prova ha 10 minuti, poi si ferma
+            ("dist/$A.app/Contents/MacOS/$E" --prova > "esito-mac/uscita-$E.txt" 2>&1; echo "codice $?" >> "esito-mac/uscita-$E.txt") &
+            PID=$!; for i in $(seq 1 600); do kill -0 $PID 2>/dev/null || break; sleep 1; done; kill $PID 2>/dev/null || true
             tail -60 "esito-mac/uscita-$E.txt"
             find "$HOME/Library/Application Support" dist -name "prova_avvio.txt" -o -name "errore_avvio.txt" 2>/dev/null | tee -a esito-mac/dove.txt
             ls -la "$HOME/Library/Application Support/" > esito-mac/application-support.txt 2>&1 || true
