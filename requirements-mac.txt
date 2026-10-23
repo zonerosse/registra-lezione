@@ -1,0 +1,3 @@
+# In piu' per il Mac (oltre a requirements.txt): disegnare i PDF e i link (yt-dlp come modulo Python)
+pypdfium2==4.30.0
+yt-dlp==2025.10.22

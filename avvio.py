@@ -19,6 +19,41 @@ if getattr(sys, "frozen", False):
     RADICE = Path(sys.executable).resolve().parent
 else:
     RADICE = Path(__file__).resolve().parent
+
+
+def _radice_mac():
+    """Mac: l'app (Verba Manent IA.app) non si puo' modificare, se no la firma di Apple non vale piu'.
+    Il codice del programma (cartella app, quella che cambia con Aggiorna) sta in
+    ~/Library/Application Support/<edizione>/programma: la prima volta, e quando l'app installata e' piu' nuova,
+    ce la copio da dentro l'app (Contents/Resources/app)."""
+    import json
+    sm = False
+    try:
+        sm = json.loads((RADICE / "edizione.json").read_text(encoding="utf-8")).get("edizione") == "scripta"
+    except Exception:
+        pass
+    dest = Path.home() / "Library" / "Application Support" / ("ScriptaManent" if sm else "VerbaManent") / "programma"
+    dentro = RADICE.parent / "Resources" / "app"
+    try:
+        def ver(p):
+            try:
+                return tuple(int(x) for x in json.loads((p / "versione.json").read_text(encoding="utf-8"))["versione"].split("."))
+            except Exception:
+                return (0,)
+        if dentro.exists() and (not (dest / "app" / "registra_lezione.py").exists() or ver(dentro) > ver(dest / "app")):
+            shutil.rmtree(dest / "app", ignore_errors=True)
+            dest.mkdir(parents=True, exist_ok=True)
+            shutil.copytree(dentro, dest / "app")
+        for n in ("edizione.json", "LICENZE.txt", "LEGGIMI.txt"):
+            if (RADICE / n).exists():
+                shutil.copy2(RADICE / n, dest / n)
+    except Exception:
+        traceback.print_exc()
+    return dest
+
+
+if sys.platform == "darwin" and getattr(sys, "frozen", False) and (RADICE.parent / "Resources" / "app").exists():
+    RADICE = _radice_mac()
 os.chdir(RADICE)
 
 if sys.stdout is None or sys.stderr is None:

@@ -170,7 +170,7 @@ def main(radice):
             ap.pdf_appunti(dati, info, "parte 1", Path(t) / "appunti.pdf")
             assert (Path(t) / "appunti.pdf").stat().st_size > 1000
             k = ap.nascondi_chiave("sk-ant-prova")
-            assert ap.leggi_chiave(k) == "sk-ant-prova" and k.startswith("dpapi:" if sys.platform == "win32" else "plain:")
+            assert ap.leggi_chiave(k) == "sk-ant-prova" and k.startswith("dpapi:" if sys.platform == "win32" else ("keychain:", "plain:"))
             righe.append("appunti e chiave cifrata: ok")
         # eliminazione nel Cestino (usata da "🗑 Elimina")
         import registra_lezione as rl

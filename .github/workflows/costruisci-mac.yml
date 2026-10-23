@@ -1,0 +1,122 @@
+name: Costruisci Mac
+
+# Costruisce Verba Manent IA e Scripta Manent per Mac (Apple e Intel): l'app (.app) e il file da installare (.dmg).
+# Per ora SENZA firma di Apple: i .dmg finiscono nella release di prova «app-mac» (nessuno li riceve con Aggiorna).
+# Il codice del programma (cartella app) va dentro l'app; al primo avvio si copia in ~/Library/Application Support,
+# dove il tasto Aggiorna lo puo' cambiare (vedi avvio.py).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {runner: macos-15, arch: apple}
+          - {runner: macos-15-intel, arch: intel}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Identificativi del cloud
+        env:
+          NUOVOLA_APP: ${{ secrets.NUVOLA_APP }}
+        run: if [ -n "$NUOVOLA_APP" ]; then printf '%s' "$NUOVOLA_APP" > app/nuvola_app.json; fi
+      - name: Librerie
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-mac.txt pyinstaller==6.22.3
+          for f in app/*.py *.py; do python -m py_compile "$f"; done
+      - name: Il pezzo per macOS (rl-cattura)
+        run: swiftc -O mac/cattura.swift -o mac/rl-cattura
+      - name: Icone
+        run: |
+          python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools")
+          import logo, logo_scripta
+          for nome, m in (("verba", logo), ("scripta", logo_scripta)):
+              import os
+              os.makedirs(f"/tmp/{nome}.iconset", exist_ok=True)
+              for s in (16, 32, 64, 128, 256, 512, 1024):
+                  im = m.icona(s)
+                  if s <= 512: im.save(f"/tmp/{nome}.iconset/icon_{s}x{s}.png")
+                  if s >= 32: im.save(f"/tmp/{nome}.iconset/icon_{s // 2}x{s // 2}@2x.png")
+          PY
+          iconutil -c icns /tmp/verba.iconset -o /tmp/verba.icns
+          iconutil -c icns /tmp/scripta.iconset -o /tmp/scripta.icns
+      - name: Costruisci l'app
+        run: |
+          pyinstaller --noconfirm --clean --windowed --name "Verba Manent IA" --icon /tmp/verba.icns \
+            --osx-bundle-identifier it.puntowebferrara.verbamanent.mac \
+            --add-binary "mac/rl-cattura:." \
+            --collect-all faster_whisper --collect-all ctranslate2 --collect-all soundcard \
+            --collect-all imageio_ffmpeg --collect-all onnxruntime --collect-all av \
+            --collect-all tokenizers --collect-all fpdf --collect-all PIL --collect-all mss \
+            --collect-all huggingface_hub --collect-all webview --collect-all pypdfium2 --collect-all yt_dlp \
+            --collect-submodules fontTools --collect-submodules numpy \
+            --hidden-import dipendenze avvio.py
+          A="dist/Verba Manent IA.app"
+          mkdir -p "$A/Contents/Resources/app"
+          cp -R app/. "$A/Contents/Resources/app/"
+          find "$A/Contents/Resources/app" -name __pycache__ -prune -exec rm -rf {} +
+          cp LEGGIMI.txt app/LICENZE.txt "$A/Contents/MacOS/" || true
+          P="$A/Contents/Info.plist"
+          V=$(python -c "import json;print(json.load(open('app/versione.json'))['versione'])")
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $V" "$P"
+          plutil -replace NSMicrophoneUsageDescription -string "Serve per registrare la lezione o la riunione in aula." "$P"
+          plutil -replace NSScreenCaptureUsageDescription -string "Serve per registrare l'audio e le slide della lezione online." "$P"
+          plutil -replace LSMinimumSystemVersion -string "13.0" "$P"
+          ls "$A/Contents/MacOS" "$A/Contents/Frameworks" | head -50
+      - name: Scripta Manent (la stessa app, edizione scripta)
+        run: |
+          cp -R "dist/Verba Manent IA.app" "dist/Scripta Manent.app"
+          S="dist/Scripta Manent.app"
+          echo '{"edizione": "scripta"}' > "$S/Contents/MacOS/edizione.json"
+          cp /tmp/scripta.icns "$S/Contents/Resources/$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIconFile' "$S/Contents/Info.plist")"
+          P="$S/Contents/Info.plist"
+          plutil -replace CFBundleName -string "Scripta Manent" "$P"
+          plutil -replace CFBundleDisplayName -string "Scripta Manent" "$P"
+          plutil -replace CFBundleIdentifier -string "it.puntowebferrara.scriptamanent.mac" "$P"
+      - name: Prova le due app
+        run: |
+          mkdir -p esito-mac
+          for A in "Verba Manent IA" "Scripta Manent"; do
+            E=$(ls "dist/$A.app/Contents/MacOS/" | grep -v -E '\.(json|txt)$' | head -1)
+            timeout 600 "dist/$A.app/Contents/MacOS/$E" --prova || echo "codice $?"
+            D=$([ "$A" = "Scripta Manent" ] && echo ScriptaManent || echo VerbaManent)
+            R="$HOME/Library/Application Support/$D/programma"
+            echo "== $A" | tee -a esito-mac/prova.txt
+            cat "$R/prova_avvio.txt" "$R/errore_avvio.txt" 2>/dev/null | tee -a esito-mac/prova.txt
+          done
+          grep -c "TUTTO A POSTO" esito-mac/prova.txt
+      - name: I file da installare (.dmg)
+        run: |
+          V=$(python -c "import json;print(json.load(open('app/versione.json'))['versione'])")
+          for A in "Verba Manent IA" "Scripta Manent"; do
+            N=$(echo "$A" | tr -d ' ')
+            mkdir -p "/tmp/dmg-$N" && cp -R "dist/$A.app" "/tmp/dmg-$N/" && ln -s /Applications "/tmp/dmg-$N/Applicazioni"
+            hdiutil create -volname "$A" -srcfolder "/tmp/dmg-$N" -ov -format UDZO "$N-${{ matrix.arch }}.dmg"
+          done
+          ls -la *.dmg
+      - name: Nella release di prova «app-mac»
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view app-mac >/dev/null 2>&1 || gh release create app-mac --prerelease --title "Mac (prova, senza firma)" --notes "Prove per Mac: non ancora firmate da Apple."
+          gh release upload app-mac *.dmg --clobber
+      - name: Pubblica l'esito
+        if: always()
+        run: |
+          mkdir -p esito-mac && date -u > esito-mac/quando.txt
+          git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+          B="esito-mac-${{ matrix.arch }}"
+          git checkout -q --orphan "$B"; git rm -rqf --cached . >/dev/null
+          git add -f esito-mac; git commit -q -m "Costruzione Mac ${{ matrix.arch }}"; git push -q -f origin "$B"

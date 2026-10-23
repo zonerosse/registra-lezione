@@ -462,7 +462,7 @@ def _cattura_exe():
     candidati = []
     if getattr(sys, "frozen", False):
         b = Path(sys.executable).resolve().parent
-        candidati += [b / "rl-cattura", b.parent / "Resources" / "rl-cattura", b.parent / "MacOS" / "rl-cattura"]
+        candidati += [b / "rl-cattura", b.parent / "Resources" / "rl-cattura", b.parent / "Frameworks" / "rl-cattura", b.parent / "MacOS" / "rl-cattura"]
     candidati.append(Path(__file__).resolve().parent.parent / "mac" / "rl-cattura")
     return next((c for c in candidati if c.exists()), candidati[-1])
 
