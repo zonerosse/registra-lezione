@@ -15,7 +15,13 @@ const TQ = {
     g_b: 'Accedi con Google', g_salta: 'Salta: uso Verba Manent solo su questo PC', g_dopo: 'Lo puoi fare dopo da Impostazioni › Inizia qui',
     g_browser: 'Si è aperto il browser: scegli il tuo account Google, lascia la spunta sul permesso di Drive e torna qui.',
     g_ok: 'Collegato: {e}', g_ok_s: 'Google Drive pronto per PC, telefono e web', g_altro: 'Usa un altro account',
-    g_gia_t: 'Nel tuo Drive ci sono già lezioni di un altro dispositivo', g_gia_s: "Scrivi la loro password degli zip: la trovi sull'altro dispositivo in Impostazioni › Sincronizza.",
+    g_gia_t: 'Nel tuo Drive ci sono già lezioni di un altro dispositivo', g_gia_s: "Per aprirle serve la loro password. Si prende dall'altro dispositivo:", g_gia_dove: 'Dove la trovo',
+    g_gia_1: 'Sull\'altro dispositivo (PC o telefono) apri <b>Verba Manent IA</b>.', g_gia_1pc: 'Sull\'altro dispositivo (telefono o PC) apri <b>Verba Manent IA</b>.',
+    g_gia_2: 'Vai in <b>Impostazioni › Sincronizza</b> e tocca <b>Apri…</b>',
+    g_gia_3: 'Accanto a <b>La password degli zip</b> c\'è un QR: tocca qui sotto <b>Inquadra il QR</b> e puntalo.',
+    g_gia_3inc: 'Accanto a <b>La password degli zip</b> tocca <b>Copia</b>, poi qui sotto <b>Incolla</b>.',
+    g_gia_3pc: 'Accanto a <b>La password degli zip</b> tocca <b>Copia</b> e incollala qui sotto, oppure scrivila.',
+    g_qr: 'Inquadra il QR', g_oppure: 'Oppure scrivila o incollala:', g_qr_no: 'Questo non è il QR della password: inquadra quello accanto a «La password degli zip».',
     g_gia_b: 'Usa questa password',
     e_annullato: "L'accesso non è stato completato. Riprova.", e_tempo: "Sono passati 5 minuti senza completare l'accesso. Riprova.",
     e_api: 'Google Drive non risponde per Verba Manent: riprova tra poco.', e_permesso: "Google non ha dato il permesso. Riprova e, nella pagina di Google, lascia la spunta sul permesso di Drive.",
@@ -59,7 +65,13 @@ const TQ = {
     g_b: 'Sign in with Google', g_salta: 'Skip: I only use Verba Manent on this PC', g_dopo: 'You can do it later from Settings › Start here',
     g_browser: 'Your browser has opened: choose your Google account, leave the Drive permission ticked and come back here.',
     g_ok: 'Connected: {e}', g_ok_s: 'Google Drive ready for PC, phone and web', g_altro: 'Use another account',
-    g_gia_t: 'Your Drive already has lectures from another device', g_gia_s: 'Type their zip password: you find it on the other device under Settings › Sync.',
+    g_gia_t: 'Your Drive already has lectures from another device', g_gia_s: 'To open them you need their password. You get it from the other device:', g_gia_dove: 'Where do I find it',
+    g_gia_1: 'On the other device (PC or phone) open <b>Verba Manent IA</b>.', g_gia_1pc: 'On the other device (phone or PC) open <b>Verba Manent IA</b>.',
+    g_gia_2: 'Go to <b>Settings › Sync</b> and tap <b>Open…</b>',
+    g_gia_3: 'Next to <b>The zip password</b> there is a QR code: tap <b>Scan the QR code</b> below and point at it.',
+    g_gia_3inc: 'Next to <b>The zip password</b> tap <b>Copy</b>, then <b>Paste</b> below.',
+    g_gia_3pc: 'Next to <b>The zip password</b> tap <b>Copy</b> and paste it below, or type it.',
+    g_qr: 'Scan the QR code', g_oppure: 'Or type or paste it:', g_qr_no: 'This is not the password QR code: scan the one next to «The zip password».',
     g_gia_b: 'Use this password',
     e_annullato: 'The sign-in was not completed. Try again.', e_tempo: '5 minutes passed without completing the sign-in. Try again.',
     e_api: 'Google Drive is not answering for Verba Manent: try again shortly.', e_permesso: 'Google did not give permission. Try again and leave the Drive permission ticked on the Google page.',
@@ -97,11 +109,13 @@ const TQ = {
 // Scripta Manent: il suo nome al posto di Verba Manent, e niente «web» (verbamanent.app/studia e' solo di Verba Manent)
 const TQ_SM = {
   it: {p3: 'Telefono', t_t: 'Telefono', g_1t: 'Le stesse lezioni su PC e telefono', g_ok_s: 'Google Drive pronto per PC e telefono',
-    t_web: '<b>La password degli zip</b>: tienila da parte.', t_foglio: 'Scrivila anche su un foglio: serve se perdi PC e telefono insieme.',
+    t_web: '<b>Sul web</b> (verbamanent.app/scripta): accedi con lo stesso Google e scrivi la password degli zip.',
+    g_gia_2: 'Vai in <b>Impostazioni › PC, telefono e cloud</b> (sul telefono Impostazioni è in <b>Altro</b>) e in <b>Sincronizza</b> tocca <b>Apri…</b>', t_foglio: 'Scrivila anche su un foglio: serve se perdi PC e telefono insieme.',
     t_nogoogle: 'Senza Google, PC e telefono si sincronizzano solo quando sono sullo stesso Wi-Fi: lo puoi fare dopo da Impostazioni › Inizia qui.',
     imp_s: 'Google, Claude e telefono in 3 passi.'},
   en: {p3: 'Phone', t_t: 'Phone', g_1t: 'The same lectures on PC and phone', g_ok_s: 'Google Drive ready for PC and phone',
-    t_web: '<b>The zip password</b>: keep it safe.', t_foglio: 'Also write it on paper: you need it if you lose PC and phone together.',
+    t_web: '<b>On the web</b> (verbamanent.app/scripta): sign in with the same Google account and type the zip password.',
+    g_gia_2: 'Go to <b>Settings › PC, phone and cloud</b> (on the phone Settings is under <b>More</b>) and in <b>Sync</b> tap <b>Open…</b>', t_foglio: 'Also write it on paper: you need it if you lose PC and phone together.',
     t_nogoogle: 'Without Google, PC and phone sync only when they are on the same Wi-Fi: you can do it later from Settings › Start here.',
     imp_s: 'Google, Claude and phone in 3 steps.'},
 };
@@ -150,16 +164,28 @@ async function passo1(err) {
     return;
   }
   if (n.provider === 'google' && n.manca_chiave && !err) {
+    const qr = TEL && (IPH || ((typeof R !== 'undefined' && R.app_codice) || 0) >= 13);     // il telefono legge il QR del PC
     mostra(1, `<h3>${sq(tq('g_gia_t'))}</h3><div class="tx">${sq(tq('g_gia_s'))}</div>
+      <div class="iq-dove"><b>${sq(tq('g_gia_dove'))}</b><ol><li>${tq(TEL ? 'g_gia_1' : 'g_gia_1pc')}</li><li>${tq('g_gia_2')}</li><li>${tq(!TEL ? 'g_gia_3pc' : qr ? 'g_gia_3' : 'g_gia_3inc')}</li></ol></div>
+      ${qr ? `<button class="btn b-main iq-qrb" id="iqPwQr">${sq(tq('g_qr'))}</button><div class="hint" style="margin:8px 0 4px">${sq(tq('g_oppure'))}</div>` : ''}
       <div class="iq-campo"><input class="in" id="iqPw" placeholder="ABCD-EFGH-JKLM-NPQR" autocomplete="off"><button class="btn b-ghost b-sm" id="iqPwInc">${sq(tq('incolla'))}</button></div>
       <div class="dlgerr" id="iqErr"></div>
       <div class="pv-bt"><a id="iqAltro">${sq(tq('g_altro'))}</a><button class="btn b-main" id="iqPwOk">${sq(tq('g_gia_b'))}</button></div>`);
     V.querySelector('#iqPwInc').onclick = async () => { const x = await leggiAppunti(); if (x) V.querySelector('#iqPw').value = x.trim(); };
-    V.querySelector('#iqAltro').onclick = () => accedi();
-    V.querySelector('#iqPwOk').onclick = async () => {
+    const prova = async () => {
       const r = await A.nuvola_chiave(V.querySelector('#iqPw').value);
       if (r.ok) passo1(); else V.querySelector('#iqErr').textContent = r.msg || '';
     };
+    if (V.querySelector('#iqPwQr')) V.querySelector('#iqPwQr').onclick = async () => {
+      V.querySelector('#iqErr').textContent = '';
+      const q = await A.leggi_qr();
+      if (!q || !q.ok) { if (q && q.msg) V.querySelector('#iqErr').textContent = q.msg; return; }
+      const x = String(q.testo || '').trim(), pw = /^vmpw:/i.test(x) ? x.slice(5) : /^[A-Z0-9]{4}(-[A-Z0-9]{4}){3}$/i.test(x) ? x : '';
+      if (!pw) { V.querySelector('#iqErr').textContent = tq('g_qr_no'); return; }
+      V.querySelector('#iqPw').value = pw.toUpperCase(); prova();
+    };
+    V.querySelector('#iqAltro').onclick = () => accedi();
+    V.querySelector('#iqPwOk').onclick = prova;
     return;
   }
   mostra(1, `<h3>${sq(tq('g_t'))}</h3><div class="tx">${sq(tq('g_s'))}</div>

@@ -846,7 +846,22 @@ def _api_android(api, mt):
             return {"ok": False, "msg": tr("sy_err_lettore")}
         return api._m.sync_collega(q)
 
+    def leggi_qr():
+        """Il lettore di QR del telefono: ritorna il testo letto (es. la password degli zip del PC, «vmpw:...»)."""
+        try:
+            q = str(Ponte.leggiQr())
+        except Exception:
+            log.exception("lettore QR")
+            q = "!"
+        if q == "":
+            return {"ok": False, "annullato": True}
+        if q == "!":
+            from testi import tr
+            return {"ok": False, "msg": tr("qr_err_lettore")}
+        return {"ok": True, "testo": q}
+
     api.sync_qr = sync_qr
+    api.leggi_qr = leggi_qr
     api.scatta_foto = scatta_foto
     api.scatta_foglio = scatta_foglio
     api.scegli_immagini = scegli_immagini

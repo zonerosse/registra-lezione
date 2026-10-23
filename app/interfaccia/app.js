@@ -3169,6 +3169,10 @@ function syQr(r) {
     return q.createSvgTag({cellSize: 6, margin: 2, scalable: true});
   } catch (e) { return ''; }
 }
+// la password degli zip anche come QR: il telefono la legge con «Inquadra il QR del PC» (Inizia qui)
+function nvQr(pw) {
+  try { const q = qrcode(0, 'M'); q.addData('vmpw:' + pw); q.make(); return q.createSvgTag({cellSize: 4, margin: 2, scalable: true}); } catch (e) { return ''; }
+}
 /* «anche fuori casa»: il cloud con gli zip chiusi da password (nuvola.py) */
 const NV_BOX = '<div class="card mt" id="nvBox"></div>';
 var NV = {p: 'google', d: null, h: ''};
@@ -3198,7 +3202,9 @@ async function disegnaNV() {
       : r.ultimo ? `<div class="hint">☁️ ${esc(t('nv.fatto', {q: syFa(r.ultimo)}))}${g && (g.su || g.giu) ? ' · ' + esc(t('nv.ultimo', {s: g.su, g: g.giu})) : ''}</div>`
       : `<div class="hint">${esc(t('nv.primo'))}</div>`;
     h += coll + `<div class="mt">${stato}</div>
-      <div class="lbl mt">🔑 ${esc(t('nv.chiave'))}</div><div class="nvchiave">${esc(r.chiave)}</div>
+      <div class="lbl mt">🔑 ${esc(t('nv.chiave'))}</div>
+      <div class="nvpw"><div class="nvqr">${nvQr(r.chiave)}</div><div class="sp"><div class="nvchiave">${esc(r.chiave)}</div>
+        <button class="btn b-ghost b-sm mt" id="nvCopia">${esc(t('dx.copia'))}</button><div class="hint mt">${esc(t('nv.qr.s'))}</div></div></div>
       <div class="hint mt">${esc(t('nv.chiave.s'))}</div>
       ${ANDROID ? `<label class="syck mt"><input type="checkbox" id="nvWifi"${r.solo_wifi ? ' checked' : ''}><span>${esc(t('nv.wifi'))}<small>${esc(t('nv.wifi.s'))}</small></span></label>` : ''}
       <div class="row mt" style="gap:8px;flex-wrap:wrap">${r.errore === 'accesso' ? `<button class="btn b-main b-sm" id="nvAcc">${esc(t('nv.riaccedi'))}</button>` : `<button class="btn b-main b-sm" id="nvOra">☁️ ${esc(t('nv.adesso'))}</button>`}
@@ -3222,6 +3228,7 @@ async function disegnaNV() {
     const x = await A.nuvola_accedi(r.attiva || r.errore === 'accesso' ? r.provider : NV.p);
     if (!x.ok) dialogo({titolo: t('nv.lbl'), testo: x.msg}); else { NV.h = ''; disegnaNV(); }
   };
+  if ($('nvCopia')) $('nvCopia').onclick = () => copiaTesto((NV.d || {}).chiave || '');
   if ($('nvOra')) $('nvOra').onclick = async () => { await A.nuvola_adesso(); setTimeout(() => { NV.h = ''; disegnaNV(); }, 400); };
   if ($('nvWifi')) $('nvWifi').onchange = () => A.nuvola_opzione('solo_wifi', $('nvWifi').checked);
   if ($('nvVia')) $('nvVia').onclick = async () => {

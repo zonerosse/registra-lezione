@@ -555,6 +555,7 @@ const GUIDA = {
      "<b>Sul telefono</b>: «Collegati al PC» → <b>📷 Inquadra il QR del PC</b> (oppure scrivi il codice). PC e telefono devono essere sulla stessa rete Wi-Fi o sull'hotspot del telefono.",
      "Da lì in poi si scambiano da soli lezioni, appunti, foto, ripasso e voti, ogni minuto, quando sono sulla stessa rete. Se la stessa cosa cambia su tutti e due, si unisce senza perdere niente; una lezione eliminata da una parte sparisce anche dall'altra.",
      "<b>☁️ Anche fuori casa</b>: accedi con Google Drive e le lezioni passano dal tuo Drive, ognuna in uno <b>zip chiuso con una password</b>. Il telefono collegato col QR riceve accesso e password dal PC. Una lezione finita va nel Drive dopo pochi secondi, e quando apri Verba Manent sull'altro dispositivo la trovi già lì. La stessa password serve anche per <b>Verba Manent sul web</b> (verbamanent.app/studia). Scrivila su un foglio: serve anche se perdi PC e telefono insieme.",
+     "<b>🔑 La password degli zip con il QR</b>: se un telefono te la chiede (le lezioni sono già nel Drive), sull'altro dispositivo apri <b>Impostazioni → Sincronizza → Apri…</b>: accanto alla password c'è un <b>QR</b>. Sul telefono tocca <b>Inquadra il QR</b> e la password si scrive da sola. Sul PC c'è anche il tasto <b>Copia</b>.",
      "In basso a sinistra (PC) vedi sempre «🔄 Sincronizzato 2 min fa». I video non passano, a meno che tu li scelga."
     ],
     "g": "lez"
@@ -1214,6 +1215,7 @@ const GUIDA = {
      "<b>On the phone</b>: «Link to PC» → <b>📷 Scan the PC's QR code</b> (or type the code). PC and phone must be on the same Wi-Fi or the phone's hotspot.",
      "From then on they exchange lectures, notes, photos, reviews and marks by themselves, every minute, when they're on the same network. If the same thing changes on both, it's merged without losing anything; a lecture deleted on one side disappears on the other too.",
      "<b>☁️ Away from home too</b>: sign in with Google Drive and lectures go through your Drive, each in a <b>password-locked zip</b>. The phone linked with the QR gets access and password from the PC. A finished lecture goes to Drive within seconds, and when you open Verba Manent on the other device it is already there. The same password also opens <b>Verba Manent on the web</b> (verbamanent.app/studia). Write it on paper: you also need it if you lose PC and phone together.",
+     "<b>🔑 The zip password with a QR code</b>: if a phone asks for it (the lectures are already in Drive), on the other device open <b>Settings → Sync → Open…</b>: next to the password there is a <b>QR code</b>. On the phone tap <b>Scan the QR code</b> and the password fills in by itself. On the PC there is also a <b>Copy</b> button.",
      "At the bottom left (PC) you always see «🔄 Synced 2 min ago». Videos don't go across unless you choose them."
     ],
     "g": "lez"
