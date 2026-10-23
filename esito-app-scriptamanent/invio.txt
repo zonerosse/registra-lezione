@@ -1,1 +1,6 @@
-inviato
+error: exportArchive The network connection was lost.
+2026-10-23 20:14:58.042 xcodebuild[5687:18214] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/Scripta Manent_2026-10-23_20-14-58.042.xcdistributionlogs".
+error: exportArchive The network connection was lost.
+
+** EXPORT FAILED **
+
