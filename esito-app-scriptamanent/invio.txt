@@ -1,0 +1,6 @@
+error: exportArchive Error Downloading App Information
+2026-10-23 16:50:41.339 xcodebuild[7076:21063] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/Scripta Manent_2026-10-23_16-50-41.336.xcdistributionlogs".
+error: exportArchive Error Downloading App Information
+
+** EXPORT FAILED **
+
