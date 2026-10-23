@@ -1557,3 +1557,12 @@ html.scripta body *{text-transform:none!important;font-style:normal!important}
 html.scripta body *:not(a):not(.lnk){text-decoration-line:none}
 html.scripta small,html.scripta .hint,html.scripta .sub{font-size:max(13px,.9em)}
 .mp-tasti button svg{width:15px;height:15px;flex:none;vertical-align:-2px}
+
+/* la password degli zip con il QR (Sincronizza) e i passi in «Inizia qui» */
+.nvpw{display:flex;gap:14px;align-items:flex-start;margin-top:6px}.nvqr svg{width:120px;height:120px;display:block;background:#fff;border:1px solid var(--line);border-radius:10px}
+.nvpw .nvchiave{margin-top:0}
+html.android .nvpw{flex-direction:column;align-items:stretch}html.android .nvqr{display:none}
+.iq-dove{background:#f6f9fc;border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin:10px 0 12px}
+.iq-dove b{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--blue);margin-bottom:6px}
+.iq-dove ol{margin:0;padding-left:20px;line-height:1.55}.iq-dove li{margin-bottom:4px}.iq-dove li b{display:inline;font-size:inherit;letter-spacing:0;text-transform:none;color:var(--ink)}
+.iq-qr{width:100%;justify-content:center}
