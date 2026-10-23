@@ -24,6 +24,7 @@ jobs:
     timeout-minutes: 90
     strategy:
       fail-fast: false
+      max-parallel: 1        # una app alla volta: due firme insieme si pestano i piedi con Apple
       matrix:
         app: ${{ fromJSON(inputs.app == 'verbamanent' && '["verbamanent"]' || inputs.app == 'scriptamanent' && '["scriptamanent"]' || '["verbamanent","scriptamanent"]') }}
     env:
