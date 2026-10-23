@@ -54,8 +54,8 @@ jobs:
           xcodebuild -version | tee -a ../esito/costruzione.txt
           python -m pip install -q --upgrade pip "$B" 2>&1 | tail -5 | tee -a ../esito/costruzione.txt
           briefcase --version | tee -a ../esito/costruzione.txt
-          briefcase create iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
-          briefcase build iOS --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
+          briefcase create iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
+          briefcase build iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
 
       - name: Prova sull'iPhone simulato
         if: steps.costruisci.outcome == 'success'

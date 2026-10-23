@@ -33,3 +33,28 @@ CFBundleDocumentTypes = [{CFBundleTypeName = "Audio e video", CFBundleTypeRole =
 NSCalendarsWriteOnlyAccessUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."
 NSCalendarsUsageDescription = "Serve per mettere nel calendario le date dette a lezione o in riunione."
 NSLocalNetworkUsageDescription = "Serve per prendere le lezioni dal tuo PC sulla rete Wi-Fi di casa."
+
+# ---- Scripta Manent: la stessa app nell'edizione «scripta» (src/scriptamanent imposta RL_EDIZIONE)
+[tool.briefcase.app.scriptamanent]
+formal_name = "Scripta Manent"
+description = "Registra le lezioni e le rende facili da leggere e da ascoltare."
+long_description = "Per chi ha un DSA: registra la lezione, la trascrive sul telefono e prepara appunti facili, letti a voce, con compiti, matematica e verifiche."
+sources = ["src/scriptamanent", "src/verbamanent"]
+icon = "icons/scriptamanent"
+requires = ["numpy", "pillow", "fpdf2==2.8.9", "certifi"]
+permission.microphone = "Serve per registrare la lezione."
+permission.camera = "Serve per fotografare la lavagna e per inquadrare il QR del PC."
+
+[tool.briefcase.app.scriptamanent.iOS]
+requires = ["toga-iOS"]
+
+# registrare a schermo spento; i file dell'app visibili nell'app «File»
+[tool.briefcase.app.scriptamanent.iOS.info]
+UIBackgroundModes = ["audio"]
+UIFileSharingEnabled = true
+LSSupportsOpeningDocumentsInPlace = true
+# audio e video mandati da altre app (Memo vocali, File, WhatsApp...): «Condividi › Scripta Manent»
+CFBundleDocumentTypes = [{CFBundleTypeName = "Audio e video", CFBundleTypeRole = "Viewer", LSHandlerRank = "Alternate", LSItemContentTypes = ["public.audio", "public.movie", "com.apple.m4a-audio", "public.mpeg-4-audio", "com.apple.quicktime-movie", "public.mpeg-4"]}]
+NSCalendarsWriteOnlyAccessUsageDescription = "Serve per mettere nel calendario le date dette a lezione."
+NSCalendarsUsageDescription = "Serve per mettere nel calendario le date dette a lezione."
+NSLocalNetworkUsageDescription = "Serve per prendere le lezioni dal tuo PC sulla rete Wi-Fi di casa."
