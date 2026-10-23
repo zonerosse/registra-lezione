@@ -67,10 +67,33 @@ if sys.platform == "win32":
             ctypes.windll.kernel32.LocalFree(uscita.pbData)
 
 
+_PORTACHIAVI = "Verba Manent IA"
+
+
+def _portachiavi(azione, conto, chiave=""):
+    """Mac: la chiave nel Portachiavi (comando «security»), non nel file delle impostazioni."""
+    import subprocess
+    if azione == "scrivi":
+        r = subprocess.run(["security", "add-generic-password", "-U", "-s", _PORTACHIAVI, "-a", conto, "-w", chiave],
+                           capture_output=True, timeout=20)
+        return r.returncode == 0
+    r = subprocess.run(["security", "find-generic-password", "-s", _PORTACHIAVI, "-a", conto, "-w"],
+                       capture_output=True, timeout=20)
+    return r.stdout.decode("utf-8").strip() if r.returncode == 0 else ""
+
+
 def nascondi_chiave(chiave):
     b = chiave.encode("utf-8")
     if sys.platform == "win32":
         return "dpapi:" + base64.b64encode(_dpapi(b, True)).decode()
+    if sys.platform == "darwin":
+        import hashlib
+        conto = hashlib.sha256(b).hexdigest()[:16]
+        try:
+            if _portachiavi("scrivi", conto, chiave):
+                return "keychain:" + conto
+        except Exception:
+            log.exception("Portachiavi del Mac")
     return "plain:" + base64.b64encode(b).decode()
 
 
@@ -79,6 +102,8 @@ def leggi_chiave(salvata):
         return ""
     try:
         tipo, dati = salvata.split(":", 1)
+        if tipo == "keychain":
+            return _portachiavi("leggi", dati)
         b = base64.b64decode(dati)
         if tipo == "dpapi":
             return _dpapi(b, False).decode("utf-8")

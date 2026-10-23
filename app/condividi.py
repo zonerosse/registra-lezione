@@ -474,6 +474,12 @@ def cartella_google_drive():
             for nome in _NOMI_DRIVE:
                 candidati.append(Path(f"{lettera}:/") / nome)
     casa = Path.home()
+    if sys.platform == "darwin":        # Mac: ~/Library/CloudStorage/GoogleDrive-<account>/Il mio Drive
+        try:
+            for d in sorted((casa / "Library" / "CloudStorage").glob("GoogleDrive-*")):
+                candidati += [d / n for n in _NOMI_DRIVE]
+        except OSError:
+            pass
     candidati += [casa / n for n in _NOMI_DRIVE]
     candidati += [casa / "Google Drive" / n for n in _NOMI_DRIVE] + [casa / "Google Drive"]
     for c in candidati:

@@ -651,6 +651,12 @@ def lingua_windows():
         if sys.platform == "win32":
             import ctypes
             return "it" if (ctypes.windll.kernel32.GetUserDefaultUILanguage() & 0x3FF) == 0x10 else "en"
+        if sys.platform == "darwin":
+            import subprocess
+            r = subprocess.run(["defaults", "read", "-g", "AppleLanguages"], capture_output=True, text=True, timeout=5)
+            prima = next((x.strip(' "(),') for x in r.stdout.splitlines() if x.strip(' "(),')), "")
+            if prima:
+                return "it" if prima.lower().startswith("it") else "en"
         import locale
         return "it" if (locale.getlocale()[0] or "").lower().startswith("it") else "en"
     except Exception:

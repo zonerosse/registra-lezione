@@ -158,6 +158,10 @@ def riavvia():
             subprocess.Popen(["powershell", "-NoProfile", "-WindowStyle", "Hidden", "-Command",
                               f"Start-Sleep -Seconds 6; Start-Process -FilePath '{exe}' -WorkingDirectory '{str(RADICE).replace(chr(39), chr(39) * 2)}'"],
                              cwd=str(RADICE), creationflags=0x08000000)
+        elif sys.platform == "darwin":
+            # Mac: dentro «Verba Manent IA.app/Contents/MacOS»: si riapre l'app intera dopo qualche secondo
+            app = next((p for p in Path(sys.executable).resolve().parents if p.suffix == ".app"), None)
+            subprocess.Popen(["/bin/sh", "-c", f'sleep 4; open -n "{app or sys.executable}"'])
         else:
             subprocess.Popen([sys.executable], cwd=str(RADICE))
     else:

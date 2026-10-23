@@ -115,8 +115,9 @@ def apri(percorso):
             return bool(webbrowser.open(str(percorso)))
         if sys.platform == "win32":
             os.startfile(str(percorso))
-        else:
-            subprocess.Popen(["xdg-open", str(percorso)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        else:      # Mac: «open»; Linux (prove): xdg-open
+            subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(percorso)],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return True
     except Exception:
         log.exception("apri %s", percorso)
@@ -134,6 +135,9 @@ def mostra_file(percorso):
     p = Path(percorso)
     if sys.platform == "win32" and p.exists():
         subprocess.Popen(f'explorer /select,"{p}"')
+        return True
+    if sys.platform == "darwin" and p.exists():           # Mac: il Finder con il file selezionato
+        subprocess.Popen(["open", "-R", str(p)])
         return True
     return apri(p.parent)
 
@@ -177,6 +181,20 @@ def al_cestino(percorsi):
     percorsi = [str(Path(p).resolve()) for p in percorsi if Path(p).exists()]
     if not percorsi:
         return
+    if sys.platform == "darwin":                           # Mac: nel Cestino dell'utente (recuperabili)
+        cestino = Path.home() / ".Trash"
+        try:
+            for p in percorsi:
+                dest = cestino / Path(p).name
+                n = 1
+                while dest.exists():
+                    dest = cestino / f"{Path(p).stem} {n}{Path(p).suffix}"
+                    n += 1
+                shutil.move(p, dest)
+            return
+        except OSError:
+            log.exception("Cestino del Mac: elimino")
+            percorsi = [p for p in percorsi if Path(p).exists()]
     if sys.platform != "win32":
         for p in percorsi:
             if Path(p).is_dir():
@@ -320,6 +338,8 @@ def apri_non_disturbare():
     try:
         if sys.platform == "win32":
             os.startfile("ms-settings:notifications")
+        elif sys.platform == "darwin":                      # Mac: Impostazioni › Full immersion (Focus)
+            subprocess.Popen(["open", "x-apple.systempreferences:com.apple.Focus-Settings.extension"])
     except Exception:
         log.exception("apertura impostazioni notifiche")
 

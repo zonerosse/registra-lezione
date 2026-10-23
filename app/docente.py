@@ -82,6 +82,17 @@ def _disegna_pagine(pdf, cartella_tmp):
                            capture_output=True, timeout=900, creationflags=NO_WINDOW)
         if r.returncode != 0:
             log.error("PDF non disegnato: %s", r.stderr.decode("utf-8", "replace")[-1500:])
+    elif sys.platform == "darwin":          # Mac: pypdfium2 (dentro l'app)
+        try:
+            import pypdfium2 as pdfium
+            doc = pdfium.PdfDocument(str(pdf))
+            for i in range(len(doc)):
+                pg = doc[i]
+                img = pg.render(scale=LARGHEZZA / max(1.0, pg.get_width())).to_pil()
+                img.save(cartella_tmp / f"p{i + 1:03d}.png")
+            doc.close()
+        except Exception:
+            log.exception("PDF disegnato sul Mac")
     elif shutil.which("pdftoppm"):          # solo per le prove su Linux
         subprocess.run(["pdftoppm", "-png", "-scale-to-x", str(LARGHEZZA), "-scale-to-y", "-1",
                         str(pdf), str(cartella_tmp / "p")], capture_output=True, timeout=900)

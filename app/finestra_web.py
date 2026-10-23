@@ -20,6 +20,12 @@ log = logging.getLogger("registra_lezione")
 
 def _leggi_appunti():
     """Il testo copiato (Ctrl+C) in Windows, per «Incolla» del tasto destro."""
+    if sys.platform == "darwin":
+        try:
+            import subprocess
+            return subprocess.run(["pbpaste"], capture_output=True, timeout=5).stdout.decode("utf-8", "replace")
+        except Exception:
+            return ""
     if sys.platform != "win32":
         return ""
     import ctypes
