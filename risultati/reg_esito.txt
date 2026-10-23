@@ -1,0 +1,9 @@
+classe: RegistratoreMac · rl-cattura: /Users/runner/work/registra-lezione/registra-lezione/mac/rl-cattura (True)
+partito: audio_t0 0.4270964899999967
+fermato: 43.2 s registrati, parti avvisate [1, 2], errori []
+audio_001.wav: 20.0 s, volume 0.1633
+audio_002.wav: 20.0 s, volume 0.1141
+audio_003.wav: 2.8 s, volume 0.0000
+slide: 3 file, in meta 3: [0.81, 11.05, 22.06]
+diretta: 42.8 s
+TUTTO A POSTO

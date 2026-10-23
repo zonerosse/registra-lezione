@@ -1,0 +1,23 @@
+{
+ "nome": "Prova Mac",
+ "inizio": "2026-10-23T22:32:45",
+ "audio_t0": 0.4270964899999967,
+ "video_t0": 0.4270964899999967,
+ "durata": 43.23722003800003,
+ "slides": [
+  {
+   "file": "slide_001.jpg",
+   "t": 0.81
+  },
+  {
+   "file": "slide_002.jpg",
+   "t": 11.05
+  },
+  {
+   "file": "slide_003.jpg",
+   "t": 22.06
+  }
+ ],
+ "errori": [],
+ "parte_secondi": 20
+}
