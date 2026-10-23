@@ -76,7 +76,9 @@ jobs:
           # Apple non accetta librerie statiche (.a) dentro l'app: quelle di numpy non servono a niente
           find "build/$APP" -path "*app_packages*" -name "*.a" -print -delete
           # numero di costruzione sempre nuovo (Apple non accetta due invii con lo stesso numero)
-          PL=$(find "build/$APP" -name "*-Info.plist" -path "*xcode*" | head -1)
+          # il file Info.plist dell'app (non quelli delle librerie dentro app_packages)
+          PL=$(find "build/$APP" -name "*-Info.plist" -path "*xcode*" -not -path "*app_packages*" -not -path "*Support*" | awk '{ print length, $0 }' | sort -n | head -1 | cut -d' ' -f2-)
+          echo "Info.plist: $PL"; test -f "$PL"
           V=$(python -c "import json;print(json.load(open('../android/versione.json'))['versione'])" 2>/dev/null || echo 0.1.0)
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $V" "$PL"
           /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${{ github.run_number }}" "$PL"
