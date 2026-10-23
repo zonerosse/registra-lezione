@@ -1,9 +1,1 @@
-error: exportArchive The network connection was lost.
-error: exportArchive No profiles for 'it.puntowebferrara.verbamanent' were found
-2026-10-23 20:15:52.841 xcodebuild[7470:22764] [MT] IDEDistribution: -[IDEDistributionLogging _createLoggingBundleAtPath:]: Created bundle at path "/var/folders/nj/vtw8zd2j31d1gdrtntc5y4600000gn/T/Verba Manent IA_2026-10-23_20-15-52.838.xcdistributionlogs".
-error: exportArchive The network connection was lost.
-
-error: exportArchive No profiles for 'it.puntowebferrara.verbamanent' were found
-
-** EXPORT FAILED **
-
+inviato
