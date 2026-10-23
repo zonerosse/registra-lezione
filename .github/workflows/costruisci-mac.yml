@@ -90,7 +90,10 @@ jobs:
           mkdir -p esito-mac
           for A in "Verba Manent IA" "Scripta Manent"; do
             E=$(ls "dist/$A.app/Contents/MacOS/" | grep -v -E '\.(json|txt)$' | head -1)
-            timeout 600 "dist/$A.app/Contents/MacOS/$E" --prova || echo "codice $?"
+            timeout 600 "dist/$A.app/Contents/MacOS/$E" --prova > "esito-mac/uscita-$E.txt" 2>&1 || echo "codice $?" >> "esito-mac/uscita-$E.txt"
+            tail -60 "esito-mac/uscita-$E.txt"
+            find "$HOME/Library/Application Support" dist -name "prova_avvio.txt" -o -name "errore_avvio.txt" 2>/dev/null | tee -a esito-mac/dove.txt
+            ls -la "$HOME/Library/Application Support/" > esito-mac/application-support.txt 2>&1 || true
             D=$([ "$A" = "Scripta Manent" ] && echo ScriptaManent || echo VerbaManent)
             R="$HOME/Library/Application Support/$D/programma"
             echo "== $A" | tee -a esito-mac/prova.txt
