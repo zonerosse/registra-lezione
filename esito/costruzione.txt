@@ -47,12 +47,14 @@ Installing app requirements for iPhone device... started
 Looking in indexes: https://pypi.org/simple, https://pypi.anaconda.org/beeware/simple
 Collecting numpy
   Downloading numpy-1.26.2-cp312-cp312-ios_13_0_arm64_iphoneos.whl (20.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 33.5 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.5/20.5 MB 32.1 MB/s  0:00:00
 Collecting pillow
   Downloading pillow-11.0.0-cp312-cp312-ios_13_0_arm64_iphoneos.whl (1.0 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 59.7 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 28.3 MB/s  0:00:00
 Collecting fpdf2==2.8.9
   Downloading fpdf2-2.8.9-py3-none-any.whl.metadata (88 kB)
+Collecting certifi
+  Downloading certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
 Collecting toga-iOS
   Downloading toga_ios-0.5.7-py3-none-any.whl.metadata (3.3 kB)
 Collecting defusedxml (from fpdf2==2.8.9)
@@ -66,16 +68,17 @@ Collecting toga-core==0.5.7 (from toga-iOS)
 Collecting travertino==0.5.7 (from toga-core==0.5.7->toga-iOS)
   Downloading travertino-0.5.7-py3-none-any.whl.metadata (3.0 kB)
 Downloading fpdf2-2.8.9-py3-none-any.whl (341 kB)
+Downloading certifi-2026.10.23-py3-none-any.whl (135 kB)
 Downloading toga_ios-0.5.7-py3-none-any.whl (446 kB)
 Downloading toga_core-0.5.7-py3-none-any.whl (170 kB)
 Downloading travertino-0.5.7-py3-none-any.whl (26 kB)
 Downloading fonttools-4.67.0-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 39.0 MB/s  0:00:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 40.3 MB/s  0:00:00
 Downloading rubicon_objc-0.5.7-py3-none-any.whl (64 kB)
 Downloading defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
-Installing collected packages: travertino, rubicon-objc, pillow, numpy, fonttools, defusedxml, toga-core, fpdf2, toga-iOS
+Installing collected packages: travertino, rubicon-objc, pillow, numpy, fonttools, defusedxml, certifi, toga-core, fpdf2, toga-iOS
 
-Successfully installed defusedxml-0.7.1 fonttools-4.67.0 fpdf2-2.8.9 numpy-1.26.2 pillow-11.0.0 rubicon-objc-0.5.7 toga-core-0.5.7 toga-iOS-0.5.7 travertino-0.5.7
+Successfully installed certifi-2026.10.23 defusedxml-0.7.1 fonttools-4.67.0 fpdf2-2.8.9 numpy-1.26.2 pillow-11.0.0 rubicon-objc-0.5.7 toga-core-0.5.7 toga-iOS-0.5.7 travertino-0.5.7
 Installing app requirements for iPhone device... done
 Creating virtual environment (venv-iphonesimulator-arm64)... started
 Creating virtual environment (venv-iphonesimulator-arm64)... done
@@ -83,14 +86,16 @@ Installing app requirements for iPhone simulator... started
 Looking in indexes: https://pypi.org/simple, https://pypi.anaconda.org/beeware/simple
 Collecting numpy
   Downloading numpy-1.26.2-cp312-cp312-ios_13_0_arm64_iphonesimulator.whl (20.3 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.3/20.3 MB 32.7 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.3/20.3 MB 28.9 MB/s  0:00:00
 WARNING: Cache entry deserialization failed, entry ignored
 WARNING: Cache entry deserialization failed, entry ignored
 Collecting pillow
   Downloading pillow-11.0.0-cp312-cp312-ios_13_0_arm64_iphonesimulator.whl (1.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 30.7 MB/s  0:00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 54.1 MB/s  0:00:00
 Collecting fpdf2==2.8.9
   Using cached fpdf2-2.8.9-py3-none-any.whl.metadata (88 kB)
+Collecting certifi
+  Using cached certifi-2026.10.23-py3-none-any.whl.metadata (2.5 kB)
 Collecting toga-iOS
   Using cached toga_ios-0.5.7-py3-none-any.whl.metadata (3.3 kB)
 Collecting defusedxml (from fpdf2==2.8.9)
@@ -104,15 +109,16 @@ Collecting toga-core==0.5.7 (from toga-iOS)
 Collecting travertino==0.5.7 (from toga-core==0.5.7->toga-iOS)
   Using cached travertino-0.5.7-py3-none-any.whl.metadata (3.0 kB)
 Using cached fpdf2-2.8.9-py3-none-any.whl (341 kB)
+Using cached certifi-2026.10.23-py3-none-any.whl (135 kB)
 Using cached toga_ios-0.5.7-py3-none-any.whl (446 kB)
 Using cached toga_core-0.5.7-py3-none-any.whl (170 kB)
 Using cached travertino-0.5.7-py3-none-any.whl (26 kB)
 Using cached fonttools-4.67.0-py3-none-any.whl (1.2 MB)
 Using cached rubicon_objc-0.5.7-py3-none-any.whl (64 kB)
 Using cached defusedxml-0.7.1-py2.py3-none-any.whl (25 kB)
-Installing collected packages: travertino, rubicon-objc, pillow, numpy, fonttools, defusedxml, toga-core, fpdf2, toga-iOS
+Installing collected packages: travertino, rubicon-objc, pillow, numpy, fonttools, defusedxml, certifi, toga-core, fpdf2, toga-iOS
 
-Successfully installed defusedxml-0.7.1 fonttools-4.67.0 fpdf2-2.8.9 numpy-1.26.2 pillow-11.0.0 rubicon-objc-0.5.7 toga-core-0.5.7 toga-iOS-0.5.7 travertino-0.5.7
+Successfully installed certifi-2026.10.23 defusedxml-0.7.1 fonttools-4.67.0 fpdf2-2.8.9 numpy-1.26.2 pillow-11.0.0 rubicon-objc-0.5.7 toga-core-0.5.7 toga-iOS-0.5.7 travertino-0.5.7
 Installing app requirements for iPhone simulator... done
 
 [verbamanent] Installing application resources...
@@ -151,13 +157,4 @@ Removing unneeded app bundle content... started
 Removing unneeded app bundle content... done
 
 [verbamanent] Created build/verbamanent/ios/xcode
-
-[verbamanent] Updating app metadata...
-Setting main module... started
-Setting main module... done
-
-[verbamanent] Building Xcode project...
-Building... started
-Building... done
-
-[verbamanent] Built build/verbamanent/ios/xcode/build/Debug-iphonesimulator/Verba Manent IA.app
+				TARGETED_DEVICE_FAMILY = "1,2";
