@@ -70,8 +70,17 @@ jobs:
         if: steps.v.outputs.nuova == '1'
         shell: pwsh
         run: |
-          python tools/prova_nuvola.py
-          if ($LASTEXITCODE -ne 0) { exit 1 }
+          python tools/prova_nuvola.py *>&1 | Tee-Object -FilePath esito_nuvola.txt
+          if ($LASTEXITCODE -ne 0) {
+            # il registro della prova nel ramo «esito-exe», cosi' si legge anche senza i log di GitHub
+            git config user.name "github-actions"; git config user.email "github-actions@users.noreply.github.com"
+            git fetch -q origin esito-exe 2>$null
+            git worktree add -q --detach C:/pub 2>$null
+            Push-Location C:/pub; git checkout -q --orphan esito-exe 2>$null; git rm -rqf . 2>$null; Pop-Location
+            Copy-Item esito_nuvola.txt C:/pub/
+            Push-Location C:/pub; git add -f esito_nuvola.txt; git commit -q -m "Prova Sincronizza fallita"; git push -q -f origin HEAD:esito-exe; Pop-Location
+            exit 1
+          }
 
       - name: Prova appunti scritti male da Claude
         if: steps.v.outputs.nuova == '1'
