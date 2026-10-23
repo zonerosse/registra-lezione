@@ -337,8 +337,9 @@ html.android .srcr{flex-wrap:wrap}html.android .srcr>b{min-width:0;flex:1}html.a
 .avv{font-size:12px;font-weight:700;color:#9a3412;background:#ffedd5;border:1px solid #fdba74;border-radius:8px;padding:4px 8px;margin:0 0 8px}
 
 /* ------------------------------------------------------------------ app Android (telefono) */
-html:not(.android) .solo-and{display:none!important}
-html.android .solo-pc{display:none!important}
+html:not(.android):not(.tablet) .solo-and{display:none!important}
+html.android .solo-pc,html.tablet .solo-pc{display:none!important}
+html.tablet *{-webkit-tap-highlight-color:transparent}
 html.android *{-webkit-tap-highlight-color:transparent}
 html.android .app{flex-direction:column;height:100vh;height:100dvh}
 html.android .side{width:auto;order:2;padding:0;flex-direction:row;background:#fff;color:#64748b;border-top:1px solid #e2e8f0;box-shadow:0 -6px 18px -12px rgba(13,66,117,.35);z-index:5}

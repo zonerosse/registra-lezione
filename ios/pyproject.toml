@@ -25,6 +25,8 @@ requires = ["toga-iOS"]
 
 # registrare a schermo spento; i file dell'app visibili nell'app «File»
 [tool.briefcase.app.verbamanent.iOS.info]
+# iPad: tutte le orientazioni (Apple lo chiede per le app anche per iPad)
+"UISupportedInterfaceOrientations~ipad" = ["UIInterfaceOrientationPortrait", "UIInterfaceOrientationPortraitUpsideDown", "UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"]
 UIBackgroundModes = ["audio"]
 UIFileSharingEnabled = true
 LSSupportsOpeningDocumentsInPlace = true
@@ -50,6 +52,8 @@ requires = ["toga-iOS"]
 
 # registrare a schermo spento; i file dell'app visibili nell'app «File»
 [tool.briefcase.app.scriptamanent.iOS.info]
+# iPad: tutte le orientazioni (Apple lo chiede per le app anche per iPad)
+"UISupportedInterfaceOrientations~ipad" = ["UIInterfaceOrientationPortrait", "UIInterfaceOrientationPortraitUpsideDown", "UIInterfaceOrientationLandscapeLeft", "UIInterfaceOrientationLandscapeRight"]
 UIBackgroundModes = ["audio"]
 UIFileSharingEnabled = true
 LSSupportsOpeningDocumentsInPlace = true
