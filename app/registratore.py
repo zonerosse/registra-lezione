@@ -449,3 +449,185 @@ def _controlla_audio():
     except Exception:
         log.exception("controllo audio")
         return False
+
+
+# ============================================================================== Mac
+# Sul Mac l'audio del computer (Meet, Teams, Zoom) e le foto dello schermo li prende «rl-cattura»,
+# il pezzo scritto per macOS (mac/cattura.swift, ScreenCaptureKit). Qui si leggono i suoi file e le sue righe
+# e si scrivono gli stessi file di Windows: audio_001.wav..., slide/ e meta.json. In aula si usa il microfono
+# come su Windows (la libreria soundcard funziona anche sul Mac).
+
+def _cattura_exe():
+    """Dove sta rl-cattura: accanto al programma (app per Mac) oppure in mac/ (prove)."""
+    candidati = []
+    if getattr(sys, "frozen", False):
+        b = Path(sys.executable).resolve().parent
+        candidati += [b / "rl-cattura", b.parent / "Resources" / "rl-cattura", b.parent / "MacOS" / "rl-cattura"]
+    candidati.append(Path(__file__).resolve().parent.parent / "mac" / "rl-cattura")
+    return next((c for c in candidati if c.exists()), candidati[-1])
+
+
+class RegistratoreMac(Registratore):
+    def avvia(self):
+        if self.modo == "aula":
+            return super().avvia()
+        (self.cartella / "slide").mkdir(parents=True, exist_ok=True)
+        self.t0 = time.monotonic()
+        self.inizio = time.strftime("%Y-%m-%dT%H:%M:%S")
+        self._salva_meta()
+        self._pronto = threading.Event()
+        self._frequenza = 48000
+        self._proc = None
+        th = threading.Thread(target=self._cattura, daemon=True)
+        th.start()
+        self._threads.append(th)
+
+    def ferma(self):
+        if self.modo == "aula" or getattr(self, "_proc", None) is None:
+            return super().ferma()
+        self.riprendi()
+        self.durata = self.secondi()
+        try:
+            self._proc.stdin.write("STOP\n")
+            self._proc.stdin.flush()
+        except Exception:
+            pass
+        self.stop_ev.set()
+        for th in self._threads:
+            th.join(timeout=90)
+        self._salva_meta()
+        return self.durata
+
+    def _cattura(self):
+        dove = self.cartella / "cattura"
+        try:
+            exe = _cattura_exe()
+            self._proc = subprocess.Popen([str(exe), str(dove), "--ogni", str(CONTROLLO_SLIDE), "--escludi-pid", str(os.getpid())],
+                                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        except Exception:
+            log.exception("rl-cattura non parte")
+            self.errori.append("audio")
+            return
+        ril = RilevatoreSlide()
+        lettore = threading.Thread(target=self._audio_mac, args=(dove / "audio.f32",), daemon=True)
+        for riga in self._proc.stdout:
+            riga = riga.strip()
+            if riga.startswith("PRONTO"):
+                try:
+                    self._frequenza = int(float(riga.split()[1]))
+                except (IndexError, ValueError):
+                    pass
+                self.audio_t0 = self.video_t0 = self.secondi()
+                log.info("rl-cattura partito a %.3f s (%d Hz)", self.audio_t0, self._frequenza)
+                self._pronto.set()
+                lettore.start()
+            elif riga.startswith("LIVELLO"):
+                if not self.in_pausa:
+                    try:
+                        self.livello = min(1.0, float(riga.split()[1]))
+                    except (IndexError, ValueError):
+                        pass
+            elif riga.startswith("FOTO") and not self.in_pausa:
+                try:
+                    f = dove / "schermo" / riga.split()[1]
+                    adesso = self.secondi()
+                    with Image.open(f) as im:
+                        img = im.convert("RGB")
+                    if ril.nuova(img, adesso):
+                        self._salva_slide(img, adesso)
+                    f.unlink()                   # le foto che non sono slide nuove non servono
+                except Exception:
+                    log.exception("foto dello schermo")
+            elif riga.startswith("ERRORE"):
+                log.error("rl-cattura: %s", riga)
+                self.errori.append("schermo" if "schermo" in riga.lower() else "audio")
+                self._pronto.set()
+        self._proc.wait()
+        self.stop_ev.set()
+        if lettore.is_alive():
+            lettore.join(timeout=60)
+
+    def _audio_mac(self, f32):
+        """Legge l'audio che rl-cattura aggiunge in fondo ad audio.f32 e lo divide in parti da un'ora (come su Windows)."""
+        rate = self._frequenza
+        per_parte = rate * self.parte_secondi
+        k, scritti, w, letti = 1, 0, None, 0
+        try:
+            w = self._apri_wav(k, rate)
+            for _ in range(100):
+                if f32.exists():
+                    break
+                time.sleep(0.1)
+            with open(f32, "rb") as fh:
+                finito = False
+                while True:
+                    blocco = fh.read(rate // 10 * 4)
+                    if not blocco:
+                        if finito:
+                            break
+                        if self.stop_ev.is_set() and (self._proc is None or self._proc.poll() is not None):
+                            finito = True          # un ultimo giro per prendere la coda del file
+                        time.sleep(0.1)
+                        continue
+                    n = len(blocco) // 4 * 4
+                    if n < len(blocco):
+                        fh.seek(n - len(blocco), 1)
+                    mono = np.frombuffer(blocco[:n], dtype=np.float32)
+                    letti += len(mono)
+                    if self.in_pausa:                # intervallo: si ascolta ma non si salva
+                        continue
+                    if self.diretta:
+                        with self._lock:
+                            self._diretta_buf.append(((k - 1) * self.parte_secondi + scritti / rate, mono.copy()))
+                    w.writeframes((np.clip(mono, -1, 1) * 32767).astype("<i2").tobytes())
+                    scritti += len(mono)
+                    if scritti >= per_parte:
+                        w.close()
+                        self.parte = k
+                        self._avvisa_parte(k)
+                        k, scritti = k + 1, 0
+                        w = self._apri_wav(k, rate)
+            w.close()
+            w = None
+            if scritti > 0:
+                self.parte = k
+            else:
+                try:
+                    (self.cartella / f"audio_{k:03d}.wav").unlink()
+                except OSError:
+                    pass
+            try:
+                f32.unlink()                         # l'audio adesso e' nei file audio_NNN.wav
+            except OSError:
+                pass
+        except Exception:
+            log.exception("audio del Mac")
+            self.errori.append("audio")
+        finally:
+            if w is not None:
+                try:
+                    w.close()
+                except Exception:
+                    pass
+
+
+_caffeinate = None
+
+
+def _sveglio_mac(si):
+    """Mac: «caffeinate» tiene sveglio il computer finche' serve."""
+    global _caffeinate
+    try:
+        if si and _caffeinate is None:
+            _caffeinate = subprocess.Popen(["caffeinate", "-ims", "-w", str(os.getpid())])
+        elif not si and _caffeinate is not None:
+            _caffeinate.terminate()
+            _caffeinate = None
+    except Exception:
+        log.exception("caffeinate")
+
+
+if sys.platform == "darwin":
+    Registratore = RegistratoreMac
+    tieni_sveglio = _sveglio_mac
+    controlla_audio = lambda: _cattura_exe().exists()      # noqa: E731  l'audio del Mac lo prende rl-cattura
