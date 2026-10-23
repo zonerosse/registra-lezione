@@ -167,7 +167,7 @@ async function passo1(err) {
     const qr = TEL && (IPH || ((typeof R !== 'undefined' && R.app_codice) || 0) >= 13);     // il telefono legge il QR del PC
     mostra(1, `<h3>${sq(tq('g_gia_t'))}</h3><div class="tx">${sq(tq('g_gia_s'))}</div>
       <div class="iq-dove"><b>${sq(tq('g_gia_dove'))}</b><ol><li>${tq(TEL ? 'g_gia_1' : 'g_gia_1pc')}</li><li>${tq('g_gia_2')}</li><li>${tq(!TEL ? 'g_gia_3pc' : qr ? 'g_gia_3' : 'g_gia_3inc')}</li></ol></div>
-      ${qr ? `<button class="btn b-main iq-qr" id="iqPwQr">${sq(tq('g_qr'))}</button><div class="hint" style="margin:8px 0 4px">${sq(tq('g_oppure'))}</div>` : ''}
+      ${qr ? `<button class="btn b-main iq-qrb" id="iqPwQr">${sq(tq('g_qr'))}</button><div class="hint" style="margin:8px 0 4px">${sq(tq('g_oppure'))}</div>` : ''}
       <div class="iq-campo"><input class="in" id="iqPw" placeholder="ABCD-EFGH-JKLM-NPQR" autocomplete="off"><button class="btn b-ghost b-sm" id="iqPwInc">${sq(tq('incolla'))}</button></div>
       <div class="dlgerr" id="iqErr"></div>
       <div class="pv-bt"><a id="iqAltro">${sq(tq('g_altro'))}</a><button class="btn b-main" id="iqPwOk">${sq(tq('g_gia_b'))}</button></div>`);
