@@ -62,7 +62,7 @@ jobs:
           briefcase --version | tee -a ../esito/costruzione.txt
           briefcase create iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
           find build -name project.pbxproj -exec sed -i '' -E 's/TARGETED_DEVICE_FAMILY = [^;]*;/TARGETED_DEVICE_FAMILY = "1,2";/' {} \;
-          grep -h "TARGETED_DEVICE_FAMILY" $(find build -name project.pbxproj) | sort -u | tee -a ../esito/costruzione.txt
+          find build -name project.pbxproj -exec grep -h "TARGETED_DEVICE_FAMILY" {} + | sort -u | tee -a ../esito/costruzione.txt
           briefcase build iOS -a verbamanent --no-input 2>&1 | tail -150 | tee -a ../esito/costruzione.txt
 
       - name: Prova sull'iPhone simulato
