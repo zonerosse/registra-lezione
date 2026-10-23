@@ -1,14 +1,14 @@
 {
- "versione": "0.14.1",
+ "versione": "0.14.2",
  "codice": 14,
- "novita": "La password degli zip passa da un dispositivo all'altro con un QR: in Sincronizza c'è la password con il QR e il tasto Copia, e nel telefono «Inizia qui» spiega dove trovarla con «Inquadra il QR».",
- "novita_en": "The zip password moves from one device to another with a QR code: Sync shows the password with a QR code and a Copy button, and on the phone «Start here» explains where to find it with «Scan the QR code».",
- "contenuto": 110,
+ "novita": "Sul telefono, per le lezioni online, il riquadro prima di registrare spiega i passi: apri Meet, Teams o Zoom, metti il vivavoce e torna a registrare (o metti il telefono vicino alle casse del PC).",
+ "novita_en": "On the phone, for online lectures, the box before recording explains the steps: open Meet, Teams or Zoom, turn on the speaker and come back to record (or put the phone close to the PC speakers).",
+ "contenuto": 111,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
- "contenuto_vm": 110,
- "contenuto_sm": 110,
- "novita_sm": "La password degli zip passa da un dispositivo all'altro con un QR: in Impostazioni › PC, telefono e cloud c'è la password con il QR e il tasto Copia, e nel telefono «Inizia qui» spiega dove trovarla con «Inquadra il QR».",
- "novita_sm_en": "The zip password moves from one device to another with a QR code: Settings › PC, phone and cloud shows the password with a QR code and a Copy button, and on the phone «Start here» explains where to find it with «Scan the QR code»."
+ "contenuto_vm": 111,
+ "contenuto_sm": 111,
+ "novita_sm": "Sul telefono, per le lezioni online, il riquadro prima di registrare spiega i passi: apri Meet, Teams o Zoom, metti il vivavoce e torna a registrare (o metti il telefono vicino alle casse del PC).",
+ "novita_sm_en": "On the phone, for online lectures, the box before recording explains the steps: open Meet, Teams or Zoom, turn on the speaker and come back to record (or put the phone close to the PC speakers)."
 }
