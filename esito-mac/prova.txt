@@ -1,0 +1,25 @@
+== Verba Manent IA
+librerie: ok
+ffmpeg: /Users/runner/work/registra-lezione/registra-lezione/dist/Verba Manent IA.app/Contents/Frameworks/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1
+vad: ok
+trascrizione (modello tiny, con e senza VAD): ok
+pacchetti: Prova – àèìòù – 14-10 ore 09.00 – parte 1 (00h-00h).zip, Prova – àèìòù – 14-10 ore 09.00 – parte 2 (00h-00h).zip
+appunti e chiave cifrata: ok
+elimina nel Cestino: ok
+calendario (anche impegni che si ripetono): ok
+yt-dlp per «importa da link»: 2025.10.22
+condividi (Word, calendario, email): ok
+chi parla (impronta della voce): ok
+TUTTO A POSTO== Scripta Manent
+librerie: ok
+ffmpeg: /Users/runner/work/registra-lezione/registra-lezione/dist/Scripta Manent.app/Contents/Frameworks/imageio_ffmpeg/binaries/ffmpeg-macos-aarch64-v7.1
+vad: ok
+trascrizione (modello tiny, con e senza VAD): ok
+pacchetti: Prova – àèìòù – 14-10 ore 09.00 – parte 1 (00h-00h).zip, Prova – àèìòù – 14-10 ore 09.00 – parte 2 (00h-00h).zip
+appunti e chiave cifrata: ok
+elimina nel Cestino: ok
+calendario (anche impegni che si ripetono): ok
+yt-dlp per «importa da link»: 2025.10.22
+condividi (Word, calendario, email): ok
+chi parla (impronta della voce): ok
+TUTTO A POSTO
