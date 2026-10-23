@@ -1,0 +1,6 @@
+unisci: (True, 111347)
+durata m4a (ms, attesi ~22000): 22000
+taglia 2-6 s: (True, '4000')
+decodifica 1-6 s: (True, 16000, 1, 5.0)
+portachiavi: ('kc:337fbf098b6257d8', 'uguale', 'assente')
+pdf in png: (2, ['p001.png', 'p002.png'])

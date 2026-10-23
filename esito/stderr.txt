@@ -1,0 +1,46 @@
+2026-10-23 22:13:16.012 Verba Manent IA[10541:33406] Configuring isolated Python...
+2026-10-23 22:13:16.014 Verba Manent IA[10541:33406] Pre-initializing Python runtime...
+2026-10-23 22:13:16.018 Verba Manent IA[10541:33406] PythonHome: /Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Bundle/Application/49CBC1E1-4218-4268-9D12-DBC92D439853/Verba Manent IA.app/python
+2026-10-23 22:13:16.023 Verba Manent IA[10541:33406] PYTHONPATH:
+2026-10-23 22:13:16.023 Verba Manent IA[10541:33406] - /Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Bundle/Application/49CBC1E1-4218-4268-9D12-DBC92D439853/Verba Manent IA.app/python/lib/python3.12
+2026-10-23 22:13:16.023 Verba Manent IA[10541:33406] - /Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Bundle/Application/49CBC1E1-4218-4268-9D12-DBC92D439853/Verba Manent IA.app/python/lib/python3.12/lib-dynload
+2026-10-23 22:13:16.023 Verba Manent IA[10541:33406] - /Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Bundle/Application/49CBC1E1-4218-4268-9D12-DBC92D439853/Verba Manent IA.app/app
+2026-10-23 22:13:16.024 Verba Manent IA[10541:33406] Configure argc/argv...
+2026-10-23 22:13:16.024 Verba Manent IA[10541:33406] Initializing Python runtime...
+2026-10-23 22:13:16.131 Verba Manent IA[10541:33406] Adding app_packages as site directory: /Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Bundle/Application/49CBC1E1-4218-4268-9D12-DBC92D439853/Verba Manent IA.app/app_packages
+2026-10-23 22:13:16.133 Verba Manent IA[10541:33406] Running app module: verbamanent
+2026-10-23 22:13:16.150 Verba Manent IA[10541:33406] ---------------------------------------------------------------------------
+whisper_init_from_file_with_params_no_state: loading model from '/Users/runner/Library/Developer/CoreSimulator/Devices/2EDB2671-090C-4988-822E-421879ECE84C/data/Containers/Data/Application/A591B6D4-6D0E-48D1-9724-A865FEFEC04F/ggml-small-q5_1.bin'
+whisper_init_with_params_no_state: use gpu    = 0
+whisper_init_with_params_no_state: flash attn = 0
+whisper_init_with_params_no_state: gpu_device = 0
+whisper_init_with_params_no_state: dtw        = 0
+whisper_init_with_params_no_state: devices    = 3
+whisper_init_with_params_no_state: backends   = 3
+whisper_model_load: loading model
+whisper_model_load: n_vocab       = 51865
+whisper_model_load: n_audio_ctx   = 1500
+whisper_model_load: n_audio_state = 768
+whisper_model_load: n_audio_head  = 12
+whisper_model_load: n_audio_layer = 12
+whisper_model_load: n_text_ctx    = 448
+whisper_model_load: n_text_state  = 768
+whisper_model_load: n_text_head   = 12
+whisper_model_load: n_text_layer  = 12
+whisper_model_load: n_mels        = 80
+whisper_model_load: ftype         = 9
+whisper_model_load: qntvr         = 1
+whisper_model_load: type          = 3 (small)
+whisper_model_load: adding 1608 extra tokens
+whisper_model_load: n_langs       = 99
+whisper_model_load:          CPU total size =   189.49 MB
+whisper_model_load: model size    =  189.49 MB
+whisper_backend_init_gpu: no GPU found
+whisper_backend_init: using BLAS backend
+whisper_init_state: kv self size  =   18.87 MB
+whisper_init_state: kv cross size =   56.62 MB
+whisper_init_state: kv pad  size  =    4.72 MB
+whisper_init_state: compute buffer (conv)   =   22.41 MB
+whisper_init_state: compute buffer (encode) =  128.01 MB
+whisper_init_state: compute buffer (cross)  =    6.18 MB
+whisper_init_state: compute buffer (decode) =   97.27 MB

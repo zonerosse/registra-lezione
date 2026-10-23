@@ -1,0 +1,2 @@
+app: ios/build/verbamanent/ios/xcode/build/Debug-iphonesimulator/Verba Manent IA.app
+simulatore: 2EDB2671-090C-4988-822E-421879ECE84C
