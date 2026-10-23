@@ -1,14 +1,14 @@
 {
- "versione": "0.14.2",
+ "versione": "0.14.3",
  "codice": 14,
- "novita": "Sul telefono, per le lezioni online, il riquadro prima di registrare spiega i passi: apri Meet, Teams o Zoom, metti il vivavoce e torna a registrare (o metti il telefono vicino alle casse del PC).",
- "novita_en": "On the phone, for online lectures, the box before recording explains the steps: open Meet, Teams or Zoom, turn on the speaker and come back to record (or put the phone close to the PC speakers).",
- "contenuto": 111,
+ "novita": "Verba Manent IA e Scripta Manent anche per iPad: sullo schermo grande l'impaginazione è quella del PC, con il menu a sinistra.",
+ "novita_en": "Verba Manent IA and Scripta Manent for iPad too: on the big screen the layout is the PC one, with the menu on the left.",
+ "contenuto": 112,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
- "contenuto_vm": 111,
- "contenuto_sm": 111,
- "novita_sm": "Sul telefono, per le lezioni online, il riquadro prima di registrare spiega i passi: apri Meet, Teams o Zoom, metti il vivavoce e torna a registrare (o metti il telefono vicino alle casse del PC).",
- "novita_sm_en": "On the phone, for online lectures, the box before recording explains the steps: open Meet, Teams or Zoom, turn on the speaker and come back to record (or put the phone close to the PC speakers)."
+ "contenuto_vm": 112,
+ "contenuto_sm": 112,
+ "novita_sm": "Verba Manent IA e Scripta Manent anche per iPad: sullo schermo grande l'impaginazione è quella del PC, con il menu a sinistra.",
+ "novita_sm_en": "Verba Manent IA and Scripta Manent for iPad too: on the big screen the layout is the PC one, with the menu on the left."
 }
