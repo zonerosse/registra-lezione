@@ -1631,7 +1631,9 @@ async function disegnaModo() {
   $('srcRum').classList.toggle('hidden', !aula); $('swRum').classList.toggle('on', !!R.aula_rumorosa);
   $('srcOnline').classList.toggle('hidden', aula);
   $('prP').textContent = t(aula ? 'pr.p.aula' : 'pr.p');
-  $('prPrima').textContent = t(aula ? 'pr.prima.aula' : 'pr.prima');
+  if (ANDROID && !aula)      // online sul telefono: il microfono sente l'altoparlante, i passi in ordine
+    $('prPrima').innerHTML = `<ol class="pr-passi"><li>${esc(t('pr.tel.1'))}</li><li>${esc(t('pr.tel.2'))}</li><li>${esc(t('pr.tel.3'))}</li></ol><div class="pr-pc">${esc(t('pr.tel.pc'))}</div>`;
+  else $('prPrima').textContent = t(aula ? 'pr.prima.aula' : 'pr.prima');
   $('pdfTxt').textContent = PDFA ? '✓ ' + PDFA.nome + (PDFA.mb != null ? ' · ' + t('dc.pag', {p: PDFA.pagine, mb: num(PDFA.mb)}) : '') : t(aula || ANDROID ? 'mpf.sl.s' : 'mpf.sl.on');
   $('pdfTxt').className = PDFA ? 'okt' : 'mutt';
   $('btnPdfA').textContent = PDFA ? t('dc.cambia') : t('src.pdf.b');
