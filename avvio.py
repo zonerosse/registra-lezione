@@ -15,6 +15,12 @@ from pathlib import Path
 
 import dipendenze  # noqa: F401  (serve a mettere tutte le librerie dentro l'exe)
 
+# l'app chiamata come «python -m yt_dlp ...» (Mac: yt-dlp e' dentro l'app, come modulo): fa solo quello ed esce
+if getattr(sys, "frozen", False) and sys.argv[1:3] == ["-m", "yt_dlp"]:
+    import yt_dlp
+    sys.argv = ["yt-dlp"] + sys.argv[3:]
+    sys.exit(yt_dlp.main())
+
 if getattr(sys, "frozen", False):
     RADICE = Path(sys.executable).resolve().parent
 else:
