@@ -1,10 +1,10 @@
 {
- "versione": "4.33",
+ "versione": "4.34",
  "librerie": 2,
- "novita": "Lo Spazio DSA è un'app dentro l'app: toccando «Spazio DSA» tutto il programma diventa come Scripta Manent (strumenti, Registra, Le mie lezioni, Compiti, Studia, Impostazioni). «Torna a Verba Manent» lo riporta com'era.",
- "novita_en": "The DSA Space is now an app inside the app: tapping «DSA Space» turns the whole program into Scripta Manent (tools, Record, My lectures, Homework, Study, Settings). «Back to Verba Manent» brings it back as it was.",
- "novita_sm": "Sul telefono la barra in basso ha 5 voci con il nome intero (Strumenti, Registra, Lezioni, Compiti, Studia) e «Altro» con Impostazioni, Guida e Informazioni.",
- "novita_sm_en": "On the phone the bottom bar has 5 items with full names (Tools, Record, Lessons, Homework, Study) and «More» with Settings, Guide and About.",
- "ultima_vm": "4.31",
- "ultima_sm": "4.33"
+ "novita": "La password degli zip passa da un dispositivo all'altro con un QR: in Sincronizza c'è la password con il QR e il tasto Copia, e nel telefono «Inizia qui» spiega dove trovarla con «Inquadra il QR».",
+ "novita_en": "The zip password moves from one device to another with a QR code: Sync shows the password with a QR code and a Copy button, and on the phone «Start here» explains where to find it with «Scan the QR code».",
+ "novita_sm": "La password degli zip passa da un dispositivo all'altro con un QR: in Impostazioni › PC, telefono e cloud c'è la password con il QR e il tasto Copia, e nel telefono «Inizia qui» spiega dove trovarla con «Inquadra il QR».",
+ "novita_sm_en": "The zip password moves from one device to another with a QR code: Settings › PC, phone and cloud shows the password with a QR code and a Copy button, and on the phone «Start here» explains where to find it with «Scan the QR code».",
+ "ultima_vm": "4.34",
+ "ultima_sm": "4.34"
 }
