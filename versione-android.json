@@ -1,0 +1,14 @@
+{
+ "versione": "0.14.8",
+ "codice": 14,
+ "novita": "Novità in inglese, per USA e Regno Unito: le guide interattive parlano inglese, il voto è in percentuale e il tempo in più nei test si sceglie (25%, 50%, 100%). In italiano non cambia niente.",
+ "novita_en": "New in English, for the US and UK: the interactive guides are in English, scores are shown as percentages and you choose the extra time in tests (25%, 50%, 100%).",
+ "contenuto": 122,
+ "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
+ "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
+ "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
+ "contenuto_vm": 122,
+ "contenuto_sm": 122,
+ "novita_sm": "Novità in inglese, per USA e Regno Unito: le guide interattive parlano inglese, il voto è in percentuale e il tempo in più nei test si sceglie (25%, 50%, 100%). In italiano non cambia niente.",
+ "novita_sm_en": "New in English, for the US and UK: the interactive guides are in English, scores are shown as percentages and you choose the extra time in tests (25%, 50%, 100%)."
+}
