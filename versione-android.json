@@ -1,16 +1,16 @@
 {
- "versione": "0.14.16",
+ "versione": "0.14.17",
  "codice": 14,
- "novita": "Sincronizza più semplice: con «Accedi con Google» e lo stesso account del PC il telefono prende da solo la password, niente QR né codici. Il tasto Ripassa funziona di nuovo.",
- "novita_en": "Simpler sync: with «Sign in with Google» and the same account as your PC, the phone gets the password by itself, no QR codes. The Review button works again.",
- "contenuto": 132,
+ "novita": "Sincronizza in vista: in cima a Impostazioni, con Google Drive per primo e un tasto solo. In Le mie registrazioni un riquadro ti ricorda di collegare il PC.",
+ "novita_en": "Sync in plain sight: at the top of Settings, with Google Drive first and a single button. My recordings reminds you to connect the PC.",
+ "contenuto": 133,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
  "contenuto_vm": 131,
- "contenuto_sm": 132,
- "novita_sm": "Sincronizza più semplice: con «Accedi con Google» e lo stesso account del PC il telefono prende da solo la password, niente QR né codici. Il tasto Ripassa funziona di nuovo, Elimina riporta all'elenco e in Compiti un giorno vuoto risponde.",
- "novita_sm_en": "Simpler sync: with «Sign in with Google» and the same account as your PC, the phone gets the password by itself, no QR codes. The Review button works again, Delete goes back to the list and in Homework an empty day responds.",
+ "contenuto_sm": 133,
+ "novita_sm": "Sincronizza più semplice, con Google Drive per primo. In Impostazioni › Trascrizione torna «Quando trascrivo».",
+ "novita_sm_en": "Simpler sync, with Google Drive first. Settings › Transcription has «When to transcribe» again.",
  "video": "3f70e1bb33266774",
  "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
