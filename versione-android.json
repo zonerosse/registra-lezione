@@ -3,14 +3,14 @@
  "codice": 14,
  "novita": "Ripasso Cornell: «Mostra tutte le risposte» funziona e il ripasso non resta più sotto la Guida.",
  "novita_en": "Cornell review: «Show all answers» works and the review no longer stays under the Guide.",
- "contenuto": 141,
+ "contenuto": 142,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
  "contenuto_vm": 141,
- "contenuto_sm": 140,
- "novita_sm": "Sincronizza: con Google Drive collegato si vede solo Google Drive, niente più messaggi del Wi-Fi.",
- "novita_sm_en": "Sync: with Google Drive linked you only see Google Drive, no more Wi-Fi messages.",
+ "contenuto_sm": 142,
+ "novita_sm": "Ripasso Cornell: «Mostra tutte le risposte» funziona e il ripasso non resta più sotto la Guida.",
+ "novita_sm_en": "Cornell review: «Show all answers» works and the review no longer stays under the Guide.",
  "video": "3f70e1bb33266774",
  "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
