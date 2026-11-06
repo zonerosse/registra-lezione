@@ -3,14 +3,14 @@
  "codice": 14,
  "novita": "Testi caricati (TXT, Word, Markdown, dispense e slide in PDF): frasi intere anche quando il file va a capo a metà frase; Word di Google Meet letto per bene.",
  "novita_en": "Uploaded texts (TXT, Word, Markdown, PDF handouts and slides): whole sentences even when the file breaks lines mid-sentence.",
- "contenuto": 164,
+ "contenuto": 165,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
  "contenuto_vm": 164,
- "contenuto_sm": 163,
- "novita_sm": "PDF caricati: lettura corretta anche dei PDF di Word con testo giustificato (niente più «pi ù», «co rion»).",
- "novita_sm_en": "Uploaded PDFs: correct reading also of Word PDFs with justified text.",
+ "contenuto_sm": 165,
+ "novita_sm": "Testi caricati (TXT, Word, Markdown, dispense e slide in PDF): frasi intere anche quando il file va a capo a metà frase; Word di Google Meet letto per bene.",
+ "novita_sm_en": "Uploaded texts (TXT, Word, Markdown, PDF handouts and slides): whole sentences even when the file breaks lines mid-sentence.",
  "video": "3f70e1bb33266774",
  "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
