@@ -3,14 +3,14 @@
  "codice": 14,
  "novita": "Documenti lunghi (anche 200 pagine) divisi in parti: appunti completi. Niente più appunti vuoti; eliminare una lezione sul telefono funziona.",
  "novita_en": "Long documents (even 200 pages) are split into parts: complete notes. No more empty notes; deleting a lesson on the phone works.",
- "contenuto": 152,
+ "contenuto": 153,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
  "contenuto_vm": 152,
- "contenuto_sm": 151,
- "novita_sm": "Gli appunti vecchi si riscrivono col metodo nuovo e si vede: nel Ripasso Cornell la lezione aperta passa per prima.",
- "novita_sm_en": "Old notes are rewritten with the new method and you can see it: in Cornell review the open lesson goes first.",
+ "contenuto_sm": 153,
+ "novita_sm": "Documenti lunghi (anche 200 pagine) divisi in parti: appunti completi. Niente più appunti vuoti; eliminare una lezione sul telefono funziona.",
+ "novita_sm_en": "Long documents (even 200 pages) are split into parts: complete notes. No more empty notes; deleting a lesson on the phone works.",
  "video": "3f70e1bb33266774",
  "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
