@@ -3,14 +3,14 @@
  "codice": 14,
  "novita": "PDF caricati: lettura corretta anche dei PDF di Word con testo giustificato (niente più «pi ù», «co rion»).",
  "novita_en": "Uploaded PDFs: correct reading also of Word PDFs with justified text.",
- "contenuto": 162,
+ "contenuto": 163,
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
  "contenuto_vm": 162,
- "contenuto_sm": 161,
- "novita_sm": "PDF caricati: frasi intere e parole senza spazi in mezzo («pi ù», «indivi duare»).",
- "novita_sm_en": "Uploaded PDFs: whole sentences and words without stray spaces.",
+ "contenuto_sm": 163,
+ "novita_sm": "PDF caricati: lettura corretta anche dei PDF di Word con testo giustificato (niente più «pi ù», «co rion»).",
+ "novita_sm_en": "Uploaded PDFs: correct reading also of Word PDFs with justified text.",
  "video": "3f70e1bb33266774",
  "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
