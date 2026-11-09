@@ -1,14 +1,16 @@
 {
- "versione": "0.14.42",
+ "versione": "0.14.43",
  "codice": 15,
- "novita": "Nuovo «Scrivi a mano»: durante la lezione scrivi col dito o la penna sul foglio o sulla slide, tocchi quello che hai scritto e senti il prof in quel punto. Nella lezione: «Correggi e sottolinea», «Traduci» (appunti o trascrizione), «Video riassunto», la trascrizione in Word o sottotitoli e «A un compagno» per mandargli la lezione intera. Nel ripasso: «Completa la frase», «Abbina» e «Slide coperte». Nel podcast «Fai una domanda»; pagine web come fonti della materia. E ancora: più audio o video importati insieme, «Podcast della materia» ed «Esporta in Anki» anche dalla lezione.",
- "novita_en": "New «Write by hand»: during the lecture write with your finger or a stylus on a sheet or on the slide, tap what you wrote and hear the lecturer at that point. In the lecture: «Correct and highlight», «Translate» (notes or transcript), «Video summary», the transcript in Word or subtitles and «To a classmate» to send them the whole lecture. In review: «Fill in the blank», «Match» and «Covered slides». In the podcast «Ask a question»; web pages as subject sources. Also: several audio or video files imported at once, «Subject podcast» and «Export to Anki» from the lecture too.",
- "contenuto": 181,
+ "novita": "Nuova sezione «Università e Master»: il libretto da una foto, media, crediti e voto di partenza, appelli e scadenze con i promemoria per tempo (anche per i master all’estero). Collega il calendario una volta e le date arrivano da sole. E nel Video riassunto le immagini dell’IA.",
+ "novita_en": "New «University and Master» section: your transcript from a photo, average, credits and starting mark, exam dates and deadlines with early reminders (also for masters abroad). Connect your calendar once and the dates arrive by themselves. And AI pictures in the Video summary.",
+ "contenuto": 183,
  "novita_sm": "Importa più audio o video insieme (sul PC e sull'iPhone): controlli i nomi e li trascrive uno dopo l'altro. Nel podcast puoi scegliere «Spiegato semplice» o «Ripasso per l'esame».",
  "novita_sm_en": "Import several audio or video files at once (on PC and iPhone): check the names and they are transcribed one after another. In the podcast you can choose «Explained simply» or «Exam review».",
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
- "contenuto_vm": 181,
- "contenuto_sm": 181
+ "contenuto_vm": 183,
+ "contenuto_sm": 181,
+ "video": "e1085b3861b3dd30",
+ "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
 }
