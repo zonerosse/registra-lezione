@@ -1,16 +1,531 @@
 {
- "versione": "0.14.43",
+ "versione": "0.14.44",
  "codice": 15,
- "novita": "Nuova sezione «Università e Master»: il libretto da una foto, media, crediti e voto di partenza, appelli e scadenze con i promemoria per tempo (anche per i master all’estero). Collega il calendario una volta e le date arrivano da sole. E nel Video riassunto le immagini dell’IA.",
- "novita_en": "New «University and Master» section: your transcript from a photo, average, credits and starting mark, exam dates and deadlines with early reminders (also for masters abroad). Connect your calendar once and the dates arrive by themselves. And AI pictures in the Video summary.",
- "contenuto": 184,
- "novita_sm": "Nuova sezione «Università e Master», per chi ha un DSA e va all’università: il libretto da una foto, media e crediti, appelli e scadenze con i promemoria per tempo. Collega il calendario una volta e le date arrivano da sole.",
- "novita_sm_en": "New «University and Master» section, for students with dyslexia at university: your transcript from a photo, average and credits, exam dates and deadlines with early reminders. Connect your calendar once and the dates arrive by themselves.",
+ "novita": "Aggiornamenti molto più leggeri: i video della guida si scaricano uno per uno, solo quelli cambiati (prima si riscaricavano tutti, quasi 50 MB).",
+ "novita_en": "Much lighter updates: the guide videos download one by one, only the ones that changed (before, all of them were downloaded again, almost 50 MB).",
+ "contenuto": 185,
+ "novita_sm": "Aggiornamenti molto più leggeri: i video della guida si scaricano uno per uno, solo quelli cambiati (prima si riscaricavano tutti, quasi 50 MB).",
+ "novita_sm_en": "Much lighter updates: the guide videos download one by one, only the ones that changed (before, all of them were downloaded again, almost 50 MB).",
  "apk": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/RegistraLezione.apk",
  "apk_sm": "https://github.com/zonerosse/registra-lezione/releases/download/app-android/ScriptaManent.apk",
  "zip": "https://github.com/zonerosse/registra-lezione/raw/android-app/contenuto.zip",
- "contenuto_vm": 183,
- "contenuto_sm": 184,
- "video": "146290d1d60b77d7",
- "zip_video": "https://github.com/zonerosse/registra-lezione/raw/android-app/video-android.zip"
+ "contenuto_vm": 185,
+ "contenuto_sm": 185,
+ "video": "",
+ "zip_video": "",
+ "video_file": {
+  "sm-tel-ascolta-en.webm": [
+   388479,
+   "71f3d216a6fe58a3"
+  ],
+  "sm-tel-ascolta-it.webm": [
+   394481,
+   "607052184abda752"
+  ],
+  "sm-tel-casa-en.webm": [
+   285440,
+   "70dcf50fd5f0904d"
+  ],
+  "sm-tel-casa-it.webm": [
+   299622,
+   "592b29b860bd0f15"
+  ],
+  "sm-tel-chiedi-en.webm": [
+   251944,
+   "21590e3495d2d483"
+  ],
+  "sm-tel-chiedi-it.webm": [
+   247693,
+   "4c8f01508259d09c"
+  ],
+  "sm-tel-compiti-en.webm": [
+   173065,
+   "2c6b2dfe7638d8bd"
+  ],
+  "sm-tel-compiti-it.webm": [
+   175710,
+   "2b9e2bec91fa17a7"
+  ],
+  "sm-tel-compito-en.webm": [
+   326135,
+   "ab1348aef692646d"
+  ],
+  "sm-tel-compito-it.webm": [
+   314573,
+   "a494c5c67116233b"
+  ],
+  "sm-tel-correggi-en.webm": [
+   355432,
+   "d1f1f8ebf9d67982"
+  ],
+  "sm-tel-correggi-it.webm": [
+   356153,
+   "84f495e913901ec6"
+  ],
+  "sm-tel-correttore-en.webm": [
+   203716,
+   "e8a4f679d329e977"
+  ],
+  "sm-tel-correttore-it.webm": [
+   196387,
+   "e1664cf84d8bc109"
+  ],
+  "sm-tel-docente-en.webm": [
+   360428,
+   "90ed4fcf88b73c1e"
+  ],
+  "sm-tel-docente-it.webm": [
+   385600,
+   "c2db2fb5fb77f170"
+  ],
+  "sm-tel-famiglia-en.webm": [
+   510825,
+   "c3cb8722460e78be"
+  ],
+  "sm-tel-famiglia-it.webm": [
+   521618,
+   "d137b70d5a0c85a3"
+  ],
+  "sm-tel-importa-en.webm": [
+   187648,
+   "2d05b9d51a271fe4"
+  ],
+  "sm-tel-importa-it.webm": [
+   193661,
+   "d9e7446471ef7c67"
+  ],
+  "sm-tel-impostazioni-en.webm": [
+   226265,
+   "eb14656ffd989360"
+  ],
+  "sm-tel-impostazioni-it.webm": [
+   229303,
+   "5c28ce7e2355b078"
+  ],
+  "sm-tel-inizia-qui-en.webm": [
+   322117,
+   "10a867bc7bc33a1c"
+  ],
+  "sm-tel-inizia-qui-it.webm": [
+   334441,
+   "a2b433d92cd83b54"
+  ],
+  "sm-tel-leggimi-en.webm": [
+   229455,
+   "a44eecdb1288ac9c"
+  ],
+  "sm-tel-leggimi-it.webm": [
+   237083,
+   "91b0faad7c230eb9"
+  ],
+  "sm-tel-leggo-en.webm": [
+   271393,
+   "b778dde632f174a8"
+  ],
+  "sm-tel-leggo-it.webm": [
+   264903,
+   "a91aa20fc439ea8e"
+  ],
+  "sm-tel-lezione-en.webm": [
+   308120,
+   "fed69da6a27dd51a"
+  ],
+  "sm-tel-lezione-it.webm": [
+   315874,
+   "0bd295024ebbe69f"
+  ],
+  "sm-tel-lezioni-en.webm": [
+   212454,
+   "a164210f474a4780"
+  ],
+  "sm-tel-lezioni-it.webm": [
+   223177,
+   "6074d327a7518ba4"
+  ],
+  "sm-tel-lingue-en.webm": [
+   346461,
+   "19a1689cc9bd952d"
+  ],
+  "sm-tel-lingue-it.webm": [
+   316547,
+   "f0411ad707b3448f"
+  ],
+  "sm-tel-mappa-en.webm": [
+   274988,
+   "05ed3328407a930d"
+  ],
+  "sm-tel-mappa-it.webm": [
+   289746,
+   "005aa2492e40fe33"
+  ],
+  "sm-tel-mate-en.webm": [
+   416125,
+   "b75ae733f74cf432"
+  ],
+  "sm-tel-mate-it.webm": [
+   446280,
+   "4d90665a85e9f0eb"
+  ],
+  "sm-tel-podcast-en.webm": [
+   251947,
+   "ee31d8964d241f0e"
+  ],
+  "sm-tel-podcast-it.webm": [
+   241220,
+   "cc39206232d00fa8"
+  ],
+  "sm-tel-registrare-en.webm": [
+   226003,
+   "7df96dc6832a4684"
+  ],
+  "sm-tel-registrare-it.webm": [
+   234669,
+   "85fc91a1960bde38"
+  ],
+  "sm-tel-ripasso-en.webm": [
+   663009,
+   "c175b3f65060e7eb"
+  ],
+  "sm-tel-ripasso-it.webm": [
+   672226,
+   "908bcfc0eff3de37"
+  ],
+  "sm-tel-studia-en.webm": [
+   400558,
+   "d34434e08ddac4dd"
+  ],
+  "sm-tel-studia-it.webm": [
+   415189,
+   "7a536ed11beaf9f7"
+  ],
+  "sm-tel-telefono-en.webm": [
+   162203,
+   "e0dc0c64d1c59468"
+  ],
+  "sm-tel-telefono-it.webm": [
+   165030,
+   "d2cc34656c44718d"
+  ],
+  "sm-tel-uni-en.webm": [
+   627620,
+   "663b76147172d994"
+  ],
+  "sm-tel-uni-it.webm": [
+   645149,
+   "32937624334a9b7a"
+  ],
+  "sm-tel-verifica-en.webm": [
+   581333,
+   "420ef33db0f32401"
+  ],
+  "sm-tel-verifica-it.webm": [
+   607594,
+   "6f00121d8a20e640"
+  ],
+  "tel-aggiornamenti-en.webm": [
+   146390,
+   "b0ded21eec07a727"
+  ],
+  "tel-aggiornamenti-it.webm": [
+   146903,
+   "fdd26d7e2302c0e1"
+  ],
+  "tel-ascolta-en.webm": [
+   481162,
+   "67977691b1df523b"
+  ],
+  "tel-ascolta-it.webm": [
+   459978,
+   "55d96b7e17d02bb0"
+  ],
+  "tel-calendario-en.webm": [
+   501340,
+   "af57e9916a832232"
+  ],
+  "tel-calendario-it.webm": [
+   536390,
+   "29e708cafff92f23"
+  ],
+  "tel-chiave-en.webm": [
+   231795,
+   "fe18557e3519ae4c"
+  ],
+  "tel-chiave-it.webm": [
+   240857,
+   "e80d67bddf8dce56"
+  ],
+  "tel-chiedi-en.webm": [
+   497499,
+   "f8f2e9958f386903"
+  ],
+  "tel-chiedi-it.webm": [
+   513798,
+   "16f7b85fc0e74093"
+  ],
+  "tel-chiparla-en.webm": [
+   330541,
+   "2f9f05a25ac63581"
+  ],
+  "tel-chiparla-it.webm": [
+   352462,
+   "ed0027a2ff281cca"
+  ],
+  "tel-compagno-en.webm": [
+   452313,
+   "beeb35aa0058ea78"
+  ],
+  "tel-compagno-it.webm": [
+   463678,
+   "d4356bba3de5702d"
+  ],
+  "tel-condividi-en.webm": [
+   387485,
+   "a9baea0ec4b9e0e7"
+  ],
+  "tel-condividi-it.webm": [
+   341486,
+   "91f55517f04f8158"
+  ],
+  "tel-correggi-en.webm": [
+   485999,
+   "800dafc98a202f60"
+  ],
+  "tel-correggi-it.webm": [
+   471499,
+   "1be0617da42101eb"
+  ],
+  "tel-cose-en.webm": [
+   137432,
+   "15d21200b6af0226"
+  ],
+  "tel-cose-it.webm": [
+   179715,
+   "b0b871e00529bdc6"
+  ],
+  "tel-docente-en.webm": [
+   442792,
+   "c12f67774898c8d5"
+  ],
+  "tel-docente-it.webm": [
+   430461,
+   "26a88613de9fa8fa"
+  ],
+  "tel-dove-en.webm": [
+   318688,
+   "dfdcfa927b93f425"
+  ],
+  "tel-dove-it.webm": [
+   295988,
+   "9bfab0be92c4f2d8"
+  ],
+  "tel-dsa-en.webm": [
+   307240,
+   "4bfe52a28f221ac6"
+  ],
+  "tel-dsa-it.webm": [
+   219241,
+   "cd10a3c277a70806"
+  ],
+  "tel-durante-en.webm": [
+   729890,
+   "8553a58dafca3400"
+  ],
+  "tel-durante-it.webm": [
+   659346,
+   "9468ac514f3ab0d4"
+  ],
+  "tel-esame-en.webm": [
+   668013,
+   "11172967968fa116"
+  ],
+  "tel-esame-it.webm": [
+   677940,
+   "3b5344f140815632"
+  ],
+  "tel-fine-en.webm": [
+   364580,
+   "8f3655cee9527a98"
+  ],
+  "tel-fine-it.webm": [
+   410436,
+   "44297434dbf625ff"
+  ],
+  "tel-foto-en.webm": [
+   340224,
+   "9395634a13bda3c8"
+  ],
+  "tel-foto-it.webm": [
+   331473,
+   "10bad84b7b7906b0"
+  ],
+  "tel-giochi-en.webm": [
+   532760,
+   "626e5f5cd446e34c"
+  ],
+  "tel-giochi-it.webm": [
+   523512,
+   "642422aad998fc27"
+  ],
+  "tel-glossario-en.webm": [
+   337899,
+   "447c4d677fccbcf8"
+  ],
+  "tel-glossario-it.webm": [
+   369241,
+   "fbf60ef581617e52"
+  ],
+  "tel-importa-en.webm": [
+   508826,
+   "6651df2cc570963a"
+  ],
+  "tel-importa-it.webm": [
+   478021,
+   "2a94910cacfbacac"
+  ],
+  "tel-impostazioni-en.webm": [
+   534842,
+   "ad9f5926cc9b5432"
+  ],
+  "tel-impostazioni-it.webm": [
+   559295,
+   "303d5404fec6174a"
+  ],
+  "tel-inviti-en.webm": [
+   585718,
+   "fbbfc36398efd904"
+  ],
+  "tel-inviti-it.webm": [
+   565077,
+   "9a5e7fe17a319893"
+  ],
+  "tel-itesto-en.webm": [
+   428031,
+   "0960cab7d2348780"
+  ],
+  "tel-itesto-it.webm": [
+   412388,
+   "384a883cf6410b64"
+  ],
+  "tel-lezione-en.webm": [
+   347623,
+   "ae1de29c83d97381"
+  ],
+  "tel-lezione-it.webm": [
+   367767,
+   "60c2aa243348eda2"
+  ],
+  "tel-lezioni-en.webm": [
+   353640,
+   "bb531785dd1b5fef"
+  ],
+  "tel-lezioni-it.webm": [
+   350441,
+   "efb5202842a041ad"
+  ],
+  "tel-libro-en.webm": [
+   279306,
+   "ea3a996031c14661"
+  ],
+  "tel-libro-it.webm": [
+   287941,
+   "cbd54898a37da0df"
+  ],
+  "tel-mano-en.webm": [
+   382272,
+   "7060bdba7ae4d845"
+  ],
+  "tel-mano-it.webm": [
+   382047,
+   "3407400a94be0465"
+  ],
+  "tel-nome-en.webm": [
+   311535,
+   "b896a20a7fb76adc"
+  ],
+  "tel-nome-it.webm": [
+   285510,
+   "aa907621c6afa1e1"
+  ],
+  "tel-parole-en.webm": [
+   448003,
+   "441e844353268b14"
+  ],
+  "tel-parole-it.webm": [
+   460812,
+   "85c8e4f059cb8227"
+  ],
+  "tel-podcast-en.webm": [
+   396199,
+   "391ab5848c7844f8"
+  ],
+  "tel-podcast-it.webm": [
+   343426,
+   "9dd0624032a4bae9"
+  ],
+  "tel-registrare-en.webm": [
+   608156,
+   "65f169f58b77a6e2"
+  ],
+  "tel-registrare-it.webm": [
+   656051,
+   "7fe5a1bc09cb20e0"
+  ],
+  "tel-rg-en.webm": [
+   650919,
+   "d3327b765b93b34e"
+  ],
+  "tel-rg-it.webm": [
+   694198,
+   "d4affb445900e297"
+  ],
+  "tel-ripasso-en.webm": [
+   334930,
+   "ddf751ccea68cdc2"
+  ],
+  "tel-ripasso-it.webm": [
+   370016,
+   "7b1a501b22e2e601"
+  ],
+  "tel-studia-en.webm": [
+   437438,
+   "1456da65e1c2d614"
+  ],
+  "tel-studia-it.webm": [
+   484666,
+   "3c112c98838f93fb"
+  ],
+  "tel-traduci-en.webm": [
+   337235,
+   "beef856c7acf94eb"
+  ],
+  "tel-traduci-it.webm": [
+   336863,
+   "ed37f321f45a45f2"
+  ],
+  "tel-tutor-en.webm": [
+   367382,
+   "6d5528274f88d383"
+  ],
+  "tel-tutor-it.webm": [
+   365350,
+   "6be711b3ace17d89"
+  ],
+  "tel-uni-en.webm": [
+   556931,
+   "54112198012825c7"
+  ],
+  "tel-uni-it.webm": [
+   575492,
+   "46fcd49a7f18fc4a"
+  ],
+  "tel-vriass-en.webm": [
+   229573,
+   "70cb4a647edc34e0"
+  ],
+  "tel-vriass-it.webm": [
+   214790,
+   "d63e31b6819a9bc2"
+  ]
+ },
+ "video_url": "https://raw.githubusercontent.com/zonerosse/registra-lezione/video-guida/f/"
 }
