@@ -1,0 +1,2 @@
+Video della guida di Verba Manent IA e Scripta Manent, uno per uno: il programma
+scarica solo quelli cambiati (elenco in versione.json, «video_file»).
